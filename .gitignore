@@ -1,0 +1,53 @@
+# yii console command
+/yii
+
+# phpstorm project files
+.idea
+
+# vs code settings
+.vscode/
+
+# netbeans project files
+nbproject
+
+# zend studio for eclipse project files
+.buildpath
+.project
+.settings
+
+# windows thumbnail cache
+Thumbs.db
+
+# composer vendor dir
+_protected/vendor
+
+_protected/reportfolder
+
+# composer itself is not needed
+composer.phar
+
+# Mac DS_Store Files
+.DS_Store
+
+# phpunit itself is not needed
+phpunit.phar
+# local phpunit config
+/phpunit.xml
+
+# config folder
+_protected/config
+
+# SQL folder
+# SQL
+
+public/barcode
+/upload
+/uploads
+
+/img/logo.jpg
+
+# project envirounment
+/env.php
+
+/access.log
+/error.log

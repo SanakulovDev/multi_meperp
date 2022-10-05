@@ -1,0 +1,82 @@
+{
+	"name": "nenad/yii2-basic-template",
+	"description": "Improved Yii 2 Basic Application Template By Nenad Zivkovic",
+	"keywords": [
+		"yii2",
+		"framework",
+		"basic",
+		"improved",
+		"application template",
+		"nenad"
+	],
+	"type": "project",
+	"license": "BSD-3-Clause",
+	"support": {
+		"tutorial": "http://www.freetuts.org/tutorial/view?id=6",
+		"source": "https://github.com/nenad-zivkovic/yii2-basic-template"
+	},
+	"minimum-stability": "stable",
+	"require": {
+		"php": ">=7.1.0",
+		"yiisoft/yii2": "~2.0.17@stable",
+		"yiisoft/yii2-bootstrap": "*",
+		"yiisoft/yii2-swiftmailer": "*",
+		"kartik-v/yii2-password": "@dev",
+		"edvlerblog/yii2-adldap-module": "^4.0.0",
+		"kartik-v/yii2-widget-select2": "@dev",
+		"kartik-v/yii2-widget-datetimepicker": "*",
+		"codemix/yii2-excelexport": "^2.7",
+		"guzzlehttp/guzzle": "~6.3",
+		"insolita/yii2-migration-generator": "^3.1",
+		"2amigos/qrcode-library": "~1.1",
+		"omnilight/yii2-scheduling": "^1.1",
+		"cetver/yii2-language-selector": "^1.0",
+		"cetver/yii2-languages-dispatcher": "^1.1",
+		"cetver/yii2-language-url-manager": "^1.0",
+		"hiqdev/yii2-asset-flag-icon-css": "^2.0",
+		"brussens/yii2-maintenance-mode": "*",
+		"malsa/yii2-maintenance-mode": "*",
+		"bizley/migration": "^4.1"
+	},
+	"require-dev": {
+		"codeception/codeception": "*",
+		"yiisoft/yii2-debug": "*",
+		"yiisoft/yii2-gii": "*",
+		"yiisoft/yii2-faker": "*",
+		"codeception/specify": "*",
+		"codeception/verify": "*"
+	},
+	"config": {
+		"vendor-dir": "_protected/vendor",
+		"fxp-asset": {
+			"installer-paths": {
+				"npm-asset-library": "_protected/vendor/npm",
+				"bower-asset-library": "_protected/vendor/bower"
+			}
+		},
+		"process-timeout": 1800
+	},
+	"scripts": {
+		"post-create-project-cmd": [
+			"yii\\composer\\Installer::postCreateProject"
+		]
+	},
+	"extra": {
+		"yii\\composer\\Installer::postCreateProject": {
+			"setPermission": [
+				{
+					"_protected/runtime": "0777",
+					"_protected/runtime/mail": "0777",
+					"_protected/runtime/session": "0777",
+					"_protected/yii": "0755",
+					"assets": "0777",
+					"uploads": "0777",
+					"cronjobs/coverage.sh": "0777"
+				}
+			],
+			"generateCookieValidationKey": [
+				"_protected/config/web.php"
+			]
+		}
+	}
+}

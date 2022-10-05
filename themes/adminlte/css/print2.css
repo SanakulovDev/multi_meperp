@@ -1,0 +1,18 @@
+.table-document2{
+    margin-bottom: 5px;
+}
+.table-document2 tr td,.table-document2 tr th{
+    padding: 1px 3px !important;
+    vertical-align: middle !important;
+    font-size: 12px !important;
+}
+
+.panel-body-doc2 p, .panel-body-doc2 div{
+    font-size: 12px !important;
+    margin-bottom: 0px !important;
+}
+
+.panel-body-doc2{
+   padding: 3px 5px;
+}
+

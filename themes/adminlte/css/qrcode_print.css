@@ -1,0 +1,113 @@
+/*for QRCode*/
+#print_qrcode_div{
+	/*outline:thin solid red;*/
+	width:287px !important;
+}
+.qrcode_div08{
+	/*outline:thin solid red;*/
+	height:95mm;
+	width:77mm !important;
+	margin-bottom:2mm;
+}
+.qrcode_div{
+	/*outline:thin solid green;*/
+	width:100% !important;
+	height:95mm !important;
+	min-height:95mm !important;
+	max-height:95mm !important;
+}
+.break_page{
+	page-break-after:always;
+}
+.tbl_qrcode{
+	/*outline:thin solid blue;*/
+	width:100% !important;
+	height:100% !important;
+	/*height:98mm !important;*/
+	/*min-height:98mm !important;*/
+	/*max-height:98mm !important;*/
+	border-collapse:collapse;
+	color:#000;
+}
+.tbl_qrcode td{
+	/*padding:1px;*/
+	border:thin solid #000;
+	vertical-align:middle;
+}
+.top_border_none{ border-top:none !important; }
+.bottom_border_none{ border-bottom:none !important; }
+.left_border_none{ border-left:none !important; }
+.right_border_none{ border-right:none !important; }
+.txt_rotate90{
+	-webkit-transform:rotate(-90deg);
+	-moz-transform:rotate(-90deg);
+	-ms-transform:rotate(-90deg);
+	-o-transform:rotate(-90deg);
+}
+.qrcode4_4{
+	width:151px;
+	min-width:151px;
+	height:151px;
+	min-height:151px;
+}
+.qrcode180{
+	width:180px;
+	min-width:180px;
+	height:180px;
+	min-height:180px;
+}
+.qc40{width:40px; height:40px; }
+.h25{height:25px; }
+.h28{height:28px; }
+.w45{width:45px; height:34px;}
+.w45{height:30px;}
+.w80{width:80px;}
+.txt_left{text-align:left !important;}
+.txt_center{text-align:center !important;}
+.txt_right{ text-align:right !important;}
+.f_bold{ font-weight:bold; !important;}
+.f10{ font-size:10px }
+.f12{ font-size:12px }
+.f14{ font-size:14px }
+.f16{ font-size:16px }
+.f18{ font-size:18px }
+.f20{ font-size:20px }
+.f25{ font-size:25px }
+.f30{ font-size:30px }
+.f35{ font-size:35px }
+.f40{ font-size:40px }
+.f45{ font-size:45px }
+.mtb-1{
+	margin-top:1mm;
+	margin-bottom:1mm;
+	/*border-top: thin dashed #6b6b6b;*/
+}
+.pl-3{
+	padding-left:3px;
+}
+.pr-3{
+	padding-right:3px;
+}
+.lh08{
+	line-height:0.9;
+}
+qrcode_smalldiv{
+	width:100% !important;
+	height:38mm !important;
+	min-height:38mm !important;
+	max-height:38mm !important;
+}
+.qrcode_small{
+	width:80px;
+	min-width:80px;
+	height:80px;
+	min-height:80px;
+}
+.tbl_qrcode_small{
+	width:100% !important;
+	height:100% !important;
+	border-collapse:collapse;
+}
+.tbl_qrcode_small td{
+	vertical-align:middle;
+}
