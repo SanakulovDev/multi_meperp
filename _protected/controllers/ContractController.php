@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\components\Helpers;
 use app\models\Contract;
+use app\models\ContractDetail;
 use app\models\ContractSearch;
 use Yii;
 use yii\web\NotFoundHttpException;
@@ -33,6 +34,8 @@ class ContractController extends AppController
 	public function actionCreate()
 	{
 		$model = new Contract();
+		$modelDetail = new ContractDetail();
+
 		$errorlist = [];
 		$isNewRecord = true;
 		if ($model->load(Yii::$app->request->post())) {
@@ -41,7 +44,7 @@ class ContractController extends AppController
 				if (count($errorlist) == 0) {
 					$transaction->commit();
 					Yii::$app->session->setFlash('success', Yii::t('app', 'Contract created successfully.'));
-					return $this->redirect(['index']);
+					return $this->redirect(["update?id=" . $model->id]);
 				} else {
 					$transaction->rollBack();
 					return $this->render('create', [
@@ -53,12 +56,14 @@ class ContractController extends AppController
 			} else {
 				return $this->render('create', [
 					'model' => $model,
+					'model_detail' => $modelDetail,
 					'isNewRecord' => $isNewRecord
 				]);
 			}
 		} else {
 			return $this->render('create', [
 				'model' => $model,
+				'model_detail' => $modelDetail,
 				'isNewRecord' => $isNewRecord
 			]);
 		}
@@ -67,6 +72,8 @@ class ContractController extends AppController
 	public function actionUpdate($id)
 	{
 		$model = $this->findModel($id);
+		$modelDetail = new ContractDetail();
+
 		$errorlist = [];
 		if ($model->load(Yii::$app->request->post())) {
 			$transaction = Yii::$app->db->beginTransaction();
@@ -80,16 +87,19 @@ class ContractController extends AppController
 					return $this->render('update', [
 						'errorlist' => ['details' => $errorlist],
 						'model' => $model,
+						'model_detail' => $modelDetail,
 					]);
 				}
 			} else {
 				return $this->render('update', [
 					'model' => $model,
+					'model_detail' => $modelDetail,
 				]);
 			}
 		} else {
 			return $this->render('update', [
 				'model' => $model,
+				'model_detail' => $modelDetail,
 			]);
 		}
 	}

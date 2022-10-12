@@ -54,10 +54,11 @@
 				]
 			])?>
 		</div>
-		<div class="col-lg-4">
+		<div class="col-lg-4 d-none" style="display: none">
 			<?=
 				$form->field($model, 'buyer_id')->dropDownList(ArrayHelper::map(\app\models\User::find()->joinWith('role')->where(['item_name' => 'buyer'])->all(), 'id', 'fullname'), [
 					'class' => ' form-control select2',
+					'value' => '4',
 					'prompt' => Yii::t('app', 'Select')
 				]);
 			?>
@@ -66,6 +67,8 @@
 			<?=
 				$form->field($model, 'payment_term_id')->dropDownList(ArrayHelper::map(app\models\PaymentTerm::find()->all(), 'id', 'name'), [
 					'class' => ' form-control select2',
+					'selected' => 2,
+					'value' => '2',
 					'prompt' => Yii::t('app', 'Select')
 				]);
 			?>
@@ -94,21 +97,29 @@
 			<?=
 				$form->field($model, 'contract_source_id')->dropDownList(ArrayHelper::map(app\models\ContractSource::find()->all(), 'id', 'name'), [
 					'class' => ' form-control select2',
+					'value' => '2',
 					'prompt' => Yii::t('app', 'Select')
 				]);
 			?>
 		</div>
-		<div class="col-md-4 col-sm-4 col-lg-4">
+		<!-- <div class="col-md-4 col-sm-4 col-lg-4">
 			<?=$form->field($model, 'status')->dropDownList($model->statusList)?>
-		</div>
+		</div> -->
 
 
 	</div>
 
 	<div class="form-group">
 		<?=Html::a(Yii::t('app', 'btn-cancel'), ['index'], ['class' => 'btn btn-default btn-sm'])?>
-		<?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?>
+		<?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm', 'id' => 'contract-form', 'type'=> 'button'])?>
 	</div>
 	<?php ActiveForm::end(); ?>
 
 </div>
+<?php
+	$model = <<< JS
+	$(document).ready(function() {
+	});
+JS;
+	$this->registerJs($model, yii\web\View::POS_END);
+?>

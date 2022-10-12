@@ -15,4 +15,9 @@
 		'modelItems' => ($modelItems ?? null)
 	])?>
 
+	<?=$this->render('_form_detail', [
+		'model_detail' => $model_detail,
+		'id' => $model->id,
+	])?>
+
 </div>

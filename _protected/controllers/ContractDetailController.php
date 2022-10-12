@@ -40,7 +40,7 @@ class ContractDetailController extends AppController
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			$result = self::definePrimaryPrice($model);
 			if(!$result['success'] == 1){
-				Yii::$app->session->setFlash('error', Yii::t('app',  implode('<br>',$result['errors'])));
+				// Yii::$app->session->setFlash('error', Yii::t('app',  implode('<br>',$result['errors'])));
 			}
 			return $this->redirect(['index']);
 		}

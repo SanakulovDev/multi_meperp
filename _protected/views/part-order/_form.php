@@ -73,12 +73,13 @@
 			])->label(Yii::t('app', 'Material required date'));
 			?>
 		</div>
-		<div class="col-md-2 col-sm-2 col-lg-2">
+		<!-- <div class="col-md-2 col-sm-2 col-lg-2">
 			<?=$form->field($model, 'for_month')->dropDownList($model->getMonths(),['prompt' => '...'])?>
-		</div>
-		<div class="col-md-2 col-sm-2 col-lg-2">
+		</div> -->
+
+		<!-- <div class="col-md-2 col-sm-2 col-lg-2">
 			<?=$form->field($model, 'order_type')->dropDownList($model->orderTypeList)?>
-		</div>
+		</div> -->
 		<div class="col-md-2 col-sm-2 col-lg-2">
 			<?
 				$data = DeliveryTerm::find()->orderBy(['name' => SORT_ASC])->all();
