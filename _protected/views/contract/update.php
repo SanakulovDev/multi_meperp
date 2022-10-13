@@ -15,9 +15,13 @@
 		'modelItems' => ($modelItems ?? null)
 	])?>
 
+	<?php foreach ($count as $count_of_component): ?>
+
 	<?=$this->render('_form_detail', [
 		'model_detail' => $model_detail,
 		'id' => $model->id,
 	])?>
+
+	<?php endforeach; ?>
 
 </div>

@@ -44,7 +44,7 @@ class ContractController extends AppController
 				if (count($errorlist) == 0) {
 					$transaction->commit();
 					Yii::$app->session->setFlash('success', Yii::t('app', 'Contract created successfully.'));
-					return $this->redirect(["update?id=" . $model->id]);
+					return $this->redirect(["update?id=" . $model->id . "&status=" . $model->status]);
 				} else {
 					$transaction->rollBack();
 					return $this->render('create', [
@@ -69,7 +69,7 @@ class ContractController extends AppController
 		}
 	}
 
-	public function actionUpdate($id)
+	public function actionUpdate($id, $status)
 	{
 		$model = $this->findModel($id);
 		$modelDetail = new ContractDetail();
@@ -93,12 +93,18 @@ class ContractController extends AppController
 			} else {
 				return $this->render('update', [
 					'model' => $model,
+					'count' => $status,
 					'model_detail' => $modelDetail,
 				]);
 			}
 		} else {
+			$arr = [];
+			for ($x = 0; $x < $status; $x++) {
+				$arr[$x] = $x*2;
+			  }
 			return $this->render('update', [
 				'model' => $model,
+				'count' => $arr,
 				'model_detail' => $modelDetail,
 			]);
 		}

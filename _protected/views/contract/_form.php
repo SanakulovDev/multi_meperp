@@ -85,7 +85,7 @@
 				]);
 			?>
 		</div>
-		<div class="col-lg-4">
+		<div class="col-lg-3">
 			<?=
 				$form->field($model, 'currency_id')->dropDownList(ArrayHelper::map(app\models\Currency::find()->all(), 'id', 'name'), [
 					'class' => ' form-control select2',
@@ -101,6 +101,9 @@
 					'prompt' => Yii::t('app', 'Select')
 				]);
 			?>
+		</div>
+		<div class="col-lg-1">
+			<?=$form->field($model, 'status')->textInput(['maxlength' => true])?>
 		</div>
 		<!-- <div class="col-md-4 col-sm-4 col-lg-4">
 			<?=$form->field($model, 'status')->dropDownList($model->statusList)?>

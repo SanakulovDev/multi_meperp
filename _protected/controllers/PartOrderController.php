@@ -102,7 +102,7 @@ use yii\web\UploadedFile;
 				$model->created_at = time();
 				if ($model->save()) {
 					Yii::$app->session->setFlash('success', Yii::t('app', 'Successfully.'));
-					return $this->redirect(['index']);
+					return $this->redirect(["view?id=" . $model->id]);
 				} else {
           $errMsg = "<i><u><strong>OrderCreate:</strong></u></i>".Helpers::arrayToStringRecursive($model->errors);
 				}

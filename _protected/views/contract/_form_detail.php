@@ -69,17 +69,15 @@
 		<div class="col-lg-2">
 			<?=$form->field($model_detail, 'lead_time')->textInput(['type'=>'number', 'value' => 7, 'maxlength' => true])?>
 		</div>
-		<div class="col-lg-1">
-			<button type="button" class="btn btn-primary">+</button>
-		</div>
 		<!-- Sub source -->
-		<!-- <div class="col-lg-2">
+		<div class="col-lg-2" style="display: none">
 			<?=$form->field($model_detail, 'sub_source')->dropDownList($model_detail->subSourceList, [
 					'class' => ' form-control select2',
+					'value' => 3,
 					'prompt' => Yii::t('app', 'Select')
 				]);
 			?>
-		</div> -->
+		</div>
 	</div>
 
 
