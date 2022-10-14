@@ -42,7 +42,7 @@ class ContractDetailController extends AppController
 			if(!$result['success'] == 1){
 				Yii::$app->session->setFlash('error', Yii::t('app',  implode('<br>',$result['errors'])));
 			}
-			return "success";
+			return 1;
 			return $this->redirect(['index']);
 		}
 		return $this->render('create', [

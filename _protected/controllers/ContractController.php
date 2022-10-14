@@ -100,7 +100,7 @@ class ContractController extends AppController
 		} else {
 			$arr = [];
 			for ($x = 0; $x < $status; $x++) {
-				$arr[$x] = $x*2;
+				$arr[$x] = $x + 1;
 			  }
 			return $this->render('update', [
 				'model' => $model,

@@ -11,7 +11,8 @@
 <div class="contract-detail-form">
 
 	<?php $form = ActiveForm::begin([
-		'action' => '/contract-detail/create'
+		'action' => '/contract-detail/create',
+		'class' => 'form-component'
 	]); ?>
 
 	<div class="row">
@@ -96,8 +97,9 @@
 
 	<div class="form-group">
 		<?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?>
+		<button style="display: none" type="button" id="delete<?php echo($index) ?>" class="btn btn-danger btn-sm">Удалить</button>
 	</div>
-
+	
 
 </div>
 
@@ -106,8 +108,18 @@
 </div>
 <?php
 	$add_item = <<< JS
-	$(document).ready(function() {
-		console.log($id)
+	$('form#w' + $index).on('submit', function(e){
+		e.preventDefault();		
+		var datastring = $(this).serialize();
+        $.ajax({
+            type: "POST",
+            url: "/contract-detail/create",
+            data: datastring,
+            success: function(data) {
+                alert('Сохранено');
+				$('#delete' + $index).show();
+            }
+        });
 	});
 JS;
 	$this->registerJs($add_item, yii\web\View::POS_END);
