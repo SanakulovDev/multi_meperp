@@ -51,8 +51,8 @@ use yii\web\JqueryAsset;
 				</tr>
 				<tr id="tr_template" style="display: none">
 					<th scope="row" style="text-align:  center;vertical-align:  middle;">
-						<input type="hidden" name="items[num][]" value=""></th>
-					<td><?=Html::input('text', 'items[container_no][]', '', ['class' => 'form-control input-sm']);?></td>
+						<input type="hidden" name="items[num][]"></th>
+					<td><?=Html::input('text', 'items[container_no][]', '', ['class' => 'form-control input-sm', 'value' => '01148QGA']);?></td>
 					<td class="cont-type">
             <?=Html::dropDownList('items[container_type][]', null, $containerTypeList, $containerTypeParams)?>
 					</td>

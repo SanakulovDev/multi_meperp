@@ -86,7 +86,14 @@ class ContainerInvoiceController extends AppController {
    *
    * @return mixed
    */
-  public function actionCreate() {
+  public function actionCreate($nomer_order = null) {
+    $partOrder = "";
+    $contract ="";
+    if ($nomer_order) {
+      $partOrder = PartOrder::findOne(['order_no' => $nomer_order]);
+      $contract = Contract::findOne(['id' => $partOrder->contract_id]);
+    }
+
     $modelInvoice = new Invoice();
     $modelContainer = new Container();
     $model = new ContainerInvoice();
@@ -105,7 +112,6 @@ class ContainerInvoiceController extends AppController {
           ]
         );
       }
-//            echo "<pre>"; print_r($_POST);echo "</pre>"; die;
       $transaction = Yii::$app->db->beginTransaction();
       //invoice bazani tekshirib yo`q bo`lsa, qo`shib kelish
       $invoice = Invoice::find()->where(['invoice_no' => $_POST['ContainerInvoice']['invoice_no']])->one();
@@ -171,8 +177,9 @@ class ContainerInvoiceController extends AppController {
         }
       }
       if(count($errorlist) == 0) {
+        // echo $item->id;
         $transaction->commit();
-        return $this->redirect(['index']);
+        return $this->redirect(['/container-invoice/view?id=' . $item->id]);
       } else {
         $transaction->rollBack();
         return $this->render(
@@ -196,6 +203,8 @@ class ContainerInvoiceController extends AppController {
           'modelInvoice' => $modelInvoice ?? null,
           'modelContainer' => $modelContainer ?? null,
           'model' => $model ?? null,
+          'partOrder' => $partOrder ?? null,
+          'contract' => $contract ?? null,
           'modelItems' => $modelItems ?? null,
         ]
       );

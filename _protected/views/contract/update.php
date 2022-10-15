@@ -36,10 +36,11 @@
 	function onSave () {
 		const count = $model->status;
 		for (let i = 1; i <= count; i++) {
-			console.log(i)
 			$('form#w' + i).submit();
 		}
-		window.location.href = `/part-order/create?id=${$model->id}`
+		if ($model->id) {
+			window.location.href = "/part-order/create?id=" + $model->id
+		}
 	}
 JS;
 	$this->registerJs($add_item, yii\web\View::POS_END);

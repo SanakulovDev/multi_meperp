@@ -25,7 +25,7 @@ use yii\widgets\ActiveForm;
 	<div class="row">
     <? if($model->isNewRecord) { ?>
 			<div class="col-md-2">
-        <?=$form->field($model, 'invoice_no')->textInput(['maxlength' => true])
+        <?=$form->field($model, 'invoice_no')->textInput(['maxlength' => true, "value" => $partOrder->order_no])
                 ->label(Yii::t('app', 'Invoice no'))
         ?>
 			</div>
@@ -34,7 +34,7 @@ use yii\widgets\ActiveForm;
       <?
       $data = Supplier::find()->orderBy(['name' => SORT_ASC])->all();
       $items = ArrayHelper::map($data, 'id', 'name');
-      $params = ['prompt' => '. . .', null, 'class' => 'form-control select2'];
+      $params = ['prompt' => '. . .', null, 'class' => 'form-control select2', "value" => $contract->supplier_id];
       echo $form->field($model, 'supplier')->dropDownList($items, $params)
                 ->label(Yii::t('app', 'Supplier'));
       ?>
@@ -57,7 +57,7 @@ use yii\widgets\ActiveForm;
       <?
       $data = DeliveryTerm::find()->orderBy(['name' => SORT_ASC])->all();
       $items = ArrayHelper::map($data, 'id', 'name');
-      $params = ['prompt' => '. . .', null, 'class' => 'form-control select2'];
+      $params = ['prompt' => '. . .', null, 'class' => 'form-control select2', "value" => 9];
       echo $form->field($model, 'delivery_term_id')->dropDownList($items, $params);
       ?>
 		</div>
@@ -65,7 +65,7 @@ use yii\widgets\ActiveForm;
       <?
       $data = Currency::find()->orderBy(['code' => SORT_ASC])->all();
       $items = ArrayHelper::map($data, 'id', 'code');
-      $params = ['prompt' => '. . .', null, 'class' => 'form-control select2'];
+      $params = ['prompt' => '. . .', null, 'class' => 'form-control select2', "value" => 1];
       echo $form->field($model, 'currency')->dropDownList($items, $params)
                 ->label(Yii::t('app', 'Currency'));
       ?>

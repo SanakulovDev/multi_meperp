@@ -13,6 +13,8 @@
 		'modelItems' => $modelItems ?? null,
 		'errorlist' => $errorlist ?? null,
 		'items' => $items ?? null,
+		'partOrder' => $partOrder ?? null,
+		'contract' => $contract ?? null,
 		'modelInvoice' => $modelInvoice ?? null,
 	])?>
 

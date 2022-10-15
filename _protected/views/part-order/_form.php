@@ -90,7 +90,10 @@
 				$data = DeliveryTerm::find()->orderBy(['name' => SORT_ASC])->all();
 				$items = ArrayHelper::map($data, 'id', 'name');
 				$params = ['prompt' => '. . .', null, 'class' => 'form-control select2'];
-				echo $form->field($model, 'delivery_term_id')->dropDownList($items, $params);
+				echo $form->field($model, 'delivery_term_id')->dropDownList($items, [
+					$params,
+					"value" => 9
+				]);
 			?>
 		</div>
 	</div>

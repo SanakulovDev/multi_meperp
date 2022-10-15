@@ -68,4 +68,18 @@
     ]
   );
   ?>
+  <div class="row">
+    <div class="col-lg-12 text-right my-2">
+      <button class="btn btn-success btn-sm" onclick="onNext()">Далее</button>
+    </div>
+  </div>
 </div>
+
+<?php
+	$add_item = <<< JS
+	function onNext () {
+		window.location.href = "/container-invoice/create?nomer_order=" + $model->order_no
+	}
+JS;
+	$this->registerJs($add_item, yii\web\View::POS_END);
+?>
