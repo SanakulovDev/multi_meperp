@@ -42,8 +42,8 @@ class ContractDetailController extends AppController
 			if(!$result['success'] == 1){
 				Yii::$app->session->setFlash('error', Yii::t('app',  implode('<br>',$result['errors'])));
 			}
-			return 1;
-			return $this->redirect(['index']);
+			return $model->id;
+			// return $this->redirect(['index']);
 		}
 		return $this->render('create', [
 			'model' => $model,
@@ -375,6 +375,7 @@ class ContractDetailController extends AppController
 	 */
 	public function actionDelete($id)
 	{
+		return $id;
 		$model = $this->findModel($id);
 
 		$result = self::definePrimaryPrice($model,'delete');

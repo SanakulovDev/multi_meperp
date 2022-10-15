@@ -19,14 +19,19 @@
 	<?php $form = ActiveForm::begin(); ?>
 	<div class="row">
 		<div class="col-md-6 col-sm-6 col-lg-6">
-			<?=$form->field($model, 'order_no')->textInput(['maxlength' => true])?>
+			<?=$form->field($model, 'order_no')->textInput([
+				'maxlength' => true,
+				'value' => $contract_model->contract_no
+			])?>
 		</div>
 		<div class="col-md-6 col-sm-6 col-lg-6">
 			<?
 				$data = Contract::find()->where('status=1')->orderBy(['contract_no' => SORT_ASC])->all();
 				$items = ArrayHelper::map($data, 'id', 'contract_no');
 				$params = ['prompt' => '. . .', null, 'class' => 'form-control select2'];
-				echo $form->field($model, 'contract_id')->dropDownList($items, $params);
+				echo $form->field($model, 'contract_id')->dropDownList($items, [
+					'value' => $contract_model->id
+				]);
 			?>
 		</div>
 	</div>

@@ -94,7 +94,9 @@ use yii\web\UploadedFile;
 		 * If creation is successful, the browser will be redirected to the 'view' page.
 		 * @return mixed
 		 */
-		public function actionCreate() {
+		public function actionCreate($id) {
+			$contract_model = Contract::find()->where(['id' => $id])->one();
+
 			$model = new PartOrder();
 			$errorlist = [];
 			if ($model->load(Yii::$app->request->post())) {
@@ -113,7 +115,8 @@ use yii\web\UploadedFile;
 				'create',
 				[
 					'model' => $model,
-          'errMsg' => $errMsg ?? null
+					'contract_model' => $contract_model,
+          			'errMsg' => $errMsg ?? null
 				]
 			);
 		}

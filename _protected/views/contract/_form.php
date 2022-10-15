@@ -19,12 +19,13 @@
 			<?=
 				$form->field($model, 'supplier_id')->dropDownList(ArrayHelper::map(app\models\Supplier::find()->all(), 'id', 'name'), [
 					'class' => ' form-control select2',
+					'disabled' => $isUpdating ? true : false,
 					'prompt' => Yii::t('app', 'Select')
 				]);
 			?>
 		</div>
 		<div class="col-lg-4">
-			<?=$form->field($model, 'contract_no')->textInput(['maxlength' => true])?>
+			<?=$form->field($model, 'contract_no')->textInput(['maxlength' => true, 'disabled' => $isUpdating ? true : false,])?>
 		</div>
 		<div class="col-lg-4">
 			<?=$form->field($model, 'contract_date')->widget(DateTimePicker::classname(), [
@@ -34,9 +35,11 @@
 					'format' => 'yyyy-mm-dd',
 					'minView' => 'month',
 					'maxView' => 'month',
+					'disabled' => $isUpdating ? true : false,
 				],
 				'options' => [
-					'autocomplete' => 'off'
+					'autocomplete' => 'off',
+					'disabled' => $isUpdating ? true : false,
 				]
 			])?>
 		</div>
@@ -48,8 +51,10 @@
 					'format' => 'yyyy-mm-dd',
 					'minView' => 'month',
 					'maxView' => 'month',
+					'disabled' => $isUpdating ? true : false,
 				],
 				'options' => [
+					'disabled' => $isUpdating ? true : false,
 					'autocomplete' => 'off'
 				]
 			])?>
@@ -59,6 +64,7 @@
 				$form->field($model, 'buyer_id')->dropDownList(ArrayHelper::map(\app\models\User::find()->joinWith('role')->where(['item_name' => 'buyer'])->all(), 'id', 'fullname'), [
 					'class' => ' form-control select2',
 					'value' => '4',
+					'disabled' => $isUpdating ? true : false,
 					'prompt' => Yii::t('app', 'Select')
 				]);
 			?>
@@ -69,18 +75,20 @@
 					'class' => ' form-control select2',
 					'selected' => 2,
 					'value' => '2',
+					'disabled' => $isUpdating ? true : false,
 					'prompt' => Yii::t('app', 'Select')
 				]);
 			?>
 		</div>
 
 		<div class="col-lg-4">
-			<?=$form->field($model, 'contract_amount')->textInput(['maxlength' => true])?>
+			<?=$form->field($model, 'contract_amount')->textInput(['maxlength' => true, 'disabled' => $isUpdating ? true : false,])?>
 		</div>
 		<div class="col-lg-4">
 			<?=
 				$form->field($model, 'contract_subject_id')->dropDownList(ArrayHelper::map(app\models\ContractSubject::find()->all(), 'id', 'name'), [
 					'class' => ' form-control select2',
+					'disabled' => $isUpdating ? true : false,
 					'prompt' => Yii::t('app', 'Select')
 				]);
 			?>
@@ -89,6 +97,7 @@
 			<?=
 				$form->field($model, 'currency_id')->dropDownList(ArrayHelper::map(app\models\Currency::find()->all(), 'id', 'name'), [
 					'class' => ' form-control select2',
+					'disabled' => $isUpdating ? true : false,
 					'prompt' => Yii::t('app', 'Select')
 				]);
 			?>
@@ -98,6 +107,7 @@
 				$form->field($model, 'contract_source_id')->dropDownList(ArrayHelper::map(app\models\ContractSource::find()->all(), 'id', 'name'), [
 					'class' => ' form-control select2',
 					'value' => '2',
+					'disabled' => $isUpdating ? true : false,
 					'prompt' => Yii::t('app', 'Select')
 				]);
 			?>
@@ -106,7 +116,9 @@
 			<?=$form->field($model, 'status')->textInput(['maxlength' => true])?>
 		</div>
 		<!-- <div class="col-md-4 col-sm-4 col-lg-4">
-			<?=$form->field($model, 'status')->dropDownList($model->statusList)?>
+			<?=$form->field($model, 'status')->dropDownList($model->statusList, [
+				'disabled' => $isUpdating ? true : false,
+			])?>
 		</div> -->
 
 

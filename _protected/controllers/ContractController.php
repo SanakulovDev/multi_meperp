@@ -81,7 +81,10 @@ class ContractController extends AppController
 				if (count($errorlist) == 0) {
 					$transaction->commit();
 					Yii::$app->session->setFlash('success', Yii::t('app', 'Contract changed successfully.'));
-					return $this->redirect(['index']);
+					if(Yii::$app->request->isAjax) {
+						return 1;
+					}
+					return $this->redirect(["update?id=" . $model->id . "&status=" . $model->status]);
 				} else {
 					$transaction->rollBack();
 					return $this->render('update', [
@@ -102,6 +105,7 @@ class ContractController extends AppController
 			for ($x = 0; $x < $status; $x++) {
 				$arr[$x] = $x + 1;
 			  }
+
 			return $this->render('update', [
 				'model' => $model,
 				'count' => $arr,

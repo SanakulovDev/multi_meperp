@@ -12,6 +12,7 @@
 		'errorlist' => ($errorlist ?? null),
 		'model' => ($model ?? null),
 		'items' => ($items ?? null),
+		'isUpdating' => true,
 		'modelItems' => ($modelItems ?? null)
 	])?>
 
@@ -25,5 +26,21 @@
 		<?php endforeach; ?>
 	</div>
 
+	<button type="button" onclick="onSave()" class="btn btn-success btn-sm">Сохранить</button>
+
 
 </div>
+
+<?php
+	$add_item = <<< JS
+	function onSave () {
+		const count = $model->status;
+		for (let i = 1; i <= count; i++) {
+			console.log(i)
+			$('form#w' + i).submit();
+		}
+		window.location.href = `/part-order/create?id=${$model->id}`
+	}
+JS;
+	$this->registerJs($add_item, yii\web\View::POS_END);
+?>

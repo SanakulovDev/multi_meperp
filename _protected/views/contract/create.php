@@ -11,6 +11,7 @@
 		'errorlist' => ($errorlist ?? null),
 		'model' => ($model ?? null),
 		'items' => ($items ?? null),
+		'isUpdating' => false,
 		'modelItems' => ($modelItems ?? null),
 		'isNewRecord' => ($isNewRecord ?? null)
 	])?>

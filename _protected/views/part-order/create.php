@@ -8,5 +8,9 @@ $this->title = Yii::t('app', 'Create part order');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Orders Supplier'), 'url' => ['index']];
 ?>
 <div class="part-order-create">
-  <?=$this->render('_form', ['model' => $model, 'errMsg' => $errMsg])?>
+  <?=$this->render('_form', [
+    'model' => $model,
+    'contract_model' => $contract_model,
+    'errMsg' => $errMsg
+  ])?>
 </div>

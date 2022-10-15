@@ -96,8 +96,9 @@
 
 
 	<div class="form-group">
-		<?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?>
-		<button style="display: none" type="button" id="delete<?php echo($index) ?>" class="btn btn-danger btn-sm">Удалить</button>
+		<!-- <?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?> -->
+
+		<button type="button" id="delete<?php echo($index) ?>" class="btn btn-danger btn-sm">Удалить</button>
 	</div>
 	
 
@@ -116,11 +117,38 @@
             url: "/contract-detail/create",
             data: datastring,
             success: function(data) {
-                alert('Сохранено');
-				$('#delete' + $index).show();
+				if (!isNaN(data)) {
+					console.log('data', data)
+					alert('Сохранено');
+					$('#delete' + $index).show();
+					$('#delete' + $index).attr('data-id', data);
+				}
             }
         });
 	});
+	$('#delete' + $index).on('click', function(e) {
+		e.preventDefault();
+		let statusValue = $('#contract-status').val();
+		if (statusValue > 1) {
+			statusValue = statusValue - 1;
+			$('form#w' + $index).remove();
+			$('#contract-status').val(statusValue);
+
+			var datastring = $('form#w0').serialize();
+
+			$.ajax({
+            type: "POST",
+            url: `/contract/update?id=495&status=${statusValue}`,
+            data: datastring,
+            success: function(data) {
+				if (!isNaN(data)) {
+					alert('Удалено');
+				}
+            }
+        	});
+		}
+		console.log()
+	})
 JS;
 	$this->registerJs($add_item, yii\web\View::POS_END);
 ?>
