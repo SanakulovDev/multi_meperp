@@ -26,7 +26,7 @@
 		</div>
 		<div class="col-md-6 col-sm-6 col-lg-6">
 			<?
-				$data = Contract::find()->where('status=1')->orderBy(['contract_no' => SORT_ASC])->all();
+				$data = Contract::find()->where('status>0')->orderBy(['contract_no' => SORT_ASC])->all();
 				$items = ArrayHelper::map($data, 'id', 'contract_no');
 				$params = ['prompt' => '. . .', null, 'class' => 'form-control select2'];
 				echo $form->field($model, 'contract_id')->dropDownList($items, [

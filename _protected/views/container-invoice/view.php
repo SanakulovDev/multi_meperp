@@ -63,5 +63,12 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Container Invoices')
     ]
   );
   ?>
-
+  <div style="text-align: right;">
+  <?=Html::input('hidden', 'shu_id', $model->id);
+        if (empty($model->document_id)) {
+          if (Yii::$app->user->can('container-invoice-update')) {
+            echo "<a href='/container-invoice/update?id=" . $model->id . "' class='btn btn-primary btn-sm'>Далее </a>";
+          }
+        } ?>
+  </div>
 </div>

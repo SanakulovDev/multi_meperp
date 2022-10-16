@@ -14,6 +14,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
       'modelItems' => ($modelItems ?? null),
       'errorlist' => ($errorlist ?? null),
       'items' => ($items ?? null),
+      'contract' => $invoice ?? null,
       'modelInvoice' => ($modelInvoice ?? null),
     ]
   )?>

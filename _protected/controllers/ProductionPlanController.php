@@ -375,7 +375,7 @@ class ProductionPlanController extends AppController {
             'model_uploadForm' => $model_uploadForm
           ]);
         }
-        $DB_part_list = ArrayHelper::map(Part::find()->where('status=1')->all(), 'id', 'part_no');
+        $DB_part_list = ArrayHelper::map(Part::find()->where('status>0')->all(), 'id', 'part_no');
         $not_DBparts = array_diff($xls_product_list, $DB_part_list);
         $no_DBparts_rows = '';
         foreach($not_DBparts as $key => $value) {
@@ -601,7 +601,7 @@ class ProductionPlanController extends AppController {
           goto redirectView;
         }
         /** DB dan topilmagan partlar*/
-        $DB_part_list = ArrayHelper::map(Part::find()->where('status=1')->all(), 'id', 'part_no');
+        $DB_part_list = ArrayHelper::map(Part::find()->where('status>0')->all(), 'id', 'part_no');
         $not_DBparts = array_diff($xls_product_list, $DB_part_list);
         $no_DBparts_rows = '';
         foreach($not_DBparts as $key => $value) {

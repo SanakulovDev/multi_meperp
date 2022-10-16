@@ -173,7 +173,7 @@ class Contract extends ActiveRecord{
 	}
 
 	public function getStatusText(){
-		return ($this->status == 1) ? Yii::t('app','Active') : Yii::t('app','Inactive');
+		return ($this->status > 0) ? Yii::t('app','Active') : Yii::t('app','Inactive');
 	}
 
 	public function getContractDateFormatted() {
@@ -190,7 +190,7 @@ class Contract extends ActiveRecord{
 
 
 	public function getIsActive(){
-		return ($this->status == Contract::STATUS_ACTIVE and $this->contract_date <= date('Y-m-d') and $this->expiry_date >= date('Y-m-d'));
+		return ($this->status > 0 and $this->contract_date <= date('Y-m-d') and $this->expiry_date >= date('Y-m-d'));
 	}
 
 	public function beforeSave($insert){

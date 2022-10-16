@@ -283,6 +283,7 @@ class ContainerInvoiceController extends AppController {
             'modelItems' => $modelItems ?? null,
             'errorlist' => $errorlist ?? null,
             'items' => $items ?? null,
+            'invoice' => $invoice ?? null,
             'modelInvoice' => $modelInvoice ?? null,
           ]
         );
@@ -296,6 +297,7 @@ class ContainerInvoiceController extends AppController {
         'modelItems' => $modelItems ?? null,
         'errorlist' => $errorlist ?? null,
         'items' => $items ?? null,
+        'invoice' => $invoice ?? null,
         'modelInvoice' => $modelInvoice ?? null,
       ]
     );

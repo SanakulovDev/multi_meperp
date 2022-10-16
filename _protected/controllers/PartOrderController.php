@@ -35,7 +35,7 @@ use yii\web\UploadedFile;
 		public function actionIndex() {
 			$searchModel = new PartOrderSearch();
 			$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-			$contract = ArrayHelper::map(Contract::find()->where('status=1')->all(), 'id', 'contract_no');
+			$contract = ArrayHelper::map(Contract::find()->where('status>0')->all(), 'id', 'contract_no');
 			$deliveryTerm = ArrayHelper::map(DeliveryTerm::find()->all(), 'id', 'name');
 			$months = $searchModel->getMonths();
 			return $this->render('index', compact('searchModel', 'dataProvider', 'contract', 'deliveryTerm', 'months'));

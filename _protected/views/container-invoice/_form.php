@@ -42,7 +42,9 @@ use yii\widgets\ActiveForm;
 		<div class="col-md-2">
       <?=$form->field($model, 'ship_mode_id')
               ->label(Yii::t('app', 'Ship mode'))
-              ->dropDownList(ArrayHelper::map(ShipMode::find()->all(), 'id', 'name'))
+              ->dropDownList(ArrayHelper::map(ShipMode::find()->all(), 'id', 'name'), [
+                "value" => 3
+              ])
       ?>
 		</div>
     <? if(!$model->isNewRecord) { ?>
@@ -74,16 +76,16 @@ use yii\widgets\ActiveForm;
   <? if(!$model->isNewRecord) { ?>
 		<div class="row">
 			<div class="col-lg-2">
-        <?=$form->field($model, 'net_weight')->textInput(['maxlength' => true])?>
+        <?=$form->field($model, 'net_weight')->textInput(['maxlength' => true, "value" => 1000])?>
 			</div>
 			<div class="col-lg-2">
-        <?=$form->field($model, 'gross_weight')->textInput(['maxlength' => true])?>
+        <?=$form->field($model, 'gross_weight')->textInput(['maxlength' => true, "value" => 1])?>
 			</div>
-			<div class="col-lg-2">
+			<!-- <div class="col-lg-2">
         <?=$form->field($model, 'cbm')->textInput(['maxlength' => true])?>
-			</div>
+			</div> -->
 			<div class="col-lg-2">
-        <?=$form->field($model, 'cargo_type')->dropDownList(CargoType::list(), ['prompt' => '...'])?>
+        <?=$form->field($model, 'cargo_type')->dropDownList(CargoType::list(), ['prompt' => '...', "value" => 2])?>
 			</div>
 		</div>
   <? } ?>
@@ -114,6 +116,7 @@ use yii\widgets\ActiveForm;
             'maxView' => 'month',
           ],
           'options' => [
+            'value' => date('Y-m-d'),
             'autocomplete' => 'off',
             'placeholder' => 'YYYY-MM-DD',
             'class' => ' form-control'
@@ -135,6 +138,7 @@ use yii\widgets\ActiveForm;
             'maxView' => 'month',
           ],
           'options' => [
+            'value' => date('Y-m-d'),
             'autocomplete' => 'off',
             'placeholder' => 'YYYY-MM-DD',
             'class' => ' form-control'
@@ -142,7 +146,7 @@ use yii\widgets\ActiveForm;
         ]);
         ?>
 			</div>
-			<div class="col-lg-3">
+			<!-- <div class="col-lg-3">
         <?=$form->field($model, 'app_arr_at')->widget(DateTimePicker::classname(), [
           'type' => DateTimePicker::TYPE_COMPONENT_PREPEND,
           'layout' => '{picker}{input}{remove}',
@@ -162,7 +166,7 @@ use yii\widgets\ActiveForm;
           ]
         ]);
         ?>
-			</div>
+			</div> -->
 
 			<div class="col-lg-3">
         <?=$form->field($model, 'station_date')->widget(DateTimePicker::classname(), [
@@ -178,6 +182,7 @@ use yii\widgets\ActiveForm;
             'maxView' => 'month',
           ],
           'options' => [
+            'value' => date('Y-m-d'),
             'autocomplete' => 'off',
             'placeholder' => 'YYYY-MM-DD',
             'class' => ' form-control'
@@ -204,6 +209,7 @@ use yii\widgets\ActiveForm;
             'maxView' => 'month',
           ],
           'options' => [
+            'value' => date('Y-m-d'),
             'autocomplete' => 'off',
             'placeholder' => 'YYYY-MM-DD',
             'class' => ' form-control'
@@ -230,6 +236,7 @@ use yii\widgets\ActiveForm;
             'maxView' => 'month',
           ],
           'options' => [
+            'value' => date('Y-m-d'),
             'autocomplete' => 'off',
             'placeholder' => 'YYYY-MM-DD',
             'class' => ' form-control'
@@ -246,7 +253,7 @@ use yii\widgets\ActiveForm;
 
 			<div class="col-lg-3">
         <?
-        $params = ['prompt' => '. . .', null, 'class' => 'form-control select2'];
+        $params = ['prompt' => '. . .', null, 'class' => 'form-control select2', "value" => 40];
         echo $form->field($model, 'regime')->dropDownList(ContainerInvoice::$regimeList, $params)
                   ->label(Yii::t('app', 'Customs regime'));
         ?>
@@ -266,6 +273,7 @@ use yii\widgets\ActiveForm;
             'maxView' => 'month',
           ],
           'options' => [
+            'value' => date('Y-m-d'),
             'autocomplete' => 'off',
             'placeholder' => 'YYYY-MM-DD',
             'class' => ' form-control'
