@@ -47,6 +47,7 @@ $qty = Helpers::numberFormatRemoveZero($qty, 2, ".", "");
             'type' => DateTimePicker::TYPE_INPUT,
             'value' => null,
             'options' => [
+              'value' => date('Y-m-d'),
               'id' => 'invDT',
               'class' => 'chng-val form-control input-sm',
               'autocomplete' => 'off',

@@ -50,6 +50,7 @@
 					'maxView' => 'month',
 				],
 				'options' => [
+					'value' => date('Y-m-d'),
 					'autocomplete' => 'off',
 					'placeholder' => 'YYYY-MM-DD',
 					'class' => ' form-control'
@@ -71,6 +72,7 @@
 					'maxView' => 'month',
 				],
 				'options' => [
+					'value' => date('Y-m-d'),
 					'autocomplete' => 'off',
 					'placeholder' => 'YYYY-MM-DD',
 					'class' => ' form-control'

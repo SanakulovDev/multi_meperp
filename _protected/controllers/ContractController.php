@@ -69,7 +69,7 @@ class ContractController extends AppController
 		}
 	}
 
-	public function actionUpdate($id, $status)
+	public function actionUpdate($id, $status = null)
 	{
 		$model = $this->findModel($id);
 		$modelDetail = new ContractDetail();
@@ -102,9 +102,11 @@ class ContractController extends AppController
 			}
 		} else {
 			$arr = [];
-			for ($x = 0; $x < $status; $x++) {
-				$arr[$x] = $x + 1;
-			  }
+			if ($status) {
+				for ($x = 0; $x < $status; $x++) {
+					$arr[$x] = $x + 1;
+				  }
+			}
 
 			return $this->render('update', [
 				'model' => $model,

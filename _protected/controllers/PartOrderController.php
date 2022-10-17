@@ -50,7 +50,7 @@ use yii\web\UploadedFile;
 		 * @return mixed
 		 * @throws NotFoundHttpException if the model cannot be found
 		 */
-		public function actionView($id) {
+		public function actionView($id = null) {
 			$model = $this->findModel($id);
 			//////////////////////////////////////////////////////////////////////////////////////////
 			$items = $_POST['items'] ?? null;
@@ -94,8 +94,10 @@ use yii\web\UploadedFile;
 		 * If creation is successful, the browser will be redirected to the 'view' page.
 		 * @return mixed
 		 */
-		public function actionCreate($id) {
-			$contract_model = Contract::find()->where(['id' => $id])->one();
+		public function actionCreate($id = null) {
+			if ($id) {
+				$contract_model = Contract::find()->where(['id' => $id])->one();
+			}
 
 			$model = new PartOrder();
 			$errorlist = [];
@@ -115,7 +117,7 @@ use yii\web\UploadedFile;
 				'create',
 				[
 					'model' => $model,
-					'contract_model' => $contract_model,
+					'contract_model' => $contract_model && null,
           			'errMsg' => $errMsg ?? null
 				]
 			);
