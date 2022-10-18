@@ -203,8 +203,8 @@ class ContainerInvoiceController extends AppController {
           'modelInvoice' => $modelInvoice ?? null,
           'modelContainer' => $modelContainer ?? null,
           'model' => $model ?? null,
-          'partOrder' => $partOrder ?? null,
-          'contract' => $contract ?? null,
+          'partOrder' => $partOrder,
+          'contract' => $contract,
           'modelItems' => $modelItems ?? null,
         ]
       );
