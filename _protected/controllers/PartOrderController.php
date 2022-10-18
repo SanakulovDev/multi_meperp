@@ -117,7 +117,7 @@ use yii\web\UploadedFile;
 				'create',
 				[
 					'model' => $model,
-					'contract_model' => $contract_model && null,
+					'contract_model' => $contract_model,
           			'errMsg' => $errMsg ?? null
 				]
 			);

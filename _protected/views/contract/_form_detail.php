@@ -89,14 +89,14 @@
 			<?=$form->field($model_detail, 'is_primary_price')->dropDownList([ 0 => Yii::t('app', 'No'), 1 => Yii::t('app', 'Yes')])?>
 		</div> -->
 		<!-- ТН-ВЭД код -->
-		<!-- <div class="col-lg-2">
+		<div class="col-lg-2" style="display: none">
 			<?=$form->field($model_detail, 'cnfea')->textInput(['maxlength' => 10])?>
-		</div> -->
+		</div>
 	</div>
 
 
 	<div class="form-group">
-		<!-- <?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?> -->
+		<?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?>
 
 		<button type="button" id="delete<?php echo($index) ?>" class="btn btn-danger btn-sm">Удалить</button>
 	</div>
@@ -129,6 +129,8 @@
 	$('#delete' + $index).on('click', function(e) {
 		e.preventDefault();
 		let statusValue = $('#contract-status').val();
+		let id = $id
+		console.log(statusValue)
 		if (statusValue > 1) {
 			statusValue = statusValue - 1;
 			$('form#w' + $index).remove();
@@ -138,7 +140,7 @@
 
 			$.ajax({
             type: "POST",
-            url: `/contract/update?id=495&status=${statusValue}`,
+            url: `/contract/update?id=${id}&status=${statusValue}`,
             data: datastring,
             success: function(data) {
 				if (!isNaN(data)) {
