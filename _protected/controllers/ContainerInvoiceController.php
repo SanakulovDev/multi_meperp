@@ -179,7 +179,7 @@ class ContainerInvoiceController extends AppController {
       if(count($errorlist) == 0) {
         // echo $item->id;
         $transaction->commit();
-        return $this->redirect(['/container-invoice/view?id=' . $item->id]);
+        return $this->redirect(['/invoice-detail/create?id=' . $item->id . '&status=' . $invoice->currency_id]);
       } else {
         $transaction->rollBack();
         return $this->render(

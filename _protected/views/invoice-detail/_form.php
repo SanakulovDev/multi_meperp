@@ -41,8 +41,9 @@ use yii\widgets\ActiveForm;
   );?>
   <input type="hidden" name="<?=Yii::$app->request->csrfParam;?>" value="<?=Yii::$app->request->getCsrfToken();?>"/>
   <div class="form-group">
-    <?=Html::a(Yii::t('app', 'btn-cancel'), ['container-invoice/view', 'id' => $model->cont_inv_id], ['class' => 'btn btn-default btn-sm'])?>
-    <?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?>
+    <!-- <?=Html::a(Yii::t('app', 'btn-cancel'), ['container-invoice/view', 'id' => $model->cont_inv_id], ['class' => 'btn btn-default btn-sm'])?> -->
+    <button type="button" id="delete<?php echo($index) ?>" class="btn btn-danger btn-sm">Удалить</button>
+    <!-- <?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?> -->
   </div>
 
   <?php ActiveForm::end(); ?>
@@ -114,7 +115,51 @@ $(document).ready(function() {
 	  
 	 });
 	});
-	
+
+  const invoice_detail_url = '/invoice-detail/create?id=' + $id
+  console.log(2222222, $id, invoice_detail_url)
+  $('form#w' + $index).on('submit', function(e){
+		e.preventDefault();
+		var datastring = $(this).serialize();
+        $.ajax({
+            type: "POST",
+            url: invoice_detail_url,
+            data: datastring,
+            success: function(data) {
+				if (!isNaN(data)) {
+					console.log('data', data)
+					alert('Сохранено');
+					$('#delete' + $index).show();
+					$('#delete' + $index).attr('data-id', data);
+				}
+            }
+        });
+	});
+	$('#delete' + $index).on('click', function(e) {
+		e.preventDefault();
+		let statusValue = $('#containerinvoice-currency').val();
+		statusValue = 2;
+
+		// if (statusValue > 1) {
+		// 	statusValue = statusValue - 1;
+    $(this).remove();
+		$('form#w' + $index).remove();
+		// 	$('#contract-status').val(statusValue);
+
+			var datastring = $('form#w0').serialize();
+
+		// $.ajax({
+    //   type: "PUT",
+    //   url: '/container-invoice/update?id=571',
+    //   data: datastring,
+    //   success: function(data) {
+		// 	  if (!isNaN(data)) {
+		// 	  	alert('Удалено');
+		// 	  }
+    //   }
+    // });
+		console.log(12321312, $('form#w' + $index))
+	})
 });
 JS;
 $this->registerJs($script1);

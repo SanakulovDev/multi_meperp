@@ -2,6 +2,8 @@
 namespace app\controllers;
 
 use app\models\ContainerInvoice;
+use app\models\Container;
+use app\models\Invoice;
 use app\models\Contract;
 use app\models\ContractDetail;
 use app\models\InvoiceDetail;
@@ -43,8 +45,9 @@ class InvoiceDetailController extends AppController {
    *
    * @return mixed
    */
-  public function actionCreate($id) {
+  public function actionCreate($id, $status = 1) {
     $parentModel = $this->findParentModel($id);
+
     if(!empty($parentModel->document_id)) {
       Yii::$app->session->setFlash('error', Yii::t('app', 'You are not allowed to do this action.'));
       return $this->redirect(['container-invoice/index']);
@@ -56,6 +59,7 @@ class InvoiceDetailController extends AppController {
       $model->created_at = time();
       $model->created_by = Yii::$app->user->id;
       if($model->save()) {
+        return 2;
         return $this->redirect(["container-invoice/view", "id" => $id]);
       } else {
         $error = $model->errors;
@@ -65,8 +69,28 @@ class InvoiceDetailController extends AppController {
         die;
       }
     }
+    $arr = [];
+		if ($status) {
+			for ($x = 0; $x < $status; $x++) {
+				$arr[$x] = $x + 1;
+			  }
+		}
+
+    $container_invoice = $this->findContainerInvoice($id);
+
+    $invoice = Invoice::findOne($container_invoice->invoice_id);
+    $container = Container::findOne($container_invoice->container_id);
+
+    $container_invoice['supplier'] = $invoice->supplier_id;
+    $container_invoice['currency'] = $invoice->currency_id;
+    $container_invoice['ship_mode_id'] = $container_invoice->ship_mode_id;
+    $container_invoice['container_type'] = $container->container_type;
+    $container_invoice['delivery_term_id'] = $container_invoice->delivery_term_id;
+
     return $this->render('create', [
+      'invoice_data' => $container_invoice,
       'model' => $model,
+      'status' => $arr,
     ]);
   }
 
@@ -104,10 +128,6 @@ class InvoiceDetailController extends AppController {
   public function actionFixProblem($id) {
     $model = $this->findModel($id);
     $model->scenario = 'scenarioCreateOrUpdate';
-//    if (!empty($model->contInv->document_id)) {
-//      Yii::$app->session->setFlash('error', Yii::t('app', 'You are not allowed to do this action.'));
-//      return $this->redirect(['container-invoice/index']);
-//    }
     $data = ContainerInvoice::find()
                             ->select(['container_invoice.id as id', 'concat(invoice.invoice_no,"(",container.container_no,")-",shipped_at) as container_no'])
                             ->leftJoin('container', 'container.id=container_invoice.container_id')
@@ -195,6 +215,13 @@ class InvoiceDetailController extends AppController {
    */
   protected function findModel($id) {
     if(($model = InvoiceDetail::findOne($id)) !== null) {
+      return $model;
+    }
+    throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+  }
+
+  protected function findContainerInvoice($id) {
+    if(($model = ContainerInvoice::findOne($id)) !== null) {
       return $model;
     }
     throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
