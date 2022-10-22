@@ -9,7 +9,7 @@ use yii\helpers\ArrayHelper;
 <div class="row">
   <div class="col-lg-6">
     <? $contracts = Contract::find()->select(['id', 'contract_no', 'contract_date'])
-                            ->where('status=1 and supplier_id='.$model->contInv->invoice->supplier->id)
+                            ->where('status>1 and supplier_id='.$model->contInv->invoice->supplier->id)
                             ->orderBy(['contract_no' => SORT_DESC, 'contract_date' => SORT_DESC])
                             ->all();
     $items = ArrayHelper::map($contracts, 'id', 'contract_no');
