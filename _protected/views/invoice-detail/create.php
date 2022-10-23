@@ -20,8 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'index' => $count_of_component
       ])?>
 		<?php endforeach; ?>
-    <button type="button" <?php echo ($invoice_data->id); ?> onclick="onSave()" class="btn btn-success btn-sm">Сохранить</button>
-    <?php print_r($invoice_data->id) ?>
+    <button type="button" id="save-all" data-count="<?php echo count($status); ?>" onclick="onSave()" class="btn btn-success btn-sm">Сохранить</button>
 	</div>
 </div>
 
@@ -29,15 +28,16 @@ $this->params['breadcrumbs'][] = $this->title;
 	$aaaa = <<< JS
 	function onSave (id) {
     let aaaa = $invoice_data->id
-    console.log(id);
-    console.log('id', aaaa)
-		const count = $status;
+    let count = $('#save-all').data('count')
 		for (let i = 1; i <= count; i++) {
-			$('form#w' + i).submit();
+      $('form#w' + i).submit()
 		}
-		if (aaaa) {
-			window.location.href = "/container-invoice/view?id=" + aaaa;
-		}
+    setTimeout(() => {
+        if (!($("div").find('[aria-invalid=true]').length)) {
+          console.log($("div").find('[aria-invalid=true]').length)
+          window.location.href = "/container-invoice/view?id=" + aaaa;
+        }
+    }, 2000);
 	}
 JS;
 	$this->registerJs($aaaa, yii\web\View::POS_END);

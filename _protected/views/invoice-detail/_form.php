@@ -43,7 +43,7 @@ use yii\widgets\ActiveForm;
   <div class="form-group">
     <!-- <?=Html::a(Yii::t('app', 'btn-cancel'), ['container-invoice/view', 'id' => $model->cont_inv_id], ['class' => 'btn btn-default btn-sm'])?> -->
     <button type="button" id="delete<?php echo($index) ?>" class="btn btn-danger btn-sm">Удалить</button>
-    <!-- <?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?> -->
+    <?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?>
   </div>
 
   <?php ActiveForm::end(); ?>
@@ -55,22 +55,21 @@ $urlOrder = Url::to(['invoice-detail/order-list-by-contract'], true);
 $urlPart = Url::to(['invoice-detail/part-list-by-order'], true);
 $script1 = <<< JS
 $(document).ready(function() {
-	// $('#invoicedetail-contract_id').select();
-	var contract_id = $('#invoicedetail-contract_id').children("option:selected"). val();
+	var contract_id = $('#w$index #invoicedetail-contract_id').children("option:selected"). val();
 	let url = '$urlOrder' + '?id=' + contract_id;
 	$.get(url, function(data, status){
 	  // clear
-	  $('#invoicedetail-part_order_id').find('option').remove();
-	  $('#invoicedetail-part_id').find('option').remove();
+	  $('#w$index #invoicedetail-part_order_id').find('option').remove();
+	  $('#w$index #invoicedetail-part_id').find('option').remove();
 	  // append
 	  $.each(data, function () {
-	    $('#invoicedetail-part_order_id').append(new Option(this.text, this.id));
+	    $('#w$index #invoicedetail-part_order_id').append(new Option(this.text, this.id));
 	  });
 	  var data = {
-      "id": $("#invoicedetail-part_order_id option:first").val(),
-      "text": $("#invoicedetail-part_order_id option:first").text()
+      "id": $("#w$index #invoicedetail-part_order_id option:first").val(),
+      "text": $("#w$index #invoicedetail-part_order_id option:first").text()
     };    
-    $('#invoicedetail-part_order_id').trigger({
+    $('#w$index #invoicedetail-part_order_id').trigger({
         type: 'select2:select',
         params: {
             data: data
@@ -78,22 +77,22 @@ $(document).ready(function() {
     });
 	});
 	
-	$(document).on("select2:select", "#invoicedetail-contract_id", function(e) {
+	$(document).on("#w$index select2:select", "#w$index #invoicedetail-contract_id", function(e) {
 	 let data = e.params.data;
 	 let url = '$urlOrder'+'?id='+data.id;
 	 $.get(url, function(data, status){
 	  // clear
-	  $('#invoicedetail-part_id').find('option').remove();
-	  $('#invoicedetail-part_order_id').find('option').remove();
+	  $('#w$index #invoicedetail-part_id').find('option').remove();
+	  $('#w$index #invoicedetail-part_order_id').find('option').remove();
 	  // append
 	  $.each(data, function () {
-	    $('#invoicedetail-part_order_id').append(new Option(this.text, this.id));
+	    $('#w$index #invoicedetail-part_order_id').append(new Option(this.text, this.id));
 	  });	  
 	  var data = {
-      "id": $("#invoicedetail-part_order_id option:first").val(),
-      "text": $("#invoicedetail-part_order_id option:first").text()
+      "id": $("#w$index #invoicedetail-part_order_id option:first").val(),
+      "text": $("#w$index #invoicedetail-part_order_id option:first").text()
     };    
-    $('#invoicedetail-part_order_id').trigger({
+    $('#w$index #invoicedetail-part_order_id').trigger({
         type: 'select2:select',
         params: {
             data: data
@@ -102,22 +101,21 @@ $(document).ready(function() {
 	 });
 	});
 	
-	$(document).on("select2:select", "#invoicedetail-part_order_id", function(e) {	  
+	$(document).on("#w$index select2:select", "#w$index #invoicedetail-part_order_id", function(e) {	  
 	 let data = e.params.data;
 	 let url = '$urlPart'+'?id='+data.id;
 	 $.get(url, function(data, status){
 	  // clear
-	  $('#invoicedetail-part_id').find('option').remove();
+	  $('#w$index #invoicedetail-part_id').find('option').remove();
 	  // append	  
 	  $.each(data, function () {
-	    $('#invoicedetail-part_id').append(new Option(this.text, this.id));
+	    $('#w$index #invoicedetail-part_id').append(new Option(this.text, this.id));
 	  });
 	  
 	 });
 	});
 
   const invoice_detail_url = '/invoice-detail/create?id=' + $id
-  console.log(2222222, $id, invoice_detail_url)
   $('form#w' + $index).on('submit', function(e){
 		e.preventDefault();
 		var datastring = $(this).serialize();
@@ -144,8 +142,6 @@ $(document).ready(function() {
 		// 	statusValue = statusValue - 1;
     $(this).remove();
 		$('form#w' + $index).remove();
-		// 	$('#contract-status').val(statusValue);
-
 			var datastring = $('form#w0').serialize();
 
 		// $.ajax({
