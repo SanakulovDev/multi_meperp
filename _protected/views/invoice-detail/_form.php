@@ -119,12 +119,13 @@ $(document).ready(function() {
   $('form#w' + $index).on('submit', function(e){
 		e.preventDefault();
 		var datastring = $(this).serialize();
+    console.log(datastring)
         $.ajax({
             type: "POST",
             url: invoice_detail_url,
             data: datastring,
             success: function(data) {
-				if (!isNaN(data)) {
+				if (!isNaN(data) && data !== '0') {
 					console.log('data', data)
 					alert('Сохранено');
 					$('#delete' + $index).show();

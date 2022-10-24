@@ -62,6 +62,7 @@ class InvoiceDetailController extends AppController {
         return 2;
         return $this->redirect(["container-invoice/view", "id" => $id]);
       } else {
+        return 0;
         $error = $model->errors;
         echo "<pre>";
         print_r($error);

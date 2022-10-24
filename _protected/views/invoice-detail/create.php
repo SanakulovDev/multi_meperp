@@ -20,7 +20,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'index' => $count_of_component
       ])?>
 		<?php endforeach; ?>
-    <button type="button" id="save-all" data-count="<?php echo count($status); ?>" onclick="onSave()" class="btn btn-success btn-sm">Сохранить</button>
+    <div style="text-align: right; padding: 7px;">
+      <button type="button" id="save-all" data-count="<?php echo count($status); ?>" onclick="onSave()" class="btn btn-success btn-sm">Далее</button>
+    </div>
 	</div>
 </div>
 
@@ -29,12 +31,11 @@ $this->params['breadcrumbs'][] = $this->title;
 	function onSave (id) {
     let aaaa = $invoice_data->id
     let count = $('#save-all').data('count')
-		for (let i = 1; i <= count; i++) {
-      $('form#w' + i).submit()
-		}
+		// for (let i = 1; i <= count; i++) {
+    //   $('form#w' + i).submit();
+		// }
     setTimeout(() => {
         if (!($("div").find('[aria-invalid=true]').length)) {
-          console.log($("div").find('[aria-invalid=true]').length)
           window.location.href = "/container-invoice/view?id=" + aaaa;
         }
     }, 2000);
