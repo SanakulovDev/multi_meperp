@@ -50,7 +50,7 @@ $partModel = new Part();
       'columns' => [
         ['class' => 'yii\grid\SerialColumn'],
         [
-          'attribute' => 'part_id',
+          'attribute' => 'Заказчик',
           'headerOptions' => ['style' => 'width: 150px;text-align: center;vertical-align:middle;'],
           'value' => function($model) {
             return Part::findOne(['id' => $model->part_id])->remark;

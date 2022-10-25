@@ -60,6 +60,7 @@
 			<?=
 				$form->field($model, 'seller_id')->dropDownList(ArrayHelper::map(\app\models\User::find()->joinWith('role')->where(['item_name' => 'shipper'])->all(), 'id', 'fullname'), [
 					'class' => ' form-control select2',
+					'value' => 11,
 					'prompt' => Yii::t('app', 'Select')
 				]);
 			?>

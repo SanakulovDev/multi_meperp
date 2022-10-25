@@ -77,7 +77,7 @@
 					if(count($errorlist) == 0){
 						$transaction->commit();
 						Yii::$app->session->setFlash('success', Yii::t('app', 'Sales contract changed successfully.'));
-						return $this->redirect(['index']);
+						return $this->redirect(['/sales-contract/update?id=' . $id]);
 					}else{
 						$transaction->rollBack();
 						return $this->render('update', [

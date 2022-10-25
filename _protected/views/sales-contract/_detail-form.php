@@ -48,21 +48,24 @@
 			<?=$form->field($model, 'price')->textInput(['maxlength' => true])?>
 		</div>
 	</div>
-
-    <div class="col-lg-2">
-		<?= $form->field($model, 'vat')->textInput(['maxlength' => true]) ?>
-	</div>
-
-    <div class="col-lg-2">
-		<?= $form->field($model, 'excise')->textInput(['maxlength' => true]) ?>
-	</div>
-	<div class="col-lg-8">
-		<div class="form-group pull-right">
-			<!-- <?=Html::a(Yii::t('app', 'btn-cancel'), ['index'], ['class' => 'btn btn-default btn-sm'])?>
-			<?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?> -->
-			<button type="button" id="delete<?php echo($index) ?>" class="btn btn-danger btn-sm">Удалить</button>
+	
+	<div class="row">
+		<div class="col-lg-2">
+			<?= $form->field($model, 'vat')->textInput(['maxlength' => true]) ?>
+		</div>
+	
+		<div class="col-lg-2">
+			<?= $form->field($model, 'excise')->textInput(['maxlength' => true]) ?>
+		</div>
+		<div class="col-lg-8">
+			<div class="form-group pull-right">
+				<!-- <?=Html::a(Yii::t('app', 'btn-cancel'), ['index'], ['class' => 'btn btn-default btn-sm'])?>
+				<?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?> -->
+				<button type="button" id="delete<?php echo($index) ?>" class="btn btn-danger btn-sm">Удалить</button>
+			</div>
 		</div>
 	</div>
+
 
 
 	<?php ActiveForm::end(); ?>

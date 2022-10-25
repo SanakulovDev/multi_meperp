@@ -62,9 +62,9 @@ class StockSearch extends Stock {
                              'part.status' => $this->part_status,
                              'part.id' => $this->part_id
                            ]);
-    if (isset($this->qty)) {
-      $query->andFilterWhere(['<', 'qty', $this->qty]);
-    }
+    // if (isset($this->qty)) {
+      $query->andFilterWhere(['>', 'qty', '0']);
+    // }
 
     $query->andFilterWhere(['like', 'part.part_name', $this->part_name])
       ->andFilterWhere(['like', 'part.part_color', $this->part_color]);
