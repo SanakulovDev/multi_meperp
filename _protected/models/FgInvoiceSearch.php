@@ -34,7 +34,9 @@
 		 * @return ActiveDataProvider
 		 */
 		public function search($params, $mode = ''){
-			$query = FgInvoice::find();
+			$query = FgInvoice::find()->orderBy([
+				'created_at' => SORT_DESC
+			]);
 			$query->with(['factory', 'customer', 'fgInvoiceWaybills', 'createdBy', 'updatedBy', 'confirmedBy']);
 			// add conditions that should always apply here
 			$dataProvider = new ActiveDataProvider(['query' => $query,]);
