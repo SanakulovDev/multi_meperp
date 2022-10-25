@@ -64,14 +64,13 @@ use yii\widgets\ActiveForm;
       ?>
 		</div>
 		<div class="col-md-2">
-      <!-- <?
+      <?
       $data = Currency::find()->orderBy(['code' => SORT_ASC])->all();
       $items = ArrayHelper::map($data, 'id', 'code');
       $params = ['prompt' => '. . .', null, 'class' => 'form-control select2', "value" => 1];
       echo $form->field($model, 'currency')->dropDownList($items, $params)
                 ->label(Yii::t('app', 'Currency'));
-      ?> -->
-      <?=$form->field($model, 'currency')->textInput(['maxlength' => true, 'required' => true])?>
+      ?>
 		</div>
 	</div>
 

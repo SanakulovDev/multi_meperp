@@ -141,7 +141,6 @@ class ContainerInvoiceController extends AppController {
         }
       } else {
         $invoice_id = $invoice->id;
-        $invoice->currency_id = $_POST['ContainerInvoice']['currency'];
       }
       if(count($_POST['items']['container_no']) > 1) {
         foreach($_POST['items']['container_no'] as $key => $value) {

@@ -59,10 +59,8 @@ class InvoiceDetailController extends AppController {
       $model->created_at = time();
       $model->created_by = Yii::$app->user->id;
       if($model->save()) {
-        return 2;
         return $this->redirect(["container-invoice/view", "id" => $id]);
       } else {
-        return 0;
         $error = $model->errors;
         echo "<pre>";
         print_r($error);
@@ -70,12 +68,6 @@ class InvoiceDetailController extends AppController {
         die;
       }
     }
-    $arr = [];
-		if ($status) {
-			for ($x = 0; $x < $status; $x++) {
-				$arr[$x] = $x + 1;
-			  }
-		}
 
     $container_invoice = $this->findContainerInvoice($id);
 
@@ -90,8 +82,7 @@ class InvoiceDetailController extends AppController {
 
     return $this->render('create', [
       'invoice_data' => $container_invoice,
-      'model' => $model,
-      'status' => $arr,
+      'model' => $model
     ]);
   }
 

@@ -32,6 +32,7 @@
 		public function actionCreate(){
 			$model = new SalesContractDetail();
 			if($model->load(Yii::$app->request->post()) && $model->save()){
+				return $model->id;
 				return $this->redirect(['index']);
 			}
 			return $this->render('create', [

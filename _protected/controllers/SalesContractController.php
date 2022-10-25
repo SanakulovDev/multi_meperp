@@ -1,8 +1,9 @@
 <?php
 	namespace app\controllers;
 
-use app\components\Helpers;
-use app\models\SalesContract;
+	use app\components\Helpers;
+	use app\models\SalesContractDetail;
+	use app\models\SalesContract;
 	use app\models\SalesContractSearch;
 	use Yii;
 	use yii\web\NotFoundHttpException;
@@ -36,7 +37,7 @@ use app\models\SalesContract;
 					if(count($errorlist) == 0){
 						$transaction->commit();
 						Yii::$app->session->setFlash('success', Yii::t('app', 'Sales contract created successfully.'));
-						return $this->redirect(['index']);
+						return $this->redirect(['/sales-contract/update?id=' . $model->id]);
 					}else{
 						$transaction->rollBack();
 						return $this->render('create', [
@@ -60,8 +61,16 @@ use app\models\SalesContract;
 		}
 
 		public function actionUpdate($id){
+			$detail = new SalesContractDetail();
 			$model = $this->findModel($id);
 			$errorlist = [];
+
+			$arr = [];
+			if ($model->status) {
+				for ($x = 0; $x < $model->status; $x++) {
+					$arr[$x] = $x + 1;
+				  }
+			}
 			if($model->load(Yii::$app->request->post())){
 				$transaction = Yii::$app->db->beginTransaction();
 				if($model->save()){
@@ -74,16 +83,22 @@ use app\models\SalesContract;
 						return $this->render('update', [
 							'errorlist' => ['details' => $errorlist],
 							'model' => $model,
+							'detail' => $detail,
+							'status' => $arr
 						]);
 					}
 				}else{
 					return $this->render('update', [
 						'model' => $model,
+						'detail' => $detail,
+						'status' => $arr
 					]);
 				}
 			}else{
 				return $this->render('update', [
 					'model' => $model,
+					'detail' => $detail,
+					'status' => $arr
 				]);
 			}
 		}

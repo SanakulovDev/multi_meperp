@@ -36,6 +36,7 @@
 					'maxView' => 'month',
 				],
 				'options' => [
+					'value' => date('Y-m-d'),
 					'autocomplete' => 'off'
 				]
 			])?>
@@ -50,6 +51,7 @@
 					'maxView' => 'month',
 				],
 				'options' => [
+					'value' => date('Y-m-d'),
 					'autocomplete' => 'off'
 				]
 			])?>
@@ -66,7 +68,8 @@
 			<?=
 				$form->field($model, 'payment_term_id')->dropDownList(ArrayHelper::map(app\models\PaymentTerm::find()->all(), 'id', 'name'), [
 					'class' => ' form-control select2',
-					'prompt' => Yii::t('app', 'Select')
+					'prompt' => Yii::t('app', 'Select'),
+					'value' => 2
 				]);
 			?>
 		</div>
@@ -83,7 +86,8 @@
 			?>
 		</div>
 		<div class="col-md-4 col-sm-4 col-lg-4">
-			<?=$form->field($model, 'status')->dropDownList($model->statusList)?>
+			<!-- <?=$form->field($model, 'status')->dropDownList($model->statusList)?> -->
+			<?=$form->field($model, 'status')->textInput(['maxlength' => true, 'required' => true])?>
 		</div>
 		<div class="col-lg-4">
 			<?=
@@ -94,13 +98,16 @@
 			?>
 		</div>
 
+		<div class="col-lg-8">
+			<div class="form-group pull-right">
+				<?=Html::a(Yii::t('app', 'btn-cancel'), ['index'], ['class' => 'btn btn-default btn-sm'])?>
+				<?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?>
+			</div>
+		</div>
+
 
 	</div>
 
-	<div class="form-group pull-right">
-		<?=Html::a(Yii::t('app', 'btn-cancel'), ['index'], ['class' => 'btn btn-default btn-sm'])?>
-		<?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?>
-	</div>
 	<?php ActiveForm::end(); ?>
 
 </div>

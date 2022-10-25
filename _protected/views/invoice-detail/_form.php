@@ -55,21 +55,21 @@ $urlOrder = Url::to(['invoice-detail/order-list-by-contract'], true);
 $urlPart = Url::to(['invoice-detail/part-list-by-order'], true);
 $script1 = <<< JS
 $(document).ready(function() {
-	var contract_id = $('#w$index #invoicedetail-contract_id').children("option:selected"). val();
+	var contract_id = $('#invoicedetail-contract_id').children("option:selected"). val();
 	let url = '$urlOrder' + '?id=' + contract_id;
 	$.get(url, function(data, status){
 	  // clear
-	  $('#w$index #invoicedetail-part_order_id').find('option').remove();
-	  $('#w$index #invoicedetail-part_id').find('option').remove();
+	  $('#invoicedetail-part_order_id').find('option').remove();
+	  $('#invoicedetail-part_id').find('option').remove();
 	  // append
 	  $.each(data, function () {
-	    $('#w$index #invoicedetail-part_order_id').append(new Option(this.text, this.id));
+	    $('#invoicedetail-part_order_id').append(new Option(this.text, this.id));
 	  });
 	  var data = {
-      "id": $("#w$index #invoicedetail-part_order_id option:first").val(),
-      "text": $("#w$index #invoicedetail-part_order_id option:first").text()
+      "id": $("#invoicedetail-part_order_id option:first").val(),
+      "text": $("#invoicedetail-part_order_id option:first").text()
     };    
-    $('#w$index #invoicedetail-part_order_id').trigger({
+    $('#invoicedetail-part_order_id').trigger({
         type: 'select2:select',
         params: {
             data: data
@@ -77,22 +77,22 @@ $(document).ready(function() {
     });
 	});
 	
-	$(document).on("#w$index select2:select", "#w$index #invoicedetail-contract_id", function(e) {
+	$(document).on("select2:select", "#invoicedetail-contract_id", function(e) {
 	 let data = e.params.data;
 	 let url = '$urlOrder'+'?id='+data.id;
 	 $.get(url, function(data, status){
 	  // clear
-	  $('#w$index #invoicedetail-part_id').find('option').remove();
-	  $('#w$index #invoicedetail-part_order_id').find('option').remove();
+	  $('#invoicedetail-part_id').find('option').remove();
+	  $('#invoicedetail-part_order_id').find('option').remove();
 	  // append
 	  $.each(data, function () {
-	    $('#w$index #invoicedetail-part_order_id').append(new Option(this.text, this.id));
+	    $('#invoicedetail-part_order_id').append(new Option(this.text, this.id));
 	  });	  
 	  var data = {
-      "id": $("#w$index #invoicedetail-part_order_id option:first").val(),
-      "text": $("#w$index #invoicedetail-part_order_id option:first").text()
+      "id": $("#invoicedetail-part_order_id option:first").val(),
+      "text": $("#invoicedetail-part_order_id option:first").text()
     };    
-    $('#w$index #invoicedetail-part_order_id').trigger({
+    $('#invoicedetail-part_order_id').trigger({
         type: 'select2:select',
         params: {
             data: data
@@ -101,62 +101,19 @@ $(document).ready(function() {
 	 });
 	});
 	
-	$(document).on("#w$index select2:select", "#w$index #invoicedetail-part_order_id", function(e) {	  
+	$(document).on("select2:select", "#invoicedetail-part_order_id", function(e) {	  
 	 let data = e.params.data;
 	 let url = '$urlPart'+'?id='+data.id;
 	 $.get(url, function(data, status){
 	  // clear
-	  $('#w$index #invoicedetail-part_id').find('option').remove();
+	  $('#invoicedetail-part_id').find('option').remove();
 	  // append	  
 	  $.each(data, function () {
-	    $('#w$index #invoicedetail-part_id').append(new Option(this.text, this.id));
+	    $('#invoicedetail-part_id').append(new Option(this.text, this.id));
 	  });
 	  
 	 });
 	});
-
-  const invoice_detail_url = '/invoice-detail/create?id=' + $id
-  $('form#w' + $index).on('submit', function(e){
-		e.preventDefault();
-		var datastring = $(this).serialize();
-    console.log(datastring)
-        $.ajax({
-            type: "POST",
-            url: invoice_detail_url,
-            data: datastring,
-            success: function(data) {
-				if (!isNaN(data) && data !== '0') {
-					console.log('data', data)
-					alert('Сохранено');
-					$('#delete' + $index).show();
-					$('#delete' + $index).attr('data-id', data);
-				}
-            }
-        });
-	});
-	$('#delete' + $index).on('click', function(e) {
-		e.preventDefault();
-		let statusValue = $('#containerinvoice-currency').val();
-		statusValue = 2;
-
-		// if (statusValue > 1) {
-		// 	statusValue = statusValue - 1;
-    $(this).remove();
-		$('form#w' + $index).remove();
-			var datastring = $('form#w0').serialize();
-
-		// $.ajax({
-    //   type: "PUT",
-    //   url: '/container-invoice/update?id=571',
-    //   data: datastring,
-    //   success: function(data) {
-		// 	  if (!isNaN(data)) {
-		// 	  	alert('Удалено');
-		// 	  }
-    //   }
-    // });
-		console.log(12321312, $('form#w' + $index))
-	})
 });
 JS;
 $this->registerJs($script1);
