@@ -19,6 +19,7 @@
 	<div>
 		<?php foreach ($status as $count_of_component): ?>
 			<?=$this->render('_detail-form', [
+				'customer' => $model->id,
 				'model' => $detail,
 				'index' => $count_of_component
 			])?>

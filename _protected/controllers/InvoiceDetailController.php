@@ -128,7 +128,7 @@ class InvoiceDetailController extends AppController {
                             ->all();
     $containerInvoice = $data[0]['container_no'];
     $partData = Part::findOne($model->part_id);
-    $partNo = $partData->part_no."(".$partData->part_color.")";
+    $partNo = $partData->part_no."(".$partData->part_color.")". $partData->remark;
     $contractDetail = ContractDetail::find()->select('contract_id')->where(['part_id' => $partData->id]);
     $contracts = Contract::find()->select(['id', 'contract_no'])
                          ->where(['status' => Contract::STATUS_ACTIVE])
@@ -260,7 +260,7 @@ class InvoiceDetailController extends AppController {
     $partListlist = $partQuery->all();
     $data = [];
     foreach($partListlist as $item) {
-      $data[] = ['id' => $item->id, 'text' => $item->part_no." ".$item->part_color];
+      $data[] = ['id' => $item->id, 'text' => $item->part_no." ".$item->part_color. " ". $partData->remark];
     }
     return $data;
   }

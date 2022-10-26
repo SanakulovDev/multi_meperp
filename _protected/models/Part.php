@@ -306,7 +306,7 @@ class Part extends ActiveRecord
 
     public function getPartinfo()
     {
-        return $this->part_no.' '.$this->part_name.' '.$this->part_color;
+        return $this->part_no.' '.$this->part_name.' '.$this->part_color.' '.$this->remark;
     }
 
     public function getUpdatedAtFormatted()

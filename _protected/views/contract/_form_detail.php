@@ -96,7 +96,7 @@
 
 
 	<div class="form-group">
-		<?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?>
+		<!-- <?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?> -->
 
 		<button type="button" id="delete<?php echo($index) ?>" class="btn btn-danger btn-sm">Удалить</button>
 	</div>

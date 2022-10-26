@@ -27,6 +27,7 @@
 	</div>
 
 	<button type="button" onclick="onSave()" class="btn btn-success btn-sm">Сохранить</button>
+	<button type="button" onclick="saveAndQuit()" class="btn btn-success btn-sm">Сохранить и выйти</button>
 
 
 </div>
@@ -104,6 +105,15 @@
 		if ($model->id) {
 			window.location.href = "/part-order/create?id=" + $model->id
 		}
+	}
+
+	function saveAndQuit () {
+		const count = $model->status;
+		for (let i = 1; i <= count; i++) {
+			$('form#w' + i).submit();
+		}
+
+		window.location.href = "/contract/index"
 	}
 JS;
 	$this->registerJs($add_item, yii\web\View::POS_END);

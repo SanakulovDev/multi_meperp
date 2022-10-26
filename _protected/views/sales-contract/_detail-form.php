@@ -20,6 +20,7 @@
 			<?=
 				$form->field($model, 'sales_contract_id')->dropDownList(ArrayHelper::map(app\models\SalesContract::find()->all(), 'id', 'contractInfo'), [
 					'class' => ' form-control select2',
+					'value' => $customer,
 					'prompt' => Yii::t('app', 'Select')
 				]);
 			?>

@@ -101,7 +101,7 @@
 	</div>
 	<div class="form-group pull-right">
 		<?=Html::a(Yii::t('app', 'btn-cancel'), ['index'], ['class' => 'btn btn-default btn-sm'])?>
-		<?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm'])?>
+		<?=Html::submitButton(Yii::t('app', 'Далее'), ['class' => 'btn btn-success btn-sm'])?>
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>

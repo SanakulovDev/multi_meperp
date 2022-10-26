@@ -722,7 +722,7 @@ throw new Error('AdminLTE requires jQuery')
     searchInput   : '.sidebar-form .form-control',
     button        : '[data-toggle="push-menu"]',
     mini          : '.sidebar-mini',
-    expanded      : '.sidebar-expanded-on-hover',
+    // expanded      : '.',
     layoutFixed   : '.fixed'
   };
 
@@ -730,7 +730,7 @@ throw new Error('AdminLTE requires jQuery')
     collapsed    : 'sidebar-collapse',
     open         : 'sidebar-open',
     mini         : 'sidebar-mini',
-    expanded     : 'sidebar-expanded-on-hover',
+    // expanded     : '',
     expandFeature: 'sidebar-mini-expand-feature',
     layoutFixed  : 'fixed'
   };

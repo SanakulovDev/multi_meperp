@@ -684,11 +684,11 @@ a:focus {
     margin-left: 0;
   }
 }
-.sidebar-expanded-on-hover .main-footer,
-.sidebar-expanded-on-hover .content-wrapper {
-  margin-left: 50px;
+. .main-footer,
+. .content-wrapper {
+  /* margin-left: 50px; */
 }
-.sidebar-expanded-on-hover .main-sidebar {
+. .main-sidebar {
   box-shadow: 3px 0 8px rgba(0, 0, 0, 0.125);
 }
 .sidebar-menu,

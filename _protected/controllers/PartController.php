@@ -353,7 +353,7 @@ class PartController extends AppController {
     foreach($parts as $part) {
       $data[] = [
         'id' => $part->id,
-        'info' => $part->part_no.' '.$part->part_name.' ('.($part->part_color).') '
+        'info' => $part->part_no.' '.$part->part_name.' ('.($part->part_color).') '. $part->remark
       ];
     }
     return $data;
