@@ -566,7 +566,7 @@ class ProductionOrderController extends AppController
     foreach ($queryPart->all() as $part) {
       $parts[$part->id] = $part->part_no . " (" . $part->part_color . ")";
       if ($part->warehouse->warehouse_type ?? null != Warehouse::TYPE_OUTSOURCING) {
-        $parts_withptnm[$part->id] = $part->part_no . " (" . $part->part_color . ") " . $part->part_name;
+        $parts_withptnm[$part->id] = $part->part_no . " (" . $part->part_color . ") " . $part->part_name. " " .$part->remark;
       }
       $options[$part->id] = ["data-pack-size" => $part->pack_size ?? "0"];
     }
