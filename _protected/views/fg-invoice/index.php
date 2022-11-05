@@ -1,8 +1,10 @@
 <?php
 use yii\grid\GridView;
 use yii\helpers\Html;
+use app\models\Customer;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
+use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\FgInvoice */
@@ -195,10 +197,9 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
       [
         'attribute' => 'customer_id',
         'value' => 'customer.name',
-        'filter' => $customers
+        'filter' => Html::activeDropDownList($searchModel, 'customer_id', ArrayHelper::map(Customer::find()->all(), 'id', 'name'), ['class' => 'form-control select2', 'prompt' => '...']),
+        // 'filter' => $customers
       ],
-
-
 
       [
         'attribute' => 'fgInvoiceWaybills',

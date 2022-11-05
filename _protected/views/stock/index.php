@@ -104,6 +104,7 @@ $partModel = new Part();
         [
           'attribute' => 'qty',
           'headerOptions' => ['style' => 'width: 80px;text-align: right; vertical-align:middle;'],
+          'filter' => ['1' => 'Все', '0' => 'без 0'],
           'content' => function($model) {
             return Helpers::numberFormatRemoveZero($model->qty, 10, '.', "", true, true);
           },
