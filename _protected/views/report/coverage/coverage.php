@@ -86,6 +86,7 @@ $s = [];
         <h3 class="pull-left" style="margin: 5px 0px -5px 10px;">
 
           <?= Yii::t('app', 'Coverage') ?> <span id="calc_at" class="loading" style="font-size: 14px;color: #a29393;"><?= $loading ?></span>
+		  
         </h3>
         <p class="pull-right" style="margin: 0px" id="buttons">
           <?= Html::a(Yii::t('app', 'btn-download'), ['download-weekly-coverage'], ['class' => 'btn btn-info btn-sm', 'id' => 'btn-download']) ?>

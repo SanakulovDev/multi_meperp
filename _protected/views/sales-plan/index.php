@@ -2,6 +2,9 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use app\models\Customer;
+use app\models\Part;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
@@ -95,6 +98,7 @@ $canCreate = Yii::$app->user->can('sales-plan-create');
               'attribute' => 'customer_id',
               'headerOptions' => ['style' => 'width: 200px;text-align: left;vertical-align:middle;'],
               'contentOptions' => ['class' => 'td-nowrap'],
+              'filter' => Html::activeDropDownList($searchModel, 'customer_id', ArrayHelper::map(Customer::find()->all(), 'id', 'name'), ['class' => 'form-control select2', 'prompt' => '...']),
               'content' => function ($model) {
                 return $model->customer->name;
               },
@@ -103,6 +107,7 @@ $canCreate = Yii::$app->user->can('sales-plan-create');
               'attribute' => 'part_id',
               'headerOptions' => ['style' => 'width: 200px;text-align: left;vertical-align:middle;'],
               'contentOptions' => ['class' => 'td-nowrap'],
+              'filter' => Html::activeDropDownList($searchModel, 'part_id', ArrayHelper::map(Part::find()->all(), 'id', 'partinfo'), ['class' => 'form-control select2', 'prompt' => '...']),
               'content' => function ($model) {
                 return $model->part->partinfo;
               },
