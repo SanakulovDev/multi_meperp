@@ -53,7 +53,7 @@ class ProductionPlanSearch extends ProductionPlan{
 				'production_plan.warehouse_id' => $this->warehouse_id,
 				'shift'                        => $this->shift,
 				'target_qty'                   => $this->target_qty,
-			]);
+			])->orderBy(['production_date' => SORT_DESC])->all();
 
     $query->andFilterWhere(['like', 'production_plan_comment.comment', $this->comment]);
 		return $dataProvider;

@@ -59,7 +59,7 @@ class SalesPlanSearch extends SalesPlan
             'id' => $this->id,
             'target_date' => $this->target_date,
             'target_qty' => $this->target_qty,
-        ]);
+        ])->orderBy(['id' => SORT_DESC])->all();
 
         $query->andFilterWhere(['OR',
                               ['like', 'part.part_no', $this->part_id],

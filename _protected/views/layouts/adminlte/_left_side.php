@@ -58,6 +58,7 @@ use yii\widgets\Menu; ?>
     $m400_plm = [];
     $m430_directory = [];
     $m500_sales = [];
+    $m_new = [];
     $m560_directory = [];
     $m700_admin = [];
     $m710_statistics = [];
@@ -492,6 +493,27 @@ use yii\widgets\Menu; ?>
         'label' => Yii::t('app', 'Customer types'),
         'url' => ['/customer-type/index'],
         'template' => '<a href="{url}"><i class="fa fa-dot-circle-o"></i> <span>{label}</span></a>',
+      ];
+    }
+    if (Yii::$app->user->can('fg-invoice-index')) {
+      $m_new[] = [
+        'label' => 'Статус обеспеченности',
+        'url' => ['/fg-invoice/index'],
+        'template' => '<a href="/report/coverage"><i class="fa fa-list"></i> <span>{label}</span></a>',
+      ];
+    }
+    if (Yii::$app->user->can('fg-invoice-index')) {
+      $m_new[] = [
+        'label' => 'Part requirement',
+        'url' => ['/fg-invoice/index'],
+        'template' => '<a href="/report/requirement"><i class="fa fa-list"></i> <span>{label}</span></a>',
+      ];
+    }
+    if (Yii::$app->user->can('fg-invoice-index')) {
+      $m_new[] = [
+        'label' => 'Текущий остаток',
+        'url' => ['/fg-invoice/index'],
+        'template' => '<a href="/report/material-stock"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
     }
     if (Yii::$app->user->can('fg-invoice-index')) {
@@ -969,6 +991,13 @@ use yii\widgets\Menu; ?>
         'items' => $m700_admin,
       ];
     }
+    $menuItems[] = [
+      'label' => 'Управление материалами',
+      'url' => '#',
+      'template' => '<a href="{url}"><i class="fa fa-line-chart"></i> <span>{label}</span> <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span> </a>',
+      'options' => ['class' => 'treeview'],
+      'items' => $m_new,
+    ];
 
 
 

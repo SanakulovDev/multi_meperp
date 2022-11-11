@@ -61,7 +61,7 @@ class StockSearch extends Stock {
                              'unit.id' => $this->unit,
                              'part.status' => $this->part_status,
                              'part.id' => $this->part_id
-                           ]);
+                           ])->orderBy(['id' => SORT_DESC])->all();
     if (isset($this->qty)) {
       if ($this->qty == '0') {
         $query->andFilterWhere(['>', 'qty', '0']);
