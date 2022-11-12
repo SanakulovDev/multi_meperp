@@ -82,7 +82,7 @@ $s = [];
 
     <div class="panel">
       <div class="panel-heading">
-        <img style="height:28px;" src="/img/mep.png" title="<?php echo Yii::$app->params['comp_name'] ?>" class="pull-left" />
+        <img style="height:28px;" src="/img/mep1.jpg" title="<?php echo Yii::$app->params['comp_name'] ?>" class="pull-left" />
         <h3 class="pull-left" style="margin: 5px 0px -5px 10px;">
 
           <?= Yii::t('app', 'Coverage') ?> <span id="calc_at" class="loading" style="font-size: 14px;color: #a29393;"><?= $loading ?></span>
@@ -101,12 +101,12 @@ $s = [];
           <ul class="nav nav-tabs">
             <li class="active">
               <a href="#tab_1" data-toggle="tab" aria-expanded="true" id="tabBtn_1" style="border: 0px">
-                <h4 style="margin: 0px 0px 0px 0px;font-size: 30px"><span class="label label-success">IMPORT</span></h4>
+                <h4 style="margin: 0px 0px 0px 0px;font-size: 30px"><span class="label label-success">Импорт</span></h4>
               </a>
             </li>
             <li class="">
               <a href="#tab_2" data-toggle="tab" aria-expanded="false" id="tabBtn_2" style="border: 0px; padding-left: 5px;">
-                <h4 style="margin: 0px 0px 0px 0px;font-size: 30px"><span class="label label-default custom-text-normal">LOCAL</span></h4>
+                <h4 style="margin: 0px 0px 0px 0px;font-size: 30px"><span class="label label-default custom-text-normal">Локальный</span></h4>
               </a>
             </li>
           </ul>
@@ -118,12 +118,12 @@ $s = [];
                 <ul class="nav nav-tabs">
                   <li class="active">
                     <a href="#tab_1_1" data-toggle="tab" aria-expanded="true" id="tabBtn_1_1" style="border: 0px;padding-left: 5px;">
-                      <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-success">WEEKLY</span></h4>
+                      <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-success">ЕЖЕНЕДЕЛЬНО</span></h4>
                     </a>
                   </li>
                   <li class="">
                     <a href="#tab_1_2" data-toggle="tab" aria-expanded="false" id="tabBtn_1_2" style="border: 0px;padding-left: 5px;">
-                      <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-default custom-text-normal">DAILY</span></h4>
+                      <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-default custom-text-normal">ПОВСЕДНЕВНАЯ</span></h4>
                     </a>
                   </li>
                 </ul>
@@ -148,17 +148,17 @@ $s = [];
                 <ul class="nav nav-tabs">
                   <li class="active">
                     <a href="#tab_2_1" data-toggle="tab" aria-expanded="true" id="tabBtn_2_1" style="border: 0px;padding-left: 5px;">
-                      <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-default custom-text-normal">LOCAL PARTS</span></h4>
+                      <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-default custom-text-normal">Локальные части</span></h4>
                     </a>
                   </li>
                   <li class="">
                     <a href="#tab_2_2" data-toggle="tab" aria-expanded="false" id="tabBtn_2_2" style="border: 0px;padding-left: 5px;">
-                      <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-default custom-text-normal">CONSIGNMENT</span></h4>
+                      <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-default custom-text-normal">Партия</span></h4>
                     </a>
                   </li>
                   <li class="">
                     <a href="#tab_2_3" data-toggle="tab" aria-expanded="false" id="tabBtn_2_3" style="border: 0px;padding-left: 5px;">
-                      <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-default custom-text-normal">SEMI PARTS</span></h4>
+                      <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-default custom-text-normal">Полузапчасти</span></h4>
                     </a>
                   </li>
                 </ul>
@@ -226,6 +226,15 @@ $script1 = <<< JS
 	$(window).resize(function(){
 		changeHeightAll();
 	});
+
+	$('.main-stock').on('click', function () {
+		$('.stock').toggle();
+		$('#w_1, #w_2, #w_3, #w_4, #w_5').toggle();
+		$('#s_1, #s_2, #s_3, #s_4, #s_5').toggle();
+		$('#l_1, #l_2, #l_3, #l_4, #l_5').toggle();
+		$('#d_1, #d_2, #d_3, #d_4, #d_5').toggle();
+		$('#c_1, #c_2, #c_3, #c_4, #c_5').toggle();
+	})
 
 	function changeHeightAll(){
 		changeHeight('#tab_1_1');
@@ -388,3 +397,14 @@ $script1 = <<< JS
 JS;
 $this->registerJs($script1);
 ?>
+<style>
+	@keyframes glowing {
+      0% { background-color: #2ba805; box-shadow: 0 0 5px #2ba805; }
+      50% { background-color: #49e819; box-shadow: 0 0 20px #49e819; }
+      100% { background-color: #2ba805; box-shadow: 0 0 5px #2ba805; }
+    }
+	.main-stock {
+		cursor: pointer;
+		animation: glowing 1300ms infinite;
+	}
+</style>

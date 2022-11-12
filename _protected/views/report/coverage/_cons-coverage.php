@@ -20,11 +20,11 @@ use app\models\Part;
                     </div>
 
                     <div class="form-group">
-                        <select class="cf-filter-model-id cov-filter form-control "></select>
+                        <!-- <select class="cf-filter-model-id cov-filter form-control "></select> -->
                     </div>
 
                     <div class="form-group">
-                        <select class="cf-filter-unit-id cov-filter form-control "></select>
+                        <!-- <select class="cf-filter-unit-id cov-filter form-control "></select> -->
                     </div>
 
                     <button class="cf-btn-filter" style="display: none">Find</button>
@@ -48,12 +48,15 @@ use app\models\Part;
             <th style="width: 100px;" class="text-center"><?= Yii::t('app', 'Type') ?></th>
             <th style="width: 100px;" class="text-center"><?= Yii::t('app', 'Model') ?></th>
             <th style="width: 70px;" class="text-center"><?= Yii::t('app', 'Unit') ?></th>
-            <th style="width: 70px;" class="text-right"><?= Yii::t('app', 'WH balance') ?></th>
-            <th style="width: 70px;" class="text-right"><?= Yii::t('app', 'Line balance') ?></th>
-            <th style="width: 70px;" class="text-right"><?= Yii::t('app', 'Semi balance') ?></th>
-            <th style="width: 70px;" class="text-right"><?= Yii::t('app', 'Pending balance') ?></th>
-            <th style="width: 70px;" class="text-right"><?= Yii::t('app', 'Outsourcing balance') ?></th>
-            <th style="width: 70px;" class="text-right"><?= Yii::t('app', 'Arrived') ?></th>
+
+            <th style="width: 70px;" class="text-right main-stock"><?= Yii::t('app', 'WH balance') ?></th>
+
+            <th style="width: 70px;" class="text-right stock"><?= Yii::t('app', 'Line balance') ?></th>
+            <th style="width: 70px;" class="text-right stock"><?= Yii::t('app', 'Semi balance') ?></th>
+            <th style="width: 70px;" class="text-right stock"><?= Yii::t('app', 'Pending balance') ?></th>
+            <th style="width: 70px;" class="text-right stock"><?= Yii::t('app', 'Outsourcing balance') ?></th>
+            <th style="width: 70px;" class="text-right stock"><?= Yii::t('app', 'Arrived') ?></th>
+
             <th style="width: 70px;" class="text-right"><?= Yii::t('app', 'Total balance') ?></th>
             <th style="width: 70px;" class="text-right qty-fg"><?= Yii::t('app', 'FG balance') ?></th>
             <th style="width: 60px;" class="text-center"><?= Yii::t('app', 'DOH (days)') ?></th>
@@ -106,17 +109,19 @@ use app\models\Part;
                 <td class="text-center"><?= $row['unit'] ?></td>
                 <td class="text-right <? if ($row['whbal'] < 0) echo "qty-red";
                                         elseif ($row['whbal'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['whbal']) ?></td>
-                <td class="text-right <? if ($row['linebal'] < 0) echo "qty-red";
+
+				<td class="text-right stock <? if ($row['linebal'] < 0) echo "qty-red";
                                         elseif ($row['linebal'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['linebal']) ?></td>
-                <td class="text-right <? if ($row['semistock'] < 0) echo "qty-red";
+                <td class="text-right stock<? if ($row['semistock'] < 0) echo "qty-red";
                                         elseif ($row['semistock'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['semistock']) ?></td>
-                <td class="text-right <? if ($row['pending'] < 0) echo "qty-red";
+                <td class="text-right stock <? if ($row['pending'] < 0) echo "qty-red";
                                         elseif ($row['pending'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['pending']) ?></td>
-                <td class="text-right <? if ($row['outsourcing'] < 0) echo "qty-red";
+                <td class="text-right stock <? if ($row['outsourcing'] < 0) echo "qty-red";
                                         elseif ($row['outsourcing'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['outsourcing']) ?></td>
-                <td class="text-right <? if ($row['arrive'] < 0) echo "qty-red";
+                <td class="text-right stock <? if ($row['arrive'] < 0) echo "qty-red";
                                         elseif ($row['arrive'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['arrive']) ?></td>
-                <td class="text-right <? if ($row['totalstock'] < 0) echo "qty-red";
+
+				<td class="text-right <? if ($row['totalstock'] < 0) echo "qty-red";
                                         elseif ($row['totalstock'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['totalstock']) ?></td>
                 <td class="text-right <? if ($row['fgstock'] < 0) echo "qty-red";
                                         elseif ($row['fgstock'] == 0) echo "qty-zero";
