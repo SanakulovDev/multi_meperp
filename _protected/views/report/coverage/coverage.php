@@ -398,13 +398,13 @@ JS;
 $this->registerJs($script1);
 ?>
 <style>
-	@keyframes glowing {
+	/* @keyframes glowing {
       0% { background-color: #2ba805; box-shadow: 0 0 5px #2ba805; }
       50% { background-color: #49e819; box-shadow: 0 0 20px #49e819; }
       100% { background-color: #2ba805; box-shadow: 0 0 5px #2ba805; }
-    }
+    } */
 	.main-stock {
 		cursor: pointer;
-		animation: glowing 1300ms infinite;
+		/* animation: glowing 1300ms infinite; */
 	}
 </style>

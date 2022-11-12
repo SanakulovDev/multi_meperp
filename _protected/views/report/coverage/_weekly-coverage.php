@@ -35,7 +35,7 @@ use app\models\Part;
 				</div>
 
 			</td>
-			<td colspan="4" class="wd_title"><?= Yii::t('app', 'Total DOH ($)') ?>:</td>
+			<!-- <td colspan="4" class="wd_title"><?= Yii::t('app', 'Total DOH ($)') ?>:</td> -->
 			<td class="total_doh_sum_import" style="text-align: right;font-weight: bold" title="1 USD: <?= Helpers::formatRemoveDecimal($rateUSD) ?>, 1 EUR: <?= Helpers::formatRemoveDecimal($rateEUR) ?>, 1 RUB: <?= Helpers::formatRemoveDecimal($rateRUB) ?>"><?= $loading ?></td>
 			<? foreach ($period_weekly as $col => $per) { ?>
 				<td class="wd" id="w_<?= ($col + 1) ?>"><?= $loading ?></td>
@@ -50,18 +50,18 @@ use app\models\Part;
 			<th style="width: 100px;" class="text-center"><?= Yii::t('app', 'Type') ?></th>
 			<th style="width: 100px;" class="text-center"><?= Yii::t('app', 'Unit') ?></th>
 
-			<th style="width: 90px;" class="text-right main-stock"><?= Yii::t('app', 'WH balance') ?>88</th>
+			<th style="width: 90px;" class="text-right main-stock"><?= Yii::t('app', 'WH balance') ?></th>
 
-			<th style="width: 90px;" class="text-right stock"><?= Yii::t('app', 'Line balance') ?>77</th>
-			<th style="width: 90px;" class="text-right stock"><?= Yii::t('app', 'Semi balance') ?>77</th>
-			<th style="width: 90px;" class="text-right stock"><?= Yii::t('app', 'Pending balance') ?>77</th>
-			<th style="width: 90px;" class="text-right stock"><?= Yii::t('app', 'Outsourcing balance') ?>77</th>
-			<th style="width: 90px;" class="text-right stock"><?= Yii::t('app', 'Arrived') ?>77</th>
+			<th style="width: 90px;" class="text-right stock"><?= Yii::t('app', 'Line balance') ?></th>
+			<th style="width: 90px;" class="text-right stock"><?= Yii::t('app', 'Semi balance') ?></th>
+			<th style="width: 90px;" class="text-right stock"><?= Yii::t('app', 'Pending balance') ?></th>
+			<th style="width: 90px;" class="text-right stock"><?= Yii::t('app', 'Outsourcing balance') ?></th>
+			<th style="width: 90px;" class="text-right stock"><?= Yii::t('app', 'Arrived') ?></th>
 
 			<th style="width: 90px;" class="text-right"><?= Yii::t('app', 'Total balance') ?></th>
 			<th style="width: 90px;" class="text-right qty-fg"><?= Yii::t('app', 'FG balance') ?></th>
-			<th style="width: 60px;" class="text-center"><?= Yii::t('app', 'DOH (days)') ?></th>
-			<th style="width: 60px;" class="text-center"><?= Yii::t('app', 'DOH ($)') ?></th>
+			<!-- <th style="width: 60px;" class="text-center"><?= Yii::t('app', 'DOH (days)') ?></th>
+			<th style="width: 60px;" class="text-center"><?= Yii::t('app', 'DOH ($)') ?></th> -->
 			<? foreach ($period_weekly as $col => $per) { ?>
 				<th style="width: 90px;" class="text-center"><?= ((strlen(trim($per['plandate'])) > 7)) ? date("d.m", strtotime($per['from'])) . '<br>-<br>' . date("d.m", strtotime($per['to'])) : date("m.Y", strtotime($per['plandate'])) ?></th>
 				<?
@@ -111,17 +111,17 @@ use app\models\Part;
 
 
 				<td class="text-right <? if ($row['whbal'] < 0) echo "qty-red";
-															elseif ($row['whbal'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['whbal']) ?>-888</td>
+															elseif ($row['whbal'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['whbal']) ?></td>
 				<td class="text-right stock <? if ($row['linebal'] < 0) echo "qty-red";
-															elseif ($row['linebal'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['linebal']) ?>-777</td>
+															elseif ($row['linebal'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['linebal']) ?></td>
 				<td class="text-right stock <? if ($row['semistock'] < 0) echo "qty-red";
-															elseif ($row['semistock'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['semistock']) ?>-777</td>
+															elseif ($row['semistock'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['semistock']) ?></td>
 				<td class="text-right stock <? if ($row['pending'] < 0) echo "qty-red";
-															elseif ($row['pending'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['pending']) ?>-777</td>
+															elseif ($row['pending'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['pending']) ?></td>
 				<td class="text-right stock <? if ($row['outsourcing'] < 0) echo "qty-red";
-															elseif ($row['outsourcing'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['outsourcing']) ?>-777</td>
+															elseif ($row['outsourcing'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['outsourcing']) ?></td>
 				<td class="text-right stock <? if ($row['arrive'] < 0) echo "qty-red";
-															elseif ($row['arrive'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['arrive']) ?>-777</td>
+															elseif ($row['arrive'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['arrive']) ?></td>
 
 
 				<td class="text-right <? if ($row['totalstock'] < 0) echo "qty-red";
@@ -129,15 +129,8 @@ use app\models\Part;
 				<td class="text-right <? if ($row['fgstock'] < 0) echo "qty-red";
 															elseif ($row['fgstock'] == 0) echo "qty-zero";
 															else echo "qty-fg"; ?>"><?= Helpers::formatRemoveDecimal($row['fgstock']) ?></td>
-				<td class="text-center"><?= $row['doh'] ?></td>
-				<?
-				if ($row['totalstock'] > 0) {
-					$doh_sum = $row['totalstock'] * $priceUSD;
-					$total_doh_sum_import += round($doh_sum, 2);
-				}
-
-				?>
-				<td class="text-right" title="<?= Helpers::formatRemoveDecimal($price) ?> <?= $currency ?>"><?= ($row['totalstock'] > 0) ? Helpers::formatRemoveDecimal($doh_sum) : 0 ?></td>
+				<!-- <td class="text-center"><?= $row['doh'] ?></td> -->
+				<!-- <td class="text-right" title="<?= Helpers::formatRemoveDecimal($price) ?> <?= $currency ?>"><?= ($row['totalstock'] > 0) ? Helpers::formatRemoveDecimal($doh_sum) : 0 ?></td> -->
 
 				<? foreach ($period_weekly as $col => $per) { ?>
 					<td class="text-right  <? if ($row['col' . ($col + 1)] < 0) echo 'req-red';

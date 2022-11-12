@@ -32,7 +32,9 @@ use app\models\Part;
                 </div>
 
             </td>
-            <td colspan="4" class="wd_title"><?= Yii::t('app', 'Total DOH ($)') ?>:</td>
+			<td></td>
+			<td></td>
+            <!-- <td colspan="4" class="wd_title"><?= Yii::t('app', 'Total DOH ($)') ?>:</td> -->
             <td class="total_doh_sum_c" style="text-align: right;font-weight: bold" title="1 USD: <?= Helpers::formatRemoveDecimal($rateUSD) ?>, 1 EUR: <?= Helpers::formatRemoveDecimal($rateEUR) ?>, 1 RUB: <?= Helpers::formatRemoveDecimal($rateRUB) ?>"><?= $loading ?></td>
             <? foreach ($period_daily as $col => $pdate) { ?>
 				<td class="wd" id="c_<?= ($col + 1) ?>"><?= $loading ?></td>
@@ -59,8 +61,8 @@ use app\models\Part;
 
             <th style="width: 70px;" class="text-right"><?= Yii::t('app', 'Total balance') ?></th>
             <th style="width: 70px;" class="text-right qty-fg"><?= Yii::t('app', 'FG balance') ?></th>
-            <th style="width: 60px;" class="text-center"><?= Yii::t('app', 'DOH (days)') ?></th>
-            <th style="width: 60px;" class="text-center"><?= Yii::t('app', 'DOH ($)') ?></th>
+            <!-- <th style="width: 60px;" class="text-center"><?= Yii::t('app', 'DOH (days)') ?></th>
+            <th style="width: 60px;" class="text-center"><?= Yii::t('app', 'DOH ($)') ?></th> -->
             <? foreach ($period_daily as $col => $pdate) { ?>
 				<th style="width: 50px;" class="text-center"><?= date("d.m", strtotime($pdate)) ?><br><span style="color: gray"><?=($col+1)?></span></th>
 				<?
@@ -126,7 +128,7 @@ use app\models\Part;
                 <td class="text-right <? if ($row['fgstock'] < 0) echo "qty-red";
                                         elseif ($row['fgstock'] == 0) echo "qty-zero";
                                         else echo "qty-fg"; ?>"><?= Helpers::formatRemoveDecimal($row['fgstock']) ?></td>
-                <td class="text-center"><?= $row['doh'] ?></td>
+                <!-- <td class="text-center"><?= $row['doh'] ?></td> -->
 
                 <?
                 if ($row['totalstock'] > 0) {
@@ -136,7 +138,7 @@ use app\models\Part;
 
                 ?>
 
-                <td class="text-right" title="<?= Helpers::formatRemoveDecimal($price) ?> <?= $currency ?>"><?= ($row['totalstock'] > 0) ? Helpers::formatRemoveDecimal($doh_sum) : 0 ?></td>
+                <!-- <td class="text-right" title="<?= Helpers::formatRemoveDecimal($price) ?> <?= $currency ?>"><?= ($row['totalstock'] > 0) ? Helpers::formatRemoveDecimal($doh_sum) : 0 ?></td> -->
 
                 <? foreach ($period_daily as $col => $pdate) { ?>
                     <td class="text-right  <? if ($row['col' . ($col + 1)] < 0) echo 'req-red';
