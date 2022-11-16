@@ -104,7 +104,7 @@ class CoverageController extends Controller
 				$modelReq->fgstock = $this->stock_fg_result[$pmodel->id];
 
 				// 09.04.2020 da fgstock ham balance ga qo'shilishi kerakligi aytildi
-				$bal += $modelReq->fgstock;
+				// $bal += $modelReq->fgstock;
 
 				$order = 0;
 				if ($modelReq->save()) {
@@ -273,7 +273,7 @@ class CoverageController extends Controller
 				$modelReq->fgstock = $this->stock_fg_result[$pmodel->id];
 
 				// 09.04.2020 da fgstock ham balance ga qo'shilishi kerakligi aytildi
-				$bal += $modelReq->fgstock;
+				// $bal += $modelReq->fgstock;
 				
 				$order = 0;
 				if ($modelReq->save()) {
@@ -426,7 +426,7 @@ class CoverageController extends Controller
 				$modelReq->fgstock = $this->stock_fg_result[$pmodel->id];
 
 				// 09.04.2020 da fgstock ham balance ga qo'shilishi kerakligi aytildi
-				$bal += $modelReq->fgstock;
+				// $bal += $modelReq->fgstock;
 				
 				$order = 0;
 				if ($modelReq->save()) {
@@ -631,7 +631,7 @@ class CoverageController extends Controller
 				$modelReq->fgstock = $this->stock_fg_result[$pmodel->id];
 
 				// 09.04.2020 da fgstock ham balance ga qo'shilishi kerakligi aytildi
-				$bal += $modelReq->fgstock;
+				// $bal += $modelReq->fgstock;
 				
 				$order = 0;
 				if ($modelReq->save()) {
@@ -793,7 +793,7 @@ class CoverageController extends Controller
 				$modelReq->fgstock = $this->stock_fg_result[$pmodel->id];
 
 				// 09.04.2020 da fgstock ham balance ga qo'shilishi kerakligi aytildi
-				$bal += $modelReq->fgstock;
+				// $bal += $modelReq->fgstock;
 				
 				$order = 0;
 				if ($modelReq->save()) {
