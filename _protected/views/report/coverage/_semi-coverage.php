@@ -61,7 +61,7 @@ use app\models\Part;
             <th style="width: 70px;" class="text-right stock"><?= Yii::t('app', 'Arrived') ?></th>
 
             <th style="width: 70px;" class="text-right"><?= Yii::t('app', 'Total balance') ?></th>
-            <th style="width: 70px;" class="text-right qty-fg"><?= Yii::t('app', 'FG balance') ?></th>
+            <!-- <th style="width: 70px;" class="text-right qty-fg"><?= Yii::t('app', 'FG balance') ?></th> -->
             <!-- <th style="width: 60px;" class="text-center"><?= Yii::t('app', 'DOH (days)') ?></th>
             <th style="width: 60px;" class="text-center"><?= Yii::t('app', 'DOH ($)') ?></th> -->
             <? foreach ($period_daily as $col => $pdate) { ?>
@@ -126,9 +126,9 @@ use app\models\Part;
 
 				<td class="text-right <? if ($row['totalstock'] < 0) echo "qty-red";
                                         elseif ($row['totalstock'] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['totalstock']) ?></td>
-                <td class="text-right <? if ($row['fgstock'] < 0) echo "qty-red";
+                <!-- <td class="text-right <? if ($row['fgstock'] < 0) echo "qty-red";
                                         elseif ($row['fgstock'] == 0) echo "qty-zero";
-                                        else echo "qty-fg"; ?>"><?= Helpers::formatRemoveDecimal($row['fgstock']) ?></td>
+                                        else echo "qty-fg"; ?>"><?= Helpers::formatRemoveDecimal($row['fgstock']) ?></td> -->
                 <!-- <td class="text-center"><?= $row['doh'] ?></td> -->
 
                 <?
