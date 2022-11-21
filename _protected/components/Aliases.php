@@ -22,5 +22,6 @@ class Aliases extends Component{
 		Yii::setAlias('@views', Yii::getAlias('@webroot').'/_protected/views/');
 		Yii::setAlias('@tests', Yii::getAlias('@webroot').'/_protected/tests/');
 		Yii::setAlias('@bower', Yii::getAlias('@webroot').'/_protected/vendor/bower');
+		Yii::setAlias('@img', Yii::getAlias('@webroot').'/img');
 	}
 }

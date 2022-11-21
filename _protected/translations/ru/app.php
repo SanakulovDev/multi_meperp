@@ -1042,8 +1042,16 @@ return [
   'Receipt number' => 'Номер платежного поручения',
   'Fg invoice receipt' => 'Оплата - счет-фактура',
   'Material stock at {date}' => 'Текущий остаток материалов на {date}',
-  'Material stock' => 'Текущий остаток материалов'
+  'Material stock' => 'Текущий остаток материалов',
 
+
+  'Posts' => 'Посты',
+  'Create Posts' => 'Создать пост',
+  'Update Posts' => 'Обновить пост',
+  'Material' => 'Материал',
+  'Is Where' => 'Откуда',
+  'Add Image' => 'Добавить изображение',
+  'Images count in post must be 3' => 'Количество изображений в посте должно быть 3',
 
 ];
 

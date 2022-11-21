@@ -727,5 +727,13 @@ return[
   'btn-dayOpen' => '<i class="glyphicon glyphicon-eye-open"></i>&nbsp;&nbsp;Open working shift',
   'Production results' => 'Production results',
   'Fg invoice receipt' => 'Finished Good invoice payments',
+
+  'Posts' => 'Posts',
+  'Create Posts' => 'Create Posts',
+  'Update Posts' => 'Update Posts',
+  'Material' => 'Material',
+  'Is Where' => 'Is Where',
+  'Add Image' => 'Add Image',
+  'Images count in post must be 3' => 'Images count in post must be 3',
 ];
 

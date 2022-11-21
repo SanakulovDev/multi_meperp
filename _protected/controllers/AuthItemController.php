@@ -20,6 +20,7 @@ class AuthItemController extends AppController {
    * @return mixed
    */
   public function actionIndex() {
+    //$this->addRoute();
     $searchModel = new AuthItemSearch();
     $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
     return $this->render('index', [
@@ -261,6 +262,31 @@ class AuthItemController extends AppController {
       return $model;
     }
     throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+  }
+  private function addRoute()
+  {
+    $data = [
+      'posts-index' => 'posts-index',
+      'posts-create' => 'posts-create',
+      'posts-update' => 'posts-update',
+      'posts-delete' => 'posts-delete',
+      'posts-upload' => 'posts-delete',
+      'posts-view' => 'posts-delete',
+      'posts-delete-image' => 'posts-delete-image',
+    ];
+
+    foreach ($data as $key => $val)
+    {
+      $auth_item = new AuthItem();
+      $auth_item->name = $key;
+      $auth_item->description = $val;
+      $auth_item->type = 2;
+      $auth_item->save();
+      var_dump($key);
+
+
+    }
+    die();
   }
 
 }

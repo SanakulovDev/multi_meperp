@@ -841,5 +841,15 @@ return [
   'Receipt control' => 'To\'lov',
   'Fg invoice receipt' => 'To\'lov - hisob fakturasi',
   'Receipt number' => 'To\'lov raqami',
-  ];
+
+
+  'Posts' => 'Postlar',
+  'Create Posts' => 'Qo\'shish',
+  'Update Posts' => 'Yangilash',
+  'Material' => 'Material',
+  'Is Where' => 'Qayerdan',
+  'Add Image' => 'Rasm yuklash',
+  'Images count in post must be 3' => 'Postdagi rasmlar soni 3 ta bo\'lishi kerak',
+
+];
 ?>
