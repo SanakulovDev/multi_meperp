@@ -516,6 +516,14 @@ use yii\widgets\Menu; ?>
         'template' => '<a href="/report/material-stock"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
     }
+
+    if (Yii::$app->user->can('posts-index')) {
+      $m_new[] = [
+        'label' => 'Posts',
+        'url' => ['/fg-invoice/index'],
+        'template' => '<a href="/posts/index"><i class="fa fa-list"></i> <span>{label}</span></a>',
+      ];
+    }
     if (Yii::$app->user->can('fg-invoice-index')) {
       $m500_sales[] = [
         'label' => Yii::t('app', 'Waybill'),

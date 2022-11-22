@@ -12,7 +12,7 @@ class TelegramService
   public static function sendToGroup($data)
   {
     $token = '5871348680:AAHPRi8zEE0w1MuriilwDDtF5yrwMypRvV8';
-    $chat_id = -631325773;
+    $chat_id = -610217454;
 
     $telegram = new Telegram($token);
     $text = '#new'. PHP_EOL;

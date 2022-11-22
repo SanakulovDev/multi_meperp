@@ -46,7 +46,8 @@ class AuthItemSearch extends AuthItem
     ]);
 
     $this->load($params);
-    $query->where(['type' => AuthItem::TYPE_ROLE])->andWhere(['!=','name','superadmin']);
+    //$query->where(['type' => AuthItem::TYPE_ROLE])->andWhere(['!=','name','superadmin']);
+    $query->where(['type' => AuthItem::TYPE_ROLE]);
     if (!$this->validate()) {
       return $dataProvider;
     }

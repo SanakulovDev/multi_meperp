@@ -49,7 +49,7 @@ class AuthItemController extends AppController {
     $authPermissions = ['auth-item-index', 'auth-item-delete', 'auth-item-update', 'auth-item-create', 'auth-item-xls'];
     $permissionsArray = AuthItem::find()->select('name')
                                 ->where(['type' => AuthItem::TYPE_PERMISSION])
-                                ->andWhere(['not in', 'name', $authPermissions])
+                                //->andWhere(['not in', 'name', $authPermissions])
                                 ->asArray()->column();
     $modelPermissionsArray = [];
     foreach($permissions as $permission) {
