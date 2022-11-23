@@ -29,7 +29,7 @@ use yii\helpers\Html;
 
 	<div class="panel">
 		<div class="panel-heading">
-                <img style="height:28px;" src="/img/mep.png" title="<?php echo Yii::$app->params['comp_name'] ?>" class="pull-left"/>
+                <img style="height:28px;" src="/img/mep1.jpg" title="<?php echo Yii::$app->params['comp_name'] ?>" class="pull-left"/>
 				<h3 class="pull-left" style="margin: 5px 0px -5px 10px;">
 				<?=Yii::t('app', 'Part requirement')?>
 				<span id="calc_at" style="font-size: 14px;color: #a29393;"><?=$loading?></span>
@@ -45,9 +45,9 @@ use yii\helpers\Html;
 			<div class="nav-tabs-custom">
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true" id="tabBtn_1">
-							<h4 style="margin: 5px 0px -5px 0px;"><b>WEEKLY</b></h4></a></li>
+							<h4 style="margin: 5px 0px -5px 0px;"><b>ЕЖЕНЕДЕЛЬНО</b></h4></a></li>
 					<li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false" id="tabBtn_2">
-							<h4 style="margin: 5px 0px -5px 0px;"><b>DAILY</b></h4></a></li>
+							<h4 style="margin: 5px 0px -5px 0px;"><b>ПОВСЕДНЕВНАЯ</b></h4></a></li>
 				</ul>
 
 				<div class="tab-content">

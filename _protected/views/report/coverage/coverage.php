@@ -161,6 +161,16 @@ $s = [];
                       <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-default custom-text-normal">Полузапчасти</span></h4>
                     </a>
                   </li>
+				  <li class="">
+                    <a href="#tab_2_3" data-toggle="tab" aria-expanded="false" id="tabBtn_2_3" style="border: 0px;padding-left: 5px;">
+                      <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-default custom-text-normal">ЕЖЕНЕДЕЛЬНО</span></h4>
+                    </a>
+                  </li>
+				  <li class="">
+                    <a href="#tab_2_3" data-toggle="tab" aria-expanded="false" id="tabBtn_2_3" style="border: 0px;padding-left: 5px;">
+                      <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-default custom-text-normal">ПОВСЕДНЕВНАЯ</span></h4>
+                    </a>
+                  </li>
                 </ul>
                 <div class="tab-content" style="padding-top: 0px;">
 
