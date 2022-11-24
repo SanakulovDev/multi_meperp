@@ -22,11 +22,11 @@ use app\models\Part;
                 </div>
 
                 <div class="form-group">
-                    <!-- <select class="lf-filter-model-id cov-filter form-control "></select> -->
+                    <select style="display: none" class="lf-filter-model-id cov-filter form-control "></select>
                 </div>
 
                 <div class="form-group">
-                    <!-- <select class="lf-filter-unit-id cov-filter form-control "></select> -->
+                    <select style="display: none" class="lf-filter-unit-id cov-filter form-control "></select>
                 </div>
 
                 <button class="lf-btn-filter" style="display: none">Find</button>

@@ -23,11 +23,11 @@ use app\models\Part;
 				</div>
 
 				<div class="form-group">
-					<!-- <select class="df-filter-model-id cov-filter form-control "></select> -->
+					<select style="display: none" class="df-filter-model-id cov-filter form-control "></select>
 				</div>
 
 				<div class="form-group">
-					<!-- <select class="df-filter-unit-id cov-filter form-control "></select> -->
+					<select style="display: none" class="df-filter-unit-id cov-filter form-control "></select>
 				</div>
 
 				<button class="df-btn-filter" style="display: none">Find</button>

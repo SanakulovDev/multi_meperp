@@ -20,11 +20,11 @@ use app\models\Part;
                     </div>
 
                     <div class="form-group">
-                        <!-- <select class="cf-filter-model-id cov-filter form-control "></select> -->
+                        <select style="display: none" class="cf-filter-model-id cov-filter form-control "></select>
                     </div>
 
                     <div class="form-group">
-                        <!-- <select class="cf-filter-unit-id cov-filter form-control "></select> -->
+                        <select style="display: none" class="cf-filter-unit-id cov-filter form-control "></select>
                     </div>
 
                     <button class="cf-btn-filter" style="display: none">Find</button>

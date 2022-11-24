@@ -21,11 +21,11 @@ use app\models\Part;
                 </div>
 
                 <div class="form-group">
-                    <!-- <select class="sf-filter-model-id cov-filter form-control "></select> -->
+                    <select style="display: none" class="sf-filter-model-id cov-filter form-control "></select>
                 </div>
 
                 <div class="form-group">
-                    <!-- <select class="sf-filter-unit-id cov-filter form-control "></select> -->
+                    <select style="display: none" class="sf-filter-unit-id cov-filter form-control "></select>
                 </div>
 
                 <button class="sf-btn-filter" style="display: none">Find</button>

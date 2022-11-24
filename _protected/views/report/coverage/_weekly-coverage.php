@@ -23,11 +23,11 @@ use app\models\Part;
 					</div>
 
 					<div class="form-group">
-						<!-- <select class="wf-filter-model-id cov-filter form-control "></select> -->
+						<select style="display: none" class="wf-filter-model-id cov-filter form-control "></select>
 					</div>
 
 					<div class="form-group">
-						<!-- <select class="wf-filter-unit-id cov-filter form-control "></select> -->
+						<select style="display: none" class="wf-filter-unit-id cov-filter form-control "></select>
 					</div>
 
 					<button class="wf-btn-filter" style="display: none">Find</button>
@@ -234,7 +234,7 @@ $(document).ready(function() {
 		});
 
 		$('#fix_table_w tr.tr-item').each(function (i, row) {
-			
+
 			is_left = true;
 			$(this).removeClass('tr_odd');
 			$(this).find('td').css("background-color", "");
