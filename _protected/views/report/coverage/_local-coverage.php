@@ -35,11 +35,10 @@ use app\models\Part;
 
             </td>
             <td></td>
-            <td></td>
             <!-- <td colspan="4" class="wd_title"><?= Yii::t('app', 'Total DOH ($)') ?>:</td> -->
             <td class="total_doh_sum_l" style="text-align: right;font-weight: bold" title="1 USD: <?= Helpers::formatRemoveDecimal($rateUSD) ?>, 1 EUR: <?= Helpers::formatRemoveDecimal($rateEUR) ?>, 1 RUB: <?= Helpers::formatRemoveDecimal($rateRUB) ?>"><?= $loading ?></td>
             <? foreach ($period_daily as $col => $pdate) { ?>
-				<td class="wd" id="l_<?= ($col + 1) ?>"><?= $loading ?></td>
+				<td class="wd <? if ($col < 7) echo 'week-hide month-hide'; else if ($col < 32) echo 'month-hide'; else if ($col >= 32) echo 'more-month'; ?>" id="l_<?= ($col + 1) ?>"><?= $loading ?></td>
 			<? } ?>
         </tr>
 
@@ -66,7 +65,7 @@ use app\models\Part;
             <!-- <th style="width: 60px;" class="text-center"><?= Yii::t('app', 'DOH (days)') ?></th>
             <th style="width: 60px;" class="text-center"><?= Yii::t('app', 'DOH ($)') ?></th> -->
             <? foreach ($period_daily as $col => $pdate) { ?>
-				<th style="width: 50px;" class="text-center"><?= date("d.m", strtotime($pdate)) ?><br><span style="color: gray"><?=($col+1)?></span></th>
+				<th style="width: 50px;" class="text-center <? if ($col < 7) echo 'week-hide month-hide'; else if ($col < 32) echo 'month-hide'; else if ($col >= 32) echo 'more-month'; ?>"><?= date("d.m", strtotime($pdate)) ?><br><span style="color: gray"><?=($col+1)?></span></th>
 				<?
 				$l[$col + 1] = 0;
 				?>
@@ -146,7 +145,7 @@ use app\models\Part;
                 <!-- <td class="text-right" title="<?= Helpers::formatRemoveDecimal($price) ?> <?= $currency ?>"><?= ($row['totalstock'] > 0) ? Helpers::formatRemoveDecimal($doh_sum) : 0 ?></td> -->
                
                 <? foreach ($period_daily as $col => $pdate) { ?>
-                    <td class="text-right  <? if ($row['col' . ($col + 1)] < 0) echo 'req-red';
+                    <td class="text-right <? if ($col < 7) echo 'week-hide month-hide'; else if ($col < 32) echo 'month-hide'; else if ($col >= 32) echo 'more-month'; ?>  <? if ($row['col' . ($col + 1)] < 0) echo 'req-red';
                                             elseif ($row['col' . ($col + 1)] == 0) echo "qty-zero"; ?>"><?= Helpers::formatRemoveDecimal($row['col' . ($col + 1)]) ?></td>
                     <?
                     if ($row['col' . ($col + 1)] < 0) {

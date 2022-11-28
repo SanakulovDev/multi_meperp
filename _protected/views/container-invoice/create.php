@@ -21,8 +21,8 @@
 <div id="multistepsform">
   <!-- progressbar -->
   <ul id="progressbar">
-    <li class="active">Создание контракта</li>
-    <li class="active" >Создание заказа</li>
+    <li>Создание контракта</li>
+    <li >Создание заказа</li>
     <li class="active">Создание счёт фактуры</li>
   </ul>
 </div>
@@ -55,7 +55,7 @@
 	 display: block;
 	 font-size: 10px;
 	 color: #fff;
-	 background: #679b9b;
+	 background: #ff9a76;
 	 border-radius: 3px;
 	 margin: 0 auto 5px auto;
 }
@@ -63,7 +63,7 @@
 	 content: "";
 	 width: 100%;
 	 height: 2px;
-	 background: #679b9b;
+	 background: #ff9a76;
 	 position: absolute;
 	 left: -50%;
 	 top: 9px;
@@ -73,10 +73,10 @@
 	 content: none;
 }
  #multistepsform #progressbar li.active {
-	 color: #ff9a76;
+	 color: #00a65a;
 }
  #multistepsform #progressbar li.active:before, #multistepsform #progressbar li.active:after {
-	 background: #ff9a76;
+	 background: #00a65a;
 	 color: white;
 }
 </style>

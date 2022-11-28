@@ -41,9 +41,13 @@ class ContractDetailController extends AppController
 			$result = self::definePrimaryPrice($model);
 			if(!$result['success'] == 1){
 				Yii::$app->session->setFlash('error', Yii::t('app',  implode('<br>',$result['errors'])));
+			} else {
+				if ($app->request->isAjax) {
+					return $model->id;
+				} else {
+					return $this->redirect(['index']);
+				}
 			}
-			return $model->id;
-			// return $this->redirect(['index']);
 		}
 		return $this->render('create', [
 			'model' => $model,

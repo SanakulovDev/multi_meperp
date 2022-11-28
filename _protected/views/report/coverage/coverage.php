@@ -161,15 +161,23 @@ $s = [];
                       <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-default custom-text-normal">Полузапчасти</span></h4>
                     </a>
                   </li>
-				  <li class="">
-                    <a href="#tab_2_3" data-toggle="tab" aria-expanded="false" id="tabBtn_2_3" style="border: 0px;padding-left: 5px;">
-                      <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-default custom-text-normal">ЕЖЕНЕДЕЛЬНО</span></h4>
-                    </a>
+				          <li style="display: flex;margin: auto;padding: 10px;column-gap: 10px;" class="">
+                    <div>
+                      <input id="checkbox" class="switch-input" type="checkbox"/>
+                      <label for="checkbox" class="switch"></label>
+                    </div>
+                    <div>
+                      ЕЖЕНЕДЕЛЬНО
+                    </div>
                   </li>
-				  <li class="">
-                    <a href="#tab_2_3" data-toggle="tab" aria-expanded="false" id="tabBtn_2_3" style="border: 0px;padding-left: 5px;">
-                      <h4 style="margin: 0px 0px 0px 0px;font-size: 24px"><span class="label label-default custom-text-normal">ПОВСЕДНЕВНАЯ</span></h4>
-                    </a>
+                  <li style="display: flex;margin: auto;padding: 10px;column-gap: 10px;" class="">
+					          <div>
+					            <input id="checkbox2" class="switch-input" type="checkbox"/>
+					            <label for="checkbox2" class="switch"></label>
+					          </div>
+					          <div>
+                      МЕСЯЧНОЕ
+                    </div>
                   </li>
                 </ul>
                 <div class="tab-content" style="padding-top: 0px;">
@@ -236,6 +244,43 @@ $script1 = <<< JS
 	$(window).resize(function(){
 		changeHeightAll();
 	});
+
+	$('#checkbox').on('change', function () {
+		const check1 = $(this).is(":checked")
+		const check2 = $('#checkbox2').is(":checked")
+    console.log(1111)
+		if (check1) {
+			$('.more-month').hide();
+			$('.month-hide').hide();
+			$('.week-hide').show();
+		}
+		if (!check1 && !check1) {
+			$('.more-month').show();
+			$('.month-hide').show();
+			$('.week-hide').show();
+		}
+		if (check1 && check2) {
+			$('#checkbox2').prop('checked', false);
+		}
+	})
+	$('#checkbox2').on('change', function () {
+		const check1 = $('#checkbox').is(":checked")
+		const check2 = $('#checkbox2').is(":checked")
+		if (check2) {
+			$('.more-month').hide();
+			$('.month-hide').hide();
+			$('.week-hide').hide();
+      $('.month-hide').show();
+		}
+		if (!check1 && !check2) {
+			$('.more-month').show();
+			$('.month-hide').show();
+			$('.week-hide').show();
+		}
+		if (check1 && check2) {
+			$('#checkbox').prop('checked', false);
+		}
+	})
 
 	$('.main-stock').on('click', function () {
 		$('.stock').toggle();
@@ -417,4 +462,58 @@ $this->registerJs($script1);
 		cursor: pointer;
 		/* animation: glowing 1300ms infinite; */
 	}
+	:root {
+  --color-bg: #458;
+  --color-switch-thumb: #ccc;
+  --color-switch-bg: #777;
+  --color-switch-bg-active: #245;
+  
+  --switch-size: 50px;
+}
+.switch-input {
+  display: none;
+}
+.switch {
+  --switch-width: var(--switch-size);
+  --switch-height: calc(var(--switch-width) / 2);
+  --switch-border: calc(var(--switch-height) / 10);
+  --switch-thumb-size: calc(var(--switch-height) - var(--switch-border) * 2);
+  --switch-width-inside: calc(var(--switch-width) - var(--switch-border) * 2);
+  display: block;
+  box-sizing: border-box;
+  width: var(--switch-width);
+  height: var(--switch-height);
+  border: var(--switch-border) solid var(--color-switch-bg);
+  border-radius: var(--switch-height);
+  background-color: var(--color-switch-bg);
+  cursor: pointer;
+  margin: var(--switch-margin) 0;
+  transition: 300ms 100ms;
+  
+  position: relative;
+}
+.switch::before {
+  content: '';
+  background-color: var(--color-switch-thumb);
+  height: var(--switch-thumb-size);
+  width: var(--switch-thumb-size);
+  border-radius: var(--switch-thumb-size);
+  
+  position: absolute;
+  top: 0;
+  left: 0;
+  
+  transition: 300ms, width 600ms;
+}
+.switch-input:checked + .switch {
+  background-color: var(--color-switch-bg-active);
+  border-color: var(--color-switch-bg-active);
+}
+.switch:active::before {
+  width: 80%;
+}
+.switch-input:checked + .switch::before {
+  left: 100%;
+  transform: translateX(-100%);
+}
 </style>
