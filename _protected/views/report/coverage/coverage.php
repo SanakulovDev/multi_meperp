@@ -248,7 +248,6 @@ $script1 = <<< JS
 	$('#checkbox').on('change', function () {
 		const check1 = $(this).is(":checked")
 		const check2 = $('#checkbox2').is(":checked")
-    console.log(1111)
 		if (check1) {
 			$('.more-month').hide();
 			$('.month-hide').hide();
@@ -453,16 +452,16 @@ JS;
 $this->registerJs($script1);
 ?>
 <style>
-	/* @keyframes glowing {
-      0% { background-color: #2ba805; box-shadow: 0 0 5px #2ba805; }
-      50% { background-color: #49e819; box-shadow: 0 0 20px #49e819; }
-      100% { background-color: #2ba805; box-shadow: 0 0 5px #2ba805; }
-    } */
-	.main-stock {
-		cursor: pointer;
-		/* animation: glowing 1300ms infinite; */
-	}
-	:root {
+/* @keyframes glowing {
+  0% { background-color: #2ba805; box-shadow: 0 0 5px #2ba805; }
+  50% { background-color: #49e819; box-shadow: 0 0 20px #49e819; }
+  100% { background-color: #2ba805; box-shadow: 0 0 5px #2ba805; }
+} */
+.main-stock {
+	cursor: pointer;
+	/* animation: glowing 1300ms infinite; */
+}
+:root {
   --color-bg: #458;
   --color-switch-thumb: #ccc;
   --color-switch-bg: #777;

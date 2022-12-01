@@ -44,10 +44,39 @@ use yii\helpers\Html;
 
 			<div class="nav-tabs-custom">
 				<ul class="nav nav-tabs">
-					<li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true" id="tabBtn_1">
-							<h4 style="margin: 5px 0px -5px 0px;"><b>ЕЖЕНЕДЕЛЬНО</b></h4></a></li>
-					<li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false" id="tabBtn_2">
-							<h4 style="margin: 5px 0px -5px 0px;"><b>ПОВСЕДНЕВНАЯ</b></h4></a></li>
+					<li class="active">
+						<a href="#tab_1" data-toggle="tab" aria-expanded="true" id="tabBtn_1">
+							<h4 style="margin: 5px 0px -5px 0px;">
+								<b>ЕЖЕНЕДЕЛЬНО</b>
+							</h4>
+						</a>
+					</li>
+
+					<li class="">
+						<a href="#tab_2" data-toggle="tab" aria-expanded="false" id="tabBtn_2">
+							<h4 style="margin: 5px 0px -5px 0px;">
+								<b>ПОВСЕДНЕВНАЯ</b>
+							</h4>
+						</a>
+					</li>
+					<li style="display: flex;margin: auto;padding: 10px;column-gap: 10px;" class="">
+                    <div>
+                      <input id="checkbox" class="switch-input" type="checkbox"/>
+                      <label for="checkbox" class="switch"></label>
+                    </div>
+                    <div>
+                      ЕЖЕНЕДЕЛЬНО
+                    </div>
+                  </li>
+                  <li style="display: flex;margin: auto;padding: 10px;column-gap: 10px;" class="">
+					          <div>
+					            <input id="checkbox2" class="switch-input" type="checkbox"/>
+					            <label for="checkbox2" class="switch"></label>
+					          </div>
+					          <div>
+                      МЕСЯЧНОЕ
+                    </div>
+                  </li>
 				</ul>
 
 				<div class="tab-content">
@@ -111,8 +140,6 @@ use yii\helpers\Html;
 								<th style="width: 100px;" class="text-center">1месяц</th>
 								
 								<? foreach($period_daily as $col => $pdate){ ?>
-									<th style="width: 60px;" class="text-center"><?=date("d.m", strtotime($pdate));?></th>
-
 									<? 
 										if (count($arr[1]) == 0 and !$nextWeek)  {
 											if (date('w', strtotime($pdate)) == 0) {
@@ -129,6 +156,10 @@ use yii\helpers\Html;
 											array_push($month, $col);
 										}
 									?>
+
+								<th style="width: 60px;" class="text-center anothers <? if (array_search($col,$arr[0],true) > -1) echo 'week '; if (array_search( $col,$month,true) > -1) echo "month"; ?>">
+									<?=date("d.m", strtotime($pdate));?>
+								</th>
 
 								<? } ?>
 							</tr>
@@ -164,7 +195,7 @@ use yii\helpers\Html;
 									<td><? echo $month_total ;  ?></td>
 									
 									<? foreach($period_daily as $col => $pdate){ ?>
-										<td class="text-right  <?=($row['col'.($col + 1)] == 0) ? 'qty-zero' : 'qty-bold'?>">
+										<td class="text-right anothers  <?=($row['col'.($col + 1)] == 0) ? 'qty-zero ' : 'qty-bold'; if (array_search($col,$arr[0],true) > -1) echo 'week '; if (array_search( $col,$month,true) > -1) echo "month";?>">
 											<?=Helpers::formatRemoveDecimal($row['col'.($col + 1)])?>
 										</td>
 									<? } ?>
@@ -216,6 +247,36 @@ use yii\helpers\Html;
 		// console.log(window_h+"-"+table_h);		
 		$('#tab_2').height(table_h+'px');
 	}
+
+	$('#checkbox').on('change', function () {
+		const check1 = $('#checkbox').is(":checked")
+		const check2 = $('#checkbox2').is(":checked")
+		if (check1) {
+			$('.anothers').hide();
+			$('.week').show();
+		}
+		if (!check1 && !check1) {
+			$('.anothers').show();
+		}
+		if (check1 && check2) {
+			$('#checkbox2').prop('checked', false);
+		}
+	})
+	$('#checkbox2').on('change', function () {
+		const check1 = $('#checkbox').is(":checked")
+		const check2 = $('#checkbox2').is(":checked")
+		if (check2) {
+			$('.anothers').hide();
+      		$('.month').show();
+		}
+		if (!check1 && !check2) {
+			$('.anothers').show();
+		}
+		if (check1 && check2) {
+			$('#checkbox').prop('checked', false);
+		}
+	})
+
         
         $('#calc_at').html('($calc_at)');
         
@@ -234,3 +295,59 @@ use yii\helpers\Html;
 JS;
 	$this->registerJs($script1);
 ?>
+<style>
+:root {
+  --color-bg: #458;
+  --color-switch-thumb: #ccc;
+  --color-switch-bg: #777;
+  --color-switch-bg-active: #245;
+  
+  --switch-size: 40px;
+}
+.switch-input {
+  display: none;
+}
+.switch {
+  --switch-width: var(--switch-size);
+  --switch-height: calc(var(--switch-width) / 2);
+  --switch-border: calc(var(--switch-height) / 10);
+  --switch-thumb-size: calc(var(--switch-height) - var(--switch-border) * 2);
+  --switch-width-inside: calc(var(--switch-width) - var(--switch-border) * 2);
+  display: block;
+  box-sizing: border-box;
+  width: var(--switch-width);
+  height: var(--switch-height);
+  border: var(--switch-border) solid var(--color-switch-bg);
+  border-radius: var(--switch-height);
+  background-color: var(--color-switch-bg);
+  cursor: pointer;
+  margin: var(--switch-margin) 0;
+  transition: 300ms 100ms;
+  
+  position: relative;
+}
+.switch::before {
+  content: '';
+  background-color: var(--color-switch-thumb);
+  height: var(--switch-thumb-size);
+  width: var(--switch-thumb-size);
+  border-radius: var(--switch-thumb-size);
+  
+  position: absolute;
+  top: 0;
+  left: 0;
+  
+  transition: 300ms, width 600ms;
+}
+.switch-input:checked + .switch {
+  background-color: var(--color-switch-bg-active);
+  border-color: var(--color-switch-bg-active);
+}
+.switch:active::before {
+  width: 80%;
+}
+.switch-input:checked + .switch::before {
+  left: 100%;
+  transform: translateX(-100%);
+}
+</style>
