@@ -77,7 +77,6 @@ use yii\helpers\Html;
 									<td style="max-width: 150px;" class="td-nowrap"><?=mb_strtoupper($row['part_name'])?></td>
 									<td class="text-center"><?=$row['csourse']?></td>
 									<td class="text-right"><?=round(Part::findOne($row['part_id'])->averageUsage)?></td>
-
 									<? foreach($period_weekly as $col => $per){ ?>
 										<td class="text-right  <?=($row['col'.($col + 1)] == 0) ? 'qty-zero' : 'qty-bold'?>">
 											<?=Helpers::formatRemoveDecimal($row['col'.($col + 1)])?>
@@ -90,6 +89,12 @@ use yii\helpers\Html;
 							</tbody>
 						</table>
 					</div>
+					<?
+						$arr = [[], []];
+						$nextWeek = false;
+						$indexMonth = '';
+						$month = [];
+					?>
 					<!-- /.tab-pane -->
 					<div class="tab-pane" id="tab_2">
 						<table class="table table-req" id="fix_table_d">
@@ -101,8 +106,30 @@ use yii\helpers\Html;
 								<th><?=mb_strtoupper(Yii::t('app', 'Part name'))?></th>
 								<th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Type')?></th>
 								<th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Average usage')?></th>
+								<th style="width: 100px;" class="text-center">1 нед</th>
+								<th style="width: 100px;" class="text-center">след нед</th>
+								<th style="width: 100px;" class="text-center">1месяц</th>
+								
 								<? foreach($period_daily as $col => $pdate){ ?>
-									<th style="width: 60px;" class="text-center"><?=date("d.m", strtotime($pdate))?></th>
+									<th style="width: 60px;" class="text-center"><?=date("d.m", strtotime($pdate));?></th>
+
+									<? 
+										if (count($arr[1]) == 0 and !$nextWeek)  {
+											if (date('w', strtotime($pdate)) == 0) {
+												$nextWeek = true;
+											}
+											array_push($arr[0], $col);
+										} else if ($nextWeek and count($arr[1]) <= 6) {
+											array_push($arr[1], $col);
+										}
+										if (!$indexMonth) {
+											$indexMonth = date("m", strtotime($pdate));
+											array_push($month, $col);
+										} else if ($indexMonth == date("m", strtotime($pdate))) {
+											array_push($month, $col);
+										}
+									?>
+
 								<? } ?>
 							</tr>
 							</thead>
@@ -117,7 +144,25 @@ use yii\helpers\Html;
 									<td style="max-width: 150px;" class="td-nowrap"><?=mb_strtoupper($row['part_name'])?></td>
 									<td class="text-center"><?=$row['csourse']?></td>
 									<td class="text-right"><?=round(Part::findOne($row['part_id'])->averageUsage)?></td>
+									<?
+										$c_week = 0;
+										foreach($arr[0] as $col){
+											$c_week = $c_week + Helpers::formatRemoveDecimal($row['col'.($col + 1)]);
+										}
+										$next_week = 0;
+										foreach($arr[1] as $col){
+											$next_week = $next_week + Helpers::formatRemoveDecimal($row['col'.($col + 1)]);
+										}
+										$month_total = 0;
+										foreach($month as $col){
+											$month_total = $month_total + Helpers::formatRemoveDecimal($row['col'.($col + 1)]);
+										}
+									?>
 
+									<td><? echo $c_week ;  ?></td>
+									<td><? echo $next_week ;  ?></td>
+									<td><? echo $month_total ;  ?></td>
+									
 									<? foreach($period_daily as $col => $pdate){ ?>
 										<td class="text-right  <?=($row['col'.($col + 1)] == 0) ? 'qty-zero' : 'qty-bold'?>">
 											<?=Helpers::formatRemoveDecimal($row['col'.($col + 1)])?>
