@@ -4,6 +4,8 @@ namespace app\controllers;
 use app\components\Helpers;
 use app\models\Part;
 use app\models\ProductionPlan;
+use app\services\TelegramService;
+use app\models\ProductSpecification;
 use app\models\ProductionPlanComment;
 use app\models\ProductionPlanSearch;
 use app\models\UploadForm;
@@ -136,6 +138,18 @@ class ProductionPlanController extends AppController {
       if($model->load(Yii::$app->request->post())) {
         if($model->save()) {
           $data['status'] = 1;
+          $w_house = Warehouse::find()
+            ->where(["id" => $model["warehouse_id"]])
+            ->one();
+            $spec = ProductSpecification::find()
+              ->where(["part_id" => $model->part_id])
+              ->one();
+          $tg["warehouse_id"] = $w_house["name"];
+          $tg["production_date"] = $model["production_date"];
+          $tg["part_id"] = $spec["code"];
+          $tg["shift"] = $model["shift"];
+          $tg["target_qty"] = $model["target_qty"];
+          TelegramService::productionPlan($tg);
         } else {
           $data['status'] = 0;
           $data['errors'] = $model->getErrors();
