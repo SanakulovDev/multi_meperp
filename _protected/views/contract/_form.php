@@ -114,7 +114,7 @@
 			?>
 		</div>
 		<div class="col-lg-1">
-			<?=$form->field($model, 'status')->textInput(['maxlength' => 10, 'required' => true])?>
+			<?=$form->field($model, 'status')->textInput(['maxlength' => 10, 'required' => true, 'disabled' => $isUpdating ? true : false])?>
 		</div>
 		<!-- <div class="col-md-4 col-sm-4 col-lg-4">
 			<?=$form->field($model, 'status')->dropDownList($model->statusList, [

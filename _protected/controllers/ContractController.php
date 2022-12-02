@@ -44,6 +44,9 @@ class ContractController extends AppController
 				if (count($errorlist) == 0) {
 					$transaction->commit();
 					Yii::$app->session->setFlash('success', Yii::t('app', 'Contract created successfully.'));
+					if ($model->status == 0) {
+						return $this->redirect(["index"]);
+					}
 					return $this->redirect(["update?id=" . $model->id . "&status=" . $model->status]);
 				} else {
 					$transaction->rollBack();

@@ -174,7 +174,7 @@ use yii\helpers\Html;
 									<td class="text-center" title="<?=$row['remark']?>"><?=$row['part_color']?></td>
 									<td style="max-width: 150px;" class="td-nowrap"><?=mb_strtoupper($row['part_name'])?></td>
 									<td class="text-center"><?=$row['csourse']?></td>
-									<td class="text-right"><?=round(Part::findOne($row['part_id'])->averageUsage)?></td>
+									<td style="text-align: center" class="text-right"><?=round(Part::findOne($row['part_id'])->averageUsage)?></td>
 									<?
 										$c_week = 0;
 										foreach($arr[0] as $col){
@@ -190,9 +190,9 @@ use yii\helpers\Html;
 										}
 									?>
 
-									<td><? echo $c_week ;  ?></td>
-									<td><? echo $next_week ;  ?></td>
-									<td><? echo $month_total ;  ?></td>
+									<td style="text-align: center"><? echo $c_week ;  ?></td>
+									<td style="text-align: center"><? echo $next_week ;  ?></td>
+									<td style="text-align: center"><? echo $month_total ;  ?></td>
 									
 									<? foreach($period_daily as $col => $pdate){ ?>
 										<td class="text-right anothers  <?=($row['col'.($col + 1)] == 0) ? 'qty-zero ' : 'qty-bold'; if (array_search($col,$arr[0],true) > -1) echo 'week '; if (array_search( $col,$month,true) > -1) echo "month";?>">

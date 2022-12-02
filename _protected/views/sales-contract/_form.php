@@ -88,7 +88,7 @@
 		</div>
 		<div class="col-md-4 col-sm-4 col-lg-4">
 			<!-- <?=$form->field($model, 'status')->dropDownList($model->statusList)?> -->
-			<?=$form->field($model, 'status')->textInput(['maxlength' => true, 'required' => true])?>
+			<?=$form->field($model, 'status')->textInput(['maxlength' => true, 'required' => true, 'disabled' => $model->status ? true : false ])?>
 		</div>
 		<div class="col-lg-4">
 			<?=
