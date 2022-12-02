@@ -7,6 +7,7 @@ use app\models\Part;
 use app\models\PartProductionMonitor;
 use app\models\ProduceForm;
 use app\models\ProductionMonitor;
+use app\services\TelegramService;
 use app\models\ProductionOrder;
 use app\models\ProductionOrderSearch;
 use app\models\ProductionOrderUploadForm;
@@ -159,7 +160,18 @@ class ProductionOrderController extends AppController
           );
         }
       }
-      // ***
+
+      $floc = Warehouse::find()
+        ->where(["id" => $post_params["floc"]])
+        ->one();
+
+      $tg["quantity_of_copy"] = $model->quantity_of_copy;
+      $tg["quantity"] = $model->quantity;
+      $tg["code"] = $spec->code;
+      $tg["floc"] = $floc["name"];
+      $tg["side"] = $post_params["side"];
+      TelegramService::productionOrder($tg);
+
       $transaction->commit();
       Yii::$app->session->setFlash("success", Yii::t("app", "Production order created successfully."));
       return $this->redirect(["create", "ProductionOrderSearch" => ["ids" => $new_ids]]);
