@@ -114,11 +114,13 @@
 			?>
 		</div>
 		<div class="col-lg-1">
-			<?=$form->field($model, 'status')->textInput(['maxlength' => 10, 'required' => true, 'disabled' => $isUpdating ? true : false])?>
+			<?=$form->field($model, 'status')->textInput(['maxlength' => 10, 'type' => 'number', 'required' => true, 'disabled' => $count ? true : false])?>
 		</div>
 		<!-- <div class="col-md-4 col-sm-4 col-lg-4">
 			<?=$form->field($model, 'status')->dropDownList($model->statusList, [
 				'disabled' => ($isUpdating || $count) ? true : false,
+				'type' => 'number',
+				'maxlength' => 10
 			])?>
 		</div> -->
 
@@ -135,6 +137,12 @@
 <?php
 	$model = <<< JS
 	$(document).ready(function() {
+		$('#contract-status').on('input', () => {
+			const value = $('#contract-status').val()
+			if (value && value > 10) {
+				$('#contract-status').val(10)
+			}
+		})
 	});
 JS;
 	$this->registerJs($model, yii\web\View::POS_END);

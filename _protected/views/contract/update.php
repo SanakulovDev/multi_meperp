@@ -13,7 +13,7 @@
 		'model' => ($model ?? null),
 		'items' => ($items ?? null),
 		'isUpdating' => $count ? true : false,
-		'count' => false,
+		'count' => true,
 		'modelItems' => ($modelItems ?? null)
 	])?>
 

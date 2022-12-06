@@ -15,6 +15,7 @@
 	])?>
 	
 </div>
+<? if ($update) {?>
 <div class="contract-detail-create">
 	<div>
 		<?php foreach ($status as $count_of_component): ?>
@@ -31,6 +32,7 @@
 		<button type="button" onclick="onSave()" class="btn btn-success btn-sm">Сохранить</button>
 	</div>
 </div>
+<?}?>
 
 <?php
 	$add_item = <<< JS

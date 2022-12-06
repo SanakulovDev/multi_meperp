@@ -73,7 +73,7 @@
 					'buttons' => [
 						'update' => function ($url, $model) use($canUpdate) {
 							if(!$canUpdate) return false;
-							$url = Url::toRoute(['sales-contract/update', 'id' => $model->id]);
+							$url = Url::toRoute(['sales-contract/update', 'id' => $model->id, 'update' => 1]);
 							return Html::a('<span class="glyphicon  glyphicon-pencil" aria-hidden="true"></span>', $url, [
 								'title' => Yii::t('app', 'Edit')
 							]) . '&nbsp;';

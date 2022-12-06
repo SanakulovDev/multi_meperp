@@ -68,7 +68,7 @@
 			}
 		}
 
-		public function actionUpdate($id){
+		public function actionUpdate($id, $update = null){
 			$detail = new SalesContractDetail();
 			$model = $this->findModel($id);
 			$errorlist = [];
@@ -92,6 +92,7 @@
 							'errorlist' => ['details' => $errorlist],
 							'model' => $model,
 							'detail' => $detail,
+							'update' => $update ? false : true,
 							'status' => $arr
 						]);
 					}
@@ -99,6 +100,7 @@
 					return $this->render('update', [
 						'model' => $model,
 						'detail' => $detail,
+						'update' => $update ? false : true,
 						'status' => $arr
 					]);
 				}
@@ -106,6 +108,7 @@
 				return $this->render('update', [
 					'model' => $model,
 					'detail' => $detail,
+					'update' => $update ? false : true,
 					'status' => $arr
 				]);
 			}

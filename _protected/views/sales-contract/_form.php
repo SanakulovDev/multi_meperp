@@ -112,3 +112,17 @@
 	<?php ActiveForm::end(); ?>
 
 </div>
+
+<?php
+	$model = <<< JS
+	$(document).ready(function() {
+		$('#salescontract-status').on('input', () => {
+			const value = $('#salescontract-status').val()
+			if (value && value > 10) {
+				$('#salescontract-status').val(10)
+			}
+		})
+	});
+JS;
+	$this->registerJs($model, yii\web\View::POS_END);
+?>
