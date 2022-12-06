@@ -33,11 +33,16 @@
 			$isNewRecord = true;
 			if($model->load(Yii::$app->request->post())){
 				$transaction = Yii::$app->db->beginTransaction();
+				$redirectToIndex = false;
+				if ($model->status == 0) {
+					$model->status = 1;
+					$redirectToIndex = true;
+				}
 				if($model->save()){
 					if(count($errorlist) == 0){
 						$transaction->commit();
 						Yii::$app->session->setFlash('success', Yii::t('app', 'Sales contract created successfully.'));
-						if ($model->status == 0) {
+						if ($redirectToIndex) {
 							return $this->redirect(["index"]);
 						}
 						return $this->redirect(['/sales-contract/update?id=' . $model->id]);

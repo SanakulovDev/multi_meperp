@@ -118,7 +118,7 @@
 		</div>
 		<!-- <div class="col-md-4 col-sm-4 col-lg-4">
 			<?=$form->field($model, 'status')->dropDownList($model->statusList, [
-				'disabled' => $isUpdating ? true : false,
+				'disabled' => ($isUpdating || $count) ? true : false,
 			])?>
 		</div> -->
 

@@ -40,11 +40,16 @@ class ContractController extends AppController
 		$isNewRecord = true;
 		if ($model->load(Yii::$app->request->post())) {
 			$transaction = Yii::$app->db->beginTransaction();
+			$redirectToIndex = false;
+			if ($model->status == 0) {
+				$model->status = 1;
+				$redirectToIndex = true;
+			}
 			if ($model->save()) {
 				if (count($errorlist) == 0) {
 					$transaction->commit();
 					Yii::$app->session->setFlash('success', Yii::t('app', 'Contract created successfully.'));
-					if ($model->status == 0) {
+					if ($redirectToIndex) {
 						return $this->redirect(["index"]);
 					}
 					return $this->redirect(["update?id=" . $model->id . "&status=" . $model->status]);

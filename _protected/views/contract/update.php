@@ -12,7 +12,8 @@
 		'errorlist' => ($errorlist ?? null),
 		'model' => ($model ?? null),
 		'items' => ($items ?? null),
-		'isUpdating' => true,
+		'isUpdating' => $count ? true : false,
+		'count' => false,
 		'modelItems' => ($modelItems ?? null)
 	])?>
 
@@ -26,8 +27,12 @@
 		<?php endforeach; ?>
 	</div>
 
-	<button type="button" onclick="onSave()" class="btn btn-success btn-sm">Далее</button>
-	<button type="button" onclick="saveAndQuit()" class="btn btn-success btn-sm">Сохранить и выйти</button>
+	<? if (count($count)) { ?>
+		<button type="button" onclick="onSave()" class="btn btn-success btn-sm">Далее</button>
+		<button type="button" onclick="saveAndQuit()" class="btn btn-success btn-sm">Сохранить и выйти</button>
+		
+	<?}?>
+
 
 
 </div>
