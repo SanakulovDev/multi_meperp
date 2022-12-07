@@ -139,8 +139,8 @@
 	$(document).ready(function() {
 		$('#contract-status').on('input', () => {
 			const value = $('#contract-status').val()
-			if (value && value > 10) {
-				$('#contract-status').val(10)
+			if (value && value > 5) {
+				$('#contract-status').val(5)
 			}
 		})
 	});

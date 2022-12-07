@@ -86,7 +86,7 @@
 	<div class="row">
 		<!-- Цена для расчета -->
 		<!-- <div class="col-lg-2">
-			<?=$form->field($model_detail, 'is_primary_price')->dropDownList([ 0 => Yii::t('app', 'No'), 1 => Yii::t('app', 'Yes')])?>
+		<?=$form->field($model_detail, 'is_primary_price')->dropDownList([ 0 => Yii::t('app', 'No'), 1 => Yii::t('app', 'Yes')])?>
 		</div> -->
 		<!-- ТН-ВЭД код -->
 		<div class="col-lg-2" style="display: none">
@@ -105,8 +105,6 @@
 </div>
 
 <?php ActiveForm::end(); ?>
-
-</div>
 <?php
 	$add_item = <<< JS
 	$('form#w' + $index).on('submit', function(e){

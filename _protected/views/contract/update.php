@@ -30,7 +30,6 @@
 	<? if (count($count)) { ?>
 		<button type="button" onclick="onSave()" class="btn btn-success btn-sm">Далее</button>
 		<button type="button" onclick="saveAndQuit()" class="btn btn-success btn-sm">Сохранить и выйти</button>
-		
 	<?}?>
 
 

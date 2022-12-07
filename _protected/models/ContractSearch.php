@@ -42,7 +42,9 @@ class ContractSearch extends Contract
 	public function search($params, $mode = '')
 	{
 		$query = Contract::find()
-		->with(['supplier', 'buyer','paymentTerm', 'contractSubject', 'currency', 'contractSource', 'createdBy', 'updatedBy']);
+		->with(['supplier', 'buyer','paymentTerm', 'contractSubject', 'currency', 'contractSource', 'createdBy', 'updatedBy'])->orderBy([
+			'id' => SORT_DESC
+		  ]);
 		// add conditions that should always apply here
 		$dataProvider = new ActiveDataProvider(['query' => $query,]);
 		$dataProvider->pagination->pageSize = 20;

@@ -92,7 +92,7 @@ class ContractController extends AppController
 					if(Yii::$app->request->isAjax) {
 						return 1;
 					}
-					return $this->redirect(["update?id=" . $model->id . "&status=" . $model->status]);
+					return $this->redirect(["index"]);
 				} else {
 					$transaction->rollBack();
 					return $this->render('update', [
