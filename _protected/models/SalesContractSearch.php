@@ -37,7 +37,9 @@ class SalesContractSearch extends SalesContract {
    * @return ActiveDataProvider
    */
   public function search($params, $mode = '') {
-    $query = SalesContract::find();
+    $query = SalesContract::find()->orderBy([
+      'id' => SORT_DESC
+    ]);
     // add conditions that should always apply here
     $dataProvider = new ActiveDataProvider(['query' => $query,]);
     $dataProvider->pagination->pageSize = 20;
