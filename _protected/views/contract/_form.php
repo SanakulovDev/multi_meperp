@@ -114,7 +114,7 @@
 			?>
 		</div>
 		<div class="col-lg-1">
-			<?=$form->field($model, 'status')->textInput(['maxlength' => 10, 'type' => 'number', 'required' => true, 'disabled' => $count ? true : false])?>
+			<?=$form->field($model, 'status')->textInput(['maxlength' => 10, 'type' => 'number', 'required' => true, 'value' => $count ? $model->status : 0, 'disabled' => $count ? true : false])?>
 		</div>
 		<!-- <div class="col-md-4 col-sm-4 col-lg-4">
 			<?=$form->field($model, 'status')->dropDownList($model->statusList, [

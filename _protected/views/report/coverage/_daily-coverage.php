@@ -14,7 +14,7 @@ use app\models\Part;
 			<td colspan="100" class="wd_title" style="text-align: left;"><?= Yii::t('app', 'No of short items') ?></td>
 		</tr>
 		<tr class="tr_minus_count">
-			<td colspan="12">
+			<td colspan="6">
 
 			<div class="form-inline df-div-filter" style="display: none;">
 
@@ -35,6 +35,11 @@ use app\models\Part;
 			</div>
 
 			</td>
+			<td class="main-stock-td"></td>
+			<td class="main-stock-td"></td>
+            <td class="main-stock-td"></td>
+            <td class="main-stock-td"></td>
+            <td class="main-stock-td"></td>
 			<td></td>
 			<!-- <td colspan="4" class="wd_title"><?= Yii::t('app', 'Total DOH ($)') ?>:</td> -->
 			<td class="total_doh_sum_import" style="text-align: right;font-weight: bold" title="1 USD: <?= Helpers::formatRemoveDecimal($rateUSD) ?>, 1 EUR: <?= Helpers::formatRemoveDecimal($rateEUR) ?>, 1 RUB: <?= Helpers::formatRemoveDecimal($rateRUB) ?>"><?= $loading ?></td>

@@ -11,7 +11,7 @@ use app\models\Part;
         </tr>
 
         <tr class="tr_minus_count">
-            <td colspan="12">
+            <td colspan="7">
 
                 <div class="form-inline cf-div-filter" style="display: none;">
 
@@ -32,6 +32,11 @@ use app\models\Part;
                 </div>
 
             </td>
+			<td class="main-stock-td"></td>
+            <td class="main-stock-td"></td>
+            <td class="main-stock-td"></td>
+            <td class="main-stock-td"></td>
+            <td class="main-stock-td"></td>
 			<td></td>
 			<td></td>
             <!-- <td colspan="4" class="wd_title"><?= Yii::t('app', 'Total DOH ($)') ?>:</td> -->

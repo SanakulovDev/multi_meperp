@@ -283,6 +283,7 @@ $script1 = <<< JS
 
 	$('.main-stock').on('click', function () {
 		$('.stock').toggle();
+		$('.main-stock-td').toggle();
 		$('#w_1, #w_2, #w_3, #w_4, #w_5').toggle();
 		$('#s_1, #s_2, #s_3, #s_4, #s_5').toggle();
 		$('#l_1, #l_2, #l_3, #l_4, #l_5').toggle();

@@ -34,7 +34,7 @@ class ContractDetailController extends AppController
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 * @return mixed
 	 */
-	public function actionCreate()
+	public function actionCreate($isAjax = null)
 	{
 		$model = new ContractDetail();
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -42,7 +42,7 @@ class ContractDetailController extends AppController
 			if(!$result['success'] == 1){
 				Yii::$app->session->setFlash('error', Yii::t('app',  implode('<br>',$result['errors'])));
 			} else {
-				if ($app->request->isAjax) {
+				if ($isAjax) {
 					return $model->id;
 				} else {
 					return $this->redirect(['index']);
@@ -230,8 +230,8 @@ class ContractDetailController extends AppController
 	{
 		$contract = $contractDetail->contract;
 		
-		if(!$contract->isActive)
-			return ['success' => 0,'errors' => [Yii::t('app', 'You cannot set this price as primary.')]];
+		// if(!$contract->isActive)
+		// 	return ['success' => 0,'errors' => [Yii::t('app', 'You cannot set this price as primary.')]];
 		
 		
 		$contractDetail->scenario = 'primary-price';

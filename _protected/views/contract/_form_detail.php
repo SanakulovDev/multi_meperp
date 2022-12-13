@@ -108,11 +108,11 @@
 <?php
 	$add_item = <<< JS
 	$('form#w' + $index).on('submit', function(e){
-		e.preventDefault();		
+		e.preventDefault();
 		var datastring = $(this).serialize();
         $.ajax({
             type: "POST",
-            url: "/contract-detail/create",
+            url: "/contract-detail/create?isAjax=1",
             data: datastring,
             success: function(data) {
 				if (!isNaN(data)) {

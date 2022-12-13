@@ -29,11 +29,14 @@
 			* If creation is successful, the browser will be redirected to the 'view' page.
 			* @return mixed
 			*/
-		public function actionCreate(){
+		public function actionCreate($isAjax = null){
 			$model = new SalesContractDetail();
 			if($model->load(Yii::$app->request->post()) && $model->save()){
-				return $model->id;
-				return $this->redirect(['index']);
+				if ($isAjax) {
+					return $model->id;
+				} else {
+					return $this->redirect(['index']);
+				}
 			}
 			return $this->render('create', [
 				'model' => $model,

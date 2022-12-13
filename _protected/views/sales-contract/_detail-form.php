@@ -80,7 +80,7 @@
 		var datastring = $(this).serialize();
         $.ajax({
             type: "POST",
-            url: "/sales-contract-detail/create",
+            url: "/sales-contract-detail/create?isAjax=1",
             data: datastring,
             success: function(data) {
 				if (!isNaN(data)) {
