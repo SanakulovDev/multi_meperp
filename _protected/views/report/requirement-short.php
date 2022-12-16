@@ -1,0 +1,209 @@
+<?php
+	use app\components\Helpers;
+    use app\models\Part;
+    use yii\helpers\Html;
+
+    $this->title = Yii::t('app', 'Part requirement Short');
+	  $this->params['breadcrumbs'][] = $this->title;
+    $arr = [[], []];
+    $nextWeek = false;
+    $indexMonth = '';
+    $month = [];
+    $loading = '<img src="/themes/adminlte/img/loading.gif">';
+	  $calc_at = null;
+?>
+<?= $this->render('../common/_loading'); ?>
+<div class="req-index">
+    <div class="panel">
+        <div class="panel-heading">
+                <img style="height:28px;" src="/img/mep1.jpg" title="<?php echo Yii::$app->params['comp_name'] ?>" class="pull-left"/>
+                <h3 class="pull-left" style="margin: 5px 0px -5px 10px;">
+                <?=Yii::t('app', $this->title)?>
+                <span id="calc_at" style="font-size: 14px;color: #a29393;"><?=$loading?></span>
+            </h3>
+            <div style="clear: both;"></div>
+        </div>
+    </div>
+
+    <table class="table table-req" id="fix_table_d">
+      <thead>
+                <tr class="tr_head">
+                    <th style="width: 30px;" class="text-center">№</th>
+                    <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Part')?></th>
+                    <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Part color')?></th>
+                    <th style="width: 100px;" class="text-center"><?=mb_strtoupper(Yii::t('app', 'Part name'))?></th>
+                    <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Type')?></th>
+                    <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Average usage')?></th>
+                    <th style="width: 100px;" class="text-center">1 нед</th>
+                    <th style="width: 100px;" class="text-center">след нед</th>
+                    <th style="width: 100px;" class="text-center">1месяц</th>
+                    <th style="width: 100px;" class="text-center">Количество остатка</th>
+                </tr>
+      </thead>
+      <tbody>
+          <?php $i = 0; ?>
+          <?php foreach($data_daily as $row):?>
+            <?php $i++; ?>
+            <tr <?=($i%2 == 0) ? 'class="tr_odd"' : ''?>>
+                <td class="text-center"><?=$i?></td>
+                <td class="text-center"><?=$row['part_no']?></td>
+                <td class="text-center" title="<?=$row['remark']?>"><?=$row['part_color']?></td>
+                <td style="max-width: 150px;" class="td-nowrap"><?=mb_strtoupper($row['part_name'])?></td>
+                <td class="text-center"><?=$row['csourse']?></td>
+                <td style="text-align: center" class="text-right"><?=round(Part::findOne($row['part_id'])->averageUsage)?></td>
+                <?
+                    $c_week = 0;
+                    foreach($arr[0] as $col){
+                        $c_week = $c_week + Helpers::formatRemoveDecimal($row['col'.($col + 1)]);
+                    }
+                    $next_week = 0;
+                    foreach($arr[1] as $col){
+                        $next_week = $next_week + Helpers::formatRemoveDecimal($row['col'.($col + 1)]);
+                    }
+                    $month_total = 0;
+                    foreach($month as $col){
+                        $month_total = $month_total + Helpers::formatRemoveDecimal($row['col'.($col + 1)]);
+                    }
+                ?>
+                <td style="text-align: center"><? echo $c_week ;  ?></td>
+                <td style="text-align: center"><? echo $next_week ;  ?></td>
+                <td style="text-align: center"><? echo $month_total ;  ?></td>
+                <td style="text-align: center"><?= dividestring(intval($row['qty'])*1, 3)?></td>
+            </tr>
+          <?php endforeach; ?>
+      </tbody>
+
+
+    </table>
+</div>
+<?
+	$routeDaily = yii\helpers\Url::toRoute(['download-daily-requirement']);
+	$routeWeekly = yii\helpers\Url::toRoute(['download-weekly-requirement']);
+	ob_start();?>
+	
+	$('#fix_table_w').tableFixer({'left' : 4});
+	changeHeightW();
+	$(window).resize(function(){
+		changeHeightW();
+	});
+	function changeHeightW(){
+		window_h = $(window).height();
+		table_h = window_h - 200;
+		// console.log(window_h+"-"+table_h);		
+		$('#tab_1').height(table_h+'px');
+	}
+        
+        
+        $('#fix_table_d').tableFixer({'left' : 4});
+	changeHeightD();
+	$(window).resize(function(){
+		changeHeightD();
+	});
+	function changeHeightD(){
+		window_h = $(window).height();
+		table_h = window_h - 200;
+		// console.log(window_h+"-"+table_h);		
+		$('#tab_2').height(table_h+'px');
+	}
+
+	$('#checkbox').on('change', function () {
+		const check1 = $('#checkbox').is(":checked")
+		const check2 = $('#checkbox2').is(":checked")
+		if (check1) {
+			$('.anothers').hide();
+			$('.week').show();
+		}
+		if (!check1 && !check1) {
+			$('.anothers').show();
+		}
+		if (check1 && check2) {
+			$('#checkbox2').prop('checked', false);
+		}
+	})
+	$('#checkbox2').on('change', function () {
+		const check1 = $('#checkbox').is(":checked")
+		const check2 = $('#checkbox2').is(":checked")
+		if (check2) {
+			$('.anothers').hide();
+      		$('.month').show();
+		}
+		if (!check1 && !check2) {
+			$('.anothers').show();
+		}
+		if (check1 && check2) {
+			$('#checkbox').prop('checked', false);
+		}
+	})
+
+        
+        $('#calc_at').html('(<?=$calc_at?>)');
+        
+        
+        $('#tabBtn_1').on('click', function () {
+            $('#btnDownload').attr('href','<?=$routeWeekly?>')
+        })
+        
+        $('#tabBtn_2').on('click', function () {
+            $('#btnDownload').attr('href','<?=$routeDaily?>')
+				})
+				
+		$('#loading').hide();
+
+	
+<?php $this->registerJs(ob_get_clean());?>
+<style>
+:root {
+  --color-bg: #458;
+  --color-switch-thumb: #ccc;
+  --color-switch-bg: #777;
+  --color-switch-bg-active: #245;
+  
+  --switch-size: 40px;
+}
+.switch-input {
+  display: none;
+}
+.switch {
+  --switch-width: var(--switch-size);
+  --switch-height: calc(var(--switch-width) / 2);
+  --switch-border: calc(var(--switch-height) / 10);
+  --switch-thumb-size: calc(var(--switch-height) - var(--switch-border) * 2);
+  --switch-width-inside: calc(var(--switch-width) - var(--switch-border) * 2);
+  display: block;
+  box-sizing: border-box;
+  width: var(--switch-width);
+  height: var(--switch-height);
+  border: var(--switch-border) solid var(--color-switch-bg);
+  border-radius: var(--switch-height);
+  background-color: var(--color-switch-bg);
+  cursor: pointer;
+  margin: var(--switch-margin) 0;
+  transition: 300ms 100ms;
+  
+  position: relative;
+}
+.switch::before {
+  content: '';
+  background-color: var(--color-switch-thumb);
+  height: var(--switch-thumb-size);
+  width: var(--switch-thumb-size);
+  border-radius: var(--switch-thumb-size);
+  
+  position: absolute;
+  top: 0;
+  left: 0;
+  
+  transition: 300ms, width 600ms;
+}
+.switch-input:checked + .switch {
+  background-color: var(--color-switch-bg-active);
+  border-color: var(--color-switch-bg-active);
+}
+.switch:active::before {
+  width: 80%;
+}
+.switch-input:checked + .switch::before {
+  left: 100%;
+  transform: translateX(-100%);
+}
+</style>

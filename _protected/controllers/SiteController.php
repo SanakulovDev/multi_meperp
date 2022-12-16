@@ -11,6 +11,9 @@ use app\models\ProductionMonitor;
 use app\models\ResetPasswordForm;
 use app\models\SignupForm;
 use app\models\User;
+use app\models\ProductionPlan;
+use app\models\ProductionOrder;
+use app\models\SalesPlan;
 use app\rbac\models\Role;
 use Yii;
 use yii\filters\AccessControl;
@@ -284,7 +287,47 @@ class SiteController extends Controller
 		// *****
 
     $data['productionMonitor'] = self::getProductionMonitorForRecentWeek();
-		return $this->render('admin-dashboard', ['data' => $data]);
+
+
+// table 1 coverage
+	$controller = new \app\controllers\ReportController('site', $this->module);
+	$localCoverageToday = $controller->localCoverage;
+
+// production plan
+	$productionPlanToday = ProductionPlan::find()
+		->where(['DATE_FORMAT(production_date, "%Y-%m-%d" )' =>  date("Y-m-d", time())])
+		->all();
+	$productionPlanTomorrow = ProductionPlan::find()
+		->where(['DATE_FORMAT(production_date, "%Y-%m-%d" )' =>  date("Y-m-d", strtotime("+1 day"))])
+		->all();
+// sales plan
+	$salesPlanMonth = SalesPlan::find()
+		->where(['DATE_FORMAT(target_date, "%Y-%m" )' =>  date("Y-m")])
+		->all();
+
+	// fact todays
+	$begin_date = date("Y-m-d")." 00:00:00";
+	$end_date = date("Y-m-d H:i:s");
+	$factTodays	= ProductionOrder::find()
+		->where(['between','FROM_UNIXTIME(created_at, "%Y-%m-%d %H:%i:%s")', $begin_date, $end_date])
+		->andWhere(['is_label' => 2])
+		->all();
+	// fact tomorrow
+	// $begin_date =
+	$factTomorrow = ProductionOrder::find()
+		->where(['>=','FROM_UNIXTIME(created_at, "%Y-%m-%d %h" )',  date("Y-m-d h", strtotime("+1 day"))])
+		->andWhere(['is_label' => 2])
+		->all();
+	// vd($localCoverageToday[0]);
+		return $this->render('admin-dashboard', [
+			'data' 						=> $data,
+			'productionPlanToday' 		=> $productionPlanToday,
+			'productionPlanTomorrow' 	=> $productionPlanTomorrow,
+			'factTodays' 				=> $factTodays,
+			'factTomorrow' 				=> $factTomorrow,
+			'salesPlanMonth' 			=> $salesPlanMonth,
+			'localCoverageToday' 		=> $localCoverageToday,
+		]);
 	}
 
   private function getProductionMonitorForRecentWeek() {

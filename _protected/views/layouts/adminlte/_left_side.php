@@ -509,6 +509,13 @@ use yii\widgets\Menu; ?>
         'template' => '<a href="/report/requirement"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
     }
+    if(Yii::$app->user->can('fg-invoice-index')) {
+      $m_new[] = [
+        'label' => 'Part requirement Short',
+        'url' => ['/fg-invoice/index'],
+        'template' => '<a href="/report/requirement-short"><i class="fa fa-list"></i> <span>{label}</span></a>',
+      ];
+    }
     if (Yii::$app->user->can('fg-invoice-index')) {
       $m_new[] = [
         'label' => 'Текущий остаток',
@@ -516,6 +523,7 @@ use yii\widgets\Menu; ?>
         'template' => '<a href="/report/material-stock"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
     }
+    
 
     if (Yii::$app->user->can('posts-index')) {
       $m_new[] = [

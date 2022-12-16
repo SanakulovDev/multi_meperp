@@ -35,7 +35,10 @@ class ProductionPlanSearch extends ProductionPlan{
 		$query = ProductionPlan::find();
 		// add conditions that should always apply here
 		$dataProvider = new ActiveDataProvider(
-			['query' => $query,]
+			[
+				'query' => $query,
+				'sort' => ['defaultOrder'=>'production_date desc']
+			]
 		);
 		$this->load($params);
 		if(!$this->validate()){

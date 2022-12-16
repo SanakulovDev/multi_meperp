@@ -5,6 +5,13 @@ use yii\helpers\Url;
 <?php
   $this->title = Yii::t('app', 'Admin dashboard');
 ?>
+
+
+<style>
+  .table-font-size{
+    font-size: 12px;
+  }
+</style>
 <h2 class="text-center text-bold" style="color: #2378ab; margin-top: 8px;margin-bottom: -5px;"><?=Yii::$app->name?></h2>
 <h4 class="text-center" style="color: #2378ab;"><?=Yii::$app->params['comp_name']?></h4>
 <div class="row">
@@ -77,25 +84,164 @@ use yii\helpers\Url;
 
 <div class="box box-primary">
   <div class="box-header with-border">
-    <h3 class="box-title">Created documents</h3>
+    <h3 class="box-title">Report</h3>
 
 
   </div>
   <div class="box-body">
-    <div class="row">
-      <div class="col-lg-12">
-
-        <div class="chart">
-          <canvas id="lineChartDocs" style="height: 250px; width: 510px;" width="510" height="250"></canvas>
-        </div>
+    <div class="row d-flex" style="  justify-content: between;">
+      <div class="col-md-4 col-sm-6  bg-danger mb-3">
+        <p class="font-weight-bold" style="font-weight: bold;"><?= Yii::t('app', 'Список красных материалов')?></p>
+        <table class="table table-bordered table-hover table-responsive table-font-size">
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>Материал</th>
+              <th>Марка</th>
+              <th>Вес</th>
+            </tr>
+          </thead>
+          <tbody>
+              <?php foreach($localCoverageToday as $key => $item):?>
+                <?php if($item['col1'] < 0):?>
+                  <tr>
+                      <th><?= $key+1 ?></th>
+                      <th><?= $item['part_no']?></th>
+                      <th><?= $item['part_name']?></th>
+                      <th><?= $item['col1']?></th>
+                  </tr>
+                <?php endif;?>
+              <?php endforeach;?>
+          </tbody>
+        </table>
       </div>
+
+      <div class="col-md-4 col-sm-6   bg-warning">
+        <p class="font-weight-bold" style="font-weight: bold;"><?= Yii::t('app', 'Список на сегодня производство')?></p>
+        <table class="table table-bordered table-hover table-responsive table-font-size">
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>№ материала</th>
+              <th>Количество</th>
+              <th>Смена</th>
+            </tr>
+          </thead>
+          <tbody>
+              <?php foreach($productionPlanToday as $key => $item): ?>
+                <tr>
+                  <th><?= $key+1 ?></th>
+                  <td><?=$item->part?$item->part->partinfo:''?></td>
+                  <td class="text-right"><?= divideString($item->target_qty, 3)?></td>
+                  <td class="text-right"><?=$item->shift?></td>
+                </tr>
+              <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-md-4 col-sm-6    bg-info" style="margin-bottom:   50px;  ">
+        <p class="font-weight-bold" style="font-weight: bold;"><?= Yii::t('app', 'Список на месяц производство')?></p>
+        <table class="table table-bordered table-hover table-responsive table-font-size">
+          <thead>
+            <tr class="text-center">
+              <th>№</th>
+              <th>№ материала</th>
+              <th>Количество</th>
+              <th>Смена</th>
+            </tr>
+          </thead>
+          <tbody>
+              <?php foreach($productionPlanTomorrow as $key => $item): ?>
+                <tr>
+                  <th><?= $key+1 ?></th>
+                  <td><?=$item->part?$item->part->partinfo:''?></td>
+                  <td class="text-right"><?= divideString($item->target_qty, 3)?></td>
+                  <td class="text-right"><?=$item->shift?></td>
+                </tr>
+              <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+
+<!-- Sales Plan -->
+    <div class="col-md-4 col-sm-6    bg-info" style="margin-bottom:   50px;  ">
+        <p class="font-weight-bold" style="font-weight: bold;"><?= Yii::t('app', 'Список план  реализации')?></p>
+        <table class="table table-bordered table-hover table-responsive table-font-size" >
+          <thead>
+            <tr class="text-center">
+              <th>№</th>
+              <th>Клиент</th>
+              <th>№ материала</th>
+              <th>Количество</th>
+            </tr>
+          </thead>
+          <tbody>
+              <?php foreach($salesPlanMonth as $key => $item): ?>
+                <tr>
+                  <th><?= $key+1 ?></th>
+                  <td><?= $item->customer?$item->customer->name:'-'?></td>
+                  <td><?=$item->part?$item->part->partinfo:''?></td>
+                  <td class="text-right"><?= divideString($item->target_qty, 3)?></td>
+                </tr>
+              <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+
+
+      <div class="col-md-4 col-sm-6   bg-success m-4">
+        <p class="font-weight-bold" style="font-weight: bold;"><?= Yii::t('app', 'Факт производство сегодня')?></p>
+        <table class="table table-bordered table-hover table-responsive table-font-size">
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>№ материала</th>
+              <th>Количество</th>
+              <th>Создан</th>
+            </tr>
+          </thead>
+          <tbody>
+              <?php foreach($factTodays as $key => $item): ?>
+                <tr>
+                  <th><?= $key+1 ?></th>
+                  <td><?=$item->part?$item->part->partinfo:''?></td>
+                  <td class="text-right"><?= divideString($item->quantity*1, 3)?></td>
+                  <td><?= (!empty($item->created_at)) ? date('d.m.Y (H:i:s)', $item->created_at) : '-'?></td>
+                </tr>
+              <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- <div class="col-md-4 col-sm-6   bg-success m-4">
+        <p class="font-weight-bold" style="font-weight: bold;"><?= Yii::t('app', 'Факт производство на завтра')?></p>
+        <table class="table table-bordered table-hover table-responsive table-font-size">
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>№ материала</th>
+              <th>Количество</th>
+              <th>Создан</th>
+            </tr>
+          </thead>
+          <tbody>
+              <?php foreach($factTomorrow as $key => $item): ?>
+                <tr>
+                  <th><?= $key+1 ?></th>
+                  <td><?=$item->part?$item->part->partinfo:''?></td>
+                  <td><?=$item->quantity?></td>
+                  <td><?= (!empty($item->created_at)) ? date('d.m.Y (H:i:s)', $item->created_at) : '-'?></td>
+                </tr>
+              <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div> -->
       <!-- /.box-body -->
     </div>
 
   </div>
 </div>
-
-
 <?php
 
   $users_data = $data['users_data'];

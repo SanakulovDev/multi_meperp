@@ -46,6 +46,11 @@ class SalesPlanSearch extends SalesPlan
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort'  => [
+                'defaultOrder' => [
+                    'target_date' => SORT_DESC,
+                ],
+            ]
         ]);
 
         $this->load($params);
@@ -59,7 +64,7 @@ class SalesPlanSearch extends SalesPlan
             'id' => $this->id,
             'target_date' => $this->target_date,
             'target_qty' => $this->target_qty,
-        ])->orderBy(['id' => SORT_DESC])->all();
+        ])->all();
 
         $query->andFilterWhere(['OR',
                               ['like', 'part.part_no', $this->part_id],
