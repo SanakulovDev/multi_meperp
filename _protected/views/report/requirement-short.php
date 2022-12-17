@@ -21,6 +21,9 @@
                 <?=Yii::t('app', $this->title)?>
                 <span id="calc_at" style="font-size: 14px;color: #a29393;"><?=$loading?></span>
             </h3>
+            <p class="pull-right" style="margin: 0px">
+              <?=Html::a(Yii::t('app', 'btn-download'), ['download-requirement-short'], ['class' => 'btn btn-info btn-sm', 'id' => 'btnDownload'])?>
+            </p>
             <div style="clear: both;"></div>
         </div>
     </div>

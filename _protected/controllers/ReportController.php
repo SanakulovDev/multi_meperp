@@ -3825,7 +3825,6 @@ class ReportController extends AppController {
           order by  sk.qty desc
 
       ";
-      // vd($query);
       $data_daily = Yii::$app->db
         ->createCommand($query, [
           ":type_d" => CoverageController::TYPE_DAILY,
@@ -3838,5 +3837,87 @@ class ReportController extends AppController {
       "data_daily" => $data_daily,
     ]);      
 
+  }
+  // excel import
+  public function actionDownloadRequirementShort()
+  {
+    // $this->checkReportAccess("requirement-short");
+    ini_set("memory_limit", "-1");
+    $query = "
+          select p.part_no,p.part_name,p.part_color, p.remark, cs.name csourse, sk.qty, a.*  from
+          (
+                  select r.id rid,r.part_id,r.calc_at, w.* from req_detail_plan w left join req r on w.req_id = r.id
+                  where w.type = :type_d or w.type = :type_l or w.type = :type_c or w.type = :type_s
+          ) a
+          left join part p on a.part_id = p.id
+          left join contract_source cs on p.contract_source_id = cs.id
+          left join stock sk on sk.part_id = p.id
+          order by  sk.qty desc
+
+      ";
+      $data_daily = Yii::$app->db
+        ->createCommand($query, [
+          ":type_d" => CoverageController::TYPE_DAILY,
+          ":type_l" => CoverageController::TYPE_LOCAL_DAILY,
+          ":type_c" => CoverageController::TYPE_LOCAL_CONS,
+          ":type_s" => CoverageController::TYPE_LOCAL_SEMI,
+        ])
+        ->queryAll();
+    $arrFile = [];
+    // vd($data_daily[0]);
+    $arr = [[], []];
+    $month = [];
+    foreach($data_daily as $key => $detailWide) {
+      unset($tmpArray);
+      $tmpArray['id'] = $key+1;
+      $tmpArray["part_no"] = $detailWide['part_no'];
+      $tmpArray["part_color"] = $detailWide['part_color'];
+      $tmpArray["part_name"] = $detailWide['part_name'];
+      $tmpArray["csourse"] = $detailWide['csourse'];
+      $avg = round(Part::findOne($detailWide['part_id'])->averageUsage);
+      $c_week = 0;
+      foreach($arr[0] as $col){
+          $c_week = $c_week + Helpers::formatRemoveDecimal($detailWide['col'.($col + 1)]);
+      }
+      $next_week = 0;
+      foreach($arr[1] as $col){
+          $next_week = $next_week + Helpers::formatRemoveDecimal($detailWide['col'.($col + 1)]);
+      }
+      $month_total = 0;
+      foreach($month as $col){
+          $month_total = $month_total + Helpers::formatRemoveDecimal($detailWide['col'.($col + 1)]);
+      }
+      $tmpArray["avg_usage"] = $avg;
+      $tmpArray["week"] = $c_week;
+      $tmpArray["next_week"] = $next_week;
+      $tmpArray["month"] = $month_total;
+      $tmpArray['qty'] = round($detailWide['qty']);
+      $arrFile[] = $tmpArray;
+      
+    }
+    $header_titles = [
+      0 => 'ID',
+      1 => 'Материал',
+      2 => 'Цвет',
+      3 => 'МАРКА',
+      4 => 'Тип',
+      5 => 'Среднее исполь.',
+      6 => '1 нед',
+      7 => 'след нед',
+      8 => '1месяц',
+      9 => 'Количество остатка'
+    ];
+    $detail_titles = [];
+    $titles = array_merge($header_titles, $detail_titles);
+    $file = Yii::createObject([
+      "class" => 'codemix\excelexport\ExcelFile',
+      "sheets" => [
+        "coverage" => [
+          "data" => $arrFile,
+          "titles" => $titles,
+        ],
+      ],
+    ]);
+    $file->send(Helpers::downloadFileName("daily-requirement"));
   }
 }
