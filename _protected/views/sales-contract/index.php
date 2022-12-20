@@ -173,18 +173,27 @@
 					'contentOptions' => ['style' => 'text-align: center;'],
 					'content' => function($model, $column){
 						$sts_value = $model->status;
-						switch($sts_value){
-							case 1:
-								$class = 'success';
-								$sts_name = "✔";
-								$sts_title = Yii::t('app', 'Active');
-								break;
-							case 0:
-								$class = 'danger';
-								$sts_name = "✖";
-								$sts_title = Yii::t('app', 'Inactive');
-								break;
+						if ($sts_value >= 0) {
+							$class = 'success';
+							$sts_name = "✔";
+							$sts_title = Yii::t('app', 'Active');
+						} else {
+							$class = 'danger';
+							$sts_name = "✖";
+							$sts_title = Yii::t('app', 'Inactive');
 						}
+						// switch($sts_value){
+						// 	case 1:
+						// 		$class = 'success';
+						// 		$sts_name = "✔";
+						// 		$sts_title = Yii::t('app', 'Active');
+						// 		break;
+						// 	case 0:
+						// 		$class = 'danger';
+						// 		$sts_name = "✖";
+						// 		$sts_title = Yii::t('app', 'Inactive');
+						// 		break;
+						// }
 						$html = Html::tag('span', Html::encode($sts_name), ['class' => 'label label-'.$class]);
 						return $sts_value === null ? $column->grid->emptyCell : $html;
 					},
