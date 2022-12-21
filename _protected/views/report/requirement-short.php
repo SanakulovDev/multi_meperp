@@ -26,7 +26,12 @@
             </p>
             <div style="clear: both;"></div>
         </div>
-    </div>
+
+      <div class="">
+        <a href="<?= \yii\helpers\Url::to(['report/requirement-short', 'filter' => 1])?>" class="btn btn-success">Фильтр</a>
+        <a href="<?= \yii\helpers\Url::to(['report/requirement-short'])?>" class="btn btn-danger">Очистить фильтра</a>
+      </div>    </div>
+
 
     <table class="table table-req" id="fix_table_d">
       <thead>

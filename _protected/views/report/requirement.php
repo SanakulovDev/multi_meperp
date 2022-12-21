@@ -38,7 +38,13 @@ use yii\helpers\Html;
 				<?=Html::a(Yii::t('app', 'btn-download'), ['download-weekly-requirement'], ['class' => 'btn btn-info btn-sm', 'id' => 'btnDownload'])?>
 			</p>
 			<div style="clear: both;"></div>
-		</div>
+
+      <div class="">
+        <a href="<?= \yii\helpers\Url::to(['report/requirement', 'filter' => 1])?>" class="btn btn-success">Фильтр</a>
+        <a href="<?= \yii\helpers\Url::to(['report/requirement'])?>" class="btn btn-danger">Очистить фильтра</a>
+      </div>    </div>
+
+  </div>
 		<div class="panel-body">
 
 
@@ -98,7 +104,15 @@ use yii\helpers\Html;
 							<tbody>
 							<? $i = 0; ?>
 							<? foreach($data_weekly as $row){
-								$i++; ?>
+                $calc_at = date("d.m.Y H:i", strtotime($row['calc_at']));
+                if ($filter != null)
+                {
+                  if (Part::findOne($row['part_id'])->averageUsage == 0)
+                    continue;
+                }
+                $i++;
+
+                ?>
 								<tr <?=($i%2 == 0) ? 'class="tr_odd"' : ''?>>
 									<td class="text-center"><?=$i?></td>
 									<td class="text-center"><?=$row['part_no']?></td>
@@ -113,7 +127,7 @@ use yii\helpers\Html;
 									<? } ?>
 
 								</tr>
-								<? $calc_at = date("d.m.Y H:i", strtotime($row['calc_at'])); ?>
+								<?/* $calc_at = date("d.m.Y H:i", strtotime($row['calc_at'])); */?>
 							<? } ?>
 							</tbody>
 						</table>
@@ -167,7 +181,15 @@ use yii\helpers\Html;
 							<tbody>
 							<? $i = 0; ?>
 							<? foreach($data_daily as $row){
-								$i++; ?>
+                $calc_at = date("d.m.Y H:i", strtotime($row['calc_at']));
+                if ($filter != null)
+                {
+                  if (Part::findOne($row['part_id'])->averageUsage == 0)
+                    continue;
+                }
+							  $i++;
+
+								?>
 								<tr <?=($i%2 == 0) ? 'class="tr_odd"' : ''?>>
 									<td class="text-center"><?=$i?></td>
 									<td class="text-center"><?=$row['part_no']?></td>

@@ -916,7 +916,7 @@ class ReportController extends AppController {
     ]);
   }
 
-  public function actionRequirement() {
+  public function actionRequirement($filter=null) {
     $this->checkReportAccess();
     $this->layout = "req";
     $query = "
@@ -952,6 +952,7 @@ class ReportController extends AppController {
     return $this->render("requirement", [
       "data_weekly" => $data_weekly,
       "data_daily" => $data_daily,
+      "filter" => $filter,
     ]);
   }
 
@@ -3809,7 +3810,7 @@ class ReportController extends AppController {
 
 
   // requirement-short
-  public function actionRequirementShort()
+  public function actionRequirementShort($filter=null)
   {
     // $this->checkReportAccess();
     $this->layout = "req";
@@ -3825,6 +3826,23 @@ class ReportController extends AppController {
           order by  sk.qty desc
 
       ";
+
+    if ($filter != null){
+      $query = "
+          select p.part_no,p.part_name,p.part_color, p.remark, cs.name csourse, sk.qty, a.*  from
+          (
+                  select r.id rid,r.part_id,r.calc_at, w.* from req_detail_plan w left join req r on w.req_id = r.id
+                  where w.type = :type_d or w.type = :type_l or w.type = :type_c or w.type = :type_s
+          ) a
+          left join part p on a.part_id = p.id
+          left join contract_source cs on p.contract_source_id = cs.id
+          left join stock sk on sk.part_id = p.id
+          WHERE sk.qty !=0
+          order by  sk.qty desc
+
+      ";
+    }
+
       $data_daily = Yii::$app->db
         ->createCommand($query, [
           ":type_d" => CoverageController::TYPE_DAILY,
