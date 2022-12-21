@@ -42,7 +42,7 @@ class TelegramService
 
     $telegram = new Telegram($token);
     $text = '#new'. PHP_EOL;
-    $text = 'Факт производства';
+    $text = '#Факт' . PHP_EOL;
     $text .= '<b>Floc: '.$data['floc'].'</b>'. PHP_EOL;
     // $text .= '<b>Модель: '.$data['model'].'</b>'. PHP_EOL;
     $text .= '--------------------------'.PHP_EOL;
@@ -70,7 +70,7 @@ class TelegramService
 
     $telegram = new Telegram($token);
     $text = '#new'. PHP_EOL;
-    $text = 'План производства';
+    $text = '#План'. PHP_EOL;
     $text .= '<b>№ материал: '.$data['part_id'].'</b>'. PHP_EOL;
     // $text .= '<b>Модель: '.$data['model'].'</b>'. PHP_EOL;
     $text .= '--------------------------'.PHP_EOL;

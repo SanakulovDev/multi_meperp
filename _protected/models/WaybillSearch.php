@@ -40,7 +40,7 @@ class WaybillSearch extends Waybill
      */
     public function search($params)
     {
-        $query = Waybill::find()->joinWith(['factory', 'createdBy',
+        $query = Waybill::find()->orderBy(['id' => SORT_DESC])->joinWith(['factory', 'createdBy',
             'updatedBy' => function($query) {
                 $query->from(['u2' => User::tableName()]);
             }]);

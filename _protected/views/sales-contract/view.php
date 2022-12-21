@@ -13,7 +13,7 @@
 <div class="contract-view">
 
 	<p>
-		<?=Html::a(Yii::t('app', 'btn-update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary btn-sm'])?>
+		<?=Html::a(Yii::t('app', 'btn-update'), ['update', 'id' => $model->id, 'update' => 1], ['class' => 'btn btn-primary btn-sm'])?>
 		<?=
 			Html::a(Yii::t('app', 'btn-delete'), ['delete', 'id' => $model->id], [
 				'class' => 'btn btn-danger btn-sm',

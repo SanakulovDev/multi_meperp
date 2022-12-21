@@ -28,10 +28,8 @@
 			<?
 				$data = Contract::find()->where('status>0')->orderBy(['contract_no' => SORT_ASC])->all();
 				$items = ArrayHelper::map($data, 'id', 'contract_no');
-				$params = ['prompt' => '. . .', null, 'class' => 'form-control select2'];
-				echo $form->field($model, 'contract_id')->dropDownList($items, [
-					'value' => $contract_model->id
-				]);
+				$params = ['prompt' => '. . .', null, 'value' => $contract_model->id, 'class' => 'form-control select2'];
+				echo $form->field($model, 'contract_id')->dropDownList($items, $params);
 			?>
 		</div>
 	</div>

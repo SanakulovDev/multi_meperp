@@ -516,7 +516,7 @@ return [
   'State' => 'Форма',
   'Part state' => 'Форма детали',
   'Sub part state' => 'Форма полуфабриката',
-  'Status' => 'Статус',
+  'Status' => 'Количество',
   'Production order' => 'Производственный заказ',
   'Production order(sticker)' => 'Ярлык',
   'Print production order' => 'Печать производственный заказ',
