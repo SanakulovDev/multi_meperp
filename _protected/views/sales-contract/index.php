@@ -173,15 +173,18 @@
 					'contentOptions' => ['style' => 'text-align: center;'],
 					'content' => function($model, $column){
 						$sts_value = $model->status;
-						if ($sts_value >= 0) {
-							$class = 'success';
-							$sts_name = "✔";
-							$sts_title = Yii::t('app', 'Active');
-						} else {
-							$class = 'danger';
-							$sts_name = "✖";
-							$sts_title = Yii::t('app', 'Inactive');
-						}
+						$class = 'success';
+						$sts_name = "✔";
+						$sts_title = Yii::t('app', 'Active');
+						// if ($sts_value >= 0) {
+						// 	$class = 'success';
+						// 	$sts_name = "✔";
+						// 	$sts_title = Yii::t('app', 'Active');
+						// } else {
+						// 	$class = 'danger';
+						// 	$sts_name = "✖";
+						// 	$sts_title = Yii::t('app', 'Inactive');
+						// }
 						// switch($sts_value){
 						// 	case 1:
 						// 		$class = 'success';
