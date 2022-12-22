@@ -162,7 +162,7 @@
 
 		public function actionListBySalesSupplier($id){
 			Yii::$app->response->format = Response::FORMAT_JSON;
-			$list = SalesContract::find()->where(['customer_id' => $id, 'status'=>1])->all();
+			$list = SalesContract::find()->where(['customer_id' => $id])->andWhere(['not', ['status' => "0"]])->andWhere(['not', ['status' => 0]])->all();
 			$data = [];
 			foreach($list as $item){
 				$data[] = ['id' => $item->id, 'text' => $item->contract_no];

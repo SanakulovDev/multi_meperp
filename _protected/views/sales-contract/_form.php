@@ -51,7 +51,7 @@
 					'maxView' => 'month',
 				],
 				'options' => [
-					'value' => date('Y-m-d'),
+					'value' => date('Y-m-d', strtotime("+12 months ". date('Y-m-d'))),
 					'autocomplete' => 'off'
 				]
 			])?>
