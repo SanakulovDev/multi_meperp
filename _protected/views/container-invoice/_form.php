@@ -117,7 +117,7 @@ use yii\widgets\ActiveForm;
             'maxView' => 'month',
           ],
           'options' => [
-            'value' => date('Y-m-d'),
+            'value' => $model->isNewRecord ? date('Y-m-d') : $model->shipped_at,
             'autocomplete' => 'off',
             'placeholder' => 'YYYY-MM-DD',
             'class' => ' form-control'
@@ -139,7 +139,7 @@ use yii\widgets\ActiveForm;
             'maxView' => 'month',
           ],
           'options' => [
-            'value' => date('Y-m-d'),
+            'value' => $model->isNewRecord ? date('Y-m-d') : $model->need_at,
             'autocomplete' => 'off',
             'placeholder' => 'YYYY-MM-DD',
             'class' => ' form-control'
@@ -183,7 +183,7 @@ use yii\widgets\ActiveForm;
             'maxView' => 'month',
           ],
           'options' => [
-            'value' => date('Y-m-d'),
+            'value' => $model->isNewRecord ? date('Y-m-d') : $model->station_date,
             'autocomplete' => 'off',
             'placeholder' => 'YYYY-MM-DD',
             'class' => ' form-control'
@@ -210,7 +210,7 @@ use yii\widgets\ActiveForm;
             'maxView' => 'month',
           ],
           'options' => [
-            'value' => date('Y-m-d'),
+            'value' => $model->isNewRecord ? date('Y-m-d') : $model->arrived_at,
             'autocomplete' => 'off',
             'placeholder' => 'YYYY-MM-DD',
             'class' => ' form-control'
@@ -237,7 +237,7 @@ use yii\widgets\ActiveForm;
             'maxView' => 'month',
           ],
           'options' => [
-            'value' => date('Y-m-d'),
+            'value' => $model->isNewRecord ? date('Y-m-d') : $model->current_at,
             'autocomplete' => 'off',
             'placeholder' => 'YYYY-MM-DD',
             'class' => ' form-control'
@@ -274,7 +274,7 @@ use yii\widgets\ActiveForm;
             'maxView' => 'month',
           ],
           'options' => [
-            'value' => date('Y-m-d'),
+            'value' => $model->isNewRecord ? date('Y-m-d') : $model->passed_at,
             'autocomplete' => 'off',
             'placeholder' => 'YYYY-MM-DD',
             'class' => ' form-control'
