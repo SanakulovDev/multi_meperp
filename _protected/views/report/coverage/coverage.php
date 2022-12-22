@@ -93,6 +93,10 @@ $s = [];
           <?= Html::button(Yii::t('app', 'btn-download'),  ['class' => 'btn btn-primary btn-sm btn-weekly', 'id' => 'btn-download-vehicle', 'style' => 'display:none;']) ?>
         </p>
         <div style="clear: both;"></div>
+        <div class="filter-buttons">
+          <a href="<?= \yii\helpers\Url::to(['report/coverage', 'filter' => 1])?>" class="btn btn-success">Фильтр</a>
+          <a href="<?= \yii\helpers\Url::to(['report/coverage'])?>" class="btn btn-danger">Очистить фильтра</a>
+        </div>    </div>
       </div>
       <div class="panel-body">
 

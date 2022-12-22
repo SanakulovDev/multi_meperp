@@ -742,16 +742,16 @@ class ReportController extends AppController {
     $this->_reportService->bomCost2();
   }
 
-  public function actionCoverage() {
+  public function actionCoverage($filter=null) {
     $this->checkReportAccess();
     $this->layout = "req";
-    // vd($this->localCoverage);
+    //vd($this->semiCoverage);
     return $this->render("coverage/coverage", [
-      "data_weekly" => $this->weeklyCoverage,
-      "data_daily" => $this->dailyCoverage,
-      "data_local" => $this->localCoverage,
-      "data_cons" => $this->consCoverage,
-      "data_semi" => $this->semiCoverage,
+      "data_weekly" => self::getWeeklyCoverage($filter),
+      "data_daily" => self::getDailyCoverage($filter),
+      "data_local" => self::getLocalCoverage($filter),
+      "data_cons" => self::getConsCoverage($filter),
+      "data_semi" => self::getSemiCoverage($filter),
     ]);
   }
 
@@ -812,7 +812,7 @@ class ReportController extends AppController {
     return Yii::$app->db->createCommand($query, [":type" => CoverageVehicleController::TYPE_WEEKLY])->queryAll();
   }
 
-  public static function getDailyCoverage() {
+  public static function getDailyCoverage($filter=null) {
     $query = "
                             select a.part_id,p.part_no,p.part_name,p.part_color, p.remark, p.comment, cs.name csourse,un.unit_value unit,un.id unit_id, a.*  from
                             (
@@ -825,10 +825,26 @@ class ReportController extends AppController {
                             left join contract_source cs on p.contract_source_id = cs.id
                             left join unit un on p.unit_id = un.id
                         ";
+    if ($filter != null)
+    {
+      $query = "
+                            select a.part_id,p.part_no,p.part_name,p.part_color, p.remark, p.comment, cs.name csourse,un.unit_value unit,un.id unit_id, a.*  from
+                            (
+                                    select r.id rid,r.part_id,r.whbal,r.linebal,r.semistock,r.fgstock,r.outsourcing,r.pending,
+                                    (ifnull(r.whbal,0)+ifnull(r.linebal,0)+ifnull(r.semistock,0)+ifnull(r.outsourcing,0)+ifnull(r.pending,0)+ifnull(r.arrive,0)) totalstock,
+                                    r.arrive,r.days_count, r.doh, r.calc_at, w.* from req_detail_wide w left join req r on w.req_id = r.id 
+                                    where w.type = :type AND r.whbal!=0
+                            ) a
+                            left join part p on a.part_id = p.id
+                            left join contract_source cs on p.contract_source_id = cs.id
+                            left join unit un on p.unit_id = un.id
+                        ";
+
+    }
     return Yii::$app->db->createCommand($query, [":type" => CoverageController::TYPE_DAILY])->queryAll();
   }
 
-  public static function getWeeklyCoverage() {
+  public static function getWeeklyCoverage($filter=null) {
     $query = "
                             select a.part_id,p.part_no,p.part_name,p.part_color, p.remark, p.comment, cs.name csourse,un.unit_value unit,un.id unit_id, a.*  from
                             (
@@ -841,10 +857,24 @@ class ReportController extends AppController {
                             left join contract_source cs on p.contract_source_id = cs.id
                             left join unit un on p.unit_id = un.id
                         ";
+    if ($filter != null)
+      $query = "
+                            select a.part_id,p.part_no,p.part_name,p.part_color, p.remark, p.comment, cs.name csourse,un.unit_value unit,un.id unit_id, a.*  from
+                            (
+                                    select r.id rid,r.part_id,r.whbal,r.linebal,r.semistock,r.fgstock,r.outsourcing,r.pending,
+                                    (ifnull(r.whbal,0)+ifnull(r.linebal,0)+ifnull(r.semistock,0)+ifnull(r.outsourcing,0)+ifnull(r.pending,0)+ifnull(r.arrive,0)) totalstock,
+                                    r.arrive,r.days_count, r.doh, r.calc_at, w.* from req_detail_wide w left join req r on w.req_id = r.id 
+                                    where w.type = :type AND r.whbal!=0
+                            ) a
+                            left join part p on a.part_id = p.id
+                            left join contract_source cs on p.contract_source_id = cs.id
+                            left join unit un on p.unit_id = un.id
+                        ";
+    //vd($query);
     return Yii::$app->db->createCommand($query, [":type" => CoverageController::TYPE_WEEKLY])->queryAll();
   }
 
-  public static function getLocalCoverage() {
+  public static function getLocalCoverage($filter=null) {
     $query = "
                             select p.part_no,p.part_name,p.part_color, p.remark, p.comment, cs.name csourse, un.unit_value unit,un.id unit_id, a.*  from
                             (
@@ -857,10 +887,26 @@ class ReportController extends AppController {
                             left join contract_source cs on p.contract_source_id = cs.id
                             left join unit un on p.unit_id = un.id
                         ";
+    if ($filter != null)
+    {
+      $query = "
+                            select p.part_no,p.part_name,p.part_color, p.remark, p.comment, cs.name csourse, un.unit_value unit,un.id unit_id, a.*  from
+                            (
+                                    select r.id rid,r.part_id,r.whbal,r.linebal,r.semistock,r.fgstock,r.outsourcing,r.pending,
+                                    (ifnull(r.whbal,0)+ifnull(r.linebal,0)+ifnull(r.semistock,0)+ifnull(r.outsourcing,0)+ifnull(r.pending,0)+ifnull(r.arrive,0)) totalstock,
+                                    r.arrive,r.days_count, r.doh, r.calc_at, w.* from req_detail_wide w left join req r on w.req_id = r.id 
+                                    where w.type = :type AND r.whbal!=0 
+                            ) a
+                            left join part p on a.part_id = p.id
+                            left join contract_source cs on p.contract_source_id = cs.id
+                            left join unit un on p.unit_id = un.id
+                        ";
+    }
+    //vd($query);
     return Yii::$app->db->createCommand($query, [":type" => CoverageController::TYPE_LOCAL_DAILY])->queryAll();
   }
 
-  public static function getConsCoverage() {
+  public static function getConsCoverage($filter=null) {
     $query = "
     select p.part_no,p.part_name,p.part_color, p.remark, p.comment, cs.name csourse,un.unit_value unit,un.id unit_id, a.*  from
     (
@@ -873,10 +919,26 @@ class ReportController extends AppController {
     left join contract_source cs on p.contract_source_id = cs.id
     left join unit un on p.unit_id = un.id
 ";
+
+    if ($filter != null)
+    {
+      $query = "
+    select p.part_no,p.part_name,p.part_color, p.remark, p.comment, cs.name csourse,un.unit_value unit,un.id unit_id, a.*  from
+    (
+            select r.id rid,r.part_id,r.whbal,r.linebal,r.semistock,r.fgstock,r.outsourcing,r.pending,
+            (ifnull(r.whbal,0)+ifnull(r.linebal,0)+ifnull(r.semistock,0)+ifnull(r.outsourcing,0)+ifnull(r.pending,0)+ifnull(r.arrive,0)) totalstock,
+            r.arrive,r.days_count, r.doh, r.calc_at, w.* from req_detail_wide w left join req r on w.req_id = r.id 
+            where w.type = :type AND r.whbal!=0
+    ) a
+    left join part p on a.part_id = p.id
+    left join contract_source cs on p.contract_source_id = cs.id
+    left join unit un on p.unit_id = un.id
+";
+    }
     return Yii::$app->db->createCommand($query, [":type" => CoverageController::TYPE_LOCAL_CONS])->queryAll();
   }
 
-  public static function getSemiCoverage() {
+  public static function getSemiCoverage($filter=null) {
     $query = "
     select p.part_no,p.part_name,p.part_color, p.remark, p.comment, cs.name csourse,un.unit_value unit,un.id unit_id, a.*  from
     (
@@ -889,6 +951,22 @@ class ReportController extends AppController {
     left join contract_source cs on p.contract_source_id = cs.id
     left join unit un on p.unit_id = un.id
 ";
+
+    if ($filter != null)
+    {
+      $query = "
+    select p.part_no,p.part_name,p.part_color, p.remark, p.comment, cs.name csourse,un.unit_value unit,un.id unit_id, a.*  from
+    (
+            select r.id rid,r.part_id,r.whbal,r.linebal,r.semistock,r.fgstock,r.outsourcing,r.pending,
+            (ifnull(r.whbal,0)+ifnull(r.linebal,0)+ifnull(r.semistock,0)+ifnull(r.outsourcing,0)+ifnull(r.pending,0)+ifnull(r.arrive,0)) totalstock,
+            r.arrive,r.days_count, r.doh, r.calc_at, w.* from req_detail_wide w left join req r on w.req_id = r.id 
+            where w.type = :type AND r.whbal!=0
+    ) a
+    left join part p on a.part_id = p.id
+    left join contract_source cs on p.contract_source_id = cs.id
+    left join unit un on p.unit_id = un.id
+";
+    }
     return Yii::$app->db->createCommand($query, [":type" => CoverageController::TYPE_LOCAL_SEMI])->queryAll();
   }
 
