@@ -80,7 +80,7 @@ use yii\widgets\ActiveForm;
         <?=$form->field($model, 'net_weight')->textInput(['maxlength' => true, "value" => 1000])?>
 			</div>
 			<div class="col-lg-2">
-        <?=$form->field($model, 'gross_weight')->textInput(['maxlength' => true, "value" => 1])?>
+        <?=$form->field($model, 'gross_weight')->textInput(['maxlength' => true])?>
 			</div>
 			<!-- <div class="col-lg-2">
         <?=$form->field($model, 'cbm')->textInput(['maxlength' => true])?>
