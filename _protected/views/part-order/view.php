@@ -141,7 +141,7 @@
 <?php
 	$add_item = <<< JS
 	function onNext () {
-		window.location.href = "/container-invoice/create?nomer_order=" + $model->order_no
+		window.location.href = "/container-invoice/create?nomer_order=" + $model->id
 	}
 JS;
 	$this->registerJs($add_item, yii\web\View::POS_END);
