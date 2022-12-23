@@ -77,7 +77,7 @@ use yii\widgets\ActiveForm;
   <? if(!$model->isNewRecord) { ?>
 		<div class="row">
 			<div class="col-lg-2">
-        <?=$form->field($model, 'net_weight')->textInput(['maxlength' => true, "value" => 1000])?>
+        <?=$form->field($model, 'net_weight')->textInput(['maxlength' => true, "value" => !$model->isNewRecord ? intval($model->net_weight) : 1000 ])?>
 			</div>
 			<div class="col-lg-2">
         <?=$form->field($model, 'gross_weight')->textInput(['maxlength' => true, "value" => !$model->isNewRecord ? intval($model->gross_weight) : 1 ])?>
