@@ -102,6 +102,7 @@ use yii\helpers\Url;
             </tr>
           </thead>
           <tbody>
+            <? if ($localCoverageToday) { ?>
               <?php foreach($localCoverageToday as $key => $item):?>
                 <?php if($item['col1'] < 0):?>
                   <tr>
@@ -112,6 +113,32 @@ use yii\helpers\Url;
                   </tr>
                 <?php endif;?>
               <?php endforeach;?>
+            <? } if (!$localCoverageToday) { ?>
+              <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+              <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+              <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+              <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            <? } ?>
           </tbody>
         </table>
       </div>
@@ -128,6 +155,8 @@ use yii\helpers\Url;
             </tr>
           </thead>
           <tbody>
+
+            <? if ($productionPlanToday) { ?>
               <?php foreach($productionPlanToday as $key => $item): ?>
                 <tr>
                   <th><?= $key+1 ?></th>
@@ -136,6 +165,33 @@ use yii\helpers\Url;
                   <td class="text-right"><?=$item->shift?></td>
                 </tr>
               <?php endforeach; ?>
+            <? } if (!$productionPlanToday) { ?>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            <? } ?>
+
           </tbody>
         </table>
       </div>
@@ -152,6 +208,7 @@ use yii\helpers\Url;
             </tr>
           </thead>
           <tbody>
+            <? if ($productionPlanTomorrow) { ?>
               <?php foreach($productionPlanTomorrow as $key => $item): ?>
                 <tr>
                   <th><?= $key+1 ?></th>
@@ -160,6 +217,32 @@ use yii\helpers\Url;
                   <td class="text-right"><?=$item->shift?></td>
                 </tr>
               <?php endforeach; ?>
+            <? } if (!$productionPlanTomorrow) { ?>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            <? } ?>
           </tbody>
         </table>
       </div>
@@ -177,6 +260,7 @@ use yii\helpers\Url;
             </tr>
           </thead>
           <tbody>
+            <? if ($salesPlanMonth) { ?>
               <?php foreach($salesPlanMonth as $key => $item): ?>
                 <tr>
                   <th><?= $key+1 ?></th>
@@ -185,6 +269,32 @@ use yii\helpers\Url;
                   <td class="text-right"><?= divideString($item->target_qty, 3)?></td>
                 </tr>
               <?php endforeach; ?>
+            <? } if (!$salesPlanMonth) { ?>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            <? } ?>
           </tbody>
         </table>
       </div>
@@ -202,6 +312,7 @@ use yii\helpers\Url;
             </tr>
           </thead>
           <tbody>
+            <? if ($factTodays) { ?>
               <?php foreach($factTodays as $key => $item): ?>
                 <tr>
                   <th><?= $key+1 ?></th>
@@ -210,6 +321,32 @@ use yii\helpers\Url;
                   <td><?= (!empty($item->created_at)) ? date('d.m.Y (H:i:s)', $item->created_at) : '-'?></td>
                 </tr>
               <?php endforeach; ?>
+            <? } if (!$factTodays) { ?>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            <? } ?>
           </tbody>
         </table>
       </div>
