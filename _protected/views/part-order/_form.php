@@ -48,7 +48,7 @@
 					'maxView' => 'month',
 				],
 				'options' => [
-					'value' => date('Y-m-d'),
+					'value' => $update ? $model->iss_dt : date('Y-m-d'),
 					'autocomplete' => 'off',
 					'placeholder' => 'YYYY-MM-DD',
 					'class' => ' form-control'
@@ -70,7 +70,7 @@
 					'maxView' => 'month',
 				],
 				'options' => [
-					'value' => date('Y-m-d'),
+					'value' => $update ? $model->mr_dt : date('Y-m-d'),
 					'autocomplete' => 'off',
 					'placeholder' => 'YYYY-MM-DD',
 					'class' => ' form-control'

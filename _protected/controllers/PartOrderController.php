@@ -143,11 +143,14 @@ use yii\web\UploadedFile;
 					$errMsg = "<i><u><strong>OrderCreate:</strong></u></i>".Helpers::arrayToStringRecursive($model->errors);
 				}
 			}
+
+			$contract_model = Contract::find()->where(['id' => $model->contract_id])->one();
 			return $this->render(
 				'update',
 				[
 					'model' => $model,
-          'errMsg' => $errMsg ?? null
+          			'errMsg' => $errMsg ?? null,
+					'contract_model' => $contract_model,
 				]
 			);
 		}

@@ -14,6 +14,7 @@
 		'items' => ($items ?? null),
 		'isUpdating' => $count ? true : false,
 		'count' => true,
+		'update' => true,
 		'modelItems' => ($modelItems ?? null)
 	])?>
 

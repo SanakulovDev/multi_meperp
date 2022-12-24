@@ -11,7 +11,8 @@
 		'errorlist' => ($errorlist ?? null),
 		'model' => ($model ?? null),
 		'items' => ($items ?? null),
-		'modelItems' => ($modelItems ?? null)
+		'modelItems' => ($modelItems ?? null),
+		'update' => true
 	])?>
 	
 </div>

@@ -38,7 +38,7 @@
 					'disabled' => $isUpdating ? true : false,
 				],
 				'options' => [
-					'value' => date('Y-m-d'),
+					'value' => $update ? $model->contract_date :  date('Y-m-d'),
 					'autocomplete' => 'off',
 					'disabled' => $isUpdating ? true : false,
 				]

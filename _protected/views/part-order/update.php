@@ -9,5 +9,5 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Orders Supplier'), '
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 ?>
 <div class="part-order-update">
-  <?=$this->render('_form', ['model' => $model, 'errMsg' => $errMsg])?>
+  <?=$this->render('_form', ['model' => $model, 'errMsg' => $errMsg, 'contract_model' => $contract_model, 'update' => true])?>
 </div>

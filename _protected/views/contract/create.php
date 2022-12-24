@@ -12,6 +12,7 @@
 		'model' => ($model ?? null),
 		'items' => ($items ?? null),
 		'isUpdating' => false,
+		'update' => true,
 		'modelItems' => ($modelItems ?? null),
 		'isNewRecord' => ($isNewRecord ?? null)
 	])?>

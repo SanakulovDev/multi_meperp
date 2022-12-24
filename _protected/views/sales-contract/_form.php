@@ -36,7 +36,7 @@
 					'maxView' => 'month',
 				],
 				'options' => [
-					'value' => date('Y-m-d'),
+					'value' => $update ? $model->contract_date : date('Y-m-d'),
 					'autocomplete' => 'off'
 				]
 			])?>
@@ -51,7 +51,7 @@
 					'maxView' => 'month',
 				],
 				'options' => [
-					'value' => date('Y-m-d', strtotime("+12 months ". date('Y-m-d'))),
+					'value' => $update ? $model->expiry_date : date('Y-m-d', strtotime("+12 months ". date('Y-m-d'))),
 					'autocomplete' => 'off'
 				]
 			])?>

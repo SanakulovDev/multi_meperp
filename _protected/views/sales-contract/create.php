@@ -12,7 +12,8 @@
 		'model' => ($model ?? null),
 		'items' => ($items ?? null),
 		'modelItems' => ($modelItems ?? null),
-		'isNewRecord' => ($isNewRecord ?? null)
+		'isNewRecord' => ($isNewRecord ?? null),
+		'update' => false
 	])?>
 
 </div>

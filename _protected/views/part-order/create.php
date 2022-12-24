@@ -11,6 +11,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Orders Supplier'), '
   <?=$this->render('_form', [
     'model' => $model,
     'contract_model' => $contract_model,
+	'update' => false,
     'errMsg' => $errMsg
   ])?>
 
