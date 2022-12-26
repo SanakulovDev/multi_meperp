@@ -60,7 +60,7 @@
 			<?=
 				$form->field($model, 'seller_id')->dropDownList(ArrayHelper::map(\app\models\User::find()->joinWith('role')->where(['item_name' => 'shipper'])->all(), 'id', 'fullname'), [
 					'class' => ' form-control select2',
-					'value' => 11,
+					'value' =>  $update ? $model->seller_id : 11,
 					'prompt' => Yii::t('app', 'Select')
 				]);
 			?>
@@ -70,7 +70,7 @@
 				$form->field($model, 'payment_term_id')->dropDownList(ArrayHelper::map(app\models\PaymentTerm::find()->all(), 'id', 'name'), [
 					'class' => ' form-control select2',
 					'prompt' => Yii::t('app', 'Select'),
-					'value' => 2
+					'value' => $update ? $model->payment_term_id : 2
 				]);
 			?>
 		</div>

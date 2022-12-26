@@ -64,7 +64,7 @@
 			<?=
 				$form->field($model, 'buyer_id')->dropDownList(ArrayHelper::map(\app\models\User::find()->joinWith('role')->where(['item_name' => 'buyer'])->all(), 'id', 'fullname'), [
 					'class' => ' form-control select2',
-					'value' => '4',
+					'value' => $isUpdating ? $model->buyer_id : '4',
 					'disabled' => $isUpdating ? true : false,
 					'prompt' => Yii::t('app', 'Select')
 				]);
@@ -75,7 +75,7 @@
 				$form->field($model, 'payment_term_id')->dropDownList(ArrayHelper::map(app\models\PaymentTerm::find()->all(), 'id', 'name'), [
 					'class' => ' form-control select2',
 					'selected' => 2,
-					'value' => '2',
+					'value' => $isUpdating ? $model->payment_term_id : '2',
 					'disabled' => $isUpdating ? true : false,
 					'prompt' => Yii::t('app', 'Select')
 				]);
@@ -107,7 +107,7 @@
 			<?=
 				$form->field($model, 'contract_source_id')->dropDownList(ArrayHelper::map(app\models\ContractSource::find()->all(), 'id', 'name'), [
 					'class' => ' form-control select2',
-					'value' => '2',
+					'value' => $isUpdating ? $model->contract_source_id : '2',
 					'disabled' => $isUpdating ? true : false,
 					'prompt' => Yii::t('app', 'Select')
 				]);
