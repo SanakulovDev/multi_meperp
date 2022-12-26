@@ -90,7 +90,7 @@ class ContainerInvoiceController extends AppController {
     $partOrder = "";
     $contract ="";
     if ($nomer_order) {
-      $partOrder = PartOrder::findOne(['order_no' => $nomer_order]);
+      $partOrder = PartOrder::findOne(['id' => $nomer_order]);
       $contract = Contract::findOne(['id' => $partOrder->contract_id]);
     }
 
@@ -224,7 +224,7 @@ class ContainerInvoiceController extends AppController {
    * @return mixed
    * @throws NotFoundHttpException if the model cannot be found
    */
-  public function actionUpdate($id) {
+  public function actionUpdate($id, $update = null) {
     $model = $this->findModel($id);
     $modelContainer = Container::find()->where(['id' => $model->container_id])->one();
     // Yii::$app->session->setFlash('error', Yii::t('app', 'You are not allowed to do this action.'));
@@ -286,6 +286,7 @@ class ContainerInvoiceController extends AppController {
             'items' => $items ?? null,
             'invoice' => $invoice ?? null,
             'modelInvoice' => $modelInvoice ?? null,
+            'update' => $update ? true :false
           ]
         );
       }
@@ -294,6 +295,7 @@ class ContainerInvoiceController extends AppController {
       'update',
       [
         'model' => $model ?? null,
+        'update' => $update ? true :false,
         'modelContainer' => $modelContainer ?? null,
         'modelItems' => $modelItems ?? null,
         'errorlist' => $errorlist ?? null,
