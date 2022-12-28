@@ -43,7 +43,7 @@ use yii\widgets\ActiveForm;
       <?=$form->field($model, 'ship_mode_id')
               ->label(Yii::t('app', 'Ship mode'))
               ->dropDownList(ArrayHelper::map(ShipMode::find()->all(), 'id', 'name'), [
-                "value" => 3
+                "value" => !$model->isNewRecord ? $model->ship_mode_id : 3
               ])
       ?>
 		</div>
@@ -59,7 +59,7 @@ use yii\widgets\ActiveForm;
       <?
       $data = DeliveryTerm::find()->orderBy(['name' => SORT_ASC])->all();
       $items = ArrayHelper::map($data, 'id', 'name');
-      $params = ['prompt' => '. . .', null, 'class' => 'form-control select2', "value" => 9];
+      $params = ['prompt' => '. . .', null, 'class' => 'form-control select2', "value" => !$model->isNewRecord ? $model->delivery_term_id : 9];
       echo $form->field($model, 'delivery_term_id')->dropDownList($items, $params);
       ?>
 		</div>
@@ -67,7 +67,7 @@ use yii\widgets\ActiveForm;
       <?
       $data = Currency::find()->orderBy(['code' => SORT_ASC])->all();
       $items = ArrayHelper::map($data, 'id', 'code');
-      $params = ['prompt' => '. . .', null, 'class' => 'form-control select2', "value" => 1];
+      $params = ['prompt' => '. . .', null, 'class' => 'form-control select2', "value" => !$model->isNewRecord ? $model->currency : 1];
       echo $form->field($model, 'currency')->dropDownList($items, $params)
                 ->label(Yii::t('app', 'Currency'));
       ?>

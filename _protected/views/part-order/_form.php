@@ -92,7 +92,7 @@
 				$params = ['prompt' => '. . .', null, 'class' => 'form-control select2'];
 				echo $form->field($model, 'delivery_term_id')->dropDownList($items, [
 					$params,
-					"value" => 9
+					"value" => $update ? $model->delivery_term_id :9,
 				]);
 			?>
 		</div>
