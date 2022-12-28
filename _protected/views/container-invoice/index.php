@@ -136,7 +136,7 @@ $canRemoveDocument = Yii::$app->user->can('container-invoice-remove-document');
                 return false;
               if(!empty($model->document_id))
                 return false;
-              $url = Url::toRoute(['container-invoice/update', 'id' => $model->id]);
+              $url = Url::toRoute(['container-invoice/update', 'id' => $model->id, 'update' => 1]);
               return Html::a('<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>', $url, [
                   'title' => Yii::t('app', 'Edit')
                 ]).'&nbsp;';
