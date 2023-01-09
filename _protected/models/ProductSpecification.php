@@ -27,7 +27,7 @@ class ProductSpecification extends \yii\db\ActiveRecord {
   public function statusList() {
     return [
       self::STATUS_ACTIVE => Yii::t('app', 'Актив'),
-      self::STATUS_INACTIVE => Yii::t('app', 'Не актив'),
+      // self::STATUS_INACTIVE => Yii::t('app', 'Не актив'),
     ];
   }
 

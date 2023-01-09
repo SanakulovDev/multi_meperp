@@ -59,7 +59,7 @@ class ProductSpecificationSearch extends ProductSpecification {
 		$query->andFilterWhere([
 			'product_specification.id' => $this->id,
 			'product_specification.part_id' => $this->part_id,
-			'product_specification.status' => $this->status,
+			'product_specification.status' => 1,
 			'product_specification.updated_by' => $this->updated_by,
 			'product_specification.updated_at' => $this->updated_at,
 			'amount' => $this->amount,

@@ -140,6 +140,16 @@ $canUpload = Yii::$app->user->can('production-plan-upload');
               'id' => null
             ],
           ],
+          [
+            'attribute' => 'Марка',
+            'value' => 'part.part_name',
+            // 'filter' => $parts,
+            // 'filterInputOptions' => [
+            //   'class' => 'select2',
+            //   'prompt' => Yii::t('app', 'All...'),
+            //   'id' => null
+            // ],
+          ],
           'target_qty',
           [
             'attribute' => 'comment',
