@@ -150,9 +150,9 @@ class ProductSpecificationController extends AppController {
 			throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
 		}
 
-		if(ProductionOrder::find()->where(['product_specification_id'=>$id])->exists()) {
-			throw new ForbiddenHttpException(Yii::t('app', 'You are not allowed to edit this record.'));
-		}
+		// if(ProductionOrder::find()->where(['product_specification_id'=>$id])->exists()) {
+		// 	throw new ForbiddenHttpException(Yii::t('app', 'You are not allowed to edit this record.'));
+		// }
 
 		$errorlist = [];
 

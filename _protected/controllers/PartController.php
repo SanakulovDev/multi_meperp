@@ -542,7 +542,6 @@ class PartController extends AppController {
           $part->part_type_id = $part_type_id;
           $part->contract_source_id = $contract_source_id;
           $part->pack_size = $row['pack_size'];
-          $part->fg_warehouse_id = $fg_warehouse_id;
           $part->warehouse_id = $warehouse_id;
           $part->remark = $row['remark'];
           $part->updated_by = Yii::$app->user->id;
