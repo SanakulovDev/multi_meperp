@@ -37,6 +37,7 @@ use app\models\User;
 use app\models\Unit;
 use app\models\ReceptControl;
 use yii\db\Exception;
+use yii\web\NotFoundHttpException;
 use yii\db\Query;
 use Codeception\Lib\Generator\Helper;
 use Yii;
@@ -2424,19 +2425,23 @@ class ReportService
                 $waybill_ids[] = $row3['waybill_id'];
             }
         }
+        // vd($waybill_ids);
         foreach($waybill_ids as $item){
             $model = Waybill::find()->with([
                 'fgInvoiceWaybills.fgInvoice.customer', 'factory', 'createdBy', 'updatedBy' => function ($query) {
                     $query->from(['u2' => User::tableName()]);
                 }
                 ])->where(['id' => $item])->one();
-            if ($model === null) {
-                throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-            }
+            // if ($model === null) {
+            //     throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+            // }
             $pivotData = [];
-            foreach ($model->fgInvoiceWaybills as $pivot) {
-                $model->invoices[] = $pivot->fg_invoice_id;
-                $pivotData[] = $pivot->id;
+            if(!empty($model)){
+
+                foreach ($model->fgInvoiceWaybills as $pivot) {
+                    $model->invoices[] = $pivot->fg_invoice_id;
+                    $pivotData[] = $pivot->id;
+                }
             }
             // show fg invoice details
         
