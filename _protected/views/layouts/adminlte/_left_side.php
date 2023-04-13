@@ -546,6 +546,14 @@ use yii\widgets\Menu; ?>
         'template' => '<a href="{url}"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
     }
+    if (Yii::$app->user->can('fg-invoice-contract-factory')) {
+      $m500_sales[] = [
+        'label' => Yii::t('app', 'Группа Счёт фактура'),
+        'url' => ['/fg-invoice/contract-factory'],
+        'template' => '<a href="{url}"><i class="fa fa-list"></i> <span>{label}</span></a>',
+      ];
+    }
+    
     if (Yii::$app->user->can('sales-plan-index')) {
       $m500_sales[] = [
         'label' => Yii::t('app', 'Sales plan'),

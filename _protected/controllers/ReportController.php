@@ -3865,7 +3865,17 @@ class ReportController extends AppController {
       'downloadFileName' => $downloadFileName
       ]);
   }
-
+  // qarzlari va qilingan oplatalari
+  public function actionSalesPaymentInfo()
+  {
+    $reportName = 'sales-payment-info';
+    $downloadFileName = rtrim(Helpers::downloadFileName($reportName, "1"), ".1");
+    $data = $this->_reportService->salesPaymentStatus();
+    return $this->render('sales/' . $reportName, [
+      'data' => $data,
+      'downloadFileName' => $downloadFileName
+      ]);
+  }
   public function actionMaterialStock($state = Part::STATE_RAW){
     $reportName = 'material-stock';
     $downloadFileName = rtrim(Helpers::downloadFileName($reportName, "1"), ".1");

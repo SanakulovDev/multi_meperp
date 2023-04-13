@@ -81,6 +81,7 @@ class WaybillController extends AppController
     $detailsTable = FgInvoiceDetail::tableName();
     $partsTable = Part::tableName();
     $unitsTable = Unit::tableName();
+    $waybillsTable = Waybill::tableName();
     $modelsTable = ProductModel::tableName();
     $details = (new Query())->select(["$detailsTable.part_name", "$partsTable.part_color", "$unitsTable.unit_value", "$detailsTable.price", "SUM(qty) as total_qty"])
       ->from($detailsTable)

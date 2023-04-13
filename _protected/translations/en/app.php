@@ -735,5 +735,6 @@ return[
   'Is Where' => 'Is Where',
   'Add Image' => 'Add Image',
   'Images count in post must be 3' => 'Images count in post must be 3',
+  'Группа Счёт фактура' => 'Group contract Factory',
 ];
 

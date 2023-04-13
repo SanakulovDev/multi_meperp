@@ -13,11 +13,13 @@
 		/**
 		 * {@inheritdoc}
 		 */
+		public $contract_factory;
 		public function rules(){
 			return [
 				[['id', 'factory_id', 'customer_id', 'vat', 'excise', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
 				[['invoice_no', 'invoice_date', 'contract', 'contract_date', 'rec_person_fullname', 'rec_person_regno', 'driver', 'truck', 'manager', 'account', 'sender', 'comment', 'confirmed_by'], 'safe'],
-			];
+				['contract_factory', 'string']
+			];	
 		}
 
 		/**
@@ -142,5 +144,26 @@
 			}else{
 				return $dataProvider;
 			}
+		}
+
+
+
+		// contract factories search
+		public function searchContractFactory($params)
+		{
+				$query = "SELECT distinct(contract) FROM `fg_invoice`";
+				$inv = Yii::$app->db->createCommand($query)->queryAll();
+				$query = FgInvoice::find()->select(['contract'])->distinct();
+				$dataProvider = new ActiveDataProvider(['query' => $query]);
+				$this->load($params);
+				if(!$this->validate()){
+					// uncomment the following line if you do not want to return any records when validation fails
+					// $query->where('0=1');
+					return $dataProvider;
+				}
+				$factorys = Waybill::find()->all();
+				$query->andFilterWhere(['like', 'contract', $this->contract]);
+				$query->andFilterWhere(['like', 'contract_factory', $factorys->waybill_no]);
+				return $dataProvider;
 		}
 	}

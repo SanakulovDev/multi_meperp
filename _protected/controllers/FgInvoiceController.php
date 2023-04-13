@@ -13,6 +13,11 @@ use app\models\ProductionOrder;
 use app\models\SalesContract;
 use app\models\SalesContractDetail;
 use app\models\Stock;
+use app\models\Waybill;
+use app\models\User;
+use app\models\Unit;
+use app\models\ProductModel;
+use app\models\ReceptControl;
 use PHPExcel_IOFactory;
 use Yii;
 use yii\base\DynamicModel;
@@ -50,6 +55,149 @@ class FgInvoiceController extends AppController {
         ], self::loadDictionaries()));
   }
 
+  public function queryContracts()
+  {
+        $query = "SELECT distinct(contract) FROM `fg_invoice`";
+        $inv = Yii::$app->db->createCommand($query)->queryAll();
+        $contracts = [];
+        foreach ($inv as $row) {
+          $contracts[$row['contract']]=[];
+          $query2 = "SELECT id, customer_id, invoice_no FROM `fg_invoice` where contract = '".$row['contract']."'";
+          $inv2 = Yii::$app->db->createCommand($query2)->queryAll();
+          foreach($inv2 as $row2){
+            $contracts[$row['contract']]['invoice_no'][] = $row2['invoice_no'];
+            $query3 = "SELECT waybill_id FROM `fg_invoice_waybill` where fg_invoice_id = '".$row2['id']."'";
+            $inv3 = Yii::$app->db->createCommand($query3)->queryAll();
+              foreach($inv3 as $row3){
+                $contracts[$row['contract']]['waybill_ids'][] = $row3['waybill_id'];
+                $query4 = "SELECT waybill_no, factory_id FROM `waybill` where id = '".$row3['waybill_id']."'";
+                $inv4 = Yii::$app->db->createCommand($query4)->queryAll();
+                // vd($inv4);
+                if(!empty($inv4)){
+                  $contracts[$row['contract']]['waybill_no'][] = $inv4[0]['waybill_no'];
+                  $contracts[$row['contract']]['customer'] = Customer::findOne($row2['customer_id'])->name;
+                }
+              }
+          }
+        }
+        return $contracts;
+  }
+
+
+   // contractdagi fakturalar tablitsasi
+    public function queryFactorys($contract)
+    {
+      $contracts = $this->queryContracts()[$contract];
+      $result = [];
+
+      $detailsTable = FgInvoiceDetail::tableName();
+      $partsTable = Part::tableName();
+      $unitsTable = Unit::tableName();
+      $waybillsTable = Waybill::tableName();
+      $modelsTable = ProductModel::tableName();
+      $waybill_ids = array_unique($contracts['waybill_ids']);
+      foreach($waybill_ids as $item){
+        $model = Waybill::find()->with([
+          'fgInvoiceWaybills.fgInvoice.customer', 'factory', 'createdBy', 'updatedBy' => function ($query) {
+            $query->from(['u2' => User::tableName()]);
+          }
+        ])->where(['id' => $item])->one();
+        if ($model === null) {
+          throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        }
+        $pivotData = [];
+        foreach ($model->fgInvoiceWaybills as $pivot) {
+          $model->invoices[] = $pivot->fg_invoice_id;
+          $pivotData[] = $pivot->id;
+        }
+        // show fg invoice details
+      
+        $details[] = (new Query())->select(["$detailsTable.part_name", "$partsTable.part_color", "$unitsTable.unit_value", "$detailsTable.price", "SUM(qty) as total_qty"])
+          ->from($detailsTable)
+          ->leftJoin($partsTable, "$partsTable.part_no = $detailsTable.part_no")
+          ->leftJoin($unitsTable, "$unitsTable.id = $detailsTable.unit_id")
+          ->groupBy(["$detailsTable.part_name", "$partsTable.part_color", "$unitsTable.unit_value", "$detailsTable.price"])
+          ->where(["$detailsTable.fg_invoice_id" => $model->invoices])
+          ->all();
+      }
+      return $details;
+    }
+
+    // customerning barcha fakturalari bo'yicha
+  public function queryCustomerFactory($customer_id)
+  {
+      $customer = Customer::findOne($customer_id);
+      if($customer){
+        $details = [];
+        $all_amount_with_vat = 0;
+        $all_amount = 0;
+        $all_qty = 0;
+        $all_vat_amount = 0;
+        $vat = $firstFgInvoice->vat;
+        $contracts = FgInVoice::find()->where(['customer_id'=>$customer_id])->orderBy(['id'=>SORT_ASC])->all();
+        if($contracts){
+          foreach($contracts as $key => $contract){
+            $result = $this->queryFactorys($contract->contract);
+            foreach($result as $items){
+              foreach($items as $detail){
+                $unit = $detail['unit_value'];
+                $qty = $detail['total_qty'];
+                $price = $detail['price'];
+                $amount = ($qty*$price);
+                $vat_amount = $amount*$vat/100;
+                $amount_with_vat = ($vat_amount) ? ($amount + $vat_amount) : $amount;
+             
+                $all_amount_with_vat = $all_amount_with_vat + $amount_with_vat;
+              }
+            }
+          }
+        }
+      }
+      return $all_amount_with_vat;
+  }
+  // kompning schet fakturalar bo'yicha qismi
+  // 2023-04-02
+  // @Sanakulov Anvar
+  public function actionContractFactory()
+  {
+        $customerList = Customer::find()->select(['id','name'])->asArray()->all();
+        $searchModel = new FgInvoiceSearch();
+        $dataProvider = $searchModel->searchContractFactory(Yii::$app->request->queryParams);
+        $contracts = $this->queryContracts();
+        return $this->render('contract-factory', compact('searchModel', 'dataProvider','contracts'));
+  }
+
+  // contract factory-view
+
+  public function actionContractFactoryView($contract=null)
+  {
+      $contracts = $this->queryContracts();
+      if(!empty($contract)){
+        $result = $contracts[$contract];
+        $customer = Customer::findOne(['name'=>$result['customer']]);
+        $details = $this->queryFactorys($contract);
+        $payments = [];
+        $statusList = [
+          0 => 'Аккредитив',
+          1 => 'По факту',
+          2 => 'Предоплата',
+        ];
+        $salesContract = SalesContract::find()->where(['contract_no'=>$contract])->all();
+        foreach($salesContract as $key => $item){
+          $payments['sales_contract']['contract_date']    = $item->contract_date;
+          $payments['sales_contract']['contract_no']      = $item->contract_no;
+          $payments['sales_contract']['contract_amount']  = $item->contract_amount; 
+          $receptControls = ReceptControl::find()->where(['sales_contract_id'=>$item->id])->all();
+          foreach($receptControls as $key2 => $item2){
+            $payments['receptControls'][$key2]['recept_control_no']     = $item2->no;
+            $payments['receptControls'][$key2]['recept_control_date']   = $item2->date;
+            $payments['receptControls'][$key2]['recept_control_amount'] = $item2->amount;
+            $payments['receptControls'][$key2]['payment_term']          = $statusList[$item2->payment_term];
+          }
+        }
+        return $this->render('contract-factory-view', compact('result','contract', 'customer', 'details', 'payments'));
+      }
+  }
   public function actionXls() {
     ini_set('memory_limit', '-1');
     $searchModel = new FgInvoiceSearch();
