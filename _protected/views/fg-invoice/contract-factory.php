@@ -6,6 +6,7 @@ use app\models\FgInvoice;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\helpers\ArrayHelper;
+use kartik\select2\Select2; 
 
 /* @var $this yii\web\View */
 /* @var $model app\models\FgInvoice */
@@ -14,7 +15,7 @@ use yii\helpers\ArrayHelper;
 /** @var TYPE_NAME $customers */
 /** @var TYPE_NAME $factories */
 /** @var TYPE_NAME $modelImport */
-$this->title = Yii::t('app', 'Группа Счёт фактура');
+$this->title = Yii::t('app', 'Группа Счёт фактура').'('.$year.')';
 $this->params['breadcrumbs'][] = $this->title;
 $canUpdate = Yii::$app->user->can('fg-invoice-update');
 $canDelete = Yii::$app->user->can('fg-invoice-delete');
@@ -63,9 +64,9 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
         'template' => '{view}',
         'buttons' => [
           
-          'view' => function($url, $model) use ($canView) {
+          'view' => function($url, $model) use ($canView, $year) {
             if(!$canView) return false;
-            $url = Url::toRoute(['fg-invoice/contract-factory-view', 'contract' => $model->contract]);
+            $url = Url::toRoute(['fg-invoice/contract-factory-view', 'contract' => $model->contract, 'year' => $year]);
             return Html::a('<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>', $url, [
                 'title' => Yii::t('app', 'View'),
                 'target' => '_blank'
@@ -74,10 +75,35 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
         ],
         'visible' => $canView
       ],
-      'contract',
+      [
+        'attribute' => 'date',
+        'label' => Yii::t('app', 'Дата'),
+        'format' => 'raw',
+        'value' => function($model) use ($year) {
+          return $year;
+        },
+        'filter' => $years
+      ],
+      [
+        'attribute' => 'customer_id',
+        'label' => Yii::t('app', 'Клиент'),
+        'format' => 'raw',
+        'value' => function($model) {
+          return $model->customer? $model->customer->name : null;
+      
+        },
+        'filter' => $customerList,
+        'filterInputOptions' => [
+          'class' => 'form-control select2',
+        ]
+      ],
+      [
+        'attribute' => 'contract'
+      ],
       [
         'attribute' => 'contract_factory',
         'label' => Yii::t('app', 'Счет фактура'),
+        'contentOptions' => ['style' => 'width:100px;text-align: center;'],
         'value' => function($model) use ($contracts) {
           if(isset($contracts) && isset($contracts[$model->contract]['waybill_no'])){
             if(!empty($contracts[$model->contract]['waybill_no'])){
@@ -90,19 +116,6 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
             return null;
         },
       ],
-
-      [
-        'attribute' => '',
-        'label' => Yii::t('app', 'Клиент'),
-        'value' => function($model) use ($contracts) {
-          if(isset($contracts) && isset($contracts[$model->contract]['customer'])){
-            if(!empty($contracts[$model->contract]['customer'])){
-              return $contracts[$model->contract]['customer'];
-            }
-          }
-          return null;
-        },
-      ]
       
     ],
   ]

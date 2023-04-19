@@ -14,11 +14,12 @@
 		 * {@inheritdoc}
 		 */
 		public $contract_factory;
+		public $date;
 		public function rules(){
 			return [
 				[['id', 'factory_id', 'customer_id', 'vat', 'excise', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
 				[['invoice_no', 'invoice_date', 'contract', 'contract_date', 'rec_person_fullname', 'rec_person_regno', 'driver', 'truck', 'manager', 'account', 'sender', 'comment', 'confirmed_by'], 'safe'],
-				['contract_factory', 'string']
+				[['contract_factory', 'date'], 'safe']
 			];	
 		}
 
@@ -151,19 +152,43 @@
 		// contract factories search
 		public function searchContractFactory($params)
 		{
-				$query = "SELECT distinct(contract) FROM `fg_invoice`";
-				$inv = Yii::$app->db->createCommand($query)->queryAll();
-				$query = FgInvoice::find()->select(['contract'])->distinct();
-				$dataProvider = new ActiveDataProvider(['query' => $query]);
-				$this->load($params);
-				if(!$this->validate()){
-					// uncomment the following line if you do not want to return any records when validation fails
-					// $query->where('0=1');
-					return $dataProvider;
-				}
-				$factorys = Waybill::find()->all();
-				$query->andFilterWhere(['like', 'contract', $this->contract]);
-				$query->andFilterWhere(['like', 'contract_factory', $factorys->waybill_no]);
+			$year = date('Y');
+			if(isset($params['FgInvoiceSearch']['date'])){
+				$year = $params['FgInvoiceSearch']['date'];
+			}
+			$contract_factory = null;
+			if(isset($params['FgInvoiceSearch']['contract_factory'])){
+				$contract_factory = $params['FgInvoiceSearch']['contract_factory'];
+			}
+			$query = FgInvoice::find()->select(['contract', 'customer_id'])
+				->joinWith(['fgInvoiceWaybills'])
+				->leftJoin('waybill', 'waybill.id = fg_invoice_waybill.waybill_id')
+				->where(['not', ['waybill.waybill_no' => null]])
+				->andWhere(['DATE_FORMAT(waybill.waybill_date, \'%Y\')' => $year])
+				->groupBy(['customer_id','contract'])
+				->orderBy(['customer_id' => SORT_ASC]);
+			if($contract_factory != null){
+				$query->andFilterWhere(['waybill.waybill_no' => $contract_factory]);
+			}
+			// vd($query->createCommand()->rawSql);
+			// $query = FgInvoice::find()->select(['distinct(contract)', 'customer.name customer_name', 'customer_id'])
+			// ->orderBy(['contract' => SORT_ASC])
+			// ->joinWith(['customer', 'fgInvoiceWaybills'])
+			// ->leftJoin('waybill', 'waybill.id = fg_invoice_waybill.waybill_id');
+			// ->andWhere(['1'=>1]);
+			$dataProvider = new ActiveDataProvider([
+				'query' => $query,
+			]);
+			$this->load($params);
+			
+			if(!$this->validate()){
+				// uncomment the following line if you do not want to return any records when validation fails
+				// $query->where('0=1');
 				return $dataProvider;
+			}
+			$query->andFilterWhere(['like', 'contract', $this->contract]);
+			$query->andFilterWhere(['customer_id'=> $this->customer_id]);
+
+			return $dataProvider;
 		}
 	}

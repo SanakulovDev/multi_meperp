@@ -25,6 +25,7 @@ use app\models\ReqDetailPlan;
 use app\models\ReqDetailWide;
 use app\models\VehicleCoverageInput;
 use app\models\Visitor;
+use app\models\Customer;
 use app\models\VisitorSearch;
 use app\rbac\models\Role;
 use app\services\ReportService;
@@ -3866,14 +3867,32 @@ class ReportController extends AppController {
       ]);
   }
   // qarzlari va qilingan oplatalari
-  public function actionSalesPaymentInfo()
+  public function actionSalesPaymentInfo($year = null)
   {
+    if(empty($year)){
+      $year = date('Y');
+    }
+    $years = [
+      2020 => 2020,
+      2021 => 2021,
+      2022 => 2022,
+      2023 => 2023,
+      2024 => 2024,
+      2025 => 2025,
+      2026 => 2026,
+      2027 => 2027,
+      2028 => 2028,
+      2029 => 2029,
+      2030 => 2030,
+    ];
     $reportName = 'sales-payment-info';
     $downloadFileName = rtrim(Helpers::downloadFileName($reportName, "1"), ".1");
-    $data = $this->_reportService->salesPaymentStatus();
+    $data = Customer::find()->where(['status' => Customer::STATUS_ACTIVE])->all();
     return $this->render('sales/' . $reportName, [
       'data' => $data,
-      'downloadFileName' => $downloadFileName
+      'downloadFileName' => $downloadFileName,
+      'year' => $year,
+      'years' => $years
       ]);
   }
   public function actionMaterialStock($state = Part::STATE_RAW){

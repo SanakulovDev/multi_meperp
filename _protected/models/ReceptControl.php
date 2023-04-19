@@ -49,7 +49,7 @@ class ReceptControl extends \yii\db\ActiveRecord {
       [['no', 'date', 'customer_id', 'payment_term', 'amount', 'sales_contract_id'], 'required'],
       [['date'], 'safe'],
       [['customer_id', 'payment_term', 'sales_contract_id', 'created_at', 'created_by', 'updated_by', 'updated_at'], 'integer'],
-      [['amount'], 'number'],
+      [['amount'], 'safe'],
       [['no'], 'string', 'max' => 100],
     ];
   }

@@ -2269,9 +2269,9 @@ class ReportService
         $customerName = Customer::findOne($customer_id)->name;
         return compact('debit','credit','customerName');
     }
-    public static function salesPaymentInfo($customer_id)
+    public static function salesPaymentInfo($customer_id, $year)
     {
-        $sum = ReceptControl::find()->where(['customer_id'=>$customer_id])->sum('amount');
+        $sum = ReceptControl::find()->where(['customer_id'=>$customer_id])->andWhere(['DATE_FORMAT(date, \'%Y\')'=>$year])->sum('amount');
         return $sum;
     }
     public function materialStock($state)
@@ -2375,36 +2375,39 @@ class ReportService
 
         return $data;
     }
-    public static function queryContracts()
-  {
+    public static function queryContracts($year, $contract_factory=null)
+    {
+        
         $query = "SELECT distinct(contract) FROM `fg_invoice`";
         $inv = Yii::$app->db->createCommand($query)->queryAll();
         $contracts = [];
         foreach ($inv as $row) {
-          $contracts[$row['contract']]=[];
-          $query2 = "SELECT id, customer_id, invoice_no FROM `fg_invoice` where contract = '".$row['contract']."'";
-          $inv2 = Yii::$app->db->createCommand($query2)->queryAll();
-          foreach($inv2 as $row2){
+        $contracts[$row['contract']]=[];
+        $query2 = "SELECT id, customer_id, invoice_no FROM `fg_invoice` where contract = '".$row['contract']."'";
+        $inv2 = Yii::$app->db->createCommand($query2)->queryAll();
+        foreach($inv2 as $row2){
             $contracts[$row['contract']]['invoice_no'][] = $row2['invoice_no'];
             $query3 = "SELECT waybill_id FROM `fg_invoice_waybill` where fg_invoice_id = '".$row2['id']."'";
             $inv3 = Yii::$app->db->createCommand($query3)->queryAll();
-              foreach($inv3 as $row3){
-                $contracts[$row['contract']]['waybill_ids'][] = $row3['waybill_id'];
-                $query4 = "SELECT waybill_no, factory_id FROM `waybill` where id = '".$row3['waybill_id']."'";
-                $inv4 = Yii::$app->db->createCommand($query4)->queryAll();
-                // vd($inv4);
-                if(!empty($inv4)){
-                  $contracts[$row['contract']]['waybill_no'][] = $inv4[0]['waybill_no'];
-                  $contracts[$row['contract']]['customer'] = Customer::findOne($row2['customer_id'])->name;
+            foreach($inv3 as $row3){
+                $query4 = "SELECT waybill_no, factory_id FROM `waybill` where  DATE_FORMAT(waybill_date,  '%Y')='".$year."' and  id = '".$row3['waybill_id']."'";
+                if(!empty($contract_factory)){
+                    $query4 .= " and waybill_no = '".$contract_factory."'";
                 }
-              }
-          }
+                $inv4 = Yii::$app->db->createCommand($query4)->queryAll();
+                if(!empty($inv4)){
+                    $contracts[$row['contract']]['waybill_ids'][] = $row3['waybill_id'];
+                    $contracts[$row['contract']]['waybill_no'][] = $inv4[0]['waybill_no'];
+                    $contracts[$row['contract']]['customer'] = Customer::findOne($row2['customer_id'])->name;
+                }
+            }
+        }
         }
         return $contracts;
-  }
+    }
   
     // contractdagi fakturalar tablitsasi
-    public static function queryFactorys($contract)
+    public static function queryFactorys($contract, $year)
     {
         
         $result = [];
@@ -2425,39 +2428,39 @@ class ReportService
                 $waybill_ids[] = $row3['waybill_id'];
             }
         }
-        // vd($waybill_ids);
-        foreach($waybill_ids as $item){
-            $model = Waybill::find()->with([
+        if(!empty($waybill_ids)){
+            foreach($waybill_ids as $key => $item){
+              $model = Waybill::find()->with([
                 'fgInvoiceWaybills.fgInvoice.customer', 'factory', 'createdBy', 'updatedBy' => function ($query) {
-                    $query->from(['u2' => User::tableName()]);
+                  $query->from(['u2' => User::tableName()]);
                 }
-                ])->where(['id' => $item])->one();
-            // if ($model === null) {
-            //     throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-            // }
-            $pivotData = [];
-            if(!empty($model)){
-
-                foreach ($model->fgInvoiceWaybills as $pivot) {
-                    $model->invoices[] = $pivot->fg_invoice_id;
-                    $pivotData[] = $pivot->id;
-                }
-            }
-            // show fg invoice details
-        
-            $details[] = (new Query())->select(["$detailsTable.part_name", "$partsTable.part_color", "$unitsTable.unit_value", "$detailsTable.price", "SUM(qty) as total_qty"])
+              ])->where(['id' => $item])->andWhere(['DATE_FORMAT(waybill_date,  \'%Y\')' => $year])->one();
+              if ($model === null) {
+                return null;
+              }
+              $pivotData = [];
+              foreach ($model->fgInvoiceWaybills as $pivot) {
+                $model->invoices[] = $pivot->fg_invoice_id;
+                $pivotData[] = $pivot->id;
+              }
+              // show fg invoice details
+            
+              $details[$key] = (new Query())->select(["$detailsTable.part_name", "$partsTable.part_color", "$unitsTable.unit_value", "$detailsTable.price", "SUM(qty) as total_qty"])
                 ->from($detailsTable)
                 ->leftJoin($partsTable, "$partsTable.part_no = $detailsTable.part_no")
                 ->leftJoin($unitsTable, "$unitsTable.id = $detailsTable.unit_id")
                 ->groupBy(["$detailsTable.part_name", "$partsTable.part_color", "$unitsTable.unit_value", "$detailsTable.price"])
                 ->where(["$detailsTable.fg_invoice_id" => $model->invoices])
                 ->all();
-        }
-        return $details;
+              
+            }
+          }
+          
+          return $details;
     }
 
   // customerning barcha fakturalari bo'yicha
-  public static function queryCustomerFactory($customer_id)
+  public static function queryCustomerFactory($customer_id, $year)
   {
       $customer = Customer::findOne($customer_id);
       if($customer){
@@ -2470,7 +2473,7 @@ class ReportService
         $contracts = FgInVoice::find()->where(['customer_id'=>$customer_id])->orderBy(['id'=>SORT_ASC])->all();
         if($contracts){
           foreach($contracts as $key => $contract){
-            $result = self::queryFactorys($contract->contract);
+            $result = self::queryFactorys($contract->contract, $year);
             if($result){
                 foreach($result as $items){
                     if($items){

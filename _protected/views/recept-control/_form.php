@@ -68,7 +68,7 @@ $form = ActiveForm::begin([
       <?= $form->field($model, 'no')->textInput(['maxlength' => true]) ?>
 	</div>
   <div class="col-sm-6 col-md-6 col-lg-6">
-      <?= $form->field($model, 'amount')->textInput(['type' => 'number']) ?>
+      <?= $form->field($model, 'amount')->textInput(['type' => 'text', 'style'=>'text-align: right']) ?>
   </div>
 </div>
 
@@ -121,7 +121,7 @@ $form = ActiveForm::begin([
 
 <?php
 $url = Url::to(['sales-contract/list-by-sales-supplier'], true);
-$script = <<< JS
+ob_start();?>
 	$(function () {
 		contractId = $('#receptcontrol-sales_contract_id').find("option:first-child").val();
 		if(contractId) {
@@ -130,7 +130,7 @@ $script = <<< JS
 
 		$('#receptcontrol-customer_id').on("select2:select", function(e) { 
 			 var selectedSupplier = e.params.data;
-			 var supplierGetUrl = '$url'+'?id='+selectedSupplier.id;
+			 var supplierGetUrl = '<?=$url?>'+'?id='+selectedSupplier.id;
 			 $.get(supplierGetUrl, function(data, status){
 				// clear
 				$('#receptcontrol-sales_contract_id')
@@ -155,7 +155,26 @@ $script = <<< JS
 			var currency = $('#receptcontrol-sales_contract_id').find("option[value="+id+"]").attr("data-currency");
 			$('#receptcontrol-currency').val(currency);
 		}
+		$(document).ready(function(){
+			//$("#receptcontrol-amount").inputmask({"mask": "999 999 999 999 999 999 999"});
+			new AutoNumeric('#receptcontrol-amount');
+		});
+		//$('#receptcontrol-amount').on('keyup', function() {
+		//	formatlash($(this));
+		//});
+		function formatlash(element) {
+			// Kiritilgan sonni olib olamiz
+			let son = element.val();
+
+			// Sonni 3 xonali formatga formatlaymiz
+			son = son.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
+			// Formatlangan sonni inputga qaytarib chiqamiz
+			element.val(son);
+		}
 
 	});
-JS;
+<?php $script = ob_get_clean();
 $this->registerJs($script, yii\web\View::POS_END);
+$this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.6/jquery.inputmask.min.js',  [yii\web\View::POS_END]);
+?>

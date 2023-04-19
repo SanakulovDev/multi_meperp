@@ -56,6 +56,7 @@ class ReceptControlController extends AppController
 
         if (Yii::$app->getRequest()->isAjax) {
             if ($model->load(Yii::$app->request->post())) {
+                $model->amount = trim(str_replace(',', '', $model->amount));
                 if ($model->save()) {
                     $data['status'] = 1;
                 } else {

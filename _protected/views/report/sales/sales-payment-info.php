@@ -8,7 +8,7 @@ use app\services\ReportService;
 /* @var $searchModel app\models\ReqSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Payment status for customers (Debit/credit)');
+$this->title = Yii::t('app', 'Client report');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 .td_num{
 	text-align: right;
-	width: 120px;
+	width: 180px;
 }
 
 .tbl-second{
@@ -79,7 +79,14 @@ $this->params['breadcrumbs'][] = $this->title;
 	<div class="col-md-2 col-lg-2">
 		<?=Html::a(Yii::t('app', 'btn-back'), ['index'], ['class' => 'btn btn-default btn-xs'])?>
 	</div>
-	<div class="col-md-10 col-lg-10">
+	<div class="col-md-2 col-lg-2">
+		<?php echo Html::dropDownList('name', $year, $years, [
+			'prompt' => 'Select an years',
+			'class' => 'form-control select2 customer-factory-year',
+			'data-url' => Url::to(['report/sales-payment-info']),
+		]);?>
+	</div>
+	<div class="col-md-8 col-lg-8">
 		<div class="pull-right">
 			<?=Html::button(Yii::t('app', 'btn-download-delivery-plan'), ['class' => 'btn btn-info btn-xs', 'id' => 'download-xls'])?>
 		</div>
@@ -92,20 +99,20 @@ $this->params['breadcrumbs'][] = $this->title;
 	<tr class="tr_head">
 		<td >№</td>
 		<td >Наименование компании</td>
-		<td >Контракт</td>
-		<td >Кредит</td>
+		<td >Счёт фактура</td>
+		<td >Оплаты</td>
 		<td >Нехватка</td>
 	</tr>
 	
 	<?php $i = 0; $sumInvAmt = 0; $sumPayAmt = 0;; $sumPayAmt = 0;?>
-	<?php foreach ($data['data'] as $row) {?>
+	<?php foreach ($data as $row) {?>
 		<?php
 			$i++;
-			list($customerName, $customerId) = explode('|', $row['customer']);
+			$customerId = $row->id;
 			$classOdd = (($i % 2) == 0) ? 'tr_odd' : '';
             $shortage = 0;
-            $contract_amount = ReportService::queryCustomerFactory($customerId);
-			$inv_amount = ReportService::salesPaymentInfo($customerId);
+            $contract_amount = ReportService::queryCustomerFactory($customerId, $year);
+			$inv_amount = ReportService::salesPaymentInfo($customerId, $year);
 			// vd($contract_amount);
 			$sumInvAmt += $inv_amount;
 			$class= '';
@@ -117,7 +124,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 		<tr class="tr_item <?=$classOdd?>">
 			<td class="td_first"><?=$i?></td>
-			<td><a href="<?=Url::toRoute(['report/sales-payment-status-customer','customer_id' => $customerId]) ?>"><?=$customerName?></a> </td>
+			<td><a href="<?=Url::toRoute(['report/sales-payment-status-customer','customer_id' => $customerId]) ?>"><?=$row->name?></a> </td>
 			<td class="td_num" data-value="<?=$contract_amount?>"><?=Helpers::numberFormatRemoveZero($contract_amount)?></td>
 			<td class="td_num" data-value="<?=$inv_amount?>"><?=Helpers::numberFormatRemoveZero($inv_amount)?></td>
 			<td class="td_num td_shortage" data-value="<?=$shortage*(-1)?>"><?=Helpers::numberFormatRemoveZero($shortage*(-1))?></td>
@@ -136,7 +143,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <?php
-$docReadyJs = <<< JS
+ob_start();?>
 $(document).ready(function() {
 
 	$('#download-xls').on('click', function (e) {
@@ -145,17 +152,28 @@ $(document).ready(function() {
 
   $('.td_shortage').each(function() {
 		var cellVal = parseInt($(this).attr('data-value'));    
-		if(cellVal <= 0){
-			$(this).addClass('td_negative');
+		if(cellVal < 0){
+			$(this).addClass('text-danger');
+		}
+		else if(cellVal == 0){
+
 		}
 		else {
-			$(this).css({"background-color": "green"});
-			$(this).css({"color": "white"});
+			$(this).addClass('bg-success');
+			$(this).addClass('text-white');
+			// $(this).css({"color": "white"});
 		}
 	});
+	$('.customer-factory-year').on('change', function(){
+		var year = $(this).val();
+		var url = $(this).attr('data-url');
+		url = url + '?year=' + year;
+		// redirect url
+		location.href = url;
+	})
 
 
 }) 
-JS;
-$this->registerJs($docReadyJs);
+<?php
+$this->registerJs(ob_get_clean());
 ?>

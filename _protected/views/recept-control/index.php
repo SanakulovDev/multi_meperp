@@ -143,12 +143,19 @@ $canDownload = Yii::$app->user->can('recept-control-xls');
 						'attribute' => 'customer_id',
 						'value' => 'customer.name',
 						'contentOptions' => function ($model, $column) {
-							return ['title' => $model->customer->name ?? null, 'class' => 'td-nowrap', 'style' => 'max-width:100px'];
+							return ['title' => $model->customer->name ?? null, 'class' => 'td-nowrap', 'style' => 'max-width:500px'];
 						},
-						'filter' => $customers
+						'filter' => $customers,
+						'filterInputOptions' => [
+							'class' => 'form-control select2',
+						]
 					]
 				],
 			]
 		); ?>
 	<?php Pjax::end(); ?>
 </div>
+
+<?php
+$this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/autonumeric/4.1.0/autoNumeric.min.js',  ['position' => yii\web\View::POS_HEAD]);
+?>

@@ -18,6 +18,7 @@ use app\models\User;
 use app\models\Unit;
 use app\models\ProductModel;
 use app\models\ReceptControl;
+use app\services\ReportService;
 use PHPExcel_IOFactory;
 use Yii;
 use yii\base\DynamicModel;
@@ -55,7 +56,7 @@ class FgInvoiceController extends AppController {
         ], self::loadDictionaries()));
   }
 
-  public function queryContracts()
+  public function queryContracts($year)
   {
         $query = "SELECT distinct(contract) FROM `fg_invoice`";
         $inv = Yii::$app->db->createCommand($query)->queryAll();
@@ -69,11 +70,10 @@ class FgInvoiceController extends AppController {
             $query3 = "SELECT waybill_id FROM `fg_invoice_waybill` where fg_invoice_id = '".$row2['id']."'";
             $inv3 = Yii::$app->db->createCommand($query3)->queryAll();
               foreach($inv3 as $row3){
-                $contracts[$row['contract']]['waybill_ids'][] = $row3['waybill_id'];
-                $query4 = "SELECT waybill_no, factory_id FROM `waybill` where id = '".$row3['waybill_id']."'";
+                $query4 = "SELECT waybill_no, factory_id FROM `waybill` where  DATE_FORMAT(waybill_date,  '%Y')='".$year."' and  id = '".$row3['waybill_id']."'";
                 $inv4 = Yii::$app->db->createCommand($query4)->queryAll();
-                // vd($inv4);
                 if(!empty($inv4)){
+                  $contracts[$row['contract']]['waybill_ids'][] = $row3['waybill_id'];
                   $contracts[$row['contract']]['waybill_no'][] = $inv4[0]['waybill_no'];
                   $contracts[$row['contract']]['customer'] = Customer::findOne($row2['customer_id'])->name;
                 }
@@ -85,9 +85,9 @@ class FgInvoiceController extends AppController {
 
 
    // contractdagi fakturalar tablitsasi
-    public function queryFactorys($contract)
+    public function queryFactorys($contract, $year)
     {
-      $contracts = $this->queryContracts()[$contract];
+      $contracts = $this->queryContracts($year)[$contract];
       $result = [];
 
       $detailsTable = FgInvoiceDetail::tableName();
@@ -96,35 +96,39 @@ class FgInvoiceController extends AppController {
       $waybillsTable = Waybill::tableName();
       $modelsTable = ProductModel::tableName();
       $waybill_ids = array_unique($contracts['waybill_ids']);
-      foreach($waybill_ids as $item){
-        $model = Waybill::find()->with([
-          'fgInvoiceWaybills.fgInvoice.customer', 'factory', 'createdBy', 'updatedBy' => function ($query) {
-            $query->from(['u2' => User::tableName()]);
+      $details = [];
+      if(!empty($waybill_ids)){
+        foreach($waybill_ids as $item){
+          $model = Waybill::find()->with([
+            'fgInvoiceWaybills.fgInvoice.customer', 'factory', 'createdBy', 'updatedBy' => function ($query) {
+              $query->from(['u2' => User::tableName()]);
+            }
+          ])->where(['id' => $item])->one();
+          if ($model === null) {
+            return null;
           }
-        ])->where(['id' => $item])->one();
-        if ($model === null) {
-          throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+          $pivotData = [];
+          foreach ($model->fgInvoiceWaybills as $pivot) {
+            $model->invoices[] = $pivot->fg_invoice_id;
+            $pivotData[] = $pivot->id;
+          }
+          // show fg invoice details
+        
+          $details[] = (new Query())->select(["$detailsTable.part_name", "$partsTable.part_color", "$unitsTable.unit_value", "$detailsTable.price", "SUM(qty) as total_qty"])
+            ->from($detailsTable)
+            ->leftJoin($partsTable, "$partsTable.part_no = $detailsTable.part_no")
+            ->leftJoin($unitsTable, "$unitsTable.id = $detailsTable.unit_id")
+            ->groupBy(["$detailsTable.part_name", "$partsTable.part_color", "$unitsTable.unit_value", "$detailsTable.price"])
+            ->where(["$detailsTable.fg_invoice_id" => $model->invoices])
+            ->all();
         }
-        $pivotData = [];
-        foreach ($model->fgInvoiceWaybills as $pivot) {
-          $model->invoices[] = $pivot->fg_invoice_id;
-          $pivotData[] = $pivot->id;
-        }
-        // show fg invoice details
-      
-        $details[] = (new Query())->select(["$detailsTable.part_name", "$partsTable.part_color", "$unitsTable.unit_value", "$detailsTable.price", "SUM(qty) as total_qty"])
-          ->from($detailsTable)
-          ->leftJoin($partsTable, "$partsTable.part_no = $detailsTable.part_no")
-          ->leftJoin($unitsTable, "$unitsTable.id = $detailsTable.unit_id")
-          ->groupBy(["$detailsTable.part_name", "$partsTable.part_color", "$unitsTable.unit_value", "$detailsTable.price"])
-          ->where(["$detailsTable.fg_invoice_id" => $model->invoices])
-          ->all();
       }
+      
       return $details;
     }
 
     // customerning barcha fakturalari bo'yicha
-  public function queryCustomerFactory($customer_id)
+  public function queryCustomerFactory($customer_id, $year)
   {
       $customer = Customer::findOne($customer_id);
       if($customer){
@@ -160,34 +164,55 @@ class FgInvoiceController extends AppController {
   // @Sanakulov Anvar
   public function actionContractFactory()
   {
-        $customerList = Customer::find()->select(['id','name'])->asArray()->all();
+        $year = date('Y');
+        $contract_factory = '';
+        if(isset(Yii::$app->request->queryParams['FgInvoiceSearch']['date'])){
+          $year = Yii::$app->request->queryParams['FgInvoiceSearch']['date'];
+        }
+        if(isset(Yii::$app->request->queryParams['FgInvoiceSearch']['contract_factory'])){
+          $contract_factory = Yii::$app->request->queryParams['FgInvoiceSearch']['contract_factory'];
+        }
+        $customerList = ArrayHelper::map(Customer::find()->all(), 'id', 'name');
         $searchModel = new FgInvoiceSearch();
         $dataProvider = $searchModel->searchContractFactory(Yii::$app->request->queryParams);
-        $contracts = $this->queryContracts();
-        return $this->render('contract-factory', compact('searchModel', 'dataProvider','contracts'));
+        $contracts = ReportService::queryContracts($year, $contract_factory);
+        $years = [
+          2020 => 2020,
+          2021 => 2021,
+          2022 => 2022,
+          2023 => 2023,
+          2024 => 2024,
+          2025 => 2025,
+          2026 => 2026,
+          2027 => 2027,
+          2028 => 2028,
+          2029 => 2029,
+          2030 => 2030,
+        ];
+        return $this->render('contract-factory', compact('searchModel', 'dataProvider','contracts', 'customerList', 'years', 'year'));
   }
 
   // contract factory-view
 
-  public function actionContractFactoryView($contract=null)
+  public function actionContractFactoryView($contract=null, $year=null)
   {
-      $contracts = $this->queryContracts();
+      $contracts = ReportService::queryContracts($year);
       if(!empty($contract)){
         $result = $contracts[$contract];
         $customer = Customer::findOne(['name'=>$result['customer']]);
-        $details = $this->queryFactorys($contract);
+        $details = ReportService::queryFactorys($contract, $year);
         $payments = [];
         $statusList = [
           0 => 'Аккредитив',
           1 => 'По факту',
           2 => 'Предоплата',
         ];
-        $salesContract = SalesContract::find()->where(['contract_no'=>$contract])->all();
+        $salesContract = SalesContract::find()->where(['contract_no'=>$contract])->andWhere(['DATE_FORMAT(contract_date, \'%Y\')'=>$year])->all();
         foreach($salesContract as $key => $item){
           $payments['sales_contract']['contract_date']    = $item->contract_date;
           $payments['sales_contract']['contract_no']      = $item->contract_no;
           $payments['sales_contract']['contract_amount']  = $item->contract_amount; 
-          $receptControls = ReceptControl::find()->where(['sales_contract_id'=>$item->id])->all();
+          $receptControls = ReceptControl::find()->where(['sales_contract_id'=>$item->id])->andWhere(['DATE_FORMAT(date, \'%Y\')'=>$year])->all();
           foreach($receptControls as $key2 => $item2){
             $payments['receptControls'][$key2]['recept_control_no']     = $item2->no;
             $payments['receptControls'][$key2]['recept_control_date']   = $item2->date;

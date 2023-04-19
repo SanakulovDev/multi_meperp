@@ -49,15 +49,15 @@ class ReceptControlSearch extends ReceptControl {
     // grid filtering conditions
     $query->andFilterWhere([
                              'id' => $this->id,
-                             'date' => $this->date,
-                             'customer_id' => $this->customer_id,
-                             'payment_term' => $this->payment_term,
-                             'amount' => $this->amount,
-                             'sales_contract_id' => $this->sales_contract_id,
-                             'created_at' => $this->created_at,
-                             'created_by' => $this->created_by,
-                             'updated_by' => $this->updated_by,
-                             'updated_at' => $this->updated_at,
+                             'recept_control.date' => $this->date,
+                             'recept_control.customer_id' => $this->customer_id,
+                             'recept_control.payment_term' => $this->payment_term,
+                             'recept_control.amount' => $this->amount,
+                             'recept_control.sales_contract_id' => $this->sales_contract_id,
+                             'recept_control.created_at' => $this->created_at,
+                             'recept_control.created_by' => $this->created_by,
+                             'recept_control.updated_by' => $this->updated_by,
+                             'recept_control.updated_at' => $this->updated_at,
                            ]);
     $query->andFilterWhere(['like', 'no', $this->no]);
     if ($mode == 'excel') {

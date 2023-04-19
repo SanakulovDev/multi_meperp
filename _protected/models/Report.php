@@ -71,4 +71,13 @@
     {
         return $this->hasOne(ReportGroup::className(), ['id' => 'report_group_id']);
     }
-	}
+
+
+	// sales-payment-info.php
+	/*
+	@@@ Sanakulov Anvar  @@@
+	@@@ 2023-04-18   @@@
+	Create by 
+
+	*/
+}
