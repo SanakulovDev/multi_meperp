@@ -67,7 +67,7 @@ $hiddenReports = [
     top: 60%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 80px;
+    font-size: 40px;
     transition: 0.7s;
     color: #fff;
   }
@@ -256,7 +256,7 @@ $hiddenReports = [
           if($key > 2) continue;
           if(count($gr->reports) == 0) continue;
           if($gr->id == 7) continue;
-
+          
       ?>
         
       <div class="card" style="z-index: 1000;">
