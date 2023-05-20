@@ -852,6 +852,6 @@ return [
   'Images count in post must be 3' => 'Postdagi rasmlar soni 3 ta bo\'lishi kerak',
   'Группа Счёт фактура' =>'Guruh hisob fakturalari',
   'Client report' => 'Mijozlar haqida ma\'lumot',
-
+  'BIRKA' => 'BIRKA',
 ];
 ?>

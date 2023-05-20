@@ -1,0 +1,87 @@
+<?php 
+
+use yii\helpers\Html;
+
+$optionsBarcode = [
+	'sf' => 2,
+	'h' => 80,
+];
+$text = $url;
+$generator = new app\components\BarcodeGenerator();
+$image = $generator->render_image('qr', $text, [
+    'f' => 'png',
+    'sf' => 10,
+]);
+ob_start();
+imagepng($image);
+$image = ob_get_contents();
+ob_end_clean();
+?>
+<style>
+    *{
+        font-family: "Arial";
+        font-size: 7px;
+        margin: 0;
+        padding: 0;
+        font-weight: bold;
+    }
+    .absolute{
+        position: absolute;
+        right: 3px;
+        font-weight: bold;
+        text-transform: capitalize;
+        /* margin-top: 2px; */
+    }
+    .head-title{
+        text-transform: uppercase;
+        font-weight: bold;
+        /* margin-top: 2px; */
+    }
+</style>
+<?php 
+    
+?>
+<div class="container" style="display:inline-block; width: 100vw;">
+    <?php for($i=1;$i<=$count; $i++):?>
+        <div class="card" style="border: 2px solid black; width: 90px; height:60px; position: relative;  margin-right: 10px; margin-bottom: 10px; float: left;">
+            <p style="">
+                <span class="head-title">Grade:</span>
+                <span class="absolute" ><?= $model->part?$model->part->part_name:''?></span>
+            </p>    
+            <p>
+                <span class="head-title">Color:</span>
+                <span class="absolute" ><?= $model->partColor?$model->partColor->name:''?></span>
+            </p>    
+            <p>
+                <span class="head-title">Lot №:</span>
+                <span class="absolute" ><?= $model->number_lot?></span>
+            </p>    
+            <p>
+                <span class="head-title">DATE:</span>
+                <span class="absolute" ><?= date('d.m.Y',strtotime($model->date))?></span>
+            </p> 
+            <p>
+                <span class="head-title">Netto:</span>
+                <span class="absolute" ><?= $model->weight_netto?:0?>KG</span>
+            </p> 
+            <p>
+                <span class="head-title">Brutto:</span>
+                <span class="absolute" ><?= $model->weight_brutto?:0?>KG</span>
+            </p> 
+            
+
+            <p style="font-size: 2.8px; transform: translateY(4px);">Срок хранения компаунда -12 месяцев со дня производство</p>
+            <p style="transform: translateY(3px);">
+                <span style="font-size: 3px;">EXP-4/40</span>
+                <span class="absolute absolute-qrcode"><img style="width: 8px; transform: translateY(0px)" src="data:image/png;base64,<?= base64_encode($image) ?>" alt=""></span>
+            </p>
+        </div>
+    <?php endfor;?>
+</div>
+
+<script>
+    window.print();
+    setTimeout(function(){
+        window.close();
+    }, 1000);
+</script>

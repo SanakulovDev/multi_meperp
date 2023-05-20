@@ -439,6 +439,13 @@ use yii\widgets\Menu; ?>
         'template' => '<a href="{url}"><i class="fa fa-list-ul"></i> <span>{label}</span></a>',
       ];
     }
+    // if (Yii::$app->user->can('pechat-product')) {
+      $m210_whm[] = [
+        'label'     => Yii::t('app', 'BIRKA'),
+        'url'       => ['/pechat-product'],
+        'template'  => '<a href="{url}"> <span class="ml-4">{label}</span></a>',
+      ];
+    // }
     if (Yii::$app->user->can('document-type-index')) {
       $m230_directory[] = [
         'label' => Yii::t('app', 'Document types'),
@@ -994,11 +1001,11 @@ use yii\widgets\Menu; ?>
     }
     if (count($reporting) > 0) {
       $menuItems[] = [
-        'label' => Yii::t('app', 'Reporting'),
-        'url' => '#',
-        'template' => '<a href="{url}"><i class="fa fa-pie-chart"></i> <span>{label}</span> <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span> </a>',
-        'options' => ['class' => 'treeview'],
-        'items' => $reporting,
+        'label' => Yii::t('app', 'Reports'),
+        'url' => '/report/index',
+        'template' => '<a href="{url}"><i class="fa fa-pie-chart"></i> <span>{label}</span> <span class="pull-right-container"></span> </a>',
+        'options' => ['class' => ''],
+        // 'items' => $reporting,
       ];
     }
     // Admin
