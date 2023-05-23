@@ -88,7 +88,7 @@ if($url == '/report/index'){
 			<span class="icon-bar"></span>
 		</a>
 		<?php if($url == '/report/index'):?>
-			<div class="navbar-custom-menu" style="float:left!important; margin-left: 390px; margin-top: 10px;">
+			<div class="navbar-custom-menu" style="float:left!important; margin-left: 100px; margin-top: 10px;">
 				<ul class="navbar-nav ml-auto">
 					<?php foreach ($reportGroups as $key => $gr):?>
 						<?php  
