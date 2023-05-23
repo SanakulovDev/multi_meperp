@@ -69,6 +69,10 @@ if($url == '/report/index'){
 		white-space: nowrap;
 		background-color: transparent;
 		border: 0;
+		//font-size: 10px;
+	}
+	.dropdown-toggle{
+		font-size; 10px;
 	}
 
 
@@ -88,7 +92,7 @@ if($url == '/report/index'){
 			<span class="icon-bar"></span>
 		</a>
 		<?php if($url == '/report/index'):?>
-			<div class="navbar-custom-menu" style="float:left!important; margin-left: 100px; margin-top: 10px;">
+			<div class="navbar-custom-menu" style="float:left!important; margin-top: 10px;">
 				<ul class="navbar-nav ml-auto">
 					<?php foreach ($reportGroups as $key => $gr):?>
 						<?php  
@@ -97,7 +101,7 @@ if($url == '/report/index'){
 							// if($gr->id == 7) continue;
 						?>
 						<li class="nav-item dropdown " style="margin-right: 30px; list-style: none; font-weight:bold;">
-							<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #fff; padding:0;">
+							<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #fff; padding:0; font-size: 10px;">
 							<?=Yii::t('app', $gr->name);?> 
 							<i class="fa fa-chevron-down"></i>
 							</a>
