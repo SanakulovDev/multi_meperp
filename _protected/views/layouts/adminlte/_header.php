@@ -3,8 +3,76 @@
 use cetver\LanguageSelector\items\DropDownLanguageItem;
 use yii\bootstrap\ButtonDropdown;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
+use app\models\ReportGroup;
+$url  = Yii::$app->request->url;
+// vd($url);
+$reportGroups = [];
+$reportGroupsT = [];
+$hiddenReports = [];
 
+if($url == '/report/index'){
+  	$query = ReportGroup::find();
+  	$query->joinWith([
+	  "reports" => function($query) {
+		  $query->onCondition(["report.action" => ArrayHelper::map(Yii::$app->user->identity->reports, "id", "action")]);
+		},
+    ]);
+    $reportGroupsT = $query->orderBy(["order" => SORT_ASC])->all();
+    $reportGroups = [];
+    foreach($reportGroupsT as $key => $rg) {
+      if($rg->id == 6) {
+        continue;
+      } // Visitors
+      if(count($rg->reports) == 0) {
+		  continue;
+		}
+		$reportGroups[] = $rg;
+    }
+	$hiddenReports = [
+
+		'vehicle-set',
+		'pipeline',
+		'import',
+		'sp',
+		'imos',
+		'sum-imos',
+	  
+		'pfep-parts',
+		'doh-calc',
+	  
+		'production-count-line',
+		'ftq-by-line',
+		'ftq-summary',
+	  
+		'coverage-balance-old',
+		'cash-requirement',
+	  
+		'ccu',
+		'ccum',
+		
+	  ];
+}
 ?>
+<?php ob_start();?>
+	.dropdown-menu .report-item:hover{
+		//background-color: #e0dcdc;
+	}
+	.report-item {
+		display: block;
+		width: 100%;
+		padding: 0.25rem 1.5rem;
+		clear: both;
+		font-weight: 400;
+		color: #212529;
+		text-align: inherit;
+		white-space: nowrap;
+		background-color: transparent;
+		border: 0;
+	}
+
+
+<?php $this->registerCss(ob_get_clean());?>
 <header class="main-header">
 	<a href="<?= Yii::$app->homeUrl ?>" class="logo">
 		<!-- mini logo for sidebar mini 50x50 pixels -->
@@ -19,6 +87,33 @@ use yii\helpers\ArrayHelper;
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		</a>
+		<?php if($url == '/report/index'):?>
+			<div class="navbar-custom-menu" style="float:left!important; margin-left: 390px; margin-top: 10px;">
+				<ul class="navbar-nav ml-auto">
+					<?php foreach ($reportGroups as $key => $gr):?>
+						<?php  
+						// if($key > 2) continue;
+							// if(count($gr->reports) == 0) continue;
+							// if($gr->id == 7) continue;
+						?>
+						<li class="nav-item dropdown " style="margin-right: 30px; list-style: none; font-weight:bold;">
+							<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #fff; padding:0;">
+							<?=Yii::t('app', $gr->name);?> 
+							<i class="fa fa-chevron-down"></i>
+							</a>
+							<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<?php foreach ($gr->reports as $key => $report):?>
+								<?php if(in_array($report->title, $hiddenReports)) continue;?>
+								<a class="dropdown-item report-item" href="<?=Url::toRoute(['report/'.$report->action])?>"><?=Yii::t('app', $report->title);?></a>
+
+							<?php endforeach;?>
+							</div>
+						</li>
+					<?php endforeach;?>
+						
+				</ul>
+			</div>
+		<?php endif;?>
 		<div class="navbar-custom-menu">
 
 			<ul class="nav navbar-nav">
@@ -246,3 +341,13 @@ use yii\helpers\ArrayHelper;
 
 	</nav>
 </header>
+
+
+<?php ob_start();?>
+$(function(){
+	$('.dropdown-toggle').hover(function() {
+		//$(this).parent().toggleClass('open');
+	});
+
+})
+<?php $this->registerJs(ob_get_clean());?>

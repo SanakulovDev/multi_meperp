@@ -29,6 +29,8 @@ use app\models\Customer;
 use app\models\VisitorSearch;
 use app\rbac\models\Role;
 use app\services\ReportService;
+
+use yii\helpers\Url;
 use DateInterval;
 use DatePeriod;
 use DateTime;
