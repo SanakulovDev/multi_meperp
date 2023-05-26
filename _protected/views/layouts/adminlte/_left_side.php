@@ -609,7 +609,7 @@ use yii\widgets\Menu; ?>
 //        'label' => Yii::t('app', 'Fg invoice receipt'),
 //        'url' => ['/fg-invoice-receipt/index'],
 //        'template' => '<a href="{url}"><i class="fa fa-list"></i> <span>{label}</span></a>',
-//      ];
+//      ];`
 //    }
     if (Yii::$app->user->can('receipt-waybill-index')) {
       $m500_sales[] = [
@@ -619,6 +619,11 @@ use yii\widgets\Menu; ?>
       ];
     }
     if (Yii::$app->user->can('part-index')) {
+      $m400_plm[] = [
+        'label' => Yii::t('app', 'Calculate products'),
+        'url' => ['/calculate-product/index'],
+        'template' => '<a href="{url}"><i class="fa fa-book"></i> <span>{label}</span></a>',
+      ];
       $m400_plm[] = [
         'label' => Yii::t('app', 'Parts'),
         'url' => ['/part/index'],
