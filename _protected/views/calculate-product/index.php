@@ -5,7 +5,6 @@ use yii\widgets\ActiveForm;
 use app\models\CalculateProduct;
 ?>
 <!-- sweetalert min css -->
-<h2 class="text-uppercase" style="font-weight: bold;">Availability for shipment</h2>
 
 <!-- renderpartial -->
 <?php echo $this->render('_form', [
@@ -13,8 +12,10 @@ use app\models\CalculateProduct;
 ]); ?>
 
 <div class="dashboard">
-    <div class="row">
-        <div class="col-md-12"></div>
+    <div class="row  " >
+        <div class="col-md-10 hidden  dashboard-row" style="border: 1.5px solid black; margin: 20px; padding: 20px;">
+
+        </div>
     </div>
 </div>
 
@@ -30,7 +31,7 @@ $(function(){
     });
     $('body').on('click','.submit-btn', function(e){
         e.preventDefault();
-        $('.dashboard').html('');
+        $('.dashboard-row').html('');
         //$(this).addClass('hidden');
         //$(this).attr('disabled', true);
         let part_ids = [];
@@ -62,7 +63,10 @@ $(function(){
         }
         let type = 'POST';
         ajaxxRequest(url, param, type, function(response){
-            $('.dashboard').html(response);
+            let data = JSON.parse(response);
+            $('.dashboard-row').html(data.data1);
+            $('.dashboard-row').append(data.data2);
+            $('.dashboard-row').removeClass('hidden');
         });
         
     })

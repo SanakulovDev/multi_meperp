@@ -7,6 +7,11 @@ use yii\helpers\ArrayHelper;
 use app\models\Part;
 use app\models\Stock;
 use app\models\ProductSpecification;
+use app\models\ProductSpecificationItem;
+use app\models\ContractDetail;
+use app\models\Contract;
+use app\models\PartOrder;
+use app\models\PartOrderDetail;
 
 
 class CalculateProduct extends \yii\db\ActiveRecord
@@ -51,7 +56,8 @@ class CalculateProduct extends \yii\db\ActiveRecord
             $response[$key]['avl_items']                = $getItems['avl_stocks'];
             $response[$key]['required_stock']           = $getItems['required_stock'];
             $response[$key]['balance']                  = $response[$key]['current_stock']-$response[$key]['required_stock'];
-          
+            $response[$key]['date']                     = self::leadyDate($part_id)['date'];
+            $response[$key]['quantity']                 = self::leadyDate($part_id)['quantity'];
         }
         return $response;
         
@@ -106,34 +112,37 @@ class CalculateProduct extends \yii\db\ActiveRecord
         // part_ids -bu hamma mahsulot uchun umumiy bo'ladigan product_specification itemdan olingan part_id lar
         $headerPartNames = self::getPartNames($part_ids);
         $table = '';
-        $table .= '<div class="row">';
-        $table .= '<div class="col-md-10" style="border: 1.5px solid black; padding: 20px; margin: 20px;">';
-        $table .= '<div class="table-responsive">';
-        $table .= '';
+        $table .= '<div class="col-md-12">';
         $table .= '<table class="table">';
         $table .= '<thead >';
         $table .= '<tr style="text-align:center">';
-        $table .= '<th>
+        $table .= '<th rowspan="2" style="width: 100px;">
                     <div class="bg-primaries">
                         №
                     </div>
                 </th>';
-        $table .= '<th>
+        $table .= '<th rowspan="2" style="width: 255px;">
                     <div class="bg-primaries">
                         Product Name
                     </div>
-        </th>';
-        $table .= '<th>
+                </th>';
+        $table .= '<th rowspan="2" style="width: 250px;">
                     <div class="bg-primaries">
                     Current Stock   
                     </div>
-        </th>';
+                </th>';
         foreach($part_ids as $key => $part_id){
-            $table .= '<th><div class="bg-primaries">'.$headerPartNames[$part_id].'(Avl '.($key+1).')</div></th>';
+            $table .= '<th rowspan="2" style="width: 200px;"><div class="bg-primaries">'.$headerPartNames[$part_id].'(Avl '.($key+1).')</div></th>';
         }
-        $table .= '<th><div class="bg-primaries">Required Stock</div></th>';
-        $table .= '<th><div class="bg-primaries">Balance</div></th>';
+        $table .= '<th rowspan="2" style="width: 200px;"><div class="bg-primaries">Required Stock</div></th>';
+        $table .= '<th rowspan="2"><div class="bg-primaries">Balance</div></th>';
+        $table .= '<th style="margin:0px; padding:0px!important;" colspan="2"><div class="bg-primaries" style="margin:0px!important;">Next Arrival</div></th> ';
         $table .= '</tr>';
+        $table .= '<tr>';
+        $table .= '<th style="margin:0px; padding:0px!important;"><div class="bg-primaries" style="margin:0px!important;">Date</div></th>';
+        $table .= '<th style="margin:0px; padding:0px!important;"><div class="bg-primaries" style="margin:0px!important;">Quantity</div</th>';
+        $table .= '</tr>';
+
         $table .= '</thead>';
         $table .= '<tbody>';
         foreach($models as $key => $item){
@@ -162,12 +171,25 @@ class CalculateProduct extends \yii\db\ActiveRecord
             else{
                 $table .= '<td><div class="bg-lighties">0</div></td>';
             }
+            $styleDate1 ='';
+            $styleDate2 ='';
+            if(empty($item['date'])){
+                $styleDate1 ='style="background-color:#faa2a2"' ;
+                $item['date'] = 'X';
+            }
+            if(empty($item['quantity'])){
+                $styleDate2 ='style="background-color:#faa2a2"' ;
+                $item['quantity'] = 'X';
+            }
             $table .= '<td><div class="bg-lighties">'.$item['required_stock'].'</div></td>';
             $table .= '<td><div class="bg-lighties" '.$style.'>'.$item['balance'].'</div></td>';
+            $table .= '<td><div class="bg-lighties" '.$styleDate1.'>'.$item['date'].'</div></td>';
+            $table .= '<td><div class="bg-lighties" '.$styleDate2.'>'.$item['quantity'].'</div></td>';
             
         }
         $table .= '</tbody>';   
-        $table .= '</table>';   
+        $table .= '</table>'; 
+        $table .= '</div>';  
         return $table;  
     }
 
@@ -189,4 +211,82 @@ class CalculateProduct extends \yii\db\ActiveRecord
         return empty($data)?0:min($data);
     }
 
+    // add-item-table
+    public  static function addItemTable($part_ids=[], $quantities=[])
+    {
+        $table = '';
+        if(!empty($part_ids) && !empty($quantities) && count($part_ids) == count($quantities)) {
+            $table .='<h2 class="text-uppercase" style="font-weight: bold;">Availability for shipment</h2>';
+            $table .='<div class="col-md-10">';
+            $table .='<table class="table">';
+            $table .='<thead>';
+            $table .='<tr>';
+            $table .='<th style="width: 100px;"><div class="bg-primaries">№</div></th>';
+            $table .='<th style="width: 255px;"><div class="bg-primaries">Product Name</div></th>';
+            $table .='<th><div class="bg-primaries">Quantity</div></th>';
+            $table .='<th><div class="bg-primaries">AVI</div></th>';
+            $table .='<th><div class="bg-primaries">Balance</div></th>';
+            $table .='</tr>';
+            $table .='</thead>';
+            $table .='<tbody>';
+            foreach($part_ids as $key=>$part_id){
+                $model = Part::findOne($part_id);
+                $table .='<tr>';
+                $avl = self::minimumProductAvl($part_id);
+                $balance = $quantities[$key]-$avl;
+                $style = '';
+                if($balance < 0){
+                    $style = 'style="background-color:#faa2a2"';
+                }
+                else{
+                    $style = 'style="background-color:lightgreen"';
+                }
+                $table .='<td><div class="bg-lighties">'.($key+1).'</div></td>';
+                $table .='<td><div class="bg-lighties">'.$model->part_name.' '.$model->part_no.'</div></td>';
+                $table .='<td><div class="bg-lighties">'.$quantities[$key].'</div></td>';
+                $table .='<td><div class="bg-lighties">'.$avl.  '</div></td>';
+                $table .='<td><div class="bg-lighties" '.$style.'>'.$balance.'</div></td>';
+                $table .='</tr>';
+            }
+            $table .='</tbody>';
+            $table .='</table>';
+            $table .='</div>';
+
+        }
+        return $table;
+    }
+
+    //contract-detail leady time
+    public static function leadyDate($part_id)
+    {
+        $todayDate = date('d.m.Y', time());
+        $data['date']         = null;
+        $data['quantity']     = null;
+        if($part_id){
+            $contract_detail = ContractDetail::find()->where(['part_id' => $part_id])->orderBy(['id'=>SORT_DESC])->one();
+            if($contract_detail){
+                $contract = Contract::findOne($contract_detail->contract_id);
+                if($contract){
+                    $date = date('d.m.Y', strtotime($contract->created_at . ' + '.$contract_detail->lead_time.' days'));
+                    $partOrder = PartOrder::find()->where(['contract_id' => $contract->id])->orderBy(['id'=>SORT_DESC])->one();
+                    if($date > $todayDate){
+                        $data['date']         = $date;
+                        $data['quantity']     = 0;
+                    }
+                   
+                    if($partOrder){
+                        $partOrderDetail = PartOrderDetail::find()->where(['part_order_id' => $partOrder->id, 'part_id' => $part_id])->orderBy(['id'=>SORT_DESC])->one();
+                        if($partOrderDetail){
+                            $data['quantity']     = $partOrderDetail->qty;
+                        }
+                       
+                    }
+                   
+                }
+               
+            }
+            
+        }
+        return $data;
+    }
 }

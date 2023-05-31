@@ -57,98 +57,82 @@ $partlist = PechatProduct::getPartsList();
     .form-group{
         margin: 5px 5px 0px;
     }
+    .dashboard-row, .header-row{
+        transform: translateX(95px);
+    }
    
 <?php  $content = ob_get_clean();?>
 <?php $this->registerCss($content);?>
 <div class="row  " style=" align-items:center; justify-content:center">
 
-    <div class="col-md-10" style="border: 1.5px solid black; margin: 20px; padding: 20px;">  
-        <!-- activeform begin -->
-        <?php $form = ActiveForm::begin(); ?>            
-            <table class="table">
-                <thead>
-                    <th>
-                        <div class="bg-primaries">
-                            №
-                        </div>
-                    </th>
-                    <th>
-                        <div class="bg-primaries">
-                            Prooduct Name</th>
-                        </div>
-                    <th>
-                        <div class="bg-primaries">
-                            Quantity</th>
-                        </div>    
-                    </th>
-                    <th>
-                        <div class="bg-primaries">
-                            AVI
-                        </div>
-                    </th>
-                    <th>
-                        <div class="bg-primaries">
-                            Balance
-                        </div>
-                    </th>
-                    <th></th>
-                </thead>
-                <tbody class="main-table-body">
-                    <?php foreach($models as $key => $model): ?>
-                        <tr class="item-<?=$key?>">
-                            <td>
-                                <div class="bg-lighties">
-                                    <?= $key+1 ?>
-                                </div>
-                            </td>
-                            <td>
-                                <!-- <div class="bg-lighties"> -->
-                                    <?= $form->field($model, "[$key]part_id")->dropDownList($partlist, ['prompt' => '---', 'class' => 'select2 form-control part_id', 'data-id'=>$key])->label(false) ?>
-                                <!-- </div> -->
-                            </td>
-                            <td>
-                                <!-- <div class="bg-lighties"> -->
-                                    <?= $form->field($model, "[$key]quantity")->textInput(['class' => 'form-control quantity text-right', 'data-id'=>$key, 'type'=>'number', 'placeholder'=>'0'])->label(false) ?>
-                                <!-- </div> -->
-                            </td>
-                            <!-- norma rasxodada mavjud bo'lgan mahsulot og'irligi -->
-                            <td width="100px">
-                                <div class="bg-lighties avl-<?=$key?> calculate-avl">
-                                    0
-                                </div>
-                            </td>
-                            <td >
-                                <div class="bg-lighties balance-<?=$key?> calculate-balance">
-                                    0
-                                </div>
-                            </td>
+    <div class="col-md-10 header-row" style="border: 1.5px solid black; margin: 20px; padding: 20px;">  
+    <h2 class="text-uppercase" style="font-weight: bold;">Availability Calculator</h2>
+        <div class="col-md-8">
 
-                            <td>
-                                <button class="btn btn-danger text-center remove-product-item " style="border: 2px solid black;" data-id="<?=$key?>"><i class="fa fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            <div class="row">  
-                <div class="col-md-4">  
-                    <button class="btn add-product-item" data-lastid="5" ><i class="fa fa-2x fa-plus"></i></button>
-                    <button type="submit" class="btn submit-btn text-uppercase  btn-lg">ok</button>
+            <!-- activeform begin -->
+            <?php $form = ActiveForm::begin(); ?>            
+                <table class="table">
+                    <thead>
+                        <th>
+                            <div class="bg-primaries">
+                                №
+                            </div>
+                        </th>
+                        <th>
+                            <div class="bg-primaries">
+                                Prooduct Name</th>
+                            </div>
+                        <th>
+                            <div class="bg-primaries">
+                                Quantity</th>
+                            </div>    
+                        </th>
+                        <th></th>
+                    </thead>
+                    <tbody class="main-table-body">
+                        <?php foreach($models as $key => $model): ?>
+                            <tr class="item-<?=$key?>">
+                                <td>
+                                    <div class="bg-lighties">
+                                        <?= $key+1 ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <!-- <div class="bg-lighties"> -->
+                                        <?= $form->field($model, "[$key]part_id")->dropDownList($partlist, ['prompt' => '---', 'class' => 'select2 form-control part_id', 'data-id'=>$key])->label(false) ?>
+                                    <!-- </div> -->
+                                </td>
+                                <td>
+                                    <!-- <div class="bg-lighties"> -->
+                                        <?= $form->field($model, "[$key]quantity")->textInput(['class' => 'form-control quantity text-right', 'data-id'=>$key, 'type'=>'number', 'placeholder'=>'0'])->label(false) ?>
+                                    <!-- </div> -->
+                                </td>
 
-                </div>
-                <div class="col-md-8">
-                    <div class="loader-ajax">
-                        <!-- loadinf.gif -->
-                        <img src="./img/loader.gif" class="hide loader-ajax" width="500px" style="margin:0; padding:0;" alt="">        
+                                <td>
+                                    <button class="btn btn-danger text-center remove-product-item " style="border: 2px solid black;" data-id="<?=$key?>"><i class="fa fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <div class="row">  
+                    <div class="col-md-4">  
+                        <button class="btn add-product-item" data-lastid="1" ><i class="fa fa-2x fa-plus"></i></button>
+                        <button type="submit" class="btn submit-btn text-uppercase  btn-lg">ok</button>
+
                     </div>
+                    <div class="col-md-8">
+                        <div class="loader-ajax">
+                            <!-- loadinf.gif -->
+                            <img src="./img/loader.gif" class="hide loader-ajax" width="500px" style="margin:0; padding:0;" alt="">        
+                        </div>
 
+                    </div>
                 </div>
-            </div>
             <?php ActiveForm::end(); ?>
+        </div>
     </div>
-    <div class="col-md-6">
-       
-    </div>
+   
 </div>
 
 <?php ob_start();?>
@@ -156,7 +140,7 @@ $(function(){
     //format number_format
 
     const format = (num, decimals) => num.toLocaleString('en-US', {
-        minimumFractionDigits: 2,      
+        minimumFractionDigits: 2,          
         maximumFractionDigits: 2,
     });
     $('.add-product-item').on('click', function(){

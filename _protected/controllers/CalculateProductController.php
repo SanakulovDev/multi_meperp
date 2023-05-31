@@ -9,7 +9,7 @@ class CalculateProductController extends \yii\web\Controller
 {
     public function actionIndex()
     {
-        for($i=0;$i<5; $i++){
+        for($i=0;$i<1; $i++){
             $models[] = new CalculateProduct;
             $models[$i]->type = 'test';
             $models[$i]->quantity = null;
@@ -63,8 +63,6 @@ class CalculateProductController extends \yii\web\Controller
             $data .= '<input type="number" data-id="'.$id.'" class="form-control quantity text-right" placeholder="0" name="CalculateProduct['.$id.'][quantity]" id="calculateproduct-'.$id.'-quantity">';
             $data .= '</div>';
             $data .= '</td>';
-            $data .= '<td><div class="bg-lighties avl-'.$id.' calculate-avl">0</div></td>';
-            $data .= '<td><div class="bg-lighties balance-'.$id.' calculate-balance">0</div></td>';
             $data .= '<td class="text-center">';
             $data .= '<button style="border: 2px solid black;" class="btn btn-danger text-center remove-product-item" data-id="'.$id.'"><i class="fa fa-trash"></i></button>';
             $data .= '</td>';
@@ -98,7 +96,12 @@ class CalculateProductController extends \yii\web\Controller
             $data       = CalculateProduct::productSpecification($part_ids, $part_ids2,      $quantities);
             // vd($data);
             $response   = CalculateProduct::table($data, $part_ids);
-            return  $response;
+
+            $response2 = CalculateProduct::addItemTable($part_ids, $quantities);
+            return json_encode([
+                'data1' => $response2,
+                'data2' => $response,
+            ]);
         }
     }
 
