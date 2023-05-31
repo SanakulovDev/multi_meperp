@@ -12,7 +12,7 @@ class CalculateProductController extends \yii\web\Controller
         for($i=0;$i<5; $i++){
             $models[] = new CalculateProduct;
             $models[$i]->type = 'test';
-            $models[$i]->quantity = 0;
+            $models[$i]->quantity = null;
             $models[$i]->part_id = 0;
         }
         return $this->render('index', [
@@ -60,7 +60,7 @@ class CalculateProductController extends \yii\web\Controller
             $data .= '<td>';
             // form  group
             $data .= '<div class="form-group field-calculateproduct-'.$id.'-quantity">';
-            $data .= '<input type="number" data-id="'.$id.'" class="form-control quantity text-right" value="0" name="CalculateProduct['.$id.'][quantity]" id="calculateproduct-'.$id.'-quantity">';
+            $data .= '<input type="number" data-id="'.$id.'" class="form-control quantity text-right" placeholder="0" name="CalculateProduct['.$id.'][quantity]" id="calculateproduct-'.$id.'-quantity">';
             $data .= '</div>';
             $data .= '</td>';
             $data .= '<td class="avl-'.$id.' calculate-avl">0</td>';
@@ -81,10 +81,8 @@ class CalculateProductController extends \yii\web\Controller
         $post = Yii::$app->request->post();
         if($post && isset($post['part_id'])){
             $part_id = $post['part_id'];
-            $model =  Stock::findOne(['part_id' => $part_id]);
-            if($model){
-                return $model->qty;
-            }
+            $avl = CalculateProduct::minimumProductAvl($part_id);
+            return json_encode($avl);
         }
         return 0;
     }
@@ -98,6 +96,7 @@ class CalculateProductController extends \yii\web\Controller
             $quantities = json_decode($post['quantities']);  
             $part_ids2  = CalculateProduct::specificationItems($part_ids);
             $data       = CalculateProduct::productSpecification($part_ids, $part_ids2,      $quantities);
+            // vd($data);
             $response   = CalculateProduct::table($data, $part_ids);
             return  $response;
         }

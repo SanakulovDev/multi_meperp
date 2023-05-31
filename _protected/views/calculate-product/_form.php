@@ -19,7 +19,8 @@ $partlist = PechatProduct::getPartsList();
         background-color: #DDEBF6!important;
     }
     td, th {
-        border: 2px solid #000000!important;
+        border: 1px solid #000000!important;
+        text-align:center;
     }
     .add-product-item, .submit-btn{
         border: 2px solid #000000!important;
@@ -31,9 +32,9 @@ $partlist = PechatProduct::getPartsList();
     }
 <?php  $content = ob_get_clean();?>
 <?php $this->registerCss($content);?>
-<div class="row">
+<div class="row  " style=" align-items:center; justify-content:center">
 
-    <div class="col-md-8">  
+    <div class="col-md-10" style="border: 1.5px solid black; margin: 20px; padding: 20px;">  
         <!-- activeform begin -->
         <?php $form = ActiveForm::begin(); ?>            
             <table class="table">
@@ -53,7 +54,7 @@ $partlist = PechatProduct::getPartsList();
                                 <?= $form->field($model, "[$key]part_id")->dropDownList($partlist, ['prompt' => '---', 'class' => 'select2 form-control part_id', 'data-id'=>$key])->label(false) ?>
                             </td>
                             <td class="">
-                                <?= $form->field($model, "[$key]quantity")->textInput(['class' => 'form-control quantity text-right', 'data-id'=>$key, 'type'=>'number'])->label(false) ?>
+                                <?= $form->field($model, "[$key]quantity")->textInput(['class' => 'form-control quantity text-right', 'data-id'=>$key, 'type'=>'number', 'placeholder'=>'0'])->label(false) ?>
                             </td>
                             <!-- norma rasxodada mavjud bo'lgan mahsulot og'irligi -->
                             <td class="avl-<?=$key?> calculate-avl" width="100px">
@@ -63,7 +64,9 @@ $partlist = PechatProduct::getPartsList();
                                 0
                             </td>
 
-                            <td></td>
+                            <td>
+                            <button class="btn btn-danger text-center remove-product-item" data-id="<?=$key?>"><i class="fa fa-trash"></i></button>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -110,7 +113,8 @@ $(function(){
         e.preventDefault();
         let id = $(this).data('id');
         $('.item-'+id).remove();
-        $('.add-product-item').data('lastid', id);
+        let lastid = $('.add-product-item').data('lastid')-1;
+        $('.add-product-item').data('lastid', lastid);
     });
 
     // dropdown onchange
@@ -124,6 +128,7 @@ $(function(){
         let type = 'POST';
         let callback = function(data){
             let obj = JSON.parse(data);
+            console.log(obj);
             let quantity = $('#calculateproduct-'+id+'-quantity').val();
             let balance = obj-quantity;
             $('.avl-'+id).html(obj);

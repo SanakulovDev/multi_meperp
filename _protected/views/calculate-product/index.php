@@ -3,17 +3,25 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\models\CalculateProduct;
-
+ob_start();
 ?>
+ .dashboard td{
+    padding: 8px;
+ }
+ <?php $this->registerCss(ob_get_clean());?>
 <!-- sweetalert min css -->
-<h1 class="text-uppercase" style="font-weight: bold;">Availability calculator</h1>
+<h2 class="text-uppercase" style="font-weight: bold;">Availability for shipment</h2>
 
 <!-- renderpartial -->
 <?php echo $this->render('_form', [
     'models' => $models
 ]); ?>
 
-<div class="dashboard"></div>
+<div class="dashboard">
+    <div class="row">
+        <div class="col-md-12"></div>
+    </div>
+</div>
 
 <?php ob_start();?>
 $(function(){
@@ -59,7 +67,6 @@ $(function(){
         }
         let type = 'POST';
         ajaxxRequest(url, param, type, function(response){
-            console.log(response);
             $('.dashboard').html(response);
         });
         
