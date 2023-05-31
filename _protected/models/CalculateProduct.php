@@ -169,7 +169,7 @@ class CalculateProduct extends \yii\db\ActiveRecord
             foreach($product_specification_items as $key => $product_specification_item){
                 $stock = Stock::find()->where(['part_id' => $product_specification_item->part_id])->one();
                 if($stock && $product_specification_item){
-                    $data[] = round($stock->qty*$product_specification_item->usage_qty/$product_specification->amount, 2);
+                    $data[] = round($stock->qty/($product_specification_item->usage_qty /$product_specification->amount), 2); 
                 }
             }
         }
