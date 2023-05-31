@@ -76,7 +76,7 @@ class CalculateProduct extends \yii\db\ActiveRecord
             if($product_specification && $product_specification->amount > 0){
                 $product_specification_item = ProductSpecificationItem::find()->where(['product_specification_id' => $product_specification->id, 'part_id' => $part_id2])->one();
                 if($product_specification_item){
-                   $data['avl_stocks'][$key]['avl_stock'] = round($stock*$product_specification_item->usage_qty/$product_specification->amount, 2); 
+                   $data['avl_stocks'][$key]['avl_stock'] = round($stock/($product_specification_item->usage_qty /$product_specification->amount), 2); 
                    $data['required_stock'] +=  round($quantities[$key]*$product_specification_item->usage_qty/$product_specification->amount,2);
                 }
                 else{
