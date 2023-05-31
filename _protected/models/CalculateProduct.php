@@ -19,7 +19,6 @@ class CalculateProduct extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['part_id', 'quantity'], 'required'],
             [['part_id'], 'integer'],
             [['quantity'], 'number'],
             [['type'], 'string', 'max' => 255],
@@ -80,11 +79,11 @@ class CalculateProduct extends \yii\db\ActiveRecord
                    $data['required_stock'] +=  round($quantities[$key]*$product_specification_item->usage_qty/$product_specification->amount,2);
                 }
                 else{
-                    $data['avl_stocks'][$key]['avl_stock'] = 0;
+                    $data['avl_stocks'][$key]['avl_stock'] = 'xxx';
                 }
             }
             else{
-                $data['avl_stocks'][$key]['avl_stock'] = 'x';
+                $data['avl_stocks'][$key]['avl_stock'] = 'xxx';
             }
         }     
         return $data;   
@@ -102,6 +101,7 @@ class CalculateProduct extends \yii\db\ActiveRecord
     }
     public static function table($models, $part_ids)
     {
+        
         // modelsni aylantirib jadval ko'rinishiga olib kelamiz
         // part_ids -bu hamma mahsulot uchun umumiy bo'ladigan product_specification itemdan olingan part_id lar
         $headerPartNames = self::getPartNames($part_ids);
@@ -113,14 +113,26 @@ class CalculateProduct extends \yii\db\ActiveRecord
         $table .= '<table class="table">';
         $table .= '<thead >';
         $table .= '<tr style="text-align:center">';
-        $table .= '<th>№</th>';
-        $table .= '<th>Product Name</th>';
-        $table .= '<th>Current Stock</th>';
+        $table .= '<th>
+                    <div class="bg-primaries">
+                        №
+                    </div>
+                </th>';
+        $table .= '<th>
+                    <div class="bg-primaries">
+                        Product Name
+                    </div>
+        </th>';
+        $table .= '<th>
+                    <div class="bg-primaries">
+                    Current Stock   
+                    </div>
+        </th>';
         foreach($part_ids as $key => $part_id){
-            $table .= '<th>'.$headerPartNames[$part_id].'(Avl '.($key+1).')</th>';
+            $table .= '<th><div class="bg-primaries">'.$headerPartNames[$part_id].'(Avl '.($key+1).')</div></th>';
         }
-        $table .= '<th>Required Stock</th>';
-        $table .= '<th>Balance</th>';
+        $table .= '<th><div class="bg-primaries">Required Stock</div></th>';
+        $table .= '<th><div class="bg-primaries">Balance</div></th>';
         $table .= '</tr>';
         $table .= '</thead>';
         $table .= '<tbody>';
@@ -133,24 +145,25 @@ class CalculateProduct extends \yii\db\ActiveRecord
                 $style = 'style="background-color:lightgreen"';
             }
             $table .= '<tr>';
-            $table .= '<td>'.($key+1).'</td>';
-            $table .= '<td>'.$item['product_name'].'</td>';
-            $table .= '<td>'.$item['current_stock'].'</td>';
+            $table .= '<td><div class="bg-lighties">'.($key+1).'</div></td>';
+            $table .= '<td><div class="bg-lighties">'.$item['product_name'].'</div></td>';
+            $table .= '<td><div class="bg-lighties">'.$item['current_stock'].'</div></td>';
             if(!empty($item['avl_items'])){
+                // vd($item['avl_items']);
                 foreach($item['avl_items'] as $key2 => $avl_item){
-                    if($avl_item['avl_stock'] == 'x'){
-                        $table .= '<td style="background-color:#faa2a2">X</td>';
+                    if($avl_item['avl_stock'] === 'xxx'){
+                        $table .= '<td><div style="background-color:#faa2a2" class="bg-lighties">X</div></td>';
                     }
                     else{
-                        $table .= '<td>'.$avl_item['avl_stock'].'</td>';
+                        $table .= '<td><div class="bg-lighties">'.$avl_item['avl_stock'].'</div></td>';
                     }
                 }
             }
             else{
-                $table .= '<td>0</td>';
+                $table .= '<td><div class="bg-lighties">0</div></td>';
             }
-            $table .= '<td>'.$item['required_stock'].'</td>';
-            $table .= '<td '.$style.'>'.$item['balance'].'</td>';
+            $table .= '<td><div class="bg-lighties">'.$item['required_stock'].'</div></td>';
+            $table .= '<td><div class="bg-lighties" '.$style.'>'.$item['balance'].'</div></td>';
             
         }
         $table .= '</tbody>';   

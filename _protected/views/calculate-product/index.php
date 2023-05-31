@@ -3,12 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\models\CalculateProduct;
-ob_start();
 ?>
- .dashboard td{
-    padding: 8px;
- }
- <?php $this->registerCss(ob_get_clean());?>
 <!-- sweetalert min css -->
 <h2 class="text-uppercase" style="font-weight: bold;">Availability for shipment</h2>
 

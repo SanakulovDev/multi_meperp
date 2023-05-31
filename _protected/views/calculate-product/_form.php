@@ -15,11 +15,11 @@ $partlist = PechatProduct::getPartsList();
         font-weight: bold;
         text-align: center;
     }
-    table thead, .add-product-item, .submit-btn{
+    .add-product-item, .submit-btn{
         background-color: #DDEBF6!important;
     }
     td, th {
-        border: 1px solid #000000!important;
+        //border: 1px solid #000000!important;
         text-align:center;
     }
     .add-product-item, .submit-btn{
@@ -30,6 +30,34 @@ $partlist = PechatProduct::getPartsList();
     .form-group{
         margin-bottom: 0px!important;
     }
+    .bg-primaries{
+        background-color: #DDEBF6!important;
+        border: 2px solid black; margin: 5px 10px;
+        padding: 5px 10px;
+    }
+    .bg-lighties{
+        border: 1px solid black; 
+        margin: 5px 10px;
+        padding: 5px 10px;
+    }
+    .help-block{
+        margin: 0px;
+        padding: 0px;
+    }
+    .quantity, .part_id{
+        border: 1px solid black!important;
+        margin: 5px 0!important;
+    }
+    select.select2{
+        margin: 5px 0!important;
+    }
+    span.select2{
+        border: 1px solid black!important;
+    }
+    .form-group{
+        margin: 5px 5px 0px;
+    }
+   
 <?php  $content = ob_get_clean();?>
 <?php $this->registerCss($content);?>
 <div class="row  " style=" align-items:center; justify-content:center">
@@ -39,33 +67,64 @@ $partlist = PechatProduct::getPartsList();
         <?php $form = ActiveForm::begin(); ?>            
             <table class="table">
                 <thead>
-                    <th>№</th>
-                    <th>Prooduct Name</th>
-                    <th>Quantity</th>
-                    <th>AVI</th>
-                    <th>Balance</th>
+                    <th>
+                        <div class="bg-primaries">
+                            №
+                        </div>
+                    </th>
+                    <th>
+                        <div class="bg-primaries">
+                            Prooduct Name</th>
+                        </div>
+                    <th>
+                        <div class="bg-primaries">
+                            Quantity</th>
+                        </div>    
+                    </th>
+                    <th>
+                        <div class="bg-primaries">
+                            AVI
+                        </div>
+                    </th>
+                    <th>
+                        <div class="bg-primaries">
+                            Balance
+                        </div>
+                    </th>
                     <th></th>
                 </thead>
                 <tbody class="main-table-body">
                     <?php foreach($models as $key => $model): ?>
                         <tr class="item-<?=$key?>">
-                            <td><?= $key+1 ?></td>
                             <td>
-                                <?= $form->field($model, "[$key]part_id")->dropDownList($partlist, ['prompt' => '---', 'class' => 'select2 form-control part_id', 'data-id'=>$key])->label(false) ?>
+                                <div class="bg-lighties">
+                                    <?= $key+1 ?>
+                                </div>
                             </td>
-                            <td class="">
-                                <?= $form->field($model, "[$key]quantity")->textInput(['class' => 'form-control quantity text-right', 'data-id'=>$key, 'type'=>'number', 'placeholder'=>'0'])->label(false) ?>
+                            <td>
+                                <!-- <div class="bg-lighties"> -->
+                                    <?= $form->field($model, "[$key]part_id")->dropDownList($partlist, ['prompt' => '---', 'class' => 'select2 form-control part_id', 'data-id'=>$key])->label(false) ?>
+                                <!-- </div> -->
+                            </td>
+                            <td>
+                                <!-- <div class="bg-lighties"> -->
+                                    <?= $form->field($model, "[$key]quantity")->textInput(['class' => 'form-control quantity text-right', 'data-id'=>$key, 'type'=>'number', 'placeholder'=>'0'])->label(false) ?>
+                                <!-- </div> -->
                             </td>
                             <!-- norma rasxodada mavjud bo'lgan mahsulot og'irligi -->
-                            <td class="avl-<?=$key?> calculate-avl" width="100px">
-                                0
+                            <td width="100px">
+                                <div class="bg-lighties avl-<?=$key?> calculate-avl">
+                                    0
+                                </div>
                             </td>
-                            <td class="balance-<?=$key?> calculate-balance">
-                                0
+                            <td >
+                                <div class="bg-lighties balance-<?=$key?> calculate-balance">
+                                    0
+                                </div>
                             </td>
 
                             <td>
-                            <button class="btn btn-danger text-center remove-product-item" data-id="<?=$key?>"><i class="fa fa-trash"></i></button>
+                                <button class="btn btn-danger text-center remove-product-item " style="border: 2px solid black;" data-id="<?=$key?>"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -94,6 +153,12 @@ $partlist = PechatProduct::getPartsList();
 
 <?php ob_start();?>
 $(function(){
+    //format number_format
+
+    const format = (num, decimals) => num.toLocaleString('en-US', {
+        minimumFractionDigits: 2,      
+        maximumFractionDigits: 2,
+    });
     $('.add-product-item').on('click', function(){
         let lastId = $(this).data('lastid');
         let url = '<?= Yii::$app->urlManager->createUrl(['calculate-product/new-product']) ?>';
@@ -128,7 +193,6 @@ $(function(){
         let type = 'POST';
         let callback = function(data){
             let obj = JSON.parse(data);
-            console.log(obj);
             let quantity = $('#calculateproduct-'+id+'-quantity').val();
             let balance = obj-quantity;
             $('.avl-'+id).html(obj);

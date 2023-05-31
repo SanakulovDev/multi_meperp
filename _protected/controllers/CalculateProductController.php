@@ -45,7 +45,7 @@ class CalculateProductController extends \yii\web\Controller
             $id = $post['lastId'];
             $data = '';
             $data .= '<tr class="item-'.$id.'">';    
-            $data .= '<td>'.($id+1).'</td>';
+            $data .= '<td><div class="bg-lighties">'.($id+1).'</div></td>';
             $data .= '<td>';
             // form group
             $data .= '<div class="form-group field-calculateproduct-'.$id.'-type">';
@@ -63,10 +63,10 @@ class CalculateProductController extends \yii\web\Controller
             $data .= '<input type="number" data-id="'.$id.'" class="form-control quantity text-right" placeholder="0" name="CalculateProduct['.$id.'][quantity]" id="calculateproduct-'.$id.'-quantity">';
             $data .= '</div>';
             $data .= '</td>';
-            $data .= '<td class="avl-'.$id.' calculate-avl">0</td>';
-            $data .= '<td class="balance-'.$id.' calculate-balance">0</td>';
+            $data .= '<td><div class="bg-lighties avl-'.$id.' calculate-avl">0</div></td>';
+            $data .= '<td><div class="bg-lighties balance-'.$id.' calculate-balance">0</div></td>';
             $data .= '<td class="text-center">';
-            $data .= '<button class="btn btn-danger text-center remove-product-item" data-id="'.$id.'"><i class="fa fa-trash"></i></button>';
+            $data .= '<button style="border: 2px solid black;" class="btn btn-danger text-center remove-product-item" data-id="'.$id.'"><i class="fa fa-trash"></i></button>';
             $data .= '</td>';
             $data .= '</tr>';
             return $data;
