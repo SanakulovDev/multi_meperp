@@ -46,7 +46,7 @@ ob_end_clean();
         <div class="card" style="border: 2px solid black; width: 90px; height:60px; position: relative;  margin-right: 10px; margin-bottom: 10px; float: left;">
             <p style="">
                 <span class="head-title">Grade:</span>
-                <span class="absolute" ><?= $model->part?$model->part->part_name:''?></span>
+                <span class="absolute" ><?= substr($model->part?$model->part->part_name:'', 0, 13)?></span>
             </p>    
             <p>
                 <span class="head-title">Color:</span>
@@ -68,13 +68,12 @@ ob_end_clean();
                 <span class="head-title">Brutto:</span>
                 <span class="absolute" ><?= $model->weight_brutto?:0?>KG</span>
             </p> 
-            
+            <span class="absolute absolute-qrcode"><img style="width: 22px; transform: translate(-33px, -16px);" src="data:image/png;base64,<?= base64_encode($image) ?>" alt=""></span>
 
-            <p style="font-size: 2.8px; transform: translateY(4px);">Срок хранения компаунда -12 месяцев со дня производство</p>
-            <p style="transform: translateY(3px);">
-                <span style="font-size: 3px;">EXP-4/40</span>
-                <span class="absolute absolute-qrcode"><img style="width: 8px; transform: translateY(0px)" src="data:image/png;base64,<?= base64_encode($image) ?>" alt=""></span>
+            <p style="transform: translateY(2px);">
+                <span style="font-size: 3px;"><?= $model->comment?></span>
             </p>
+            <p style="font-size: 2.8px; transform: translateY(4px);">Срок хранения компаунда -12 месяцев со дня производство</p>
         </div>
     <?php endfor;?>
 </div>

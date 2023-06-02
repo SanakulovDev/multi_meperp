@@ -33,7 +33,8 @@ class PechatProduct extends \yii\db\ActiveRecord
     {
         return [
             [['part_id', 'number_lot', 'weight_netto', 'weight_brutto', 'date', 'line', 'color_id'], 'required'],
-            [['part_id', 'weight_netto', 'weight_brutto', 'color_id'], 'integer'],
+            [['part_id', 'color_id'], 'integer'],
+            [['weight_netto', 'weight_brutto'], 'number'],
             [['date'], 'safe'],
             [['number_lot', 'line', 'comment'], 'string', 'max' => 255],
         ];

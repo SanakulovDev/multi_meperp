@@ -123,24 +123,24 @@ class CalculateProduct extends \yii\db\ActiveRecord
                 </th>';
         $table .= '<th rowspan="2" style="width: 255px;">
                     <div class="bg-primaries">
-                        Product Name
+                        '.Yii::t('app', 'Product Name').'
                     </div>
                 </th>';
         $table .= '<th rowspan="2" style="width: 250px;">
                     <div class="bg-primaries">
-                    Current Stock   
+                    '.Yii::t('app', 'Current Stock').'   
                     </div>
                 </th>';
         foreach($part_ids as $key => $part_id){
             $table .= '<th rowspan="2" style="width: 200px;"><div class="bg-primaries">'.$headerPartNames[$part_id].'(Avl '.($key+1).')</div></th>';
         }
-        $table .= '<th rowspan="2" style="width: 200px;"><div class="bg-primaries">Required Stock</div></th>';
-        $table .= '<th rowspan="2"><div class="bg-primaries">Balance</div></th>';
-        $table .= '<th style="margin:0px; padding:0px!important;" colspan="2"><div class="bg-primaries" style="margin:0px!important;">Next Arrival</div></th> ';
+        $table .= '<th rowspan="2" style="width: 200px;"><div class="bg-primaries">'.Yii::t('app', 'Required Stock').'</div></th>';
+        $table .= '<th rowspan="2"><div class="bg-primaries">'.Yii::t('app', 'Balance').'</div></th>';
+        $table .= '<th style="margin:0px; padding:0px!important;" colspan="2"><div class="bg-primaries" style="margin:0px!important;">'.Yii::t('app', 'Next Arrival').'</div></th> ';
         $table .= '</tr>';
         $table .= '<tr>';
-        $table .= '<th style="margin:0px; padding:0px!important;"><div class="bg-primaries" style="margin:0px!important;">Date</div></th>';
-        $table .= '<th style="margin:0px; padding:0px!important;"><div class="bg-primaries" style="margin:0px!important;">Quantity</div</th>';
+        $table .= '<th style="margin:0px; padding:0px!important;"><div class="bg-primaries" style="margin:0px!important;">'.Yii::t('app', 'Date').'</div></th>';
+        $table .= '<th style="margin:0px; padding:0px!important;"><div class="bg-primaries" style="margin:0px!important;">'.Yii::t('app', 'Quantity').'</div</th>';
         $table .= '</tr>';
 
         $table .= '</thead>';
@@ -216,16 +216,16 @@ class CalculateProduct extends \yii\db\ActiveRecord
     {
         $table = '';
         if(!empty($part_ids) && !empty($quantities) && count($part_ids) == count($quantities)) {
-            $table .='<h2 class="text-uppercase" style="font-weight: bold;">Availability for shipment</h2>';
+            $table .='<h2 class="text-uppercase" style="font-weight: bold;">'.Yii::t('app', 'Availability for shipment').'</h2>';
             $table .='<div class="col-md-10">';
             $table .='<table class="table">';
             $table .='<thead>';
             $table .='<tr>';
             $table .='<th style="width: 100px;"><div class="bg-primaries">№</div></th>';
-            $table .='<th style="width: 255px;"><div class="bg-primaries">Product Name</div></th>';
-            $table .='<th><div class="bg-primaries">Quantity</div></th>';
-            $table .='<th><div class="bg-primaries">AVI</div></th>';
-            $table .='<th><div class="bg-primaries">Balance</div></th>';
+            $table .='<th style="width: 255px;"><div class="bg-primaries">'.Yii::t('app', 'Product Name').'</div></th>';
+            $table .='<th><div class="bg-primaries">'.Yii::t('app', 'Quantity').'</div></th>';
+            $table .='<th><div class="bg-primaries">'.Yii::t('app', 'AVL').'</div></th>';
+            $table .='<th><div class="bg-primaries">'.Yii::t('app', 'Balance').'</div></th>';
             $table .='</tr>';
             $table .='</thead>';
             $table .='<tbody>';
@@ -260,26 +260,19 @@ class CalculateProduct extends \yii\db\ActiveRecord
     public static function leadyDate($part_id)
     {
         $todayDate = date('d.m.Y', time());
+        $todayTime = time();
         $data['date']         = null;
         $data['quantity']     = null;
         if($part_id){
-            $contract_detail = ContractDetail::find()->where(['part_id' => $part_id])->orderBy(['id'=>SORT_DESC])->one();
-            if($contract_detail){
-                $contract = Contract::findOne($contract_detail->contract_id);
-                if($contract){
-                    $date = date('d.m.Y', strtotime($contract->created_at . ' + '.$contract_detail->lead_time.' days'));
-                    $partOrder = PartOrder::find()->where(['contract_id' => $contract->id])->orderBy(['id'=>SORT_DESC])->one();
-                    if($date > $todayDate){
+            $invoice_detail = InvoiceDetail::find()->where(['part_id' => $part_id])->orderBy(['id'=>SORT_DESC])->one();
+            if($invoice_detail){
+                $containerInvoice = ContainerInvoice::findOne($invoice_detail->cont_inv_id);
+                if($containerInvoice){
+                    $date = date('d.m.Y',strtotime($containerInvoice->app_arr_at));
+                    $dateTime = strtotime($containerInvoice->app_arr_at);
+                    if($dateTime >= $todayTime){
                         $data['date']         = $date;
-                        $data['quantity']     = 0;
-                    }
-                   
-                    if($partOrder){
-                        $partOrderDetail = PartOrderDetail::find()->where(['part_order_id' => $partOrder->id, 'part_id' => $part_id])->orderBy(['id'=>SORT_DESC])->one();
-                        if($partOrderDetail){
-                            $data['quantity']     = $partOrderDetail->qty;
-                        }
-                       
+                        $data['quantity']     = $invoice_detail->qty*1;
                     }
                    
                 }

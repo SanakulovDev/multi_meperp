@@ -59,14 +59,15 @@ $partlist = PechatProduct::getPartsList();
     }
     .dashboard-row, .header-row{
         transform: translateX(95px);
+        //border: 1.5px solid black; margin: 20px; padding: 20px;
     }
    
 <?php  $content = ob_get_clean();?>
 <?php $this->registerCss($content);?>
 <div class="row  " style=" align-items:center; justify-content:center">
 
-    <div class="col-md-10 header-row" style="border: 1.5px solid black; margin: 20px; padding: 20px;">  
-    <h2 class="text-uppercase" style="font-weight: bold;">Availability Calculator</h2>
+    <div class="col-md-10 header-row" style="">  
+    <h2 class="text-uppercase" style="font-weight: bold;"><?= Yii::t('app','Availability Calculator')?></h2>
         <div class="col-md-8">
 
             <!-- activeform begin -->
@@ -80,14 +81,13 @@ $partlist = PechatProduct::getPartsList();
                         </th>
                         <th>
                             <div class="bg-primaries">
-                                Prooduct Name</th>
+                                <?= \Yii::t('app', 'Product Name')?>
                             </div>
                         <th>
                             <div class="bg-primaries">
-                                Quantity</th>
+                            <?= \Yii::t('app', 'Quantity')?>
                             </div>    
                         </th>
-                        <th></th>
                     </thead>
                     <tbody class="main-table-body">
                         <?php foreach($models as $key => $model): ?>
@@ -108,16 +108,14 @@ $partlist = PechatProduct::getPartsList();
                                     <!-- </div> -->
                                 </td>
 
-                                <td>
-                                    <button class="btn btn-danger text-center remove-product-item " style="border: 2px solid black;" data-id="<?=$key?>"><i class="fa fa-trash"></i></button>
-                                </td>
+                               
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
                 <div class="row">  
                     <div class="col-md-4">  
-                        <button class="btn add-product-item" data-lastid="1" ><i class="fa fa-2x fa-plus"></i></button>
+                        <!-- <button class="btn add-product-item" data-lastid="1" ><i class="fa fa-2x fa-plus"></i></button> -->
                         <button type="submit" class="btn submit-btn text-uppercase  btn-lg">ok</button>
 
                     </div>

@@ -13,7 +13,7 @@ use app\models\CalculateProduct;
 
 <div class="dashboard">
     <div class="row  " >
-        <div class="col-md-10 hidden  dashboard-row" style="border: 1.5px solid black; margin: 20px; padding: 20px;">
+        <div class="col-md-10 hidden  dashboard-row">
 
         </div>
     </div>
@@ -21,14 +21,6 @@ use app\models\CalculateProduct;
 
 <?php ob_start();?>
 $(function(){
-    $(document)
-        .ajaxStart(function () {
-            $('.loader-ajax').removeClass('hide');
-        })
-        .ajaxStop(function () {
-            $('.loader-ajax').addClass('hide');
-            $(this).removeClass('hide');
-    });
     $('body').on('click','.submit-btn', function(e){
         e.preventDefault();
         $('.dashboard-row').html('');

@@ -1055,5 +1055,14 @@ return [
   'Группа Счёт фактура' =>'Группа Счёт фактура',
   'Client report' => 'Отчет по клиентам',
   'BIRKA' => 'БИРКА',
+  'Availability Calculator' => 'Калькулятор возможности',
+  'Availability for shipment' => 'Возможность поставки',
+  'Product Name' => 'Наименование продукта',
+  'Quantity' => 'Кол-во',
+  'AVL' => 'Возм-ть',
+  'Balance' => 'Баланс',
+  'Current Stock' => 'Oстаток',
+  'Required Stock' => 'Необходимo',
+  'Next Arrival' => 'В пути',
 ];
 

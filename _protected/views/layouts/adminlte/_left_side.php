@@ -536,6 +536,11 @@ use yii\widgets\Menu; ?>
         'url' => ['/fg-invoice/index'],
         'template' => '<a href="/report/sales-payment-info"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
+      $m_new[] = [
+        'label' => Yii::t('app', 'Calculator'),
+        'url' => ['/calculate-product/index'],
+        'template' => '<a href="{url}"><i class="fa fa-calculator"></i> <span>{label}</span></a>',
+      ];
     }
     
 
@@ -619,11 +624,11 @@ use yii\widgets\Menu; ?>
       ];
     }
     if (Yii::$app->user->can('part-index')) {
-      $m400_plm[] = [
-        'label' => Yii::t('app', 'Calculate products'),
-        'url' => ['/calculate-product/index'],
-        'template' => '<a href="{url}"><i class="fa fa-book"></i> <span>{label}</span></a>',
-      ];
+      // $m400_plm[] = [
+      //   'label' => Yii::t('app', 'Calculate products'),
+      //   'url' => ['/calculate-product/index'],
+      //   'template' => '<a href="{url}"><i class="fa fa-book"></i> <span>{label}</span></a>',
+      // ];
       $m400_plm[] = [
         'label' => Yii::t('app', 'Parts'),
         'url' => ['/part/index'],

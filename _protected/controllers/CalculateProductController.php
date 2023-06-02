@@ -7,8 +7,10 @@ use app\models\PechatProduct;
 use app\models\Stock;
 class CalculateProductController extends \yii\web\Controller
 {
+    public $title;
     public function actionIndex()
     {
+        $this->title = 'Calculate Product';
         for($i=0;$i<1; $i++){
             $models[] = new CalculateProduct;
             $models[$i]->type = 'test';
@@ -63,9 +65,9 @@ class CalculateProductController extends \yii\web\Controller
             $data .= '<input type="number" data-id="'.$id.'" class="form-control quantity text-right" placeholder="0" name="CalculateProduct['.$id.'][quantity]" id="calculateproduct-'.$id.'-quantity">';
             $data .= '</div>';
             $data .= '</td>';
-            $data .= '<td class="text-center">';
-            $data .= '<button style="border: 2px solid black;" class="btn btn-danger text-center remove-product-item" data-id="'.$id.'"><i class="fa fa-trash"></i></button>';
-            $data .= '</td>';
+            // $data .= '<td class="text-center">';
+            // $data .= '<button style="border: 2px solid black;" class="btn btn-danger text-center remove-product-item" data-id="'.$id.'"><i class="fa fa-trash"></i></button>';
+            // $data .= '</td>';
             $data .= '</tr>';
             return $data;
         }
