@@ -713,6 +713,7 @@ return[
   'Statistics' => 'Statistics',
   'List' => 'List',
   'Logistics' => 'Logistics',
+  'Accounting' => 'Accounting',
 
   'Invoice type' => 'Invoice type',
   'Invoice date' => 'Invoice date',

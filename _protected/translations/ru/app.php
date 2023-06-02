@@ -969,6 +969,7 @@ return [
   'Statistics' => 'Статистика',
   'List' => 'Список',
   'Logistics' => 'Логистика',
+  'Accounting' => 'Бухгалтерия',
   'Invoice type' => 'Тип инвойса',
   'Carrier' => 'Перевозчик',
   'Freight invoice' => 'CФ на грузоперевозку',

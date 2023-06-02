@@ -807,6 +807,7 @@ return [
   'Statistics' => 'Statistika',
   'List' => 'Ro\'yxat',
   'Logistics' => 'Logistika',
+  'Accounting' => 'Buxgalteriya',
 
   'Invoice type' => 'Faktura turi',
   'Invoice date' => 'Faktura sanasi',

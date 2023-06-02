@@ -74,6 +74,7 @@ class ReportController extends AppController {
   }
 
   public function actionIndex() {
+    $identiy = Yii::$app->user->identity;
     $query = ReportGroup::find();
     $query->joinWith([
       "reports" => function($query) {
@@ -4046,5 +4047,11 @@ class ReportController extends AppController {
       ],
     ]);
     $file->send(Helpers::downloadFileName("daily-requirement"));
+  }
+
+  // calculator
+  public function actionCalculate()
+  {
+    return $this->redirect(['calculate-product/index']);
   }
 }
