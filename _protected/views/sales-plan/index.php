@@ -16,12 +16,19 @@ $this->params['breadcrumbs'][] = $this->title;
 $canUpdate = Yii::$app->user->can('sales-plan-update');
 $canDelete = Yii::$app->user->can('sales-plan-delete');
 $canCreate = Yii::$app->user->can('sales-plan-create');
+
 ?>
 <div class="product-group-index">
 
     <p class="pull-right">
 		<? if ($canCreate) { ?>
-        <?=Html::a(Yii::t('app', 'btn-create'),
+        <?=Html::a(Yii::t('app', 'btn-create day'),
+            ['create-day'], [
+                'class' => 'btn btn-success btn-sm form-modal',
+                'data-intro' => Yii::t('intro', 'add-new-record')
+            ]
+        )?>
+        <?=Html::a(Yii::t('app', 'btn-create month'),
             ['create'], [
                 'class' => 'btn btn-success btn-sm form-modal',
                 'data-intro' => Yii::t('intro', 'add-new-record')

@@ -739,5 +739,10 @@ return[
   'Группа Счёт фактура' => 'Group contract Factory',
   'Client report' => 'Client report',
   'BIRKA' => 'BIRKA',
+  'btn-create month' => '<i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;Create month',
+  'btn-create week' => '<i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;Create week',
+  'btn-create day' => '<i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;Create day',
+  'Material Report' => 'Material Report',
+  'Calculator' => 'Calculator',
 ];
 

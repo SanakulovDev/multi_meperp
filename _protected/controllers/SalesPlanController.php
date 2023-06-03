@@ -114,7 +114,28 @@ class SalesPlanController extends AppController
       return $this->redirect(['index']);
     }
   }
+  public function actionCreateDay()
+  {
+    $model = new SalesPlan();
 
+    if (Yii::$app->getRequest()->isAjax) {
+      if ($model->load(Yii::$app->request->post())) {
+        if ($model->save()) {
+          $data['status'] = 1;
+        } else {
+          $data['status'] = 0;
+          $data['errors'] = $model->getErrors();
+        }
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return $data;
+      } else {
+        [$partColorsAll, $partMarksAll, $customersAll] = self::allDictionaries();
+        return $this->renderAjax('_form_day', compact('model', 'partColorsAll', 'partMarksAll', 'customersAll'));
+      }
+    } else {
+      return $this->redirect(['index']);
+    }
+  }
   /**
    * Updates an existing SalesPlan model.
    * If update is successful, the browser will be redirected to the 'view' page.

@@ -4054,4 +4054,9 @@ class ReportController extends AppController {
   {
     return $this->redirect(['calculate-product/index']);
   }
+  //material report
+  public function actionMaterialReport()
+  {
+    return $this->redirect(['dashboard/index']);
+  }
 }

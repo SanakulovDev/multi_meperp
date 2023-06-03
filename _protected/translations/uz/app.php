@@ -854,5 +854,9 @@ return [
   'Группа Счёт фактура' =>'Guruh hisob fakturalari',
   'Client report' => 'Mijozlar haqida ma\'lumot',
   'BIRKA' => 'BIRKA',
+  'btn-create month' =>'<i class="glyphicon glyphicon-plus"></i> Oykik qo\'shish',
+  'btn-create day' =>'<i class="glyphicon glyphicon-plus"></i> Kunlik qo\'shish',
+  'Material Report' => 'Materiallar haqida hisobot',
+  'Calculator' => 'Kalkulyator',
 ];
 ?>

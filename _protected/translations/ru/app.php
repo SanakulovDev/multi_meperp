@@ -1065,5 +1065,9 @@ return [
   'Current Stock' => 'Oстаток',
   'Required Stock' => 'Необходимo',
   'Next Arrival' => 'В пути',
+  'btn-create month' => '<i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;Добавить месяц',
+  'btn-create day' => '<i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;Добавить день',
+  'Material Report' => 'Отчет по материалам',
+  'Calculator' => 'Калькулятор',
 ];
 

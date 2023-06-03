@@ -16,6 +16,8 @@ $this->params['breadcrumbs'][] = $this->title;
 .tbl-plan{
 	width: 100%;
 	border-collapse: collapse;
+    height: 80vh;
+	overflow: scroll;
 }
 .tbl-plan tr td{
 	border: 1px solid #cccccc;
@@ -87,6 +89,15 @@ $this->params['breadcrumbs'][] = $this->title;
 	margin: 0px;
 	vertical-align: middle;
 }
+thead {
+  position: sticky;
+  top: 0;
+}
+
+.content-index{
+	width: 100vw;
+	height: 80vh;
+}
 
 </style>
 
@@ -108,55 +119,59 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 	<br>
 <div class="content-index">
-
+	<div class="container-header">
+		
+	</div>
   <table class="tbl-plan tbl-first" id="fix_table">
-	<tr class="tr_head">
-		<td rowspan="2">№</td>
-		<td rowspan="2">Наименование компании</td>
-		<td rowspan="2" style="width: 120px;">Наименование компаундов</td>
-		<td rowspan="2" style="width: 100px;">Свет компаундов</td>
-		<?php foreach ($data['monthList'] as $month => $monthName) {?>
+	<thead>
+		<tr class="tr_head">
+			<td rowspan="2">№</td>
+			<td rowspan="2">Наименование компании</td>
+			<td rowspan="2" style="width: 120px;">Наименование компаундов</td>
+			<td rowspan="2" style="width: 100px;">Свет компаундов</td>
+			<?php foreach ($data['monthList'] as $month => $monthName) {?>
+				<?php list($month, $quarter) = explode('|', $month)?>
+				<td colspan="3" class="q_<?=$quarter?>"><?=$monthName?></td>
+			<? } ?>
+
+			<td class="td_delimeter"><p></p></td>
+			<td colspan="3"><a href="<?=Url::toRoute(['implementation-plan-fact','q' => 1])?>">1- квартал</a> </td>
+			<td class="td_delimeter"><p></p></td>
+			<td colspan="3"><a href="<?=Url::toRoute(['implementation-plan-fact','q' => 2])?>">2- квартал</a> </td>
+			<td class="td_delimeter"><p></p></td>
+			<td colspan="3"><a href="<?=Url::toRoute(['implementation-plan-fact','q' => 3])?>">3- квартал</a> </td>
+			<td class="td_delimeter"><p></p></td>
+			<td colspan="3"><a href="<?=Url::toRoute(['implementation-plan-fact','q' => 4])?>">4- квартал</a> </td>
+		</tr>
+		<tr class="tr_head">
+			<?php foreach ($data['monthList'] as $month => $monthName) {?>
 			<?php list($month, $quarter) = explode('|', $month)?>
-			<td colspan="3" class="q_<?=$quarter?>"><?=$monthName?></td>
-		<? } ?>
+				<td class="q_<?=$quarter?>"><p class="header_td_p">План</p></td>
+				<td class="q_<?=$quarter?>"><p class="header_td_p">Факт</p></td>
+				<td class="q_<?=$quarter?>"><p class="header_td_p">Разница</p></td>
+			<? } ?>
 
-		<td class="td_delimeter"><p></p></td>
-		<td colspan="3"><a href="<?=Url::toRoute(['implementation-plan-fact','q' => 1])?>">1- квартал</a> </td>
-		<td class="td_delimeter"><p></p></td>
-		<td colspan="3"><a href="<?=Url::toRoute(['implementation-plan-fact','q' => 2])?>">2- квартал</a> </td>
-		<td class="td_delimeter"><p></p></td>
-		<td colspan="3"><a href="<?=Url::toRoute(['implementation-plan-fact','q' => 3])?>">3- квартал</a> </td>
-		<td class="td_delimeter"><p></p></td>
-		<td colspan="3"><a href="<?=Url::toRoute(['implementation-plan-fact','q' => 4])?>">4- квартал</a> </td>
-	</tr>
-	<tr class="tr_head">
-		<?php foreach ($data['monthList'] as $month => $monthName) {?>
-		<?php list($month, $quarter) = explode('|', $month)?>
-			<td class="q_<?=$quarter?>"><p class="header_td_p">План</p></td>
-			<td class="q_<?=$quarter?>"><p class="header_td_p">Факт</p></td>
-			<td class="q_<?=$quarter?>"><p class="header_td_p">Разница</p></td>
-		<? } ?>
+			<td class="td_delimeter"><p></p></td>	
+			<td><p class="header_td_p">План</p> </td>
+			<td><p class="header_td_p">Факт</p> </td>
+			<td><p class="header_td_p">Разница</p> </td>
+			<td class="td_delimeter"><p></p></td>
+			<td><p class="header_td_p">План</p> </td>
+			<td><p class="header_td_p">Факт</p> </td>
+			<td><p class="header_td_p">Разница</p> </td>
+			<td class="td_delimeter"><p></p></td>
+			<td><p class="header_td_p">План</p> </td>
+			<td><p class="header_td_p">Факт</p> </td>
+			<td><p class="header_td_p">Разница</p> </td>
+			<td class="td_delimeter"><p></p></td>
+			<td><p class="header_td_p">План</p> </td>
+			<td><p class="header_td_p">Факт</p> </td>
+			<td><p class="header_td_p">Разница</p> </td>
 
-		<td class="td_delimeter"><p></p></td>	
-		<td><p class="header_td_p">План</p> </td>
-		<td><p class="header_td_p">Факт</p> </td>
-		<td><p class="header_td_p">Разница</p> </td>
-		<td class="td_delimeter"><p></p></td>
-		<td><p class="header_td_p">План</p> </td>
-		<td><p class="header_td_p">Факт</p> </td>
-		<td><p class="header_td_p">Разница</p> </td>
-		<td class="td_delimeter"><p></p></td>
-		<td><p class="header_td_p">План</p> </td>
-		<td><p class="header_td_p">Факт</p> </td>
-		<td><p class="header_td_p">Разница</p> </td>
-		<td class="td_delimeter"><p></p></td>
-		<td><p class="header_td_p">План</p> </td>
-		<td><p class="header_td_p">Факт</p> </td>
-		<td><p class="header_td_p">Разница</p> </td>
+		</tr>
+	</thead>
 
-	</tr>
-
-
+	<tbody>
 		<?php 
 			$i = 0; 
 		?>
@@ -249,6 +264,7 @@ $this->params['breadcrumbs'][] = $this->title;
 				</tr>
 			<?}?>
 		<? } ?>
+	</tbody>
 
 		<tr class="tr_footer" >
 			<td colspan="4">Итого</td>

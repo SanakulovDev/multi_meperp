@@ -2112,7 +2112,7 @@ class ReportService
 
     public function salesImplementationPlanFact()
     {
-        $year = date('Y');
+        $year = '2022';
         $query = "
         select customer_name, partinfo, rmonth, sum(plan_qty) plan_qty, sum(fact_qty) fact_qty from 
         (
