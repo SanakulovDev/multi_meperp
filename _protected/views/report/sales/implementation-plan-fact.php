@@ -95,8 +95,7 @@ thead {
 }
 
 .content-index{
-	width: 100vw;
-	height: 80vh;
+	height: 75vh;
 }
 
 </style>
