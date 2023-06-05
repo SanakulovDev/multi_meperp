@@ -17,23 +17,62 @@ $canUpdate = Yii::$app->user->can('sales-plan-update');
 $canDelete = Yii::$app->user->can('sales-plan-delete');
 $canCreate = Yii::$app->user->can('sales-plan-create');
 
+$bgClass1 = '';
+$bgClass2 = '';
+if($status == 2){
+    $bgClass1 = 'btn-light';
+    $bgClass2 = 'btn-success';
+}
+else{
+    $bgClass1 = 'btn-success';
+    $bgClass2 = 'btn-light';
+}
 ?>
+<?php ob_start();?>
+.month-day-btn{
+    border: 1.5px solid black;
+    width: 120px;
+}
+.sort-month-btn{
+    border-right: none;
+}
+<?php $this->registerCss(ob_get_clean());?>
 <div class="product-group-index">
-
+    <div class="btn-group">
+        <!-- month btn -->
+        <?=Html::a(Yii::t('app', 'Month'),
+            ['index'], [
+                'class' => 'btn '.$bgClass1.' btn-lg month-day-btn sort-btn',
+                'data-param'=> 'SalesPlanSearch%5Bstatus%5D=1',
+                'data-intro' => Yii::t('intro', 'month-btn'),
+            ]
+        )?>
+        <!-- day btn -->
+        <?=Html::a(Yii::t('app', 'Days'),
+            ['index-day'], [
+                'class' => 'btn '.$bgClass2.' btn-lg  month-day-btn sort-btn',
+                'data-param'=>'SalesPlanSearch%5Bstatus%5D=2',
+                'data-intro' => Yii::t('intro', 'day-btn'),
+            ]
+        )?>
+    </div>
     <p class="pull-right">
 		<? if ($canCreate) { ?>
-        <?=Html::a(Yii::t('app', 'btn-create day'),
-            ['create-day'], [
-                'class' => 'btn btn-success btn-sm form-modal',
-                'data-intro' => Yii::t('intro', 'add-new-record')
-            ]
-        )?>
-        <?=Html::a(Yii::t('app', 'btn-create month'),
-            ['create'], [
-                'class' => 'btn btn-success btn-sm form-modal',
-                'data-intro' => Yii::t('intro', 'add-new-record')
-            ]
-        )?>
+            <?php if($status == 2):?>
+                <?=Html::a(Yii::t('app', 'btn-create'),
+                    ['create-day'], [
+                        'class' => 'btn btn-success btn-sm form-modal',
+                        'data-intro' => Yii::t('intro', 'add-new-record')
+                    ]
+                )?>
+            <?php elseif($status == 1):?>
+                <?=Html::a(Yii::t('app', 'btn-create'),
+                    ['create'], [
+                        'class' => 'btn btn-success btn-sm form-modal',
+                        'data-intro' => Yii::t('intro', 'add-new-record')
+                    ]
+                )?>
+            <?php endif;?>
 		<? } ?>
     </p>
 
@@ -127,3 +166,18 @@ $canCreate = Yii::$app->user->can('sales-plan-create');
     <?php Pjax::end(); ?>
 
 </div>
+
+<?php ob_start();?>
+$(function(){
+
+    $('body').on('click', '.sort-btn', function(e){
+        e.preventDefault();
+        let param = $(this).data('param');
+        console.log(param);
+        let url = '<?=Url::toRoute(['sales-plan/index?'])?>'+param;
+        // redirect url
+        window.location.href = url;
+    })
+})
+
+<?php $this->registerJs(ob_get_clean());?>

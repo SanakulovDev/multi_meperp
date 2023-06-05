@@ -71,7 +71,7 @@ $script_create = <<< JS
     $('.finder').on('change', function(e) {
       load();
     })
-    
+    load();
     function load() {
       var color = $('#salesplan-partcolorid').val();
       var mark = $('#salesplan-partmarkid').val();

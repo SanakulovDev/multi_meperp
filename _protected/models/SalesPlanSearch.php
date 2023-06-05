@@ -17,7 +17,7 @@ class SalesPlanSearch extends SalesPlan
     public function rules()
     {
         return [
-            [['id', 'target_qty'], 'integer'],
+            [['id', 'target_qty', 'status'], 'integer'],
             [['target_date', 'partMarkId', 'partColorId', 'part_id', 'customer_id',], 'safe'],
         ];
     }
@@ -58,13 +58,16 @@ class SalesPlanSearch extends SalesPlan
         if (!$this->validate()) {
             return $dataProvider;
         }
-
+        if(empty($this->status) || $this->status != 2) {
+            $this->status = 1;
+        }
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'target_date' => $this->target_date,
-            'target_qty' => $this->target_qty,
-        ])->all();
+            'id'            => $this->id,
+            'target_date'   => $this->target_date,
+            'target_qty'    => $this->target_qty,
+            'sales_plan.status'        => $this->status,
+        ]);
 
         $query->andFilterWhere(['OR',
                               ['like', 'part.part_no', $this->part_id],
@@ -72,7 +75,7 @@ class SalesPlanSearch extends SalesPlan
                               ['like', 'part.part_color', $this->part_id]
                             ])
           ->andFilterWhere(['like', 'customer.name', $this->customer_id]);
-
+        // vd($query->createCommand()->rawSql);
         return $dataProvider;
     }
 }

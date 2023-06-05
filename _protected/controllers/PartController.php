@@ -272,7 +272,7 @@ class PartController extends AppController {
   public function actionGetPartsByMarkAndColor($mark, $color) {
     Yii::$app->response->format = Response::FORMAT_JSON;
     $data = [];
-    foreach (Part::find()->where(['part_name' => $mark, 'part_color' => $color])->all() as $part) {
+    foreach (Part::find()->where(['part_name' => $mark])->all() as $part) {
       $data[] = [
         'id' => $part->id,
         'text' => $part->partinfo,

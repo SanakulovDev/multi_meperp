@@ -33,7 +33,10 @@ class SalesPlanController extends AppController
   {
     $searchModel = new SalesPlanSearch();
     $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+    $status = 1;
+    if(isset(Yii::$app->request->queryParams['SalesPlanSearch']['status'])){
+      $status = Yii::$app->request->queryParams['SalesPlanSearch']['status'];
+    }
     [$partColorsAll, $partMarksAll, $customersAll] = self::allDictionaries();
     return $this->render('index', [
       'searchModel' => $searchModel,
@@ -41,6 +44,7 @@ class SalesPlanController extends AppController
       'partColorsAll' => $partColorsAll,
       'partMarksAll' => $partMarksAll,
       'customersAll' => $customersAll,
+      'status'        => $status,
     ]);
   }
 
@@ -82,7 +86,7 @@ class SalesPlanController extends AppController
     $model = $id === null ? new SalesPlan() : SalesPlan::findOne($id);
     if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
       Yii::$app->response->format = Response::FORMAT_JSON;
-      return ActiveForm::validate($model);
+      return ActiveForm::validate($model);  
     }
   }
 
@@ -120,6 +124,7 @@ class SalesPlanController extends AppController
 
     if (Yii::$app->getRequest()->isAjax) {
       if ($model->load(Yii::$app->request->post())) {
+        $model->status =2;
         if ($model->save()) {
           $data['status'] = 1;
         } else {

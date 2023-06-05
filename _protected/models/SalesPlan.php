@@ -26,12 +26,14 @@ class SalesPlan extends \yii\db\ActiveRecord
 
   /**
    * {@inheritdoc}
+   * status == 1 - oylik
+   * status == 2 - kunlik
    */
   public function rules()
   {
     return [
       [['part_id', 'customer_id', 'target_qty', 'target_date'], 'required'],
-      [['part_id', 'customer_id', 'target_qty'], 'integer'],
+      [['part_id', 'customer_id', 'target_qty', 'status'], 'integer'],
       [['target_date'], 'safe'],
       [
         ['part_id', 'target_date', 'customer_id'],
