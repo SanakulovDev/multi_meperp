@@ -103,6 +103,7 @@
 						<th style="text-align: right"><?=Yii::t('app', 'Price')?></th>
 						<th style="text-align: right"><?=Yii::t('app', 'VAT')?></th>
 						<th style="text-align: right"><?=Yii::t('app', 'Excise')?></th>
+						<th style="text-align: right"><?=Yii::t('app', 'Qty')?></th>
 						<th><?=Yii::t('app', 'Unit')?></th>
 					</tr>
 					<?
@@ -110,13 +111,14 @@
 						foreach($model->salesContractDetails as $item){
 							?>
 							<tr class="tr_item <?=($i%2 == 0) ? 'odd' : ''?>">
-
+								<?php //vd($item);?>
 								<th><?=++$i?></th>
 								<td><?=$item->part->part_name?></td>
 								<td style="text-align: left"><?=$item->part->part_color?></td>
 								<td style="text-align: right"><?=number_format($item->price, 2);?></td>
-								<td style="text-align: right"><?=number_format(Yii::$app->params['vat'], 2);?></td>
-								<td style="text-align: right"><?=number_format(Yii::$app->params['excise'], 2);?></td>
+								<td style="text-align: right"><?=number_format($item->vat, 2);?></td>
+								<td style="text-align: right"><?=number_format($item->excise, 2);?></td>
+								<td style="text-align: right"><?=number_format($item->qty, 2);?></td>
 								<td><?=$item->part->unit->unit_value?></td>
 							</tr>
 							<?

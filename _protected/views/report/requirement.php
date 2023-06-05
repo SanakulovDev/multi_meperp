@@ -181,6 +181,7 @@ use yii\helpers\Html;
 							<tbody>
 							<? $i = 0; ?>
 							<? foreach($data_daily as $row){
+								
                 $calc_at = date("d.m.Y H:i", strtotime($row['calc_at']));
                 if ($filter != null)
                 {
