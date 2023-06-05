@@ -14,6 +14,7 @@ use Yii;
  *
  * @property Contract $contract
  * @property Part $part
+ * @property  $qty
  */
 class SalesContractDetail extends \yii\db\ActiveRecord
 {
@@ -34,9 +35,9 @@ class SalesContractDetail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['sales_contract_id', 'part_id', 'price','delivery_term_id'], 'required'],
+            [['sales_contract_id', 'part_id', 'price','delivery_term_id', 'qty'], 'required'],
             [['sales_contract_id', 'part_id', 'delivery_term_id'], 'integer'],
-            [['price', 'vat', 'excise'], 'number'],
+            [['price', 'vat', 'excise', 'qty'], 'number'],
             [['part_name'], 'safe'],
             ['price', 'compare', 'compareValue' => 0, 'operator' => '>','message'=>Yii::t('app', 'Price must be greater than zero')],
             [['sales_contract_id', 'part_id', 'delivery_term_id'], 'unique', 'targetAttribute' => ['sales_contract_id', 'part_id', 'delivery_term_id'],  'message' => Yii::t('app', 'Duplicating data')],
@@ -63,6 +64,7 @@ class SalesContractDetail extends \yii\db\ActiveRecord
             'part_name' => Yii::t('app', 'Part name'),
             'part_color' => Yii::t('app', 'Part color'),
             'part_no' => Yii::t('app', 'Part(DY)'),
+            'qty' => Yii::t('app', 'Qty'),
         ];
     }
 

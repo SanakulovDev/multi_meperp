@@ -48,15 +48,18 @@
 		<div class="col-lg-2">
 			<?=$form->field($model, 'price')->textInput(['maxlength' => true])?>
 		</div>
+		<div class="col-lg-3">
+			<?=$form->field($model, 'qty')->textInput(['maxlength' => true, 'type'=>'number'])?>
+		</div>
 	</div>
 	
 	<div class="row">
 		<div class="col-lg-2">
-			<?= $form->field($model, 'vat')->textInput(['maxlength' => true]) ?>
+			<?= $form->field($model, 'vat')->textInput(['maxlength' => true, 'value'=>15]) ?>
 		</div>
 	
 		<div class="col-lg-2">
-			<?= $form->field($model, 'excise')->textInput(['maxlength' => true]) ?>
+			<?= $form->field($model, 'excise')->textInput(['maxlength' => true, 'value'=>0]) ?>
 		</div>
 		<div class="col-lg-8">
 			<div class="form-group pull-right">

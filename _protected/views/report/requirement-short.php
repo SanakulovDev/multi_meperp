@@ -42,10 +42,13 @@
                     <th style="width: 100px;" class="text-center"><?=mb_strtoupper(Yii::t('app', 'Part name'))?></th>
                     <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Type')?></th>
                     <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Average usage')?></th>
-                    <th style="width: 100px;" class="text-center">1 нед</th>
-                    <th style="width: 100px;" class="text-center">след нед</th>
-                    <th style="width: 100px;" class="text-center">1месяц</th>
                     <th style="width: 100px;" class="text-center">Количество остатка</th>
+                    <th style="width: 100px;" class="text-center">1 нед</th>
+                    <th style="width: 100px;" class="text-center">Балансе</th>
+                    <th style="width: 100px;" class="text-center">след нед</th>
+                    <th style="width: 100px;" class="text-center">Балансе</th>
+                    <th style="width: 100px;" class="text-center">1месяц</th>
+                    <th style="width: 100px;" class="text-center">Балансе</th>
                 </tr>
       </thead>
       <tbody>
@@ -59,6 +62,8 @@
                 <td style="max-width: 150px;" class="td-nowrap"><?=mb_strtoupper($row['part_name'])?></td>
                 <td class="text-center"><?=$row['csourse']?></td>
                 <td style="text-align: center" class="text-right"><?=round(Part::findOne($row['part_id'])->averageUsage)?></td>
+                <?php $quantity = $row['qty'] * 1; ?>
+                <td style="text-align: center"><?= dividestring($quantity*1, 3)?></td>
                 <?
                     $c_week = 0;
                     foreach($arr[0] as $col){
@@ -74,9 +79,11 @@
                     }
                 ?>
                 <td style="text-align: center"><? echo $c_week ;  ?></td>
+                <td style="text-align: center"><? echo $quantity - $c_week ;  ?></td>
                 <td style="text-align: center"><? echo $next_week ;  ?></td>
+                <td style="text-align: center"><? echo $quantity - $next_week ;  ?></td>
                 <td style="text-align: center"><? echo $month_total ;  ?></td>
-                <td style="text-align: center"><?= dividestring(intval($row['qty'])*1, 3)?></td>
+                <td style="text-align: center"><? echo $quantity - $month_total ;  ?></td>
             </tr>
           <?php endforeach; ?>
       </tbody>
