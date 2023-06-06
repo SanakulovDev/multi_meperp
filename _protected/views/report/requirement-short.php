@@ -11,8 +11,13 @@
     $month = [];
     $loading = '<img src="/themes/adminlte/img/loading.gif">';
 	  $calc_at = null;
+    $period_daily = [];
+    foreach (app\components\Helpers::getPeriodFull() as $pdate) {
+      if($pdate > date('Y-m-t', strtotime('+6 month'))) break;
+      $period_daily[] = $pdate;
+    }
 ?>
-<?= $this->render('../common/_loading'); ?>
+<?php //echo $this->render('../common/_loading'); ?>
 <div class="req-index">
     <div class="panel">
         <div class="panel-heading">
@@ -51,6 +56,29 @@
                     <th style="width: 100px;" class="text-center">Балансе</th>
                 </tr>
       </thead>
+      <?php
+        $arr = [[], []];
+        $nextWeek = false;
+        $indexMonth = '';
+        $month = [];
+      ?>
+    <? foreach($period_daily as $col => $pdate){ ?>
+			<? 
+				if (count($arr[1]) == 0 and !$nextWeek)  {
+					if (date('w', strtotime($pdate)) == 0) {
+						$nextWeek = true;
+					}
+					array_push($arr[0], $col);
+				} else if ($nextWeek and count($arr[1]) <= 6) {
+					array_push($arr[1], $col);
+				}
+				if (!$indexMonth) {
+					$indexMonth = date("m", strtotime($pdate));
+					array_push($month, $col);
+				} else if ($indexMonth == date("m", strtotime($pdate))) {
+					array_push($month, $col);
+				}
+      }?>
       <tbody>
           <?php $i = 0; ?>
           <?php foreach($data_daily as $row):?>
