@@ -64,7 +64,7 @@ class Dashboard extends \yii\db\ActiveRecord
     public static function fakt($date=null)
     {
         $date = self::runDate();
-        $query = " SELECT part.part_name as part_name, part.part_no part_no, sum(po.quantity) as quantity from production_order po 
+        $query = " SELECT part.id as part_id, part.part_name as part_name, part.part_no part_no, sum(po.quantity) as quantity, part.part_color as part_color from production_order po 
             LEFT JOIN part ON part.id = po.part_id where 
             DATE(FROM_UNIXTIME(po.created_at))='".$date."' 
             group by po.part_id;
@@ -145,7 +145,7 @@ class Dashboard extends \yii\db\ActiveRecord
     public static function runDate()
     {
         $date = date('H:i');
-        // return '2022-10-02';
+        return '2022-10-02';
         // return '2022-08-03';
 
         // return '2021-05-29';

@@ -55,7 +55,7 @@
 	
 	<div class="row">
 		<div class="col-lg-2">
-			<?= $form->field($model, 'vat')->textInput(['maxlength' => true, 'value'=>15]) ?>
+			<?= $form->field($model, 'vat')->textInput(['maxlength' => true, 'value'=>12]) ?>
 		</div>
 	
 		<div class="col-lg-2">

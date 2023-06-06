@@ -90,14 +90,13 @@ class DashboardController extends \yii\web\Controller
     {
         $post = Yii::$app->request->post();
         if($post && isset($post['date'])){
-            $items = Dashboard::productionPlan($post['date']);
+            $items = Dashboard::fakt($post['date']);
             $data = '';
             if($items){
                 foreach($items as $item){
                     $color = isset($item['part_color']) ? $item['part_color'] : '';
                     $title = $item['part_name'].'('.$color.')';
-                    // vd($item);
-                    $models = Dashboard::normaRasxoda($item['part_id'], $post['date'], $item['quantity']);
+                    $models = Dashboard::normaRasxoda($item['part_id'], $post['date'], $item['quantity']*1);
                     if(!empty($models)){
                         $data .= Dashboard::shablon($title, $models);
                     }
