@@ -744,5 +744,6 @@ return[
   'btn-create day' => '<i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;Create day',
   'Material Report' => 'Material Report',
   'Calculator' => 'Calculator',
+  'Fakt' => 'Fakt',
 ];
 

@@ -1069,5 +1069,6 @@ return [
   'btn-create day' => '<i class="glyphicon glyphicon-plus"></i>&nbsp;&nbsp;Добавить день',
   'Material Report' => 'Отчет по материалам',
   'Calculator' => 'Калькулятор',
+  'Fakt' => 'Факт',
 ];
 

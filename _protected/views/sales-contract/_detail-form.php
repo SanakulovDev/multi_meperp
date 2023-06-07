@@ -55,11 +55,11 @@
 	
 	<div class="row">
 		<div class="col-lg-2">
-			<?= $form->field($model, 'vat')->textInput(['maxlength' => true, 'value'=>12]) ?>
+			<?= $form->field($model, 'vat')->textInput(['maxlength' => true, 'value'=> Yii::$app->params['vat']]) ?>
 		</div>
 	
 		<div class="col-lg-2">
-			<?= $form->field($model, 'excise')->textInput(['maxlength' => true, 'value'=>0]) ?>
+			<?= $form->field($model, 'excise')->textInput(['maxlength' => true, 'value'=>  Yii::$app->params['excise']]) ?>
 		</div>
 		<div class="col-lg-8">
 			<div class="form-group pull-right">

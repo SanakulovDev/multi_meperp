@@ -23,6 +23,7 @@ use yii\db\ActiveRecord;
  * @property int                      $updated_by
  * @property int                      $created_at
  * @property int                      $updated_at
+ * @property int                      $line
  * @property User                     $createdBy
  * @property Part                     $part
  * @property User                     $updatedBy
@@ -82,9 +83,9 @@ class ProductionOrder extends ActiveRecord {
    */
   public function rules() {
     return [
-      [['part_id', 'current_seq', 'quantity'], 'required'],
+      [['part_id', 'current_seq', 'quantity', 'line'], 'required'],
       [['quantity_of_copy'], 'required', 'on' => 'create'],
-      [['part_id', 'is_bulk', 'product_specification_id', 'current_seq', 'is_printed', 'is_label', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
+      [['part_id', 'is_bulk', 'product_specification_id', 'current_seq', 'is_printed', 'is_label', 'created_by', 'updated_by', 'created_at', 'updated_at', 'line'], 'integer'],
       [['current_event'], 'string', 'max' => 3],
       [['serial_number'], 'string', 'max' => 50],
       ['quantity', 'number'],
@@ -117,6 +118,7 @@ class ProductionOrder extends ActiveRecord {
       'updated_at' => Yii::t('app', 'Updated at'),
       'is_bulk' => Yii::t('app', 'BULK'),
       'product_specification_id' => Yii::t('app', 'Production specification'),
+      'line' => Yii::t('app', 'Line'),
     ];
   }
 
@@ -300,4 +302,16 @@ class ProductionOrder extends ActiveRecord {
     }
   }
 
+
+
+  // lines
+  public static function getLines()
+  {
+    return [
+      1 => Yii::t('app', 'Line').' 1',
+      2 => Yii::t('app', 'Line').' 2',
+      3 => Yii::t('app', 'Line').' 3',
+      4 => Yii::t('app', 'Line').' 4',
+    ];
+  }
 }

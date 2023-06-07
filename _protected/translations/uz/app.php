@@ -858,5 +858,6 @@ return [
   'btn-create day' =>'<i class="glyphicon glyphicon-plus"></i> Kunlik qo\'shish',
   'Material Report' => 'Materiallar haqida hisobot',
   'Calculator' => 'Kalkulyator',
+  'Fakt' => 'Fakt',
 ];
 ?>

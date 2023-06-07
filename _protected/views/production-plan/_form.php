@@ -1,6 +1,7 @@
 <?php
 use app\models\Part;
 use app\models\Warehouse;
+use app\models\ProductionOrder;
 use kartik\datetime\DateTimePicker;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
@@ -20,6 +21,7 @@ $form = ActiveForm::begin([
   'validationUrl' => $validationUrl,
   'options' => ['data-pjax' => true, 'class' => 'modalForm']
 ]);
+$lines = ProductionOrder::getLines();
 ?>
 <div class="row">
 	<div class="col-lg-4">
@@ -90,6 +92,12 @@ $form = ActiveForm::begin([
 			<span><?=Yii::t('app', 'Target qty')?></span>
 		</label>
 	</div>
+  <div class="col-lg-4">
+    <label class="form-group has-float-label">
+      <?= $form->field($model, 'line')->dropDownList($lines, ['prompt' => '. . .', 'class' => 'form-control select2'])->label(false) ?>
+      <span><?= Yii::t('app', 'Line')?></span>
+    </label>
+  </div>
 </div>
 
 <?php ActiveForm::end(); ?>

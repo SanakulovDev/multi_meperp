@@ -3,6 +3,7 @@
 namespace app\controllers;
 use Yii;
 use app\models\Dashboard;
+use app\models\ProductionOrder;
 
 class DashboardController extends \yii\web\Controller
 {
@@ -112,5 +113,28 @@ class DashboardController extends \yii\web\Controller
             ]);
         }
         return $this->render('norma-rasxoda');
+    }
+
+
+    // action analiz
+    public function actionAnaliz()
+    {
+       $this->layout='req';
+       $lines = ProductionOrder::getLines();
+        return $this->render('analiz', [
+            'lines' => $lines,
+        ]);
+    }   
+
+    public function actionAnalizAjax()
+    {
+        if(Yii::$app->request->isAjax){
+            $nowTime = date('d.m.Y H:i:s', time()).' AM';
+            $data = Dashboard::todayProductionByHtml();
+            return json_encode([
+                'nowTime'   => $nowTime,
+                'html'      => $data,
+            ]);
+        }
     }
 }

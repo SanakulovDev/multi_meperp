@@ -1,5 +1,6 @@
 <?php
 use app\models\ProductionPlan;
+use app\models\ProductionOrder;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -157,6 +158,16 @@ $canUpload = Yii::$app->user->can('production-plan-upload');
             'headerOptions' => [
               'style' => 'color:#3c8dbc',
             ],
+          ],
+          [
+            'attribute' => 'line',
+            'value' => function($model) {
+              return $model->line ? (Yii::t('app', 'Line').'-'.$model->line) : '';
+            },
+            'headerOptions' => [
+              'style' => 'color:#3c8dbc',
+            ],
+            'filter' => ProductionOrder::getLines(),
           ]
         ],
       ]

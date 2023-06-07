@@ -229,6 +229,16 @@ $stateList = array_merge(ProductionOrder::stateList(), [ProductionOrder::LABEL_A
             return (!empty($data->created_at)) ? date('d.m.Y (H:i:s)', $data->created_at) : '-';
           },
         ],
+        [
+          'attribute' => 'line',
+          'value' => function($model) {
+            return $model->line ? (Yii::t('app', 'Line').'-'.$model->line) : '';
+          },
+          'headerOptions' => [
+            'style' => 'color:#3c8dbc',
+          ],
+          'filter' => ProductionOrder::getLines(),
+        ]
         //        [
         //          'attribute' => 'updated_at',
         //          'value' => function($data) {

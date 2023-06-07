@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
+use app\models\ProductionOrder;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -12,7 +13,7 @@ use yii\widgets\ActiveForm;
 /** @var TYPE_NAME $flocs */
 /** @var TYPE_NAME $parts_withptnm */
 /** @var TYPE_NAME $prev_shift */
-
+$lines = ProductionOrder::getLines();
 ?>
 
 <div class="production-order-form" xmlns="">
@@ -57,6 +58,10 @@ use yii\widgets\ActiveForm;
         </div>
         <div class="col-lg-2 col-md-2">
           <?=$form->field($model, 'quantity_of_copy')->textInput(['maxlength' => 2, 'type' => 'number', 'min' => 1, 'max' => 99])?>
+        </div>
+        <div class="col-lg-2 col-md-2">
+            <!-- line column drodownList activeform -->
+          <?=$form->field($model, 'line')->dropDownList($lines, ['class' => 'form-control select2','prompt' => Yii::t('app', '...')])?>
         </div>
       <? if($prev_shift == 1){ ?>
           <div class="col-lg-2 col-md-2">
