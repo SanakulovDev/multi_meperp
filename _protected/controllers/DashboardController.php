@@ -121,6 +121,7 @@ class DashboardController extends \yii\web\Controller
     {
        $this->layout='req';
        $lines = ProductionOrder::getLines();
+       $lines = array_merge([0 => 'Все'], $lines);
         return $this->render('analiz', [
             'lines' => $lines,
             'term'  => $line,
