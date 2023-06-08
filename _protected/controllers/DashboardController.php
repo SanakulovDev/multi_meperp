@@ -117,20 +117,26 @@ class DashboardController extends \yii\web\Controller
 
 
     // action analiz
-    public function actionAnaliz()
+    public function actionAnaliz($line=null)
     {
        $this->layout='req';
        $lines = ProductionOrder::getLines();
         return $this->render('analiz', [
             'lines' => $lines,
+            'term'  => $line,
         ]);
     }   
 
     public function actionAnalizAjax()
     {
         if(Yii::$app->request->isAjax){
+            $post = Yii::$app->request->post();
+            $line = null;
+            if(isset($post['line'])){
+                $line = $post['line'];
+            }
             $nowTime = date('d.m.Y H:i:s', time()).' AM';
-            $data = Dashboard::todayProductionByHtml();
+            $data = Dashboard::todayProductionByHtml($line);
             return json_encode([
                 'nowTime'   => $nowTime,
                 'html'      => $data,

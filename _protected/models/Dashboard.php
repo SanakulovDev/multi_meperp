@@ -163,24 +163,24 @@ class Dashboard extends \yii\db\ActiveRecord
         if(empty($date)){
             $date = date('Y-m-d');
         }
-        $query = "SELECT part_id, line, shift from production_plan where production_date='".$date."' and line is not null group by part_id, line, shift";
+        $query = "SELECT part_id, line, shift from production_plan where production_date='".$date."' and line is not null group by part_id, line, shift order by line asc";
         $response = Yii::$app->db->createCommand($query)->queryAll();
         return $response;
         
     }
     public static function todayProductionPlan($part_id, $line, $shift, $date)
     {
-        $query = "SELECT sum(target_qty) as qty from production_plan where part_id='".$part_id."' and line='".$line."' and shift='".$shift."' and production_date='".$date."'";
+        $query = "SELECT sum(target_qty) as qty from production_plan where part_id='".$part_id."' and line='".$line."' and shift='".$shift."' and production_date='".$date."' and target_qty > 0 and target_qty is not null";
         $response = Yii::$app->db->createCommand($query)->queryOne();
         return $response['qty']?:0;
     }
     public static function todayProductionFakt($part_id, $line, $shift, $date)
     {
-        $query = "SELECT sum(quantity) as qty from production_order where part_id='".$part_id."' and line='".$line."' and DATE(FROM_UNIXTIME(created_at))='".$date."'";
+        $query = "SELECT sum(quantity) as qty from production_order where part_id='".$part_id."' and line='".$line."' and DATE(FROM_UNIXTIME(created_at))='".$date."' and quantity > 0 and quantity is not null";
         $response = Yii::$app->db->createCommand($query)->queryOne();
         return $response['qty']?:0;
     }
-    public static function todayProductionByData()
+    public static function todayProductionByData($line=null)
     {
         $date = date('Y-m-d', time());
         $partList = self::todayProductionPlanPartList($date);
@@ -188,6 +188,9 @@ class Dashboard extends \yii\db\ActiveRecord
         $data['nowTime'] = $nowTime;
         $data['data'] = [];
         foreach($partList as $part){
+            if(!empty($line) && $line != $part['line']){
+                continue;
+            }
             $data['data'][] = [
                 'part_id'       => $part['part_id'],
                 'part_name'     => substr(Part::getPartName($part['part_id']), 0, 45),
@@ -200,9 +203,9 @@ class Dashboard extends \yii\db\ActiveRecord
         }
         return $data;
     }
-    public static function todayProductionByHtml()
+    public static function todayProductionByHtml($line=null)
     {
-        $data = self::todayProductionByData();
+        $data = self::todayProductionByData($line);
         $html = '';
         foreach($data['data'] as $model){
             $html .= '<div class="item-row">';

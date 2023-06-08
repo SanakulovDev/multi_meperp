@@ -73,11 +73,14 @@ body{
                 <span  class="dropdown-toggle color-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="caret"></span>
                     <?= \Yii::t('app', 'Line')?> 
+                    <?php if(!empty($term)):?>
+                        -<?= $term?>
+                    <?php endif;?>
                 </span>
                 <ul class="dropdown-menu">
                     <?php foreach($lines as $key => $line):?>
 
-                        <li><a href="javascript:void()" data-id="<?= $key?>" class="line"><?= $line?></a></li>
+                        <li><a href="javascript:void(0)" data-id="<?= $key?>" class="line"><?= $line?></a></li>
                     <?php endforeach;?>
                 </ul>
             </div>
@@ -96,22 +99,33 @@ body{
 $(function(){
     let deg  = 0;
     let analizUrl = '<?= Url::to(['dashboard/analiz-ajax'])?>';
-    ajaxFunc(analizUrl, {}, 'POST', function(data){
+    let param = {
+        line: '<?= $term?>'
+    };
+    ajaxFunc(analizUrl, param, 'POST', function(data){
         let response = JSON.parse(data);
         $('.analiz').html(response.html);
         $('.time').html(response.nowTime);
     });
     $('.refresh').on('click', function(e){
-        deg += 360;
+        deg += 720;
         $(this).find('i').css({
             'transform': 'rotate('+deg+'deg)',
             'transition': 'transform 1s ease-in-out'
         });
-        ajaxFunc(analizUrl, {}, 'POST', function(data){
+        ajaxFunc(analizUrl, param, 'POST', function(data){
             let response = JSON.parse(data);
             $('.analiz').html(response.html);
             $('.time').html(response.nowTime);
         });
+    });
+
+
+    //line
+
+    $('.line').on('click', function(){
+        let id = $(this).data('id');
+        window.location.href = '<?= Url::to(['dashboard/analiz'])?>?line='+id;
     })
 
     function ajaxFunc(url, param, type, callback){
