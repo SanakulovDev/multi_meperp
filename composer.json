@@ -36,7 +36,8 @@
 		"hiqdev/yii2-asset-flag-icon-css": "^2.0",
 		"brussens/yii2-maintenance-mode": "*",
 		"malsa/yii2-maintenance-mode": "*",
-		"bizley/migration": "^4.1"
+		"bizley/migration": "^4.1",
+		"ellera/yii2-backup": "^2.0"
 	},
 	"require-dev": {
 		"codeception/codeception": "*",

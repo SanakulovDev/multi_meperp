@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fc3a354cb9f7ab2872ce615e90aa8c32",
+    "content-hash": "177566b2684a1a3de72ac995b8c26a86",
     "packages": [
         {
             "name": "2amigos/qrcode-library",
@@ -1101,6 +1101,49 @@
                 "validator"
             ],
             "time": "2020-06-16T20:11:17+00:00"
+        },
+        {
+            "name": "ellera/yii2-backup",
+            "version": "v2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/elleracompany/yii2-backup.git",
+                "reference": "82791eb2524a82b2e3522c8c4330b6267d4d1fd0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/elleracompany/yii2-backup/zipball/82791eb2524a82b2e3522c8c4330b6267d4d1fd0",
+                "reference": "82791eb2524a82b2e3522c8c4330b6267d4d1fd0",
+                "shasum": ""
+            },
+            "require": {
+                "ext-zip": "*",
+                "php": ">=7.1.0",
+                "yiisoft/yii2": "~2.0.0"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "ellera\\backup\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jørgen Ellingsen",
+                    "email": "jorgen@ellera.no"
+                }
+            ],
+            "description": "Console backup for yii2 applications ",
+            "keywords": [
+                "backup",
+                "console",
+                "yii2"
+            ],
+            "time": "2019-01-17T07:52:17+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -2506,6 +2549,7 @@
                 "mail",
                 "mailer"
             ],
+            "abandoned": "symfony/mailer",
             "time": "2019-11-12T09:31:26+00:00"
         },
         {
