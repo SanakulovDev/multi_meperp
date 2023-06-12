@@ -11,6 +11,8 @@ use app\models\ProductionPlanSearch;
 use app\models\UploadForm;
 use app\models\UserWarehouse;
 use app\models\Warehouse;
+use app\models\Model;
+use app\models\ProductionPlanShort;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -133,6 +135,72 @@ class ProductionPlanController extends AppController {
    * @return mixed
    */
   public function actionCreate() {
+    $modelMain = new ProductionPlanShort();
+    $models	= [new ProductionPlan];
+    if(Yii::$app->getRequest()->isAjax) {
+      if($modelMain->load(Yii::$app->request->post())) {
+		  $models = Model::createMultiple(ProductionPlan::classname());
+		  Model::loadMultiple($models, Yii::$app->request->post());
+		//   vd($models);
+        $valid = $modelMain->validate();
+        $valid = Model::validateMultiple($models) ;
+		    $valid = true;
+        if($valid){
+          // $transaction = \Yii::$app->db->beginTransaction();
+
+          // try{
+            $flag = true;
+              	foreach ($models as $index => $model) {
+                  	$model->part_id = $modelMain->part_id;
+                    $model->warehouse_id = $modelMain->warehouse_id;
+                    $model->clearErrors();
+                    // vd($model->save(false));
+                    if (! ($flag = $model->save(false))) {
+                      $data['errors'] = $model->getErrors();
+                      $transaction->rollBack();
+                      break;
+                    }
+                  	$data['status'] = 1;
+                  	$w_house = Warehouse::find()
+                  	  ->where(["id" => $model->warehouse_id])
+                  	  ->one();
+                  	$spec = ProductSpecification::find()
+                  	  ->where(["part_id" => $model->part_id])
+                  	  ->one();
+                  	$tg["warehouse_id"] 	= $w_house->name;
+                  	$tg["production_date"] 	= $model->production_date;
+                  	$tg["part_id"] 			= $spec->code;
+                  	$tg["shift"] 			= $model->shift;
+                  	$tg["target_qty"] 		= $model->target_qty;
+                  //TelegramService::productionPlan($tg);
+              	}
+            if ($flag) {
+                // $transaction->commit();
+                Yii::$app->response->format = Response::FORMAT_JSON;
+        		    return $data;
+            }
+          // } catch (Exception $e) {
+          //   $transaction->rollBack();
+          //   $data['status'] = 0;
+          //   Yii::$app->response->format = Response::FORMAT_JSON;
+          //   return $data;
+          // }
+        }
+        
+      } else {
+        return $this->renderAjax('_form2', [
+          'modelMain' 	=> $modelMain,
+          'models' 		=> (empty($models))?[new ProductionPlan]:$models
+        ]);
+      }
+    } else {
+      return $this->redirect(['index']);
+    }
+  }
+
+
+  //dynamicform create
+  public function actionCreate2() {
     $model = new ProductionPlan();
     if(Yii::$app->getRequest()->isAjax) {
       if($model->load(Yii::$app->request->post())) {
@@ -157,13 +225,12 @@ class ProductionPlanController extends AppController {
         Yii::$app->response->format = Response::FORMAT_JSON;
         return $data;
       } else {
-        return $this->renderAjax('_form', ['model' => $model]);
+        return $this->renderAjax('_form2', ['model' => $model]);
       }
     } else {
       return $this->redirect(['index']);
     }
   }
-
   /**
    * Updates an existing ProductionPlan model.
    * If update is successful, the browser will be redirected to the 'view' page.
@@ -173,6 +240,63 @@ class ProductionPlanController extends AppController {
    * @return mixed
    * @throws NotFoundHttpException if the model cannot be found
    */
+  public function actionUpdate2($id) {
+    $modelMain = new ProductionPlanShort();
+    $generalModel = $this->findModel($id);
+    $modelMain->part_id 	= $generalModel->part_id;
+    $modelMain->warehouse_id = $generalModel->warehouse_id;
+    $models = ProductionPlan::findAll($id);
+
+      if(Yii::$app->getRequest()->isAjax) {
+        if($modelMain->load(Yii::$app->request->post())) {
+        $oldIDs = ArrayHelper::map($models, 'id', 'id');
+        $models = Model::createMultiple(ProductionPlan::classname(), $models);
+        Model::loadMultiple($models, Yii::$app->request->post());
+        $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($models, 'id', 'id')));
+        
+        $valid = $modelMain->validate();
+        $valid = Model::validateMultiple($models) && $valid;
+        $valid = true;
+
+      if ($valid) {
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+          if (!empty($deletedIDs)) {
+            ProductionPlan::deleteAll(['id' => $deletedIDs]);
+          }
+          foreach ($models as $model) {
+            $model->part_id 		= $modelMain->part_id;
+            $model->warehouse_id 	= $modelMain->warehouse_id;
+            $model->clearErrors();
+            if (! ($flag = $model->save(false))) {
+              $transaction->rollBack();
+              $data['status'] = 0;
+              $data['errors'] = $model->getErrors();
+              Yii::$app->response->format = Response::FORMAT_JSON;
+              return $data;
+            }
+          }
+          if ($flag) {
+            $transaction->commit();
+            $data['status'] = 1;
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return $data;
+          }
+        } catch (Exception $e) {
+          $transaction->rollBack();
+        }
+      }
+        } else {
+          return $this->renderAjax('_form2', [
+            'modelMain' => $modelMain,
+        'models' => (empty($models)) ? [new ProductionPlan] : $models
+          ]);
+        }
+      } else {
+        return $this->redirect(['index']);
+      }
+  }
+
   public function actionUpdate($id) {
     $model = $this->findModel($id);
     if(Yii::$app->getRequest()->isAjax) {
@@ -194,7 +318,6 @@ class ProductionPlanController extends AppController {
       return $this->redirect(['index']);
     }
   }
-
   /**
    * Comment an existing ProductionPlan definition.
    * If comment is successful, the browser will be redirected to the 'view' page.

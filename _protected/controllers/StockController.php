@@ -183,6 +183,16 @@ class StockController extends AppController
 	}
 
 
+	// ostatoka GP
+	public function actionDashboard()
+	{
+		// $this->layout = 'req';
+		$query = "SELECT part.remark as remark, part.part_no as part_no, part.part_name as part_name, part.part_color as part_color, sum(stock.qty) as qty FROM stock left join part on part.id = stock.part_id  where qty >0 group by stock.part_id order by part.remark DESC";
+		$stocks = Yii::$app->db->createCommand($query)->queryAll();
+		return $this->render('dashboard', [
+			'stocks' => $stocks,
+		]);
+	}
 	/**
 	 * Finds the Stock model based on its primary key value.
 	 * If the model is not found, a 404 HTTP exception will be thrown.

@@ -13,7 +13,7 @@ class ProductionPlanSearch extends ProductionPlan{
 	 */
 	public function rules(){
 		return [
-			[['id', 'part_id', 'warehouse_id', 'shift', 'target_qty'], 'integer'],
+			[['id', 'part_id', 'warehouse_id', 'shift', 'target_qty', 'line'], 'integer'],
 			[['production_date','comment'], 'safe'],
 		];
 	}
@@ -56,6 +56,7 @@ class ProductionPlanSearch extends ProductionPlan{
 				'production_plan.warehouse_id' => $this->warehouse_id,
 				'shift'                        => $this->shift,
 				'target_qty'                   => $this->target_qty,
+				'line'                         => $this->line,
 			])->orderBy(['production_date' => SORT_DESC])->all();
 
     $query->andFilterWhere(['like', 'production_plan_comment.comment', $this->comment]);

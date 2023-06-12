@@ -496,4 +496,15 @@ class Part extends ActiveRecord
             ->where(['type' => CoverageController::TYPE_STOCK]);
     }
 
+    // get part name
+    public static function getPartName($part_id)
+    {
+        $part = self::findOne($part_id);
+        if ($part) {
+            return $part->part_name;
+        }
+
+        return '';
+    }
+
 }

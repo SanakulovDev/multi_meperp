@@ -3,6 +3,7 @@
 namespace app\controllers;
 use Yii;
 use app\models\Dashboard;
+use app\models\ProductionOrder;
 
 class DashboardController extends \yii\web\Controller
 {
@@ -90,14 +91,13 @@ class DashboardController extends \yii\web\Controller
     {
         $post = Yii::$app->request->post();
         if($post && isset($post['date'])){
-            $items = Dashboard::productionPlan($post['date']);
+            $items = Dashboard::fakt($post['date']);
             $data = '';
             if($items){
                 foreach($items as $item){
                     $color = isset($item['part_color']) ? $item['part_color'] : '';
                     $title = $item['part_name'].'('.$color.')';
-                    // vd($item);
-                    $models = Dashboard::normaRasxoda($item['part_id'], $post['date'], $item['quantity']);
+                    $models = Dashboard::normaRasxoda($item['part_id'], $post['date'], $item['quantity']*1);
                     if(!empty($models)){
                         $data .= Dashboard::shablon($title, $models);
                     }
@@ -113,5 +113,35 @@ class DashboardController extends \yii\web\Controller
             ]);
         }
         return $this->render('norma-rasxoda');
+    }
+
+
+    // action analiz
+    public function actionAnaliz($line=null)
+    {
+       $this->layout='req';
+       $lines = ProductionOrder::getLines();
+       $lines = array_merge([0 => 'Все'], $lines);
+        return $this->render('analiz', [
+            'lines' => $lines,
+            'term'  => $line,
+        ]);
+    }   
+
+    public function actionAnalizAjax()
+    {
+        if(Yii::$app->request->isAjax){
+            $post = Yii::$app->request->post();
+            $line = null;
+            if(isset($post['line'])){
+                $line = $post['line'];
+            }
+            $nowTime = date('d.m.Y H:i:s', time()).' AM';
+            $data = Dashboard::todayProductionByHtml($line);
+            return json_encode([
+                'nowTime'   => $nowTime,
+                'html'      => $data,
+            ]);
+        }
     }
 }

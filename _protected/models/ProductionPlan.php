@@ -16,6 +16,7 @@ use yii\db\ActiveRecord;
  * @property int       $shift        smena
  * @property int       $target_qty
  * @property string    $comment
+ * @property int       $line
  * @property Part      $part
  * @property Warehouse $warehouse
  */
@@ -40,8 +41,8 @@ class ProductionPlan extends ActiveRecord {
    */
   public function rules() {
     return [
-      [['part_id', 'production_date', 'warehouse_id', 'shift'], 'required'],
-      [['part_id', 'warehouse_id', 'shift', 'target_qty'], 'integer'],
+      [['part_id', 'production_date', 'warehouse_id', 'shift', 'line'], 'required'],
+      [['part_id', 'warehouse_id', 'shift', 'target_qty', 'line'], 'integer'],
       [['part_id', 'production_date', 'warehouse_id', 'shift'], 'unique',
         'targetAttribute' => ['part_id', 'production_date', 'warehouse_id', 'shift']
       ],
@@ -63,6 +64,7 @@ class ProductionPlan extends ActiveRecord {
       'shift' => Yii::t('app', 'Shift'),
       'target_qty' => Yii::t('app', 'Target qty'),
       'comment' => Yii::t('app', 'Comment'),
+      'line' => Yii::t('app', 'Line'),
     ];
   }
 

@@ -4040,4 +4040,15 @@ class ReportController extends AppController {
   {
     return $this->redirect(['dashboard/index']);
   }
+  // stock-dahboard action
+  public function actionStockDashboard()
+  {
+    return $this->redirect(['stock/dashboard']);
+  }
+
+  //  plan dashboard-analiz action
+  public function actionDashboardAnaliz()
+  {
+    return $this->redirect(['dashboard/analiz']);
+  }
 }

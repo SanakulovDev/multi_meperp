@@ -504,6 +504,11 @@ use yii\widgets\Menu; ?>
     }
     if (Yii::$app->user->can('fg-invoice-index')) {
       $m_new[] = [
+        'label' => 'Результат производства',
+        'url' => ['/dashboard/analiz'],
+        'template' => '<a href="/dashboard/analiz"><i class="fa fa-list"></i> <span>{label}</span></a>',
+      ];
+      $m_new[] = [
         'label' => 'Статус обеспеченности',
         'url' => ['/fg-invoice/index'],
         'template' => '<a href="/report/coverage"><i class="fa fa-list"></i> <span>{label}</span></a>',

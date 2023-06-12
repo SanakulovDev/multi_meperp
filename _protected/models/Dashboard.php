@@ -64,7 +64,7 @@ class Dashboard extends \yii\db\ActiveRecord
     public static function fakt($date=null)
     {
         $date = self::runDate();
-        $query = " SELECT part.part_name as part_name, part.part_no part_no, sum(po.quantity) as quantity from production_order po 
+        $query = " SELECT part.id as part_id, part.part_name as part_name, part.part_no part_no, sum(po.quantity) as quantity, part.part_color as part_color from production_order po 
             LEFT JOIN part ON part.id = po.part_id where 
             DATE(FROM_UNIXTIME(po.created_at))='".$date."' 
             group by po.part_id;
@@ -144,7 +144,7 @@ class Dashboard extends \yii\db\ActiveRecord
 
     public static function runDate()
     {
-        $date = date('H:i');
+        // $date = date('H:i');
         // return '2022-10-02';
         // return '2022-08-03';
 
@@ -155,4 +155,94 @@ class Dashboard extends \yii\db\ActiveRecord
         }
         return date('Y-m-d', strtotime('-1 day'));
     }
+
+    // from dashboard analiz 
+
+    public static function todayProductionPlanPartList($date=null)
+    {
+        if(empty($date)){
+            $date = date('Y-m-d');
+        }
+        $query = "SELECT part_id, line, shift from production_plan where production_date='".$date."' and line is not null group by part_id, line, shift order by line asc";
+        $response = Yii::$app->db->createCommand($query)->queryAll();
+        return $response;
+        
+    }
+    public static function todayProductionPlan($part_id, $line, $shift, $date)
+    {
+        $query = "SELECT sum(target_qty) as qty from production_plan where part_id='".$part_id."' and line='".$line."' and shift='".$shift."' and production_date='".$date."' and target_qty > 0 and target_qty is not null";
+        $response = Yii::$app->db->createCommand($query)->queryOne();
+        return $response['qty']?:0;
+    }
+    public static function todayProductionFakt($part_id, $line, $shift, $date)
+    {
+        $query = "SELECT sum(quantity) as qty from production_order where part_id='".$part_id."' and line='".$line."' and DATE(FROM_UNIXTIME(created_at))='".$date."' and quantity > 0 and quantity is not null";
+        $response = Yii::$app->db->createCommand($query)->queryOne();
+        return $response['qty']?:0;
+    }
+    public static function todayProductionByData($line=null)
+    {
+        $date = date('Y-m-d', time());
+        $partList = self::todayProductionPlanPartList($date);
+        $nowTime = date('d.m.Y H:i:s', time()).' AM';
+        $data['nowTime'] = $nowTime;
+        $data['data'] = [];
+        foreach($partList as $part){
+            if(!empty($line) && $line != $part['line']){
+                continue;
+            }
+            $data['data'][] = [
+                'part_id'       => $part['part_id'],
+                'part_name'     => substr(Part::getPartName($part['part_id']), 0, 45),
+                'line'          => $part['line'].'-'.Yii::t('app', 'Line'),
+                'shift'         => $part['shift'].'-'.Yii::t('app', 'Shift'),
+                'plan'          => self::todayProductionPlan($part['part_id'], $part['line'], $part['shift'], $date)*1,
+                'fakt'          => self::todayProductionFakt($part['part_id'], $part['line'], $part['shift'], $date)*1,
+                'balance'       => self::todayProductionPlan($part['part_id'], $part['line'], $part['shift'], $date) - self::todayProductionFakt($part['part_id'], $part['line'], $part['shift'], $date),
+            ];
+        }
+        return $data;
+    }
+    public static function todayProductionByHtml($line=null)
+    {
+        $data = self::todayProductionByData($line);
+        $html = '';
+        foreach($data['data'] as $model){
+            $html .= '<div class="item-row">';
+            $html .= '<div class="row " style="margin: 50px 0 25px 0;">';
+            $html .= '<div class="col-md-3 text-left">';
+            $html .= '<span class="color-primary">'.$model['part_name'].'</span>';
+            $html .= '</div>';
+            $html .= '<div class="col-md-6 ">';
+            $html .= '<div class="row">';
+            $html .= '<div class="col-md-6 text-right">';
+            $html .= '<span class="color-primary">'.$model['line'].'</span>';
+            $html .= '</div>';
+            $html .= '<div class="col-md-6 text-right">';
+            $html .= '<span class="color-primary">'.$model['shift'].'</span>';
+            $html .= '</div>';
+            $html .= '</div>';
+            $html .= '</div>';
+            $html .= '</div>';
+            $html .= '<div class="row ">';
+            $html .= '<div class="col-md-3 item-border-right item-quantity">';
+            //span header title
+            $html .= '<span class="color-primary item-quantity-title">'.Yii::t('app', 'Plan').'</span>';
+            $html .= '<span class="color-success">'.divideString($model['plan'], 3).'</span>';
+            $html .= '</div>';
+            $html .= '<div class="col-md-3 item-border-right item-quantity">';
+            $html .= '<span class="color-primary item-quantity-title">'.Yii::t('app', 'Fakt').'</span>';
+            $html .= '<span class="color-success">'.divideString($model['fakt'], 3).'</span>';
+            $html .= '</div>';
+            $html .= '<div class="col-md-3 item-quantity">';
+            $html .= '<span class="color-primary item-quantity-title">'.Yii::t('app', 'Balance').'</span>';
+            $html .= '<span class="color-danger">'.divideString($model['balance'], 3).'</span>';
+            $html .= '</div>';
+            $html .= '</div>';
+            $html .= '</div>';
+        }
+        return $html;
+    }
+
+    
 }
