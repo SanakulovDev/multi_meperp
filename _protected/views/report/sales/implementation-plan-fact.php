@@ -63,9 +63,6 @@ $this->params['breadcrumbs'][] = $this->title;
 	margin: 0px;
 }
 
-.content-index{
-	overflow: scroll;
-}
 
 .td_zero{
 	color: #bdbdbd !important;
@@ -96,6 +93,7 @@ thead {
 
 .content-index{
 	height: 75vh;
+	overflow: scroll;
 }
 
 </style>

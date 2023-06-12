@@ -65,7 +65,7 @@ body{
 
     <div class="row header">
         <div class="col-md-5  text-right">
-            <span class="color-primary">Результат производства</span>
+            <span class="color-primary"><?= Yii::t('app', 'Production result')?></span>
         </div>
         <div class="col-md-3  text-right">
             <!-- <span class="color-primary">Rezultat proizvodstva</span> -->

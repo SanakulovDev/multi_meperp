@@ -859,5 +859,8 @@ return [
   'Material Report' => 'Materiallar haqida hisobot',
   'Calculator' => 'Kalkulyator',
   'Fakt' => 'Fakt',
+  'Remaining GP' =>'Qoldiq GP',
+  'Production result' => 'Ishlab chiqarish natijasi',
+  'Production result (line)' => 'Ishlab chiqarish natijasi (liniya)',
 ];
 ?>

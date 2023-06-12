@@ -1070,5 +1070,8 @@ return [
   'Material Report' => 'Отчет по материалам',
   'Calculator' => 'Калькулятор',
   'Fakt' => 'Факт',
+  'Remaining GP' => 'Остаток ГП',
+  'Production result' => 'Результат производства',
+  'Production result (line)' => 'Результат производства (линия)',
 ];
 
