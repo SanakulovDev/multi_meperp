@@ -3971,10 +3971,33 @@ class ReportController extends AppController {
           ":type_s" => CoverageController::TYPE_LOCAL_SEMI,
         ])
         ->queryAll();
+    $period_daily = [];
+    foreach (app\components\Helpers::getPeriodFull() as $pdate) {
+      if($pdate > date('Y-m-t', strtotime('+6 month'))) break;
+      $period_daily[] = $pdate;
+    }
     $arrFile = [];
     // vd($data_daily[0]);
     $arr = [[], []];
     $month = [];
+
+     foreach($period_daily as $col => $pdate){ 
+			 
+				if (count($arr[1]) == 0 and !$nextWeek)  {
+					if (date('w', strtotime($pdate)) == 0) {
+						$nextWeek = true;
+					}
+					array_push($arr[0], $col);
+				} else if ($nextWeek and count($arr[1]) <= 6) {
+					array_push($arr[1], $col);
+				}
+				if (!$indexMonth) {
+					$indexMonth = date("m", strtotime($pdate));
+					array_push($month, $col);
+				} else if ($indexMonth == date("m", strtotime($pdate))) {
+					array_push($month, $col);
+				}
+      }
     foreach($data_daily as $key => $detailWide) {
       unset($tmpArray);
       $tmpArray['id'] = $key+1;
