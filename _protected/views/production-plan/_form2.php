@@ -32,13 +32,7 @@ $smena_list = [
 <?php ob_start();?>
 jQuery(".dynamicform_wrapper").on("afterInsert", function(e, item) {
     jQuery(".dynamicform_wrapper .panel-title-address").each(function(index) {
-        $(item).find('.datetimepicker').datetimepicker({
-                                            format: 'yyyy-mm-dd',
-                                            autoclose: true,
-                                            todayBtn: true
-                                            // Boshqa sozlovlar va parametrlar shu yerdan kiritilishi mumkin
-                                        });
-                                        console.log(123);
+        $(item).find('.datetimepicker').date();
         jQuery(this).html((index + 1))
     });
 });
@@ -126,24 +120,7 @@ jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
                         <div class="row" style="display: flex;align-items: center;justify-content: center;">
                             <div class="col-md-4">
                                 <label class="form-group has-float-label">
-                                    <?=$form->field($model, "[{$index}]production_date")->widget(DateTimePicker::classname(), [
-                                            'type' => DateTimePicker::TYPE_COMPONENT_PREPEND,
-                                            'layout' => '{picker}{input}{remove}',
-                                            'removeButton' => ['position' => 'append'],
-                                            'language' => 'ru',
-                                            'pluginOptions' => [
-                                                'autoclose' => true,
-                                                'format' => 'yyyy-mm-dd',
-                                                'startView' => 'month',
-                                                'minView' => 'month',
-                                                'maxView' => 'month',
-                                            ],
-                                            'options' => [
-                                                'autocomplete' => 'off',
-                                                'placeholder' => 'YYYY-MM-DD',
-                                                'class' => ' form-control datetimepicker'
-                                            ]
-                                        ]);?>
+                                    <?=$form->field($model, "[{$index}]production_date")->textInput(['class' => 'datetimepicker form-control', 'type'=>'date'])?>
                                     <span><?=Yii::t('app', 'Production date')?></span>
                                 </label>
                             </div>

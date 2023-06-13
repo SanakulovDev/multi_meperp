@@ -193,6 +193,49 @@ class StockController extends AppController
 			'stocks' => $stocks,
 		]);
 	}
+	 // excel import
+	 public function actionDownloadDashboard()
+	 {
+	   ini_set("memory_limit", "-1");
+	   	$query = "SELECT part.remark as remark, part.part_no as part_no, part.part_name as part_name, part.part_color as part_color, sum(stock.qty) as qty FROM stock left join part on part.id = stock.part_id  where qty >0 group by stock.part_id order by part.remark DESC";
+		$stocks = Yii::$app->db->createCommand($query)->queryAll();
+		$arrFile = [];
+		// vd($data_daily[0]);
+		$arr = [[], []];
+		$month = [];
+		foreach($stocks as $key => $detailWide) {
+			$tmpArray['id'] 		= $key+1;
+			$tmpArray['remark'] 	= $detailWide['remark'];
+			$tmpArray["part_no"] 	= $detailWide['part_no'];
+			$tmpArray["part_name"] 	= $detailWide['part_name'];
+			$tmpArray["part_color"] = preg_replace('/\d+/', '', $detailWide['part_color']);
+			$tmpArray["qty"] 		= number_format($detailWide['qty'], 2, '.', ' ')*1;
+			$arrFile[] 				= $tmpArray;
+			
+		}
+		$header_titles = [
+			0 => Yii::t('app', 'No'),
+			1 => Yii::t('app', 'Remark'),
+			2 => Yii::t('app', 'Part No'),
+			3 => Yii::t('app', 'Part Name'),
+			4 => Yii::t('app', 'Part Color'),
+			5 => Yii::t('app', 'Qty'),
+		];
+		$detail_titles = [];
+		// $titles = array_merge($header_titles);
+
+		$titles = $header_titles;
+		$file = Yii::createObject([
+			"class" => 'codemix\excelexport\ExcelFile',
+			"sheets" => [
+				"coverage" => [
+					"data" => $arrFile,
+					"titles" => $titles,
+				],
+			],
+		]);
+		$file->send(Helpers::downloadFileName("Остаток GP"));
+	 }
 	/**
 	 * Finds the Stock model based on its primary key value.
 	 * If the model is not found, a 404 HTTP exception will be thrown.

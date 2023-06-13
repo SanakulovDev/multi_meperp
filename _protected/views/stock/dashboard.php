@@ -49,7 +49,12 @@ $this->params['breadcrumbs'][] = $this->title;
         justify-content: center;
     }
 <?php $this->registerCss(ob_get_clean());?>
-	<br>
+    <div class="panel-heading">
+        <p class="pull-right" style="margin: 0px">
+        <?=Html::a(Yii::t('app', 'btn-download'), ['download-dashboard'], ['class' => 'btn btn-info btn-sm', 'id' => 'btnDownload'])?>
+        </p>
+        <div style="clear: both;"></div>
+    </div>
 <div class="content-index">
   <table class="tbl-plan tbl-first table" id="fix_table">
 	<thead>
