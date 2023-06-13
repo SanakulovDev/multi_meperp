@@ -13,11 +13,11 @@ $hiddenReports = [];
 
 if($url == '/report/index'){
   	$query = ReportGroup::find();
-  	$query->joinWith([
-	  "reports" => function($query) {
-		  $query->onCondition(["report.action" => ArrayHelper::map(Yii::$app->user->identity->reports, "id", "action")]);
-		},
-    ]);
+  	// $query->joinWith([
+	//   "reports" => function($query) {
+	// 	  $query->onCondition(["report.action" => ArrayHelper::map(Yii::$app->user->identity->reports, "id", "action")]);
+	// 	},
+    // ]);
     $reportGroupsT = $query->orderBy(["order" => SORT_ASC])->all();
     $reportGroups = [];
     foreach($reportGroupsT as $key => $rg) {

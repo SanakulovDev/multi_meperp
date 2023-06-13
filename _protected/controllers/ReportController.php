@@ -3953,15 +3953,14 @@ class ReportController extends AppController {
     // $this->checkReportAccess("requirement-short");
     ini_set("memory_limit", "-1");
     $query = "
-          select p.part_no,p.part_name,p.part_color, p.remark, cs.name csourse, sk.qty, a.*  from
-          (
-                  select r.id rid,r.part_id,r.calc_at, w.* from req_detail_plan w left join req r on w.req_id = r.id
-                  where w.type = :type_d or w.type = :type_l or w.type = :type_c or w.type = :type_s
-          ) a
-          left join part p on a.part_id = p.id
-          left join contract_source cs on p.contract_source_id = cs.id
-          left join stock sk on sk.part_id = p.id
-          order by  sk.qty desc
+        select p.part_no,p.part_name,p.part_color, p.remark, cs.name csourse, a.*  from
+        (
+                select r.id rid,r.part_id,r.calc_at, w.* from req_detail_plan w left join req r on w.req_id = r.id
+                where w.type = :type_d or w.type = :type_l or w.type = :type_c or w.type = :type_s
+        ) a
+        left join part p on a.part_id = p.id
+        left join contract_source cs on p.contract_source_id = cs.id
+        order by p.part_no
 
       ";
       $data_daily = Yii::$app->db
@@ -3997,24 +3996,31 @@ class ReportController extends AppController {
           $month_total = $month_total + Helpers::formatRemoveDecimal($detailWide['col'.($col + 1)]);
       }
       $tmpArray["avg_usage"] = $avg;
-      $tmpArray["week"] = $c_week;
-      $tmpArray["next_week"] = $next_week;
-      $tmpArray["month"] = $month_total;
       $tmpArray['qty'] = round($detailWide['qty']);
+      $tmpArray["week"] = $c_week;
+      $tmpArray['balance1'] = $tmpArray['qty'] - $tmpArray['week'];
+      $tmpArray["next_week"] = $next_week;
+      $tmpArray['balance2'] = $tmpArray['qty'] - $tmpArray['next_week'];
+      $tmpArray["month"] = $month_total;
+      $tmpArray['balance3'] = $tmpArray['qty'] - $tmpArray['month'];
       $arrFile[] = $tmpArray;
       
     }
     $header_titles = [
-      0 => 'ID',
-      1 => 'Материал',
-      2 => 'Цвет',
-      3 => 'МАРКА',
-      4 => 'Тип',
-      5 => 'Среднее исполь.',
-      6 => '1 нед',
-      7 => 'след нед',
-      8 => '1месяц',
-      9 => 'Количество остатка'
+      0   => 'ID',
+      1   => 'Материал',
+      2   => 'Цвет',
+      3   => 'МАРКА',
+      4   => 'Тип',
+      5   => 'Среднее исполь.',
+      6   => 'Количество остатка',
+      7   => '1 нед',
+      8   => 'Баланс',
+      9   => 'след нед',
+      10  => 'Баланс',
+      11  => '1месяц',
+      12  => 'Баланс',
+
     ];
     $detail_titles = [];
     $titles = array_merge($header_titles, $detail_titles);

@@ -49,11 +49,11 @@
                     <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Average usage')?></th>
                     <th style="width: 100px;" class="text-center">Количество остатка</th>
                     <th style="width: 100px;" class="text-center">1 нед</th>
-                    <th style="width: 100px;" class="text-center">Балансе</th>
+                    <th style="width: 100px;" class="text-center">Баланс</th>
                     <th style="width: 100px;" class="text-center">след нед</th>
-                    <th style="width: 100px;" class="text-center">Балансе</th>
+                    <th style="width: 100px;" class="text-center">Баланс</th>
                     <th style="width: 100px;" class="text-center">1месяц</th>
-                    <th style="width: 100px;" class="text-center">Балансе</th>
+                    <th style="width: 100px;" class="text-center">Баланс</th>
                 </tr>
       </thead>
       <?php

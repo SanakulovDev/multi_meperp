@@ -37,7 +37,7 @@ ob_end_clean();
 .head-title {
     text-transform: uppercase;
     font-weight: bold;
-    /* margin-top: 2px; */
+    margin-left: 4px;
 }
 
 .card{
@@ -55,7 +55,7 @@ ob_end_clean();
 }   
 .absolute-qrcode img{
     width: 37px; 
-    transform: translate(-50px, -20px);
+    transform: translate(-62px, -30px);
 }
 .general-title{
     margin-bottom: 5px;
@@ -82,7 +82,7 @@ ob_end_clean();
                 style="">
                 <p class="general-title">
                     <span class="head-title">Grade:</span>
-                    <span class="absolute"><?= substr($model->part?$model->part->part_name:'', 0, 13)?></span>
+                    <span class="absolute"><?= substr($model->part?$model->part->part_name:'', 0, 20)?></span>
                 </p>
                 <p class="general-title">
                     <span class="head-title">Color:</span>
@@ -108,10 +108,10 @@ ob_end_clean();
                     <img style=""
                         src="data:image/png;base64,<?= base64_encode($image) ?>" alt=""></span>
 
-                <p style="transform: translateY(2px);">
+                <p style="transform: translateY(2px); margin-left: 4px;">
                     <span style="font-size: 4px;"><?= $model->comment?></span>
                 </p>
-                <p style="font-size: 4px; transform: translateY(4px);">Срок хранения компаунда -12 месяцев со дня производство
+                <p style="font-size: 4px; position: absolute; bottom:4px; left:4px;">Срок хранения компаунда -12 месяцев со дня производство
                 </p>
             </div>
         </div>

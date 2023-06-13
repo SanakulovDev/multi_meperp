@@ -9,7 +9,7 @@ use yii\helpers\Html;
             <div class="col-md-3">
                 <div class="form-group field-pechatproduct-number_lot required">
                     <label class="control-label" for="pechatproduct-number">Количество</label>
-                    <input type="text" id="pechatproduct-number" class="form-control" name="number"  min="1" max="30">
+                    <input type="text" id="pechatproduct-number" class="form-control" name="number" value='25'  min="1" max="25">
 
                     <div class="help-block"></div>
                 </div>
