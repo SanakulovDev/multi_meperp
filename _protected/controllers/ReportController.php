@@ -3972,7 +3972,7 @@ class ReportController extends AppController {
         ])
         ->queryAll();
     $period_daily = [];
-    foreach (app\components\Helpers::getPeriodFull() as $pdate) {
+    foreach (\app\components\Helpers::getPeriodFull() as $pdate) {
       if($pdate > date('Y-m-t', strtotime('+6 month'))) break;
       $period_daily[] = $pdate;
     }
