@@ -3925,7 +3925,7 @@ class ReportController extends AppController {
     // $this->checkReportAccess();
     $this->layout = "req";
     $query = "
-        select p.part_no,p.part_name,p.part_color, p.remark, cs.name csourse, a.*  from
+        select p.id as part_id, p.part_no,p.part_name,p.part_color, p.remark, cs.name csourse, a.*  from
         (
                 select r.id rid,r.part_id,r.calc_at, w.* from req_detail_plan w left join req r on w.req_id = r.id
                 where w.type = :type_d or w.type = :type_l or w.type = :type_c or w.type = :type_s

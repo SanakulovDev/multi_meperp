@@ -329,4 +329,13 @@ class Stock extends ActiveRecord {
     return (!empty($this->created_at)) ? date('d.m.Y H:i', $this->created_at) : '';
   }
 
+
+
+  // get stock
+  public static function getStockPart($part_id)
+  {
+    // sum
+    $sum = Stock::find()->where(['part_id' => $part_id])->sum('qty');
+    return $sum;
+  }
 }
