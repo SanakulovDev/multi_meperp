@@ -163,13 +163,15 @@ class Dashboard extends \yii\db\ActiveRecord
         if(empty($date)){
             $date = date('Y-m-d');
         }
-        $query = "SELECT part_id, line, shift from production_plan where production_date='".$date."' and line is not null group by part_id, line, shift order by line asc";
+        $shift = self::getShift();
+        $query = "SELECT part_id, line, shift from production_plan where production_date='".$date."' and line is not null and shift='".$shift."' group by part_id, line order by line asc";
         $response = Yii::$app->db->createCommand($query)->queryAll();
         return $response;
         
     }
     public static function todayProductionPlan($part_id, $line, $shift, $date)
     {
+        $shift = self::getShift();
         $query = "SELECT sum(target_qty) as qty from production_plan where part_id='".$part_id."' and line='".$line."' and shift='".$shift."' and production_date='".$date."' and target_qty > 0 and target_qty is not null";
         $response = Yii::$app->db->createCommand($query)->queryOne();
         return $response['qty']?:0;
@@ -202,6 +204,15 @@ class Dashboard extends \yii\db\ActiveRecord
             ];
         }
         return $data;
+    }
+
+    public static function getShift()
+    {
+        $time = date('H:i');
+        if($time >= '08:00' && $time < '20:00'){
+            return 1;
+        }
+        return 2;
     }
     public static function todayProductionByHtml($line=null)
     {
