@@ -91,7 +91,7 @@
                 <td style="max-width: 150px;" class="td-nowrap"><?=mb_strtoupper($row['part_name'])?></td>
                 <td class="text-center"><?=$row['csourse']?></td>
                 <td style="text-align: center" class="text-right"><?=round(Part::findOne($row['part_id'])->averageUsage)?></td>
-                <?php $quantity = number_format(Stock::getStockPart($row['part_id'])*1, 2, ',', ' ')*1; ?>
+                <?php $quantity = Stock::getStockPart($row['part_id'])*1; ?>
                 <td style="text-align: center"><?= $quantity?></td>
                 <?
                     $c_week = 0;
