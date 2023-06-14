@@ -51,7 +51,11 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php $this->registerCss(ob_get_clean());?>
     <div class="panel-heading">
         <p class="pull-right" style="margin: 0px">
-        <?=Html::a(Yii::t('app', 'btn-download'), ['download-dashboard'], ['class' => 'btn btn-info btn-sm', 'id' => 'btnDownload'])?>
+            <!-- php html activedropdownlist -->
+            <?=Html::a(Yii::t('app', 'btn-download'), ['download-dashboard'], ['class' => 'btn btn-info btn-sm', 'id' => 'btnDownload'])?>
+        </p>
+        <p class="pull-right">
+            <?= Html::dropDownList('warehouse_id', $warehouse_id, $user_warehouses,['class'=>'form-control  warehouse_id'])?>
         </p>
         <div style="clear: both;"></div>
     </div>
@@ -96,3 +100,12 @@ $this->params['breadcrumbs'][] = $this->title;
   </table>
 
 </div>
+<?php ob_start();?>
+$(function(){
+    $('.warehouse_id').on('change', function(){
+        var warehouse_id = $(this).val();
+        window.location.href = '<?=Url::to(['stock/dashboard'])?>?warehouse_id='+warehouse_id;
+    })
+})
+
+<?php $this->registerJs(ob_get_clean());?>

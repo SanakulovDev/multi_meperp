@@ -184,13 +184,23 @@ class StockController extends AppController
 
 
 	// ostatoka GP
-	public function actionDashboard()
+	public function actionDashboard($warehouse_id=1)
 	{
+		
 		// $this->layout = 'req';
-		$query = "SELECT part.remark as remark, part.part_no as part_no, part.part_name as part_name, part.part_color as part_color, sum(stock.qty) as qty FROM stock left join part on part.id = stock.part_id  where qty >0 group by stock.part_id order by part.remark DESC";
+		$query = "SELECT part.remark as remark, part.part_no as part_no, part.part_name as part_name, part.part_color as part_color, sum(stock.qty) as qty FROM stock left join part on part.id = stock.part_id  where qty >0 and stock.warehouse_id='".$warehouse_id."' group by stock.part_id order by part.remark DESC";
 		$stocks = Yii::$app->db->createCommand($query)->queryAll();
+		if(Yii::$app->request->isAjax){
+			return $this->renderAjax('dashboard', [
+				'stocks' => $stocks,
+				'user_warehouses' => $this->userWarehouses,
+				'warehouse_id' => $warehouse_id,
+			]);
+		}
 		return $this->render('dashboard', [
 			'stocks' => $stocks,
+			'user_warehouses' => $this->userWarehouses,
+			'warehouse_id' => $warehouse_id,
 		]);
 	}
 	 // excel import
