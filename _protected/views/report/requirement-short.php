@@ -99,8 +99,8 @@
                 <td style="max-width: 150px;" class="td-nowrap"><?=mb_strtoupper($row['part_name'])?></td>
                 <td class="text-center"><?=$row['csourse']?></td>
                 <td style="text-align: center" class="text-right"><?= $averageUsage?></td>
-                <?php $quantity = Stock::getStockPart($row['part_id'])*1; ?>
-                <td style="text-align: center"><?= $quantity?></td>
+                <?php $quantity = round(Stock::getStockPart($row['part_id']))*1; ?>
+                <td style="text-align: center"><?= number_format($quantity, 0, ',', ' ')?></td>
                 <?
                     $c_week = 0;
                     foreach($arr[0] as $col){
@@ -115,12 +115,12 @@
                         $month_total = $month_total + Helpers::formatRemoveDecimal($row['col'.($col + 1)]);
                     }
                 ?>
-                <td style="text-align: center"><? echo $c_week ;  ?></td>
-                <td style="text-align: center"><? echo $quantity - $c_week ;  ?></td>
-                <td style="text-align: center"><? echo $next_week ;  ?></td>
-                <td style="text-align: center"><? echo $quantity - $next_week ;  ?></td>
-                <td style="text-align: center"><? echo $month_total ;  ?></td>
-                <td style="text-align: center"><? echo $quantity - $month_total ;  ?></td>
+                <td style="text-align: center"><? echo number_format($c_week*1, 0, ',', ' ') ;  ?></td>
+                <td style="text-align: center"><? echo number_format($quantity - $c_week, 0, ',', ' ') ;  ?></td>
+                <td style="text-align: center"><? echo number_format($next_week*1, 0, ',', ' ') ;  ?></td>
+                <td style="text-align: center"><? echo number_format($quantity - $next_week, 0, ',', ' ') ;  ?></td>
+                <td style="text-align: center"><? echo number_format($month_total*1, 0, ',', ' ') ;  ?></td>
+                <td style="text-align: center"><? echo number_format($quantity - $month_total, 0, ',', ' ') ?></td>
             </tr>
           <?php endforeach; ?>
       </tbody>
