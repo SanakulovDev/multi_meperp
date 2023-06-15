@@ -3944,6 +3944,7 @@ class ReportController extends AppController {
     ->queryAll();
     return $this->render("requirement-short", [
       "data_daily" => $data_daily,
+      'filter'   => $filter
     ]);      
 
   }

@@ -84,13 +84,21 @@
           <?php $i = 0; ?>
           <?php foreach($data_daily as $row):?>
             <?php $i++; ?>
+            <?php $averageUsage =  round(Part::findOne($row['part_id'])->averageUsage)?>
+            <?php 
+              if($filter == 1){
+                if($averageUsage == 0){
+                  continue;
+                }
+              }
+            ?>
             <tr <?=($i%2 == 0) ? 'class="tr_odd"' : ''?>>
                 <td class="text-center"><?=$i?></td>
                 <td class="text-center"><?=$row['part_no']?></td>
                 <td class="text-center" title="<?=$row['remark']?>"><?=$row['part_color']?></td>
                 <td style="max-width: 150px;" class="td-nowrap"><?=mb_strtoupper($row['part_name'])?></td>
                 <td class="text-center"><?=$row['csourse']?></td>
-                <td style="text-align: center" class="text-right"><?=round(Part::findOne($row['part_id'])->averageUsage)?></td>
+                <td style="text-align: center" class="text-right"><?= $averageUsage?></td>
                 <?php $quantity = Stock::getStockPart($row['part_id'])*1; ?>
                 <td style="text-align: center"><?= $quantity?></td>
                 <?
