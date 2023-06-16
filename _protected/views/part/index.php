@@ -155,7 +155,8 @@ $canDelete = Yii::$app->user->can('part-delete');
           'filter' => [
             Part::STATE_RAW => Yii::t('app', 'Component'),
             Part::STATE_SEMI => Yii::t('app', 'Semi-finished'),
-            Part::STATE_FINISHED => Yii::t('app', 'Product')
+            Part::STATE_FINISHED => Yii::t('app', 'Product'),
+            Part::STATE_CASTLE => Yii::t('app', 'Castle')
           ],
           'content' => function($model, $column) {
             return $model->stateText;

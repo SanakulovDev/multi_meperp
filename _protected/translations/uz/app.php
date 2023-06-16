@@ -862,5 +862,6 @@ return [
   'Remaining GP' =>'Qoldiq GP',
   'Production result' => 'Ishlab chiqarish natijasi',
   'Production result (line)' => 'Ishlab chiqarish natijasi (liniya)',
+  'Castle' => 'Qasr',
 ];
 ?>

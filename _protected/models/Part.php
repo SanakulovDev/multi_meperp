@@ -90,6 +90,7 @@ class Part extends ActiveRecord
     const STATE_RAW = 0;
     const STATE_SEMI = 1;
     const STATE_FINISHED = 2;
+    const STATE_CASTLE = 3;
 
     /**
      * List of names for each status.
@@ -105,6 +106,7 @@ class Part extends ActiveRecord
         self::STATE_RAW => 'Базовое сырье',
         self::STATE_SEMI => 'Полуфабрикат',
         self::STATE_FINISHED => 'Готовый продукт',
+        self::STATE_CASTLE => 'Замец'
     ];
 
     /**

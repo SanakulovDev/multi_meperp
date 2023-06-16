@@ -748,5 +748,6 @@ return[
   'Remaining GP' => 'Remaining GP',
   'Production result' => 'Production result',
   'Production result (line)' => 'Production result (line)',
+  'Castle' => 'Castle',
 ];
 
