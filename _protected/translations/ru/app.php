@@ -1073,6 +1073,6 @@ return [
   'Remaining GP' => 'Остаток ГП',
   'Production result' => 'Результат производства',
   'Production result (line)' => 'Результат производства (линия)',
-  'Castle' => 'Замец',
+  'Castle' => 'Замеc',
 ];
 
