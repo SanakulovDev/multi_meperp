@@ -254,6 +254,176 @@ class Dashboard extends \yii\db\ActiveRecord
         }
         return $html;
     }
-
+    /*
     
+    * Bu qismdan boshhlan plan fakt va prodaj bo'yicha otchot qilingan
+    * plan fakt prodaj 2023-06-16  created Sanakulov Anvar #sanakulov_dev
+
+    */
+
+    public static function getCustomerParts($year, $customer_id)
+    {
+        $query = "SELECT part.id as part_id, part.part_name, part.part_color, part.part_no FROM sales_plan 
+            inner join part on part.id=part_id
+            where YEAR(sales_plan.target_date)='".$year."' and sales_plan.status = 1 and sales_plan.customer_id='".$customer_id."' group by part_id"; 
+        $parts = Yii::$app->db->createCommand($query)->queryAll();
+
+        return $parts;
+    }
+    public static function getConditionParts($customer_id, $year, $firstType, $secondType)
+    {
+        $data = [];
+        $parts = self::getCustomerParts($year, $customer_id);
+        $part_ids = implode(',', ArrayHelper::getColumn($parts, 'part_id'));
+        $part_noes = implode(',', ArrayHelper::getColumn($parts, 'part_no'));
+        foreach($parts as $key => $part){
+            $data[$part['part_id']] = [
+                'part_name' => $part['part_name'],
+                'part_color'=> $part['part_color'],
+                'list' => self::getPartsByLists($customer_id, $part['part_id'], $year, $firstType, $secondType, $part_ids=null, $part_noes=null),
+            ];
+        }
+        return $data;
+    }
+
+    public static function getPartsByLists($customer_id, $part_id, $year, $firstType, $secondType, $part_ids, $part_noes)
+    {
+        $data = [];
+        if($firstType == 1){
+            $months = [
+                0 => '01-01',
+                1 => '02-02',
+                2 => '03-03',
+                3 => '04-04',
+                4 => '05-05',
+                5 => '06-06',
+                6 => '07-07',
+                7 => '08-08',
+                8 => '09-09',
+                9 => '10-10',
+                10 => '11-11',
+                11 => '12-12',
+            ];
+        }
+        elseif($firstType == 2){
+            $months = [
+                0 => '01-03',
+                1 => '04-07',
+                2 => '08-10',
+                3 => '10-12', 
+            ];
+        }
+
+        foreach($months as $key => $month){
+            $data[$key] = [
+                'plan' => self::getPlanCountsOrPrices($customer_id, $part_id, $year, $secondType, $month, $part_ids),
+                'fakt' => self::getFaktCountOrPrices($customer_id, $part_id, $year, $secondType, $month, $part_ids, $part_noes),
+                'balance' => self::getPlanCountsOrPrices($customer_id, $part_id, $year, $secondType, $month, $part_ids) - self::getFaktCountOrPrices($customer_id, $part_id, $year, $secondType, $month, $part_ids, $part_noes),
+            ];
+        }
+        return $data;
+    }
+
+    public static function getPlanCountsOrPrices($customer_id, $part_id=null, $year, $secondType, $month, $part_ids=null)
+    {
+        $months = explode('-', $month);
+        $month1 = $months[0];
+        $month2 = $months[1];
+        if($secondType == 1){
+            if(empty($part_id)){
+                $query = "SELECT sum(target_qty) from sales_plan where customer_id='".$customer_id."' and part_id IN(".$part_ids.")  and YEAR(target_date)='".$year."' and MONTH(target_date) between '".$month1."' and '".$month2."' and status = 1";
+            } else{
+                $query = "SELECT sum(target_qty) from sales_plan where customer_id='".$customer_id."' and part_id='".$part_id."' and YEAR(target_date)='".$year."' and MONTH(target_date) between '".$month1."' and '".$month2."' and status = 1";
+            }
+        }
+        elseif($secondType == 2){
+            if(empty($part_id)){
+                $query = "SELECT sum(scd.price)  from sales_contract inner join sales_contract_detail scd on scd.sales_contract_id=sales_contract.id where sales_contract.customer_id='".$customer_id."' and scd.part_id IN(".$part_ids.") and YEAR(sales_contract.contract_date)='".$year."' and MONTH(sales_contract.contract_date) between '".$month1."' and '".$month2."' and sales_contract.status = 1";
+            } else{
+                $query = "SELECT sum(scd.price)  from sales_contract inner join sales_contract_detail scd on scd.sales_contract_id=sales_contract.id where sales_contract.customer_id='".$customer_id."' and scd.part_id='".$part_id."' and YEAR(sales_contract.contract_date)='".$year."' and MONTH(sales_contract.contract_date) between '".$month1."' and '".$month2."' and sales_contract.status = 1";
+            }
+        }
+        $res = Yii::$app->db->createCommand($query)->queryScalar();
+        return $res?round($res):0;
+    }
+    public static function getFaktCountOrPrices($customer_id, $part_id=null, $year, $secondType, $month, $part_ids=null, $part_noes=null)
+    {
+        $months = explode('-', $month);
+        $month1 = $months[0];
+        $month2 = $months[1];
+        $part_no = Part::findOne($part_id)->part_no;
+        $name = 'fgd.qty';
+        if($secondType == 2){
+            $name = 'fgd.price';
+        }
+        if(empty($part_id)){
+            $query = "SELECT sum(".$name.") from fg_invoice inner join fg_invoice_detail fgd on fgd.fg_invoice_id=fg_invoice.id where fg_invoice.customer_id='".$customer_id."' and fgd.part_no IN(".$part_noes.") and YEAR(fg_invoice.invoice_date)='".$year."' and MONTH(fg_invoice.invoice_date) between '".$month1."' and '".$month2."'";
+        } else{
+            $query = "SELECT sum(".$name.") from fg_invoice inner join fg_invoice_detail fgd on fgd.fg_invoice_id=fg_invoice.id where fg_invoice.customer_id='".$customer_id."' and fgd.part_no='".$part_no."' and YEAR(fg_invoice.invoice_date)='".$year."' and MONTH(fg_invoice.invoice_date) between '".$month1."' and '".$month2."'";
+        }
+        $res = Yii::$app->db->createCommand($query)->queryScalar();
+        return $res?round($res):0;
+    
+    }
+
+    public static function getCustomerPlanSales($firstType =1, $secondType=1)
+    {
+        $data = [];
+        // $year = '2021';
+        $year = date('Y');
+        $query = "SELECT customer_id, customer.name from sales_plan 
+                    INNER join customer on customer.id=customer_id
+                    where YEAR(sales_plan.target_date)='".$year."' and sales_plan.status = 1  GROUP BY customer_id";
+        $customerList = Yii::$app->db->createCommand($query)->queryAll();
+        foreach($customerList as $customer){
+            $parts = self::getCustomerParts($year, $customer['customer_id']);
+            $part_ids = implode(',', ArrayHelper::getColumn($parts, 'part_id'));
+            $part_noes = implode(',', ArrayHelper::getColumn($parts, 'part_no'));
+            $data[$customer['customer_id']] = [
+                'customer_name' => $customer['name'],
+                'planfaktbalance' => self::getPartsByLists($customer['customer_id'],null, $year, $firstType, $secondType, $part_ids, $part_noes),
+                'parts'         => self::getConditionParts($customer['customer_id'], $year, $firstType, $secondType),
+            ];
+        }
+
+        return $data;
+    }
+    
+    public static function getCustomerPlanSalesTableHeaders($firstType, $secondType)
+    {
+        $data = [];
+        if($firstType == 1){
+            $months = [
+                0 => 'январь',
+                1 => 'февраль',
+                2 => 'март',
+                3 => 'апрель',
+                4 => 'май',
+                5 => 'июнь',
+                6 => 'июль',
+                7 => 'август',
+                8 => 'сентябрь',
+                9 => 'октябрь',
+                10 => 'ноябрь',
+                11 => 'декабрь',
+            ];
+        } elseif($firstType == 2){
+            $months = [
+                0 =>' 1-квартал',
+                1 =>' 2-квартал',
+                2 =>' 3-квартал',
+                3 =>' 4-квартал',
+            ];
+        }
+
+        foreach($months as $key => $item){
+            $data[$key]['name']     = $item;
+            $data[$key]['plan']     = 'План';
+            $data[$key]['fakt']     = 'Факт';
+            $data[$key]['balance']  = 'Баланс';
+        }
+
+        return $data;
+        
+    }
 }

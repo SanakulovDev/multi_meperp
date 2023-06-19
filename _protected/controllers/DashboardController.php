@@ -144,4 +144,17 @@ class DashboardController extends \yii\web\Controller
             ]);
         }
     }
+    // 16-06-2023 Sanakulov Anvar  bu qismda Plan Prodaj qismi bo'ladi
+    public function actionPlanProdaj($firstType=1, $secondType=1)
+    {
+        $models = Dashboard::getCustomerPlanSales($firstType, $secondType);
+        // vd($models);
+        $headers = Dashboard::getCustomerPlanSalesTableHeaders($firstType, $secondType);
+        return $this->render('plan-prodaj', [
+            'models'        => $models,
+            'headers'       => $headers,
+            'firstType'     => $firstType,
+            'secondType'    => $secondType,
+        ]);
+    }
 }
