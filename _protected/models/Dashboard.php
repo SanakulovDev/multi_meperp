@@ -369,8 +369,8 @@ class Dashboard extends \yii\db\ActiveRecord
     public static function getCustomerPlanSales($firstType =1, $secondType=1)
     {
         $data = [];
-        $year = '2021';
-        // $year = date('Y');
+        // $year = '2021';
+        $year = date('Y');
         $query = "SELECT customer_id, customer.name from sales_plan 
                     INNER join customer on customer.id=customer_id
                     where YEAR(sales_plan.target_date)='".$year."' and sales_plan.status = 1  GROUP BY customer_id";
