@@ -263,9 +263,12 @@ class Dashboard extends \yii\db\ActiveRecord
 
     public static function getCustomerParts($year, $customer_id)
     {
-        $query = "SELECT part.id as part_id, part.part_name, part.part_color, part.part_no FROM sales_plan 
-            inner join part on part.id=part_id
-            where YEAR(sales_plan.target_date)='".$year."' and sales_plan.status = 1 and sales_plan.customer_id='".$customer_id."' group by part_id"; 
+        $query = "SELECT p.id as part_id, p.part_name, p.part_color, p.part_no FROM fg_invoice 
+                    inner join fg_invoice_detail fgd on fgd.fg_invoice_id=fg_invoice.id 
+                    inner join part p on p.part_no = fgd.part_no
+                    where YEAR(fg_invoice.invoice_date)='".$year."' 
+                    and fg_invoice.customer_id='".$customer_id."' 
+                    group by fgd.part_no"; 
         $parts = Yii::$app->db->createCommand($query)->queryAll();
 
         return $parts;
@@ -275,18 +278,17 @@ class Dashboard extends \yii\db\ActiveRecord
         $data = [];
         $parts = self::getCustomerParts($year, $customer_id);
         $part_ids = implode(',', ArrayHelper::getColumn($parts, 'part_id'));
-        $part_noes = implode(',', ArrayHelper::getColumn($parts, 'part_no'));
         foreach($parts as $key => $part){
             $data[$part['part_id']] = [
                 'part_name' => $part['part_name'],
                 'part_color'=> $part['part_color'],
-                'list' => self::getPartsByLists($customer_id, $part['part_id'], $year, $firstType, $secondType, $part_ids=null, $part_noes=null),
+                'list' => self::getPartsByLists($customer_id, $part['part_id'], $year, $firstType, $secondType, $part_ids),
             ];
         }
         return $data;
     }
 
-    public static function getPartsByLists($customer_id, $part_id, $year, $firstType, $secondType, $part_ids, $part_noes)
+    public static function getPartsByLists($customer_id, $part_id, $year, $firstType, $secondType, $part_ids, $part_noes=null)
     {
         $data = [];
         if($firstType == 1){
@@ -329,6 +331,9 @@ class Dashboard extends \yii\db\ActiveRecord
         $months = explode('-', $month);
         $month1 = $months[0];
         $month2 = $months[1];
+        if(empty($part_ids)){
+            return 0;
+        }
         if($secondType == 1){
             if(empty($part_id)){
                 $query = "SELECT sum(target_qty) from sales_plan where customer_id='".$customer_id."' and part_id IN(".$part_ids.")  and YEAR(target_date)='".$year."' and MONTH(target_date) between '".$month1."' and '".$month2."' and status = 1";
@@ -352,25 +357,38 @@ class Dashboard extends \yii\db\ActiveRecord
         $month1 = $months[0];
         $month2 = $months[1];
         $part_no = Part::findOne($part_id)->part_no;
+        if(empty($part_ids)){
+            return 0;
+        }
         $name = 'fgd.qty';
         if($secondType == 2){
             $name = 'fgd.price';
         }
         if(empty($part_id)){
-            $query = "SELECT sum(".$name.") from fg_invoice inner join fg_invoice_detail fgd on fgd.fg_invoice_id=fg_invoice.id where fg_invoice.customer_id='".$customer_id."' and fgd.part_no IN(".$part_noes.") and YEAR(fg_invoice.invoice_date)='".$year."' and MONTH(fg_invoice.invoice_date) between '".$month1."' and '".$month2."'";
+            $query = "SELECT sum(".$name.") from fg_invoice 
+                    inner join fg_invoice_detail fgd on fgd.fg_invoice_id=fg_invoice.id 
+                    inner join part p on p.part_no = fgd.part_no
+                    where fg_invoice.customer_id='".$customer_id."' 
+                    and p.id IN(".$part_ids.") 
+                    and YEAR(fg_invoice.invoice_date)='".$year."' 
+                    and MONTH(fg_invoice.invoice_date) between '".$month1."' and '".$month2."'";
         } else{
-            $query = "SELECT sum(".$name.") from fg_invoice inner join fg_invoice_detail fgd on fgd.fg_invoice_id=fg_invoice.id where fg_invoice.customer_id='".$customer_id."' and fgd.part_no='".$part_no."' and YEAR(fg_invoice.invoice_date)='".$year."' and MONTH(fg_invoice.invoice_date) between '".$month1."' and '".$month2."'";
+            $query = "SELECT sum(".$name.") from fg_invoice 
+                    inner join fg_invoice_detail fgd on fgd.fg_invoice_id=fg_invoice.id 
+                    inner join part p on p.part_no = fgd.part_no
+                    where fg_invoice.customer_id='".$customer_id."' 
+                    and p.id='".$part_id."' 
+                    and YEAR(fg_invoice.invoice_date)='".$year."' 
+                    and MONTH(fg_invoice.invoice_date) between '".$month1."' and '".$month2."'";
         }
         $res = Yii::$app->db->createCommand($query)->queryScalar();
         return $res?round($res):0;
     
     }
 
-    public static function getCustomerPlanSales($firstType =1, $secondType=1)
+    public static function getCustomerPlanSales($firstType =1, $secondType=1, $year)
     {
         $data = [];
-        // $year = '2021';
-        $year = date('Y');
         $query = "SELECT customer_id, customer.name from sales_plan 
                     INNER join customer on customer.id=customer_id
                     where YEAR(sales_plan.target_date)='".$year."' and sales_plan.status = 1  GROUP BY customer_id";
@@ -388,9 +406,7 @@ class Dashboard extends \yii\db\ActiveRecord
 
         return $data;
     }
-    
-    public static function getCustomerPlanSalesTableHeaders($firstType, $secondType)
-    {
+    public static function getMonths($firstType, $secondType){
         $data = [];
         if($firstType == 1){
             $months = [
@@ -415,7 +431,12 @@ class Dashboard extends \yii\db\ActiveRecord
                 3 =>' 4-квартал',
             ];
         }
-
+        return $months;
+    }
+    public static function getCustomerPlanSalesTableHeaders($firstType, $secondType)
+    {
+        
+        $months = self::getMonths($firstType, $secondType);
         foreach($months as $key => $item){
             $data[$key]['name']     = $item;
             $data[$key]['plan']     = 'План';

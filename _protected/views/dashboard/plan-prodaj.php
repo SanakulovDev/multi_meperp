@@ -4,6 +4,13 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
+$this->title = Yii::t('app', 'Plan -Fakt Prodaj');
+$planSum = 0;
+$faktSum = 0;
+$balanceSum = 0;
+
+$generalSum = 0;
+$footerLists = [];
 ?>
 <?php ob_start(); ?>
     th, td{
@@ -15,11 +22,12 @@ use yii\helpers\Url;
         width: 200px;
     }
     .main-content{
+        height: 80vh;
         overflow-x: auto;
     }
 
     .bg-primaries{
-        background-color: #DDEBF6!important;
+        background-color: #DDEBF6;
         border: 2px solid black; margin: 5px 10px;
     }
     .bg-lighties{
@@ -42,8 +50,20 @@ use yii\helpers\Url;
         padding: 0px;
     }
     thead{
+        border: 2px  solid black;
         position: sticky;
         top: 0;
+    }
+    tfoot{
+        border: 2px  solid black;
+        position: sticky;
+        bottom: 0;
+    }
+    .tbl-plan{
+        width: 100%;
+        border-collapse: collapse;
+        height: 80vh;
+        overflow: scroll;
     }
 
 <?php $this->registerCss(ob_get_clean()); ?>
@@ -65,7 +85,7 @@ use yii\helpers\Url;
 
 
     <div class="main-content">
-         <table class=" ">
+         <table class="tbl-plan ">
             <thead>
                 <tr>
                         <td class="bg-primaries" rowspan="2">№</td>
@@ -113,6 +133,11 @@ use yii\helpers\Url;
                                 </p>
                             </td>
                             <?php foreach($model['planfaktbalance'] as $key2 => $item): ?>
+                                <?php 
+                                    $footerLists[$key2]['plan'] = isset($footerLists[$key2]['plan']) ? $footerLists[$key2]['plan'] + $item['plan'] : $item['plan'];
+                                    $footerLists[$key2]['fakt'] = isset($footerLists[$key2]['fakt']) ? $footerLists[$key2]['fakt'] + $item['fakt'] : $item['fakt'];
+                                    $footerLists[$key2]['balance'] = isset($footerLists[$key2]['balance']) ? $footerLists[$key2]['balance'] + $item['balance'] : $item['balance'];
+                                ?>
                                 <td class="bg-lighties">
                                     <p class="text-wrapp">
                                         <?= divideString(round($item['plan'])*1, 3)?>
@@ -159,10 +184,33 @@ use yii\helpers\Url;
                         <?php endif; ?>
                     <?php endforeach; ?>
             </tbody>
+            <!-- tfooter -->
+            <tfoot>
+                <tr>
+                    <td class="bg-primaries" colspan="3">Итого</td>
+                    <?php foreach($footerLists as $item):?>
+                        <td class="bg-primaries">
+                            <p class="text-wrapp">
+                                <?=  divideString($item['plan'], 3)?>
+                            </p>
+                        </td>
+                        <td class="bg-primaries">
+                            <p class="text-wrapp">
+                                <?=  divideString($item['fakt'], 3)?></td>
+                            </p>
+                        </td>
+                        <td class="bg-primaries balance" data-price="<?= $item['balance']?>">
+                            <p class="text-wrapp">
+                                <?=  divideString($item['balance'], 3)?></td>
+                            </p>
+                        </td>
+
+                    <?php endforeach; ?>
+                </tr>                      
+            </tfoot>
          </table>
     </div>
 </div>
-
 <?php ob_start(); ?>
 
 $(function(){
