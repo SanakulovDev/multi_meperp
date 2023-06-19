@@ -9,6 +9,7 @@ use yii\helpers\Url;
     th, td{
         border: 2px solid black!important;
         text-align:center;
+        padding: 5px 10px;
     }
     td{
         width: 200px;
@@ -20,13 +21,11 @@ use yii\helpers\Url;
     .bg-primaries{
         background-color: #DDEBF6!important;
         border: 2px solid black; margin: 5px 10px;
-        padding: 5px 10px;
     }
     .bg-lighties{
         border: 1px solid black; 
         margin: 5px 10px;
-        padding: 5px 10px;
-    }   
+    } 
 
     .cell-1 {
         border-spacing: 0 4em;
@@ -72,12 +71,12 @@ use yii\helpers\Url;
                         <td class="bg-primaries" rowspan="2">№</td>
                         <td class="bg-primaries" rowspan="2">
                             <p class="text-wrapp">
-                                <?= Yii::t('app', 'Part Name')?>
+                                <?= Yii::t('app', 'Part name')?>
                             </p>
                         </td>
                         <td class="bg-primaries" rowspan="2">
                             <p class="text-wrapp">
-                                <?= Yii::t('app', 'Part Color')?>
+                                <?= Yii::t('app', 'Part color')?>
                             </p>
                         </td>
                     <?php foreach($headers as $key => $item): ?>
@@ -136,24 +135,24 @@ use yii\helpers\Url;
                             <?php $inc = 1;?>
 
                             <?php foreach($model['parts'] as $part_id => $part):?>
-                                <tr class="collapse demo-<?=$customer_id?>">
-                                    <td class="bg-primaries"><?= $inc++;?></td>  
-                                    <td class="bg-primaries">
+                                <tr class="collapse bg-primaries demo-<?=$customer_id?>">
+                                    <td class="bg-primariess"><?= $inc++;?></td>  
+                                    <td class="bg-primariess">
                                         <p class="text-wrapp">
                                             <?= $part['part_name']?>
                                         </p>
                                     </td>  
-                                    <td class="bg-primaries">
+                                    <td class="bg-primariess">
                                         <p class="text-wrapp">
                                             <?= $part['part_color']?>
                                         </p>
                                     </td>
                                     <?php foreach($part['list'] as $key2 => $part_item): ?>
-                                            <td class="bg-primaries">
+                                            <td class="bg-primariess">
                                                 <?= divideString($part_item['plan']*1, 3)?></td>
-                                            <td class="bg-primaries">
+                                            <td class="bg-primariess">
                                                 <?= divideString($part_item['fakt']*1, 3)?></td>
-                                            <td class="bg-primaries balance" data-price="<?=$part_item['balance']?>"><?= divideString($part_item['balance']*1, 3)?></td>
+                                            <td class="bg-primariess balance" data-price="<?=$part_item['balance']?>"><?= divideString($part_item['balance']*1, 3)?></td>
                                     <?php endforeach; ?>
                                 </tr>
                             <?php endforeach; ?>
