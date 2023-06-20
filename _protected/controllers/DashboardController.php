@@ -161,4 +161,5 @@ class DashboardController extends \yii\web\Controller
             'secondType'    => $secondType,
         ]);
     }
+
 }
