@@ -280,7 +280,7 @@ class Dashboard extends \yii\db\ActiveRecord
         $part_ids = implode(',', ArrayHelper::getColumn($parts, 'part_id'));
         foreach($parts as $key => $part){
             $data[$part['part_id']] = [
-                'part_name' => $part['part_name'],
+                'part_name' => substr($part['part_name'], 0, 30),
                 'part_color'=> $part['part_color'],
                 'list' => self::getPartsByLists($customer_id, $part['part_id'], $year, $firstType, $secondType, $part_ids),
             ];
