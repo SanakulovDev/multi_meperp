@@ -60,6 +60,9 @@ body{
     font-size: 30px;
     transform: translateY(-20px);
 }
+.control-label{
+    font-size: 14px;
+}
 <?php $this->registerCss(ob_get_clean());?>
 <div class="container" style="text-align:center">
 
@@ -95,6 +98,27 @@ body{
     <div class="analiz"></div>
 </div>
 
+
+<!-- modal -->
+<div class="modal" tabindex="-1" role="dialog" style="z-index:1111111111111111111111;">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" style="display: inline-block;float: left;"><?= Yii::t('app', 'Production count')?></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+      <div class="modal-body">
+        
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= Yii::t('app', 'btn-cancel')?></button>
+          <button type="button" class="btn btn-success modalFormSubmit1"><?= Yii::t('app', 'btn-save')?></button>
+      </div>
+    </div>
+  </div>
+</div>
 <?php ob_start();?>
 $(function(){
     let deg  = 0;
@@ -138,6 +162,45 @@ $(function(){
             }
         })
     }
+
+
+    
+
+    // modal show_source
+
+    $('body').on('click', '.form-modal', function(){
+        let part_id = $(this).data('partid');
+        let href = $(this).data('href');
+        let line = $(this).data('line');
+        let shift = $(this).data('shift');  
+        
+        let param = {
+            part_id: part_id,
+            line: line,
+            shift: shift
+        };
+        let url = '<?= Url::to(['dashboard/analiz-form-modal'])?>';
+       $.get(url, param, function(data){
+            $('.modal-body').html(data);
+            $('.modal').modal('show');
+       })
+    })
+
+    $('body').on('click', '.modalFormSubmit1', function(e){
+        e.preventDefault();
+        let form = $('.modal-body').find('form');
+        let url = form.attr('action');
+        let data = form.serialize();
+        console.log(data);
+        ajaxFunc(url, data, 'POST', function(data){
+            //let response = JSON.parse(data);
+            console.log(data);
+            if(data.status == 1){
+                $('.modal').modal('hide');
+                $('.refresh').trigger('click');
+            }
+        })
+    })
 })
 
 <?php $this->registerJs(ob_get_clean());?>

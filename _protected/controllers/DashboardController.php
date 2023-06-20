@@ -4,6 +4,8 @@ namespace app\controllers;
 use Yii;
 use app\models\Dashboard;
 use app\models\ProductionOrder;
+use app\models\ProductSpecification;
+use yii\web\Response;
 
 class DashboardController extends \yii\web\Controller
 {
@@ -142,6 +144,41 @@ class DashboardController extends \yii\web\Controller
                 'nowTime'   => $nowTime,
                 'html'      => $data,
             ]);
+        }
+    }
+
+    public function actionAnalizFormModal($part_id=null,$line=null, $shift=null)
+    {
+        if(Yii::$app->request->isAjax){
+            if(Yii::$app->request->post()){
+                $model = new ProductionOrder();
+                $post = Yii::$app->request->post();
+                // $post = (object) $post;
+                if($model->load($post)){
+                    $model->quantity_of_copy    = 1;
+                    $model->current_event       = ProductionOrder::EVENT_PRODUCED;
+                    $model->current_seq         = $model->getCurrentSeq($model->part_id) + 1;
+                    $model->is_printed          = 0;
+                    $model->is_label            = 2;
+                    $model->created_by          = Yii::$app->user->id;
+                    $model->created_at          = time();
+                    $model->updated_at          = time();
+                    $spec = ProductSpecification::find()
+                    ->where(["part_id" => $model->part_id, "status" => ProductSpecification::STATUS_ACTIVE])
+                    ->one();
+                    $model->product_specification_id = $spec?$spec->id:null;
+                    $model->serial_number = $model->generateSerialNumber();
+                    // vd($model);
+                    if($model->save(false)){
+                        $data['status'] = 1;
+                        $data['message'] = 'Success';
+                        Yii::$app->response->format = Response::FORMAT_JSON;
+                        return $data;
+                    }
+                }
+            }
+
+            return Dashboard::getAnalizFormModal($part_id, $line, $shift);
         }
     }
     // 16-06-2023 Sanakulov Anvar  bu qismda Plan Prodaj qismi bo'ladi

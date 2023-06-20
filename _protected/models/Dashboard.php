@@ -197,7 +197,9 @@ class Dashboard extends \yii\db\ActiveRecord
                 'part_id'       => $part['part_id'],
                 'part_name'     => substr(Part::getPartName($part['part_id']), 0, 45),
                 'line'          => $part['line'].'-'.Yii::t('app', 'Line'),
+                'lineNumber'    => $part['line'],
                 'shift'         => $part['shift'].'-'.Yii::t('app', 'Shift'),
+                'shiftNumber'   => $part['shift'],
                 'plan'          => self::todayProductionPlan($part['part_id'], $part['line'], $part['shift'], $date)*1,
                 'fakt'          => self::todayProductionFakt($part['part_id'], $part['line'], $part['shift'], $date)*1,
                 'balance'       => self::todayProductionPlan($part['part_id'], $part['line'], $part['shift'], $date) - self::todayProductionFakt($part['part_id'], $part['line'], $part['shift'], $date),
@@ -231,6 +233,7 @@ class Dashboard extends \yii\db\ActiveRecord
             $html .= '</div>';
             $html .= '<div class="col-md-6 text-right">';
             $html .= '<span class="color-primary">'.$model['shift'].'</span>';
+            $html .= '<span class="color-success form-modal" data-line="'.$model['lineNumber'].'" data-shift="'.$model['shiftNumber'].'"   data-href="/dashboard/analiz-form-modal" style="cursor: pointer;" data-partid='.$model['part_id'].'><i class="fa  fa-plus"></i></span>';
             $html .= '</div>';
             $html .= '</div>';
             $html .= '</div>';
@@ -446,5 +449,42 @@ class Dashboard extends \yii\db\ActiveRecord
 
         return $data;
         
+    }
+
+
+
+
+    // Analiz form modal  21-06-2023
+
+    public static function getAnalizFormModal($part_id, $line, $shift)
+    {
+        $data = '';
+        $data = '<form action="/dashboard/analiz-form-modal" method="post" id="analiz-form">';
+        $data .= '<div class="row" style="display: flex; align-items:center; justify-content:space-between;">';
+        $data .= '<div class="col-md-4">';
+        $data .= '<label class="form-group has-float-label">';
+        $data .= '<div class="form-group field-productionplanshort-part_id required ">';
+        $data .= '<label class="control-label" for="part_id">'.Yii::t('app', 'Part name').'</label>';
+        $data .= '<select name="ProductionOrder[part_id]" id="part_id" class="form-control">';
+        $data .= '<option selected value="'.$part_id.'">'.Part::getPartName($part_id).'</option>';
+        $data .= '</select>';
+        $data .= '</div>';
+        $data .= '</label>';
+        $data .= '</div>';
+        $data .= '<div class="col-md-4">';
+        $data .= '<div class="form-group required">';
+        $data .= '<label class="control-label" for="quantity">'.Yii::t('app', 'Target qty').'</label>';
+        $data .= '<input type="number" name="ProductionOrder[quantity]" id="quantity" class="form-control" required value="1000">';
+        $data .= '</div>';
+        $data .= '</div>';  
+        $data .= '</div>';
+        $data .= '<input name="ProductionOrder[line]" type="hidden" value="'.$line.'">';
+        $data .= '<input name="ProductionOrder[shift]" type="hidden" value="'.$shift.'">';
+        $data .= '</form>';
+
+        return $data;
+
+
+
     }
 }
