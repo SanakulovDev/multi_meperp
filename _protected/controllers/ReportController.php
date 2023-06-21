@@ -4081,4 +4081,16 @@ class ReportController extends AppController {
   {
     return $this->redirect(['dashboard/analiz']);
   }
+
+  // plan-prodaj
+  public function actionPlanProdaj()
+  {
+    return $this->redirect(['dashboard/plan-prodaj']);
+  }
+
+  // plan-prodaj-month
+  public function actionPlanProdajMonth()
+  {
+    return $this->redirect(['dashboard/plan-prodaj-new']);
+  }
 }

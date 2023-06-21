@@ -865,5 +865,6 @@ return [
   'Castle' => 'Qasr',
   'Year'  => 'Yil',
   'Plan -Fakt Prodaj' => 'Reja - Fakt sotish',
+  'Plan -prodaj-month' => 'Reja - sotish oylik',
 ];
 ?>

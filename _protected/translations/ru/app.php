@@ -1076,5 +1076,6 @@ return [
   'Castle' => 'Замеc',
   'Year'  => 'Год',
   'Plan -Fakt Prodaj' => 'План -Факт Продаж',
+  'Plan -prodaj-month' => 'Ежемесячные продажи',
 ];
 

@@ -751,5 +751,7 @@ return[
   'Castle' => 'Castle',
   'Year' => 'Year',
   'Plan -Fakt Prodaj' => 'Plan -Fakt Prodaj',
+  'Plan -prodaj-month'  => 'Plan -prodaj-month',
+  
 ];
 
