@@ -62,7 +62,7 @@ $(function(){
         $('.general-date').text(formattedDate);
         $('.dashboard-row').empty();
         $.each(arr, function(index, value){
-            ajaxRequst(value, currentDate);
+            ajaxRequst(value, formattedDate);
         });
     });
 

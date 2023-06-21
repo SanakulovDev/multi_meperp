@@ -19,7 +19,8 @@ class DashboardController extends \yii\web\Controller
         $post = Yii::$app->request->post();
         if($post && isset($post['date'])){
             $title = 'Произведено';
-            $models = Dashboard::fakt($post['date']);
+            $date = date('Y-m-d', strtotime($post['date']));
+            $models = Dashboard::fakt($date);
             if(empty($models)){
                 $data = '<div class="col-md-12">';
                 $data .= '<h4 class="text-uppercase " style="font-weight: bold">'.$title.'</h4>';
@@ -43,7 +44,8 @@ class DashboardController extends \yii\web\Controller
     {
         $post = Yii::$app->request->post();
         if($post && isset($post['date'])){
-            $models = Dashboard::ttn($post['date']);
+            $date = date('Y-m-d', strtotime($post['date']));
+            $models = Dashboard::ttn($date);
             $title = 'Отгружено';
             if(empty($models)){
                 $data = '<div class="col-md-12">';
@@ -68,7 +70,8 @@ class DashboardController extends \yii\web\Controller
     {
         $post = Yii::$app->request->post();
         if($post && isset($post['date'])){
-            $models = Dashboard::prixod($post['date']);
+            $date = date('Y-m-d', strtotime($post['date']));
+            $models = Dashboard::prixod($date);
             $title = 'Приход';
             if(empty($models)){
                 $data = '<div class="col-md-12">';
@@ -93,7 +96,8 @@ class DashboardController extends \yii\web\Controller
     {
         $post = Yii::$app->request->post();
         if($post && isset($post['date'])){
-            $items = Dashboard::fakt($post['date']);
+            $date = date('Y-m-d', strtotime($post['date']));
+            $items = Dashboard::fakt($date);
             $data = '';
             if($items){
                 foreach($items as $item){
