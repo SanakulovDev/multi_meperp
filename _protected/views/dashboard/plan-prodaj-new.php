@@ -31,7 +31,7 @@ $footerLists = [];
         border: 2px solid black; margin: 5px 10px;
     }
     .bg-lighties{
-        border: 1px solid black; 
+       // border: 1px solid black; 
         margin: 5px 10px;
     } 
 
@@ -45,9 +45,6 @@ $footerLists = [];
     }
     .text-wrapp{
         text-wrap: nowrap;
-        display: block;
-        margin: 0px;
-        padding: 0px;
     }
     thead{
         border: 2px  solid black;
@@ -70,88 +67,69 @@ $footerLists = [];
 
 <div class="dashboard-plan-prodaj">
     <div class="row" style="display:flex: align-items:center; justify-content:space-between;">
-        <div class="col-md-4">
-            <h3 style="margin:0px; padding: 0px;"><?= Yii::t('app', 'Plan -Fakt Prodaj')?></h3>
+        <div class="col-md-3">
+            <h3 style="margin:0px; padding: 0px;"><?= Yii::t('app', 'Plan -Fakt Prodaj')?> - <?=$year?></h3>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <button class="first-type btn " data-id="1"><?= Yii::t('app', 'Month')?></button>
             <button class="first-type btn " data-id="2">Квартал</button>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <button class="second-type btn" data-id="1">Обём</button>
             <button class="second-type btn" data-id="2">Сумма</button>
+        </div>
+        <div class="col-md-3">
+            <div class="btn-group bg-primaries" style="cursor:pointer;">
+                <span class="dropdown-toggle " style="padding: 5px 10px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                    <?= Yii::t('app', 'Year')?>
+                </span>
+                <ul class="dropdown-menu">
+                    <?php foreach($years as $item):?>
+                        <li>
+                            <a href="javascript:void(0)" data-year="<?= $item?>" class="item-year"><?= $item?></a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+
+            <button class="excel-export btn btn-info btn-sm"><?= Yii::t('app','btn-download')?></button>
         </div>
     </div>
 
 
     <div class="main-content">
-         <table class="tbl-plan ">
+         <table class="tbl-plan " id="fix_table">
             <thead>
                 <tr>
-                        <td class="bg-primaries" rowspan="2">№</td>
-                        <td class="bg-primaries" rowspan="2">
-                            <p class="text-wrapp">
+                        <td class="bg-primaries">№</td>
+                        <td class="bg-primaries text-wrapp">
                                 <?= Yii::t('app', 'Part name')?>
-                            </p>
                         </td>
-                        <td class="bg-primaries" rowspan="2">
-                            <p class="text-wrapp">
+                        <td class="bg-primaries">
                                 <?= Yii::t('app', 'Part color')?>
-                            </p>
                         </td>
                     <?php foreach($headers as $key => $item): ?>
-                        <td colspan="3" class="bg-primaries" style="text-transform: capitalize;"><?= $item['name']?></td>
+                        <td class="bg-primaries" style="text-transform: capitalize;"><?= $item['name']?></td>
                     <?php endforeach; ?>
 
                 </tr>
-                <tr>
-                    <?php foreach($headers as $key => $item): ?>
-                        <td class="bg-primaries">
-                            <p class="text-wrapp">    
-                                <?= Yii::t('app', 'Plan')?>
-                            </p>
-                        </td>
-                        <td class="bg-primaries">
-                            <p class="text-wrapp">    
-                                <?= Yii::t('app', 'Fakt')?>
-                            </p>
-                        </td>
-                        <td class="bg-primaries">
-                            <p class="text-wrapp">    
-                                <?= Yii::t('app', 'Balance')?>
-                            </p>
-                        </td>
-                    <?php endforeach; ?>
-                </tr>
             </thead>
             <tbody>
+                <?php $inc1 = 1;?>
                     <?php foreach($models as $customer_id => $model):?>
                         <tr class="cell-1" data-toggle="collapse" data-target=".demo-<?=$customer_id?>" aria-expanded="false">
-                            <td colspan="3" class="bg-lighties">
-                                <p class="text-wrapp">
+                            <td><?= $inc1?></td>
+                            <td  class="bg-lighties text-wrapp">
                                     <?= $model['customer_name']?>
-                                </p>
                             </td>
+                            <td></td>
                             <?php foreach($model['planfaktbalance'] as $key2 => $item): ?>
                                 <?php 
                                     $footerLists[$key2]['plan'] = isset($footerLists[$key2]['plan']) ? $footerLists[$key2]['plan'] + $item['plan'] : $item['plan'];
-                                    $footerLists[$key2]['fakt'] = isset($footerLists[$key2]['fakt']) ? $footerLists[$key2]['fakt'] + $item['fakt'] : $item['fakt'];
-                                    $footerLists[$key2]['balance'] = isset($footerLists[$key2]['balance']) ? $footerLists[$key2]['balance'] + $item['balance'] : $item['balance'];
                                 ?>
-                                <td class="bg-lighties">
-                                    <p class="text-wrapp">
-                                        <?= divideString(round($item['plan'])*1, 3)?>
-                                    </p>
-                                </td>
-                                <td class="bg-lighties">
-                                    <p class="text-wrapp">
-                                        <?= divideString(round($item['fakt'])*1, 3)?>
-                                    </p>
-                                </td>
-                                <td class="bg-lighties balance" data-price="<?=$item['balance']?>">
-                                    <p class="text-wrapp">
-                                        <?= divideString(round($item['balance'])*1, 3)?>
-                                    </p>
+                                <td class="bg-lighties text-wrapp">
+                                        <?= divideString(round($item['plan']), 3)?>
                                 </td>
                             <?php endforeach; ?>
 
@@ -161,27 +139,23 @@ $footerLists = [];
 
                             <?php foreach($model['parts'] as $part_id => $part):?>
                                 <tr class="collapse bg-primaries demo-<?=$customer_id?>">
-                                    <td class="bg-primariess"><?= $inc++;?></td>  
-                                    <td class="bg-primariess">
-                                        <p class="text-wrapp">
+                                    <td class="bg-primariess text-wrapp"><?= $inc1.'.'.$inc;?></td>  
+                                    <?php $inc++;?>
+                                    <td class="bg-primariess text-wrapp">
                                             <?= $part['part_name']?>
-                                        </p>
                                     </td>  
-                                    <td class="bg-primariess">
-                                        <p class="text-wrapp">
+                                    <td class="bg-primariess text-wrapp">
                                             <?= $part['part_color']?>
-                                        </p>
                                     </td>
                                     <?php foreach($part['list'] as $key2 => $part_item): ?>
-                                            <td class="bg-primariess">
-                                                <?= divideString($part_item['plan']*1, 3)?></td>
-                                            <td class="bg-primariess">
-                                                <?= divideString($part_item['fakt']*1, 3)?></td>
-                                            <td class="bg-primariess balance" data-price="<?=$part_item['balance']?>"><?= divideString($part_item['balance']*1, 3)?></td>
+                                            <td class="bg-primariess text-wrapp">
+                                                <?= divideString($part_item['plan'], 3)?>
+                                            </td>
                                     <?php endforeach; ?>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
+                        <?php $inc1++;?>
                     <?php endforeach; ?>
             </tbody>
             <!-- tfooter -->
@@ -189,20 +163,8 @@ $footerLists = [];
                 <tr>
                     <td class="bg-primaries" colspan="3">Итого</td>
                     <?php foreach($footerLists as $item):?>
-                        <td class="bg-primaries">
-                            <p class="text-wrapp">
-                                <?=  divideString($item['plan'], 3)?>
-                            </p>
-                        </td>
-                        <td class="bg-primaries">
-                            <p class="text-wrapp">
-                                <?=  divideString($item['fakt'], 3)?></td>
-                            </p>
-                        </td>
-                        <td class="bg-primaries balance" data-price="<?= $item['balance']?>">
-                            <p class="text-wrapp">
-                                <?=  divideString($item['balance'], 3)?></td>
-                            </p>
+                        <td class="bg-primaries text-wrapp">
+                                <?=  divideString(round($item['plan']), 3)?>
                         </td>
 
                     <?php endforeach; ?>
@@ -231,13 +193,13 @@ $(function(){
     })
     $('.first-type').on('click', function(){
         let id = $(this).data('id');
-        window.location.href = '<?=Url::to(['dashboard/plan-prodaj'])?>?firstType='+id+'&secondType=<?=$secondType?>';
+        window.location.href = '<?=Url::to(['dashboard/plan-prodaj-new'])?>?firstType='+id+'&secondType=<?=$secondType?>'+'&year=<?=$year?>';
     })
 
     // secondType click
     $('.second-type').on('click', function(){
         let id = $(this).data('id');
-        window.location.href = '<?=Url::to(['dashboard/plan-prodaj'])?>?firstType=<?=$firstType?>&secondType='+id;
+        window.location.href = '<?=Url::to(['dashboard/plan-prodaj-new'])?>?firstType=<?=$firstType?>&secondType='+id+'&year=<?=$year?>';
     })
 
     $('.cell-1').on('click', function(){
@@ -256,6 +218,64 @@ $(function(){
             $(this).css('background-color', '#83d783');
         }
     })
+
+    // item-year-click
+
+    $('.item-year').on('click', function(){
+        let year = $(this).data('year');
+        console.log(year);
+        window.location.href = '<?=Url::to(['dashboard/plan-prodaj-new'])?>?firstType=<?=$firstType?>&secondType=<?=$secondType?>&year='+year;
+    })
+
+
+
+
+    // excel-export
+    $('.excel-export').on('click', function(){
+        exportExcel();
+    });
+
+    function exportExcel(){
+        var excel = $JExcel.new("Calibri light 10");            
+        excel.set( {sheet:0,value:"Sheet 1" } );
+        
+        var table = document.getElementById('fix_table');
+        var limit = table.rows.length;
+        var cells = table.rows[0].cells.length;
+
+        // alert(cells);
+
+        var headers = [];
+
+        for (var i = 0; i < cells; i++) {
+            headers.push(table.rows[0].cells[i].innerHTML);
+        }
+
+
+       
+        var formatHeader=excel.addStyle({
+            border: "none,none,none,thin #333333",font: "Calibri 12 #000 B"}
+        );                                                         
+
+        for (var i=0;i< headers.length;i++){              // Loop headers
+            excel.set(0,i,0,headers[i],formatHeader);    // Set CELL header text & header format
+            excel.set(0,i,undefined,"auto");             // Set COLUMN width to auto 
+        }
+                    
+        for (var i=1; i < limit; i++){                                    // Generate 50 rows
+            for(var j = 0; j < cells; j++){
+                if(table.rows[i].cells[j] !== undefined)
+                excel.set(0,j,i,table.rows[i].cells[j].innerHTML);                    // This column is a TEXT
+            }
+        }
+
+        excel.generate("Report-<?= time()?>.xlsx");    
+    }
 })
 
 <?php $this->registerJs(ob_get_clean(), \yii\web\View::POS_READY); ?>
+<?php $this->registerJsFile('/themes/excel/jquery-3.5.1.min.js', ['position' => \yii\web\View::POS_HEAD]); ?>
+<?php $this->registerJsFile('/themes/excel/myexcel.js', ['position' => \yii\web\View::POS_HEAD]); ?>
+<?php $this->registerJsFile('/themes/excel/jszip.js', ['position' => \yii\web\View::POS_HEAD]); ?>
+<?php $this->registerJsFile('/themes/excel/myscript.js', ['position' => \yii\web\View::POS_HEAD]); ?>
+<?php $this->registerJsFile('/themes/excel/FileSaver.js', ['position' => \yii\web\View::POS_HEAD]); ?>

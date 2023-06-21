@@ -199,4 +199,30 @@ class DashboardController extends \yii\web\Controller
         ]);
     }
 
+    public function actionPlanProdajNew($firstType=1, $secondType=1, $year = null)
+    {
+        $years = [
+            2021 => 2021,
+            2022 => 2022,
+            2023 => 2023,
+            2024 => 2024,
+            2025 => 2025,
+        ];
+        
+        if($year == null){
+            $year = date('Y');
+            // $year = 2021;
+        }
+        $models = Dashboard::getCustomerPlanSales($firstType, $secondType, $year);
+        // vd($models);
+        $headers = Dashboard::getCustomerPlanSalesTableHeaders($firstType, $secondType);
+        return $this->render('plan-prodaj-new', [
+            'models'        => $models,
+            'headers'       => $headers,
+            'firstType'     => $firstType,
+            'secondType'    => $secondType,
+            'years'         => $years,
+            'year'          => $year,
+        ]);
+    }
 }

@@ -1074,5 +1074,7 @@ return [
   'Production result' => 'Результат производства',
   'Production result (line)' => 'Результат производства (линия)',
   'Castle' => 'Замеc',
+  'Year'  => 'Год',
+  'Plan -Fakt Prodaj' => 'План -Факт Продаж',
 ];
 

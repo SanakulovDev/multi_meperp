@@ -863,5 +863,7 @@ return [
   'Production result' => 'Ishlab chiqarish natijasi',
   'Production result (line)' => 'Ishlab chiqarish natijasi (liniya)',
   'Castle' => 'Qasr',
+  'Year'  => 'Yil',
+  'Plan -Fakt Prodaj' => 'Reja - Fakt sotish',
 ];
 ?>

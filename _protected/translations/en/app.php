@@ -749,5 +749,7 @@ return[
   'Production result' => 'Production result',
   'Production result (line)' => 'Production result (line)',
   'Castle' => 'Castle',
+  'Year' => 'Year',
+  'Plan -Fakt Prodaj' => 'Plan -Fakt Prodaj',
 ];
 

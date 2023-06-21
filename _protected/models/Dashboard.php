@@ -63,7 +63,9 @@ class Dashboard extends \yii\db\ActiveRecord
     }
     public static function fakt($date=null)
     {
-        $date = self::runDate();
+        if(empty($date)){
+            $date = self::runDate();
+        }
         $query = " SELECT part.id as part_id, part.part_name as part_name, part.part_no part_no, sum(po.quantity) as quantity, part.part_color as part_color from production_order po 
             LEFT JOIN part ON part.id = po.part_id where 
             DATE(FROM_UNIXTIME(po.created_at))='".$date."' 
@@ -76,7 +78,9 @@ class Dashboard extends \yii\db\ActiveRecord
     // ttn - отгружено
     public static function ttn($date = null)
     {
-        $date = self::runDate();
+        if(empty($date)){
+            $date = self::runDate();
+        }
         $query = " SELECT fgd.part_name as part_name, fgd.part_no as part_no, sum(fgd.qty) as quantity, c.name as receiver from fg_invoice_detail fgd 
             LEFT JOIN fg_invoice  ON fgd.fg_invoice_id = fg_invoice.id 
             INNER JOIN customer c ON c.id = fg_invoice.customer_id
@@ -90,7 +94,9 @@ class Dashboard extends \yii\db\ActiveRecord
     // prixod - приход
     public static function prixod($date = null)
     {
-        $date = self::runDate();
+        if(empty($date)){
+            $date = self::runDate();
+        }
         $query = " SELECT part.part_name as part_name, part.part_no as part_no, sum(qty) as quantity, sp.name as receiver from document_detail dd 
             LEFT JOIN document d ON d.id = dd.document_id 
             LEFT JOIN part ON part.id = dd.part_id 
@@ -110,7 +116,9 @@ class Dashboard extends \yii\db\ActiveRecord
     // norma rasxoda
     public static function normaRasxoda($part_id, $date = null, $quantity)
     {
-        $date = self::runDate();
+        if(empty($date)){
+            $date = self::runDate();
+        }
         $productSpecification = ProductSpecification::find()->where(['part_id' => $part_id])->andWhere(['status'=>1])->one();
         $qisqartma = 1;
         if($productSpecification){
@@ -142,7 +150,7 @@ class Dashboard extends \yii\db\ActiveRecord
         return $result;
     }
 
-    public static function runDate()
+    public static function runDate($date = null)
     {
         // $date = date('H:i');
         // return '2022-10-02';
@@ -231,7 +239,7 @@ class Dashboard extends \yii\db\ActiveRecord
             $html .= '<div class="col-md-6 text-right">';
             $html .= '<span class="color-primary">'.$model['line'].'</span>';
             $html .= '</div>';
-            $html .= '<div class="col-md-6 text-right">';
+            $html .= '<div class="col-md-6 text-right" style="display: flex; justify-content: space-around;align-items: center;">';
             $html .= '<span class="color-primary">'.$model['shift'].'</span>';
             $html .= '<span class="color-success form-modal" data-line="'.$model['lineNumber'].'" data-shift="'.$model['shiftNumber'].'"   data-href="/dashboard/analiz-form-modal" style="cursor: pointer;" data-partid='.$model['part_id'].'><i class="fa  fa-plus"></i></span>';
             $html .= '</div>';
@@ -401,7 +409,7 @@ class Dashboard extends \yii\db\ActiveRecord
             $part_ids = implode(',', ArrayHelper::getColumn($parts, 'part_id'));
             $part_noes = implode(',', ArrayHelper::getColumn($parts, 'part_no'));
             $data[$customer['customer_id']] = [
-                'customer_name' => $customer['name'],
+                'customer_name' =>  substr($customer['name'],0, 30),
                 'planfaktbalance' => self::getPartsByLists($customer['customer_id'],null, $year, $firstType, $secondType, $part_ids, $part_noes),
                 'parts'         => self::getConditionParts($customer['customer_id'], $year, $firstType, $secondType),
             ];
@@ -442,9 +450,6 @@ class Dashboard extends \yii\db\ActiveRecord
         $months = self::getMonths($firstType, $secondType);
         foreach($months as $key => $item){
             $data[$key]['name']     = $item;
-            $data[$key]['plan']     = 'План';
-            $data[$key]['fakt']     = 'Факт';
-            $data[$key]['balance']  = 'Баланс';
         }
 
         return $data;
