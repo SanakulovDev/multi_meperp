@@ -66,6 +66,11 @@ $footerLists = [];
         overflow: scroll;
     }
 
+    .left-sticky{
+        position: sticky;
+        left: 0px;
+    }
+
 <?php $this->registerCss(ob_get_clean()); ?>
 
 <div class="dashboard-plan-prodaj">
@@ -88,17 +93,17 @@ $footerLists = [];
          <table class="tbl-plan ">
             <thead>
                 <tr>
-                        <td class="bg-primaries" rowspan="2">№</td>
-                        <td class="bg-primaries" rowspan="2">
-                            <p class="text-wrapp">
-                                <?= Yii::t('app', 'Part name')?>
-                            </p>
-                        </td>
-                        <td class="bg-primaries" rowspan="2">
-                            <p class="text-wrapp">
-                                <?= Yii::t('app', 'Part color')?>
-                            </p>
-                        </td>
+                    <td class="bg-primaries" rowspan="2">№</td>
+                    <td class="bg-primaries" rowspan="2">
+                        <p class="text-wrapp">
+                            <?= Yii::t('app', 'Part name')?>
+                        </p>
+                    </td>
+                    <td class="bg-primaries" rowspan="2">
+                        <p class="text-wrapp">
+                            <?= Yii::t('app', 'Part color')?>
+                        </p>
+                    </td>
                     <?php foreach($headers as $key => $item): ?>
                         <td colspan="3" class="bg-primaries" style="text-transform: capitalize;"><?= $item['name']?></td>
                     <?php endforeach; ?>
@@ -256,6 +261,11 @@ $(function(){
             $(this).css('background-color', '#83d783');
         }
     })
+
+    $(".tbl-plan").tableFixer({'left' : 3, 'head': false, 'foot': false});
 })
 
-<?php $this->registerJs(ob_get_clean(), \yii\web\View::POS_READY); ?>
+<?php $this->registerJs(ob_get_clean(), \yii\web\View::POS_END); ?>
+<?php $this->registerJsFile('https://code.jquery.com/jquery-3.5.1.min.js',  ['position' => \yii\web\View::POS_HEAD])?>
+<?php $this->registerJsFile('/themes/adminlte/js/tableHeadFixer.js', ['position' => \yii\web\View::POS_HEAD]); ?>
+<?php 

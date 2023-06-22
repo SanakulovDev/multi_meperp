@@ -400,9 +400,7 @@ class Dashboard extends \yii\db\ActiveRecord
     public static function getCustomerPlanSales($firstType =1, $secondType=1, $year)
     {
         $data = [];
-        $query = "SELECT customer_id, customer.name from sales_plan 
-                    INNER join customer on customer.id=customer_id
-                    where YEAR(sales_plan.target_date)='".$year."' and sales_plan.status = 1  GROUP BY customer_id";
+        $query = "SELECT id as customer_id, name from customer  where customer_type_id=1 and status=1 order by name asc";
         $customerList = Yii::$app->db->createCommand($query)->queryAll();
         foreach($customerList as $customer){
             $parts = self::getCustomerParts($year, $customer['customer_id']);
