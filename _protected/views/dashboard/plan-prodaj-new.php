@@ -66,12 +66,12 @@ $footerLists = [];
 <?php $this->registerCss(ob_get_clean()); ?>
 
 <div class="dashboard-plan-prodaj">
-    <div class="row" style="display:flex; align-items:center; justify-content:space-between;">
+    <div class="row" style="">
         <div class="col-md-3">
             <h3 style="margin:0px; padding: 0px;"><?= Yii::t('app', 'Plan -Fakt Prodaj')?> - <?=$year?></h3>
         </div>
-        <div class="col-md-3">
-            <div class="btn-group bg-primaries" style="cursor:pointer;">
+        <div class="pull-right">
+            <div class="btn-group  bg-primaries" style="cursor:pointer;">
                 <span class="dropdown-toggle " style="padding: 5px 10px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="caret"></span>
                     <?= Yii::t('app', 'Year')?>
