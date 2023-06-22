@@ -373,7 +373,7 @@ class Dashboard extends \yii\db\ActiveRecord
         }
         $name = 'fgd.qty';
         if($secondType == 2){
-            $name = 'fgd.price';
+            $name = 'fgd.price*fgd.qty';
         }
         if(empty($part_id)){
             $query = "SELECT sum(".$name.") from fg_invoice 

@@ -66,17 +66,9 @@ $footerLists = [];
 <?php $this->registerCss(ob_get_clean()); ?>
 
 <div class="dashboard-plan-prodaj">
-    <div class="row" style="display:flex: align-items:center; justify-content:space-between;">
+    <div class="row" style="display:flex; align-items:center; justify-content:space-between;">
         <div class="col-md-3">
             <h3 style="margin:0px; padding: 0px;"><?= Yii::t('app', 'Plan -Fakt Prodaj')?> - <?=$year?></h3>
-        </div>
-        <div class="col-md-3">
-            <button class="first-type btn " data-id="1"><?= Yii::t('app', 'Month')?></button>
-            <button class="first-type btn " data-id="2">Квартал</button>
-        </div>
-        <div class="col-md-3">
-            <button class="second-type btn" data-id="1">Обём</button>
-            <button class="second-type btn" data-id="2">Сумма</button>
         </div>
         <div class="col-md-3">
             <div class="btn-group bg-primaries" style="cursor:pointer;">

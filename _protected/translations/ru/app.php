@@ -1075,7 +1075,7 @@ return [
   'Production result (line)' => 'Результат производства (линия)',
   'Castle' => 'Замеc',
   'Year'  => 'Год',
-  'Plan -Fakt Prodaj' => 'План -Факт Продаж',
+  'Plan -Fakt Prodaj' => 'План - Продаж ',
   'Plan -prodaj-month' => 'Ежемесячные продажи',
 ];
 
