@@ -509,11 +509,6 @@ use yii\widgets\Menu; ?>
         'template' => '<a href="/dashboard/analiz"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
       $m_new[] = [
-        'label' => 'План производства 2',
-        'url' => ['/dashboard/plan-prodaj'],
-        'template' => '<a href="/dashboard/plan-prodaj"><i class="fa fa-list"></i> <span>{label}</span></a>',
-      ];
-      $m_new[] = [
         'label' => 'Статус обеспеченности',
         'url' => ['/fg-invoice/index'],
         'template' => '<a href="/report/coverage"><i class="fa fa-list"></i> <span>{label}</span></a>',

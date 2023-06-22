@@ -141,7 +141,7 @@ $footerLists = [];
                                     </td>
                                     <?php foreach($part['list'] as $key2 => $part_item): ?>
                                             <td class="bg-primariess text-wrapp">
-                                                <?= divideString($part_item['plan'], 3)?>
+                                                <?= divideString(round($part_item['plan']), 3)?>
                                             </td>
                                     <?php endforeach; ?>
                                 </tr>
@@ -262,6 +262,9 @@ $(function(){
         }
 
         excel.generate("Report-<?= time()?>.xlsx");    
+
+
+        $(".tbl-plan").tableFixer({'left' : 3, 'head': false, 'foot': false});
     }
 })
 

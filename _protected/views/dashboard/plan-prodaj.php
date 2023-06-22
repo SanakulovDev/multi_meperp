@@ -179,10 +179,10 @@ $footerLists = [];
                                     </td>
                                     <?php foreach($part['list'] as $key2 => $part_item): ?>
                                             <td class="bg-primariess">
-                                                <?= divideString($part_item['plan']*1, 3)?></td>
+                                                <?= divideString(round($part_item['plan'])*1, 3)?></td>
                                             <td class="bg-primariess">
-                                                <?= divideString($part_item['fakt']*1, 3)?></td>
-                                            <td class="bg-primariess balance" data-price="<?=$part_item['balance']?>"><?= divideString($part_item['balance']*1, 3)?></td>
+                                                <?= divideString(round($part_item['fakt'])*1, 3)?></td>
+                                            <td class="bg-primariess balance" data-price="<?=$part_item['balance']?>"><?= divideString(round($part_item['balance'])*1, 3)?></td>
                                     <?php endforeach; ?>
                                 </tr>
                             <?php endforeach; ?>
@@ -196,17 +196,17 @@ $footerLists = [];
                     <?php foreach($footerLists as $item):?>
                         <td class="bg-primaries">
                             <p class="text-wrapp">
-                                <?=  divideString($item['plan'], 3)?>
+                                <?=  divideString(round($item['plan']), 3)?>
                             </p>
                         </td>
                         <td class="bg-primaries">
                             <p class="text-wrapp">
-                                <?=  divideString($item['fakt'], 3)?></td>
+                                <?=  divideString(round($item['fakt']), 3)?></td>
                             </p>
                         </td>
-                        <td class="bg-primaries balance" data-price="<?= $item['balance']?>">
+                        <td class="bg-primaries balance" data-price="<?= round($item['balance'])?>">
                             <p class="text-wrapp">
-                                <?=  divideString($item['balance'], 3)?></td>
+                                <?=  divideString(round($item['balance']), 3)?></td>
                             </p>
                         </td>
 
@@ -266,6 +266,3 @@ $(function(){
 })
 
 <?php $this->registerJs(ob_get_clean(), \yii\web\View::POS_END); ?>
-<?php $this->registerJsFile('https://code.jquery.com/jquery-3.5.1.min.js',  ['position' => \yii\web\View::POS_HEAD])?>
-<?php $this->registerJsFile('/themes/adminlte/js/tableHeadFixer.js', ['position' => \yii\web\View::POS_HEAD]); ?>
-<?php 
