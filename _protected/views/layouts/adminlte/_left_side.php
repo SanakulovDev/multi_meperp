@@ -508,6 +508,13 @@ use yii\widgets\Menu; ?>
         'url' => ['/dashboard/analiz'],
         'template' => '<a href="/dashboard/analiz"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
+      
+      $m_new[] = [
+        'label' => 'Результат производства 2',
+        'url' => ['/dashboard/report-plan-month'],
+        'template' => '<a href="/dashboard/analiz"><i class="fa fa-list"></i> <span>{label}</span></a>',
+      ];
+
       $m_new[] = [
         'label' => 'Статус обеспеченности',
         'url' => ['/fg-invoice/index'],
