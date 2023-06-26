@@ -65,27 +65,25 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php $this->registerCss(ob_get_clean()); ?>
 
-<div class="dashboard-report-plan-month">
-    <div class="header" style="display: block; width: 100vw;">
-
-        <div class="pull-right">
-            <!-- dropdown month list -->
-            <div class="btn-group">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                    <?=$monthName?> <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                <?php foreach($monthList as $key=> $month):?>
-                    <li>
-                        <?=Html::a($month, Url::to(['dashboard/report-plan-month', 'month' => $key]))?>
-                    </li>
-                    <?php endforeach;?>
-                </ul>
-            </div>
-        </div>
+<div class="pull-right">
+    <!-- dropdown month list -->
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            <?=$monthName?> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+        <?php foreach($monthList as $key=> $month):?>
+            <li>
+                <?=Html::a($month, Url::to(['dashboard/report-plan-month', 'month' => $key]))?>
+            </li>
+            <?php endforeach;?>
+        </ul>
     </div>
+</div>
+<div class="dashboard-report-plan-month">
 
-    <div class="main-content">
+
+    <div class="main-content1">
         <table class="table tbl_plan">
             <thead>
                 <tr>
