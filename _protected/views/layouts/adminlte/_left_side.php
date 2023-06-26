@@ -512,7 +512,7 @@ use yii\widgets\Menu; ?>
       $m_new[] = [
         'label' => 'Результат производства 2',
         'url' => ['/dashboard/report-plan-month'],
-        'template' => '<a href="/dashboard/analiz"><i class="fa fa-list"></i> <span>{label}</span></a>',
+        'template' => '<a href="/dashboard/report-plan-month"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
 
       $m_new[] = [
