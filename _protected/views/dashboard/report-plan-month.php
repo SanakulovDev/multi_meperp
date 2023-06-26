@@ -10,9 +10,7 @@ $this->params['breadcrumbs'][] = $this->title;
         text-align:center;
         padding: 5px 10px;
     }
-    td{
-        width: 200px;
-    }
+    
     .main-content{
         height: 80vh;
         overflow-x: auto;
@@ -68,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="pull-right">
     <!-- dropdown month list -->
     <div class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
             <?=$monthName?> <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
@@ -131,7 +129,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php foreach($models as $key => $model):?>
                     <tr class="cell-1" data-toggle="collapse" data-target=".demo-<?=$key?>">
                         <td class="bg-lighties"><?= $inx++?></td>
-                        <td class="bg-lighties" colspan="2"><?= $model['customer_name']?></td>
+                        <td class="bg-lighties" colspan="2"><?= substr($model['customer_name'], 0,40)?></td>
                         <td class="bg-lighties"><?= divideString(round($model['plan']['quantity']),3)?></td>
                         <td class="bg-lighties"><?= divideString(round($model['plan']['price']),3)?></td>
                         <td class="bg-lighties"><?= divideString(round($model['plan']['sum']),3)?></td>

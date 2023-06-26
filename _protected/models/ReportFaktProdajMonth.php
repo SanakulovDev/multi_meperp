@@ -83,12 +83,11 @@ class ReportFaktProdajMonth extends \yii\base\Model{
             $condition = "scd.part_id='".$part_id."' ";
         }
         
-        $queryQty = "SELECT sum(scd.qty) as quantity FROM sales_contract_detail scd
-                    inner join sales_contract sc on sc.id=scd.sales_contract_id
+        $queryQty = "SELECT sum(scd.target_qty) as quantity FROM sales_plan scd
                     where $condition
-                    and YEAR(sc.contract_date)='".$year."' 
-                    and MONTH(sc.contract_date)='".$month."'
-                    and sc.status=1 and sc.customer_id='".$customer_id."'
+                    and YEAR(scd.target_date)='".$year."' 
+                    and MONTH(scd.target_date)='".$month."'
+                    and scd.status=1 and scd.customer_id='".$customer_id."'
                     
                     ";
         $planQty = Yii::$app->db->createCommand($queryQty)->queryOne();
