@@ -99,7 +99,7 @@ class ReportFaktProdajMonth extends \yii\base\Model{
                     where $condition
                     and YEAR(scd.target_date)='".$year."' 
                     and MONTH(scd.target_date)='".$month."'
-                    and scd.status=1 and scd.customer_id='".$customer_id."'
+                    and scd.customer_id='".$customer_id."'
                     
                     ";
         $planQty = Yii::$app->db->createCommand($queryQty)->queryOne();
