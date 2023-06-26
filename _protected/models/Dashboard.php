@@ -24,11 +24,11 @@ class Dashboard extends \yii\db\ActiveRecord
 {
     
     
-    public static function shablon($title, $models)
+    public static function shablon($title, $models, $class=null)
     {
         $data = '<div class="col-md-12">';
         $data .= '<h4 class="text-uppercase font-weight-bold" style="font-weight: bold;">'.$title.'</h4>';
-        $data .= '<table class="table">';
+        $data .= '<table class="table " id="table-'.$class.'">';
         $data .= '<thead class="">';
         $data .= '<tr class="text-center">';
         $data .= '<th class="text-center">№</th>';

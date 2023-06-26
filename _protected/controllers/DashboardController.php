@@ -5,6 +5,7 @@ use Yii;
 use app\models\Dashboard;
 use app\models\ProductionOrder;
 use app\models\ProductSpecification;
+use app\models\ReportFaktProdajMonth;
 use yii\web\Response;
 
 class DashboardController extends \yii\web\Controller
@@ -12,6 +13,26 @@ class DashboardController extends \yii\web\Controller
     public function actionIndex()
     {
         return $this->render('index');
+    }
+
+    public function actionDownloadIndex($date = null)
+    {
+        if(empty($date)){
+            $date = Dashbard::rundate();
+        }
+        else{
+            $date = date('Y-m-d', strtotime($date));
+        }
+        $headerTitles = [
+            'ПРОИЗВЕДЕНО',
+            'ОТГРУЖЕНО',
+            'ПРИХОД',
+            'НОРМА РАСХОДА'
+        ];
+        $models1 = Dashboard::fakt($date);
+        $models2 = Dashboard::ttn($date);
+        $models3 = Dashboard::prixod($date);
+        // $models4 = Dashboard::
     }
     // fakt
     public function actionFakt()
@@ -31,7 +52,7 @@ class DashboardController extends \yii\web\Controller
                     'html' => $data,
                 ]);
             }
-            $data = Dashboard::shablon($title, $models);
+            $data = Dashboard::shablon($title, $models, 'fakt');
             return json_encode([
                 'id' => 1,
                 'html' => $data,
@@ -57,7 +78,7 @@ class DashboardController extends \yii\web\Controller
                     'html' => $data,
                 ]);
             }
-            $data = Dashboard::shablon($title, $models);
+            $data = Dashboard::shablon($title, $models, 'ttn');
             return json_encode([
                 'id' => 2,
                 'html' => $data,
@@ -83,7 +104,7 @@ class DashboardController extends \yii\web\Controller
                     'html' => $data,
                 ]);
             }
-            $data = Dashboard::shablon($title, $models);
+            $data = Dashboard::shablon($title, $models, 'prixod');
             return json_encode([
                 'id' => 3,
                 'html' => $data,
@@ -105,7 +126,7 @@ class DashboardController extends \yii\web\Controller
                     $title = $item['part_name'].'('.$color.')';
                     $models = Dashboard::normaRasxoda($item['part_id'], $post['date'], $item['quantity']*1);
                     if(!empty($models)){
-                        $data .= Dashboard::shablon($title, $models);
+                        $data .= Dashboard::shablon($title, $models, 'norma-rasxod');
                     }
                 }
                 return json_encode([
@@ -227,6 +248,58 @@ class DashboardController extends \yii\web\Controller
             'secondType'    => $secondType,
             'years'         => $years,
             'year'          => $year,
+        ]);
+    }
+
+
+
+
+
+
+
+    // rezultat prodaj oylik 2023
+    // ============================================
+    // =============Sanakulov Anvar================
+    // ============================================
+    // 2023-06-25  Sanakulov Anvar
+    public function actionReportPlanMonth($month = null, $year = null)
+    {
+        if($month == null){
+            $month = date('m');
+        }
+        if($year == null){
+            $year = date('Y');
+        }
+        
+        $monthList = [
+            '01' => 'Январь',
+            '02' => 'Февраль',
+            '03' => 'Март',
+            '04' => 'Апрель',
+            '05' => 'Май',
+            '06' => 'Июнь',
+            '07' => 'Июль',
+            '08' => 'Август',
+            '09' => 'Сентябрь',
+            '10' => 'Октябрь',
+            '11' => 'Ноябрь',
+            '12' => 'Декабрь',
+        ];
+        $year = '2021';
+        $month = '07';
+        $monthName = $monthList[$month];
+        $models = ReportFaktProdajMonth::resultReport($month, $year);
+        // vd($models);
+        $headers = '';
+        // $models = Dashboard::getMonthResult($month, $year);
+        // $headers = Dashboard::getMonthResultTableHeaders();
+        return $this->render('report-plan-month', [
+            'models'        => $models,
+            'headers'       => $headers,
+            'month'         => $month,
+            'year'          => $year,
+            'monthName'     => $monthName,
+            'monthList'     => $monthList,
         ]);
     }
 }

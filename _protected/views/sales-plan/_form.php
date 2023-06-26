@@ -28,46 +28,45 @@ use yii\widgets\ActiveForm;
 
 <?= $form->field($model, 'customer_id')->dropDownList($customersAll, ['class' => 'form-control select2'])?>
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-2">
     <?= $form->field($model, 'partMarkId')->dropDownList($partMarksAll, ['class' => 'form-control select2 finder'])?>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-2">
     <?= $form->field($model, 'partColorId')->dropDownList($partColorsAll, ['class' => 'form-control select2 finder'])?>
   </div>
-</div>
-<?= $form->field($model, 'part_id')->dropDownList($parts, ['class' => 'form-control select2'])?>
-
-  <div class="row">
-    <div class="col-md-6">
-      <?= $form->field($model, 'target_qty')->textInput(['class' => 'form-control', 'type'=>'number'])?>
-    </div>
-    <div class="col-md-6">
-      <?=$form->field($model, 'target_date')->widget(DateTimePicker::classname(), [
-        'type' => DateTimePicker::TYPE_COMPONENT_PREPEND,
-        'layout' => '{picker}{input}{remove}',
-        'removeButton' => ['position' => 'append'],
-        'language' => 'ru',
-        'pluginOptions' => [
-          'autoclose' => true,
-          'format' => 'yyyy-mm',
-          'startView' => 'year',
-          'minView' => 'year',
-          'maxView' => 'year',
-        ],
-        'options' => [
-          'autocomplete' => 'off',
-          'placeholder' => 'YYYY-MM',
-          'class' => ' form-control'
-        ]
-      ])->label(Yii::t('app', 'Issued date'));
-      ?>
-    </div>
+  <div class="col-md-2">
+    <?= $form->field($model, 'part_id')->dropDownList($parts, ['class' => 'form-control select2'])?>
   </div>
+  <div class="col-md-2">
+    <?= $form->field($model, 'target_qty')->textInput(['class' => 'form-control', 'type'=>'number'])?>
+  </div>
+  <div class="col-md-2">
+    <?=$form->field($model, 'target_date')->widget(DateTimePicker::classname(), [
+          'type' => DateTimePicker::TYPE_COMPONENT_PREPEND,
+          'layout' => '{picker}{input}{remove}',
+          'removeButton' => ['position' => 'append'],
+          'language' => 'ru',
+          'pluginOptions' => [
+            'autoclose' => true,
+            'format' => 'yyyy-mm',
+            'startView' => 'year',
+            'minView' => 'year',
+            'maxView' => 'year',
+          ],
+          'options' => [
+            'autocomplete' => 'off',
+            'placeholder' => 'YYYY-MM',
+            'class' => ' form-control'
+          ]
+        ])->label(Yii::t('app', 'Issued date'));
+        ?>
+  </div>
+</div>
 
 <?php
   ActiveForm::end();
   $partsUrl = Url::to(['part/get-parts-by-mark-and-color'], true);
-$script_create = <<< JS
+  ob_start();?>
     $('.finder').on('change', function(e) {
       load();
     })
@@ -75,7 +74,7 @@ $script_create = <<< JS
     function load() {
       var color = $('#salesplan-partcolorid').val();
       var mark = $('#salesplan-partmarkid').val();
-      var url = "$partsUrl?mark="+mark+"&color="+color;
+      var url = "<?= $partsUrl?>?mark="+mark+"&color="+color;
       $.ajax({
         dataType: "json",
         type: "GET",
@@ -85,6 +84,5 @@ $script_create = <<< JS
         }
       });
     }
-JS;
-  $this->registerJs($script_create);
+<?php $this->registerJs(ob_get_clean(), \yii\web\View::POS_READY )
 ?>

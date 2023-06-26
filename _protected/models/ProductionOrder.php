@@ -312,6 +312,9 @@ class ProductionOrder extends ActiveRecord {
       2 => Yii::t('app', 'Line').' 2',
       3 => Yii::t('app', 'Line').' 3',
       4 => Yii::t('app', 'Line').' 4',
+      5 => Yii::t('app', 'Line').' 5',
+      6 => Yii::t('app', 'Line').' 6',
+      7 => Yii::t('app', 'Line').' 7',
     ];
   }
 }

@@ -25,6 +25,9 @@ ob_start(); ?>
             <input type="date" id="date" value="<?= $yesterday?>"   class="form-control date">
         </div>
     </div>
+    <div class="col-md-2">
+        <button class="btn-download btn btn-info" type="button"><?= Yii::t('app', 'btn-download')?></button>
+    </div>
 </div>
 <div class="" id="report-analytic">
     <div class="dashboard-1 row dashboard-row">
@@ -58,7 +61,6 @@ $(function(){
         let dateformat = 'dd.mm.yyyy';
         let formattedDate = ("0" + currentDate.getDate()).slice(-2) + "." + ("0" + (currentDate.getMonth() + 1)).slice(-2) + "." + currentDate.getFullYear();
 
-        console.log(formattedDate);
         $('.general-date').text(formattedDate);
         $('.dashboard-row').empty();
         $.each(arr, function(index, value){
@@ -78,6 +80,91 @@ $(function(){
             }
         });
     }
+
+
+    // excel-export
+    let classList = [
+        'table-fakt',
+        'table-ttn',
+        'table-prixod',
+        'table-norma-rasxod'
+        ];
+    $('.btn-download').on('click', function(){
+
+
+        var exportData = [];
+        $.each(classList, function(index, tableId) {
+            var tableData = $('#' + tableId).tableExport({ type: 'excel', escape: 'false', htmlContent: 'true' });
+            exportData.push(tableData);
+        });
+        
+        // Jadvallarni birlashtirib Excel-faylga o'tkazish
+        var mergedData = exportData.join('\n');
+        var blob = new Blob([mergedData], { type: 'application/vnd.ms-excel' });
+        var url = URL.createObjectURL(blob);
+        console.log(exportData);
+        // Faylni avtomatik yuklash uchun linkni yaratish
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = 'exported_tables.xls';
+        link.click();
+
+
+
+        //$.each(classList, function(index, value){
+        //    value = value.toString();
+        //    console.log(exportExcel(value));
+        //})
+
+    })
+
+
+    function exportExcel(itemClass){
+        var excel = $JExcel.new("Calibri light 10");            
+        excel.set( {sheet:0,value:"Sheet 1" } );
+        
+        var table = document.getElementById(itemClass);
+        if(table != null){
+            var limit = table.rows.length;
+            var cells = table.rows[0].cells.length;
+
+            // alert(cells);
+
+            var headers = [];
+
+            for (var i = 0; i < cells; i++) {
+                headers.push(table.rows[0].cells[i].innerHTML);
+            }
+
+
+        
+            var formatHeader=excel.addStyle({
+                border: "none,none,none,thin #333333",font: "Calibri 12 #000 B"}
+            );                                                         
+
+            for (var i=0;i< headers.length;i++){              // Loop headers
+                excel.set(0,i,0,headers[i],formatHeader);    // Set CELL header text & header format
+                excel.set(0,i,undefined,"auto");             // Set COLUMN width to auto 
+            }
+                        
+            for (var i=1; i < limit; i++){                                    // Generate 50 rows
+                for(var j = 0; j < cells; j++){
+                    if(table.rows[i].cells[j] !== undefined)
+                    excel.set(0,j,i,table.rows[i].cells[j].innerHTML);                    // This column is a TEXT
+                }
+            }
+            excel.generate(itemClass+"-<?= time()?>.xlsx");
+            return excel;
+
+        }
+         
+        return null;
+
+    }
 })
 <?php $this->registerJs(ob_get_clean(), \yii\web\View::POS_READY); ?>
+<?php $this->registerJsFile('/themes/adminlte/js/jquery.plugin_tableExport.min.js', ['depends' => [\yii\web\JqueryAsset::className()]]); ?>
 <?php //$this->registerJsFile('/themes/excel/myexcel.js', ['depends' => [\yii\web\JqueryAsset::className()]]); ?>
+<?php //$this->registerJsFile('/themes/excel/jszip.js', ['depends' => [\yii\web\JqueryAsset::className()]]); ?>
+<?php //$this->registerJsFile('/themes/excel/myscript.js', ['depends' => [\yii\web\JqueryAsset::className()]]); ?>
+<?php //$this->registerJsFile('/themes/excel/FileSaver.js', ['depends' => [\yii\web\JqueryAsset::className()]]); ?>

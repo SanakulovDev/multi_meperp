@@ -42,12 +42,12 @@ use wbraganca\dynamicform\DynamicFormWidget;
       $(item).find('.finder-partmarkid').select2();
       $(item).find('.finder-partColorId').select2();
       $(item).find('.datetimepicker').datetimepicker({
-        format: 'yyyy-mm-dd',
+        format: 'yyyy-mm',
         autoclose: true,
         todayBtn: true,
         startView: 'year',
-        minView: 'month',
-        maxView: 'month',
+        minView: 'year',
+        maxView: 'year',
         // Boshqa sozlovlar va parametrlar shu yerdan kiritilishi mumkin
       });
   });
@@ -125,14 +125,14 @@ use wbraganca\dynamicform\DynamicFormWidget;
                                   'language' => 'ru',
                                   'pluginOptions' => [
                                     'autoclose' => true,
-                                    'format' => 'yyyy-mm-dd',
+                                    'format' => 'yyyy-mm',
                                     'startView' => 'year',
-                                    'minView' => 'month',
-                                    'maxView' => 'month',
+                                    'minView' => 'year',
+                                    'maxView' => 'year',
                                   ],
                                   'options' => [
                                     'autocomplete' => 'off',
-                                    'placeholder' => 'YYYY-MM-DD',
+                                    'placeholder' => 'YYYY-MM',
                                     'class' => ' form-control datetimepicker'
                                   ]
                                 ])->label(Yii::t('app', 'Issued date'));

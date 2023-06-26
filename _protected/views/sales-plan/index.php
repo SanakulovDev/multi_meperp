@@ -36,6 +36,9 @@ else{
 .sort-month-btn{
     border-right: none;
 }
+.modal-dialog{
+    width: 1200px;
+}
 <?php $this->registerCss(ob_get_clean());?>
 <div class="product-group-index">
     <div class="btn-group">

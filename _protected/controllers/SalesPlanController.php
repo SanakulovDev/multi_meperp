@@ -10,6 +10,8 @@ use app\models\PartType;
 use app\models\Unit;
 use Yii;
 use app\models\SalesPlan;
+use app\models\SalesPlanShort;
+use app\models\Model;
 use app\models\SalesPlanSearch;
 use yii\base\BaseObject;
 use yii\helpers\ArrayHelper;
@@ -97,6 +99,67 @@ class SalesPlanController extends AppController
    */
   public function actionCreate()
   {
+    $modelMain = new SalesPlanShort();
+    $models = [new SalesPlan()];
+    if (Yii::$app->getRequest()->isAjax) {
+      if ($modelMain->load(Yii::$app->request->post())) {
+        // vd($modelMain);
+          $models = Model::createMultiple(SalesPlan::classname());
+          Model::loadMultiple($models, Yii::$app->request->post());
+          $valid = $modelMain->validate();
+          $valid = Model::validateMultiple($models) ;
+          $valid = true;
+          if($valid){
+            $transaction = \Yii::$app->db->beginTransaction();
+  
+            try{
+              $flag = true;
+                  foreach ($models as $index => $model) {
+                    // vd($model);
+                      $model->target_date .=  '-01';
+                      $model->customer_id = $modelMain->customer_id;
+                      $model->clearErrors();
+                      // vd($model->save(false));
+                      if (! ($flag = $model->save(false))) {
+                        // vd(123);
+                        $data['status'] = 0;
+                        Yii::$app->response->format = Response::FORMAT_JSON;
+                        $data['errors'] = $model->getErrors();
+
+                      }
+                  }
+              if ($flag) {
+                  $transaction->commit();
+                  Yii::$app->response->format = Response::FORMAT_JSON;
+                  $data['status'] = 1;
+
+                  return $data;
+              }
+            } catch (Exception $e) {
+              $transaction->rollBack();
+              $data['status'] = 0;
+              Yii::$app->response->format = Response::FORMAT_JSON;
+              return $data;
+            }
+          }
+
+
+      } else {
+        [$partColorsAll, $partMarksAll, $customersAll] = self::allDictionaries();
+        return $this->renderAjax('_form2', [
+          'modelMain' => $modelMain,
+          'models' => (empty($models)) ? [new SalesPlan()] : $models,
+          'partColorsAll' => $partColorsAll,
+          'partMarksAll' => $partMarksAll,
+          'customersAll' => $customersAll,
+        ]);
+      }
+    } else {
+      return $this->redirect(['index']);
+    }
+  }
+  public function actionCreate2()
+  {
     $model = new SalesPlan();
 
     if (Yii::$app->getRequest()->isAjax) {
@@ -119,6 +182,67 @@ class SalesPlanController extends AppController
     }
   }
   public function actionCreateDay()
+  {
+    $modelMain = new SalesPlanShort();
+    $models = [new SalesPlan()];
+    if (Yii::$app->getRequest()->isAjax) {
+      if ($modelMain->load(Yii::$app->request->post())) {
+        // vd($modelMain);
+          $models = Model::createMultiple(SalesPlan::classname());
+          Model::loadMultiple($models, Yii::$app->request->post());
+          $valid = $modelMain->validate();
+          $valid = Model::validateMultiple($models) ;
+          $valid = true;
+          if($valid){
+            $transaction = \Yii::$app->db->beginTransaction();
+  
+            try{
+              $flag = true;
+                  foreach ($models as $index => $model) {
+                    // vd($model);
+                      $model->customer_id = $modelMain->customer_id;
+                      $model->status = 2;
+                      $model->clearErrors();
+                      // vd($model->save(false));
+                      if (! ($flag = $model->save(false))) {
+                        // vd(123);
+                        $data['status'] = 0;
+                        Yii::$app->response->format = Response::FORMAT_JSON;
+                        $data['errors'] = $model->getErrors();
+
+                      }
+                  }
+              if ($flag) {
+                  $transaction->commit();
+                  Yii::$app->response->format = Response::FORMAT_JSON;
+                  $data['status'] = 1;
+
+                  return $data;
+              }
+            } catch (Exception $e) {
+              $transaction->rollBack();
+              $data['status'] = 0;
+              Yii::$app->response->format = Response::FORMAT_JSON;
+              return $data;
+            }
+          }
+
+
+      } else {
+        [$partColorsAll, $partMarksAll, $customersAll] = self::allDictionaries();
+        return $this->renderAjax('_form_day', [
+          'modelMain' => $modelMain,
+          'models' => (empty($models)) ? [new SalesPlan()] : $models,
+          'partColorsAll' => $partColorsAll,
+          'partMarksAll' => $partMarksAll,
+          'customersAll' => $customersAll,
+        ]);
+      }
+    } else {
+      return $this->redirect(['index']);
+    }
+  }
+  public function actionCreateDay2()
   {
     $model = new SalesPlan();
 
