@@ -43,7 +43,6 @@ class SalesPlanSearch extends SalesPlan
         $query = SalesPlan::find()->joinWith(['customer', 'part']);
 
         // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort'  => [
@@ -58,7 +57,7 @@ class SalesPlanSearch extends SalesPlan
         if (!$this->validate()) {
             return $dataProvider;
         }
-        if(empty($this->status) || $this->status != 2) {
+        if(empty($this->status)) {
             $this->status = 1;
         }
         // grid filtering conditions
@@ -68,13 +67,11 @@ class SalesPlanSearch extends SalesPlan
             'target_qty'    => $this->target_qty,
             'sales_plan.status'        => $this->status,
         ]);
+        // vd($this);
 
-        $query->andFilterWhere(['OR',
-                              ['like', 'part.part_no', $this->part_id],
-                              ['like', 'part.part_name', $this->part_id],
-                              ['like', 'part.part_color', $this->part_id]
-                            ])
-          ->andFilterWhere(['like', 'customer.name', $this->customer_id]);
+        $query->andFilterWhere(['part.id' => $this->part_id]);
+        $query->andFilterWhere(['customer.id'=> $this->customer_id]);
+
         // vd($query->createCommand()->rawSql);
         return $dataProvider;
     }
