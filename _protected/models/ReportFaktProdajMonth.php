@@ -51,7 +51,17 @@ class ReportFaktProdajMonth extends \yii\base\Model{
                     where YEAR(fg_invoice.invoice_date)='".$year."' 
                     and MONTH(fg_invoice.invoice_date)='".$month."'
                     and fg_invoice.customer_id='".$customer_id."' 
-                    group by p.id"; 
+                    group by p.id
+                    
+                    union
+
+                    SELECT p.id as part_id, p.part_name, p.part_color, p.part_no FROM sales_plan
+                    inner join part p on p.id = sales_plan.part_id
+                    where YEAR(sales_plan.target_date)='".$year."'
+                    and MONTH(sales_plan.target_date)='".$month."'
+                    and sales_plan.customer_id='".$customer_id."'
+                    group by sales_plan.part_id
+                    "; 
         $parts = Yii::$app->db->createCommand($query)->queryAll();
         // vd($parts);
         return $parts;
@@ -75,7 +85,9 @@ class ReportFaktProdajMonth extends \yii\base\Model{
 
     public static function getPlan($part_id, $customer_id, $year, $month, $partIds=null)
     {
-        $data = [];
+        $data['quantity']   = 0;
+        $data['price']      = 0;
+        $data['sum']        = 0;
         if(!empty($partIds)){
             $condition = "scd.part_id in (".$partIds.")";
         }
@@ -92,6 +104,9 @@ class ReportFaktProdajMonth extends \yii\base\Model{
                     ";
         $planQty = Yii::$app->db->createCommand($queryQty)->queryOne();
         $data['quantity'] = $planQty['quantity']?:0;
+        if($data['quantity'] == 0){
+            return $data;
+        }
         $queryDescPrice = "SELECT scd.price as price FROM sales_contract_detail scd
                         inner join sales_contract sc on sc.id=scd.sales_contract_id
                         where $condition
@@ -111,10 +126,16 @@ class ReportFaktProdajMonth extends \yii\base\Model{
 
     public static function getFakt($part_id, $customer_id, $year, $month, $partIds=null)
     {
-        $data = [];
-        $condition = "p.id='".$part_id."' ";
+        $data['quantity']   = 0;
+        $data['price']      = 0;
+        $data['sum']        = 0;
+        $condition          = "";
         if(!empty($partIds)){
-            $condition .= " and p.id in (".$partIds.")";
+            $condition = "  p.id in (".$partIds.")";
+            // vd($partIds);
+        }
+        else{
+            $condition = "  p.id='".$part_id."' ";
         }
         $queryQty = "SELECT sum(fgd.qty) as quantity FROM fg_invoice_detail fgd
                     inner join fg_invoice fg on fg.id=fgd.fg_invoice_id
@@ -123,11 +144,15 @@ class ReportFaktProdajMonth extends \yii\base\Model{
                     and YEAR(fg.invoice_date)='".$year."' 
                     and MONTH(fg.invoice_date)='".$month."'
                     and fg.customer_id='".$customer_id."'
+                    and fg.confirmed_by is not null
                     ";
 
         $faktQty = Yii::$app->db->createCommand($queryQty)->queryOne();
 
         $data['quantity'] = $faktQty['quantity']?:0;
+        if($data['quantity'] == 0){
+            return $data;
+        }
         $queryDescPrice = "SELECT fgd.price as price FROM fg_invoice_detail fgd
                         inner join fg_invoice fg on fg.id=fgd.fg_invoice_id
                         left join part p on p.part_no = fgd.part_no

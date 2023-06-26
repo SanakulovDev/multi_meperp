@@ -153,7 +153,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?php foreach($model['parts'] as $key1 => $part):?>
                             <tr class="collapse bg-primaries demo-<?=$key?>">
                                 <td class="bg-primaries"><?= $inx++?></td>
-                                <td class="bg-primaries"><?=$part['part_name']?></td>
+                                <td class="bg-primaries"><?= substr($part['part_name'], 0, 40)?></td>
                                 <td class="bg-primaries"><?=$part['part_color']?></td>
                                 <td class="bg-primaries"><?= divideString(round($part['plan']['quantity']),3)?></td>
                                 <td class="bg-primaries"><?= divideString(round($part['plan']['price']),3)?></td>
