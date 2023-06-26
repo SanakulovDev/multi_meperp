@@ -63,9 +63,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php $this->registerCss(ob_get_clean()); ?>
 
-<div class="pull-right">
+<div class="pull-right1" style="display: flex;">
     <!-- dropdown month list -->
-    <div class="btn-group">
+    <div class="btn-group" style="margin:auto; margin-right: 0px;">
         <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
             <?=$monthName?> <span class="caret"></span>
         </button>
@@ -81,7 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="dashboard-report-plan-month">
 
 
-    <div class="main-content1">
+    <div class="main-content">
         <table class="table tbl_plan">
             <thead>
                 <tr>
