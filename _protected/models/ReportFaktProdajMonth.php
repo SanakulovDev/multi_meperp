@@ -77,7 +77,6 @@ class ReportFaktProdajMonth extends \yii\base\Model{
     {
         $data = [];
         if(!empty($partIds)){
-            vd($customer_id);
             $condition = "scd.part_id in (".$partIds.")";
         }
         else{
