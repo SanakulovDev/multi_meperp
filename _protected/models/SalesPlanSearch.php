@@ -63,7 +63,6 @@ class SalesPlanSearch extends SalesPlan
         // grid filtering conditions
         $query->andFilterWhere([
             'id'            => $this->id,
-            'target_date'   => $this->target_date,
             'target_qty'    => $this->target_qty,
             'sales_plan.status'        => $this->status,
         ]);
@@ -71,6 +70,7 @@ class SalesPlanSearch extends SalesPlan
 
         $query->andFilterWhere(['part.id' => $this->part_id]);
         $query->andFilterWhere(['customer.id'=> $this->customer_id]);
+        $query->andFilterWhere(['like', 'target_date', $this->target_date]);
 
         // vd($query->createCommand()->rawSql);
         return $dataProvider;
