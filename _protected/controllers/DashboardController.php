@@ -285,8 +285,8 @@ class DashboardController extends \yii\web\Controller
             '11' => 'Ноябрь',
             '12' => 'Декабрь',
         ];
-        $year = '2021';
-        $month = '07';
+        // $year = '2021';
+        // $month = '07';
         $monthName = $monthList[$month];
         $models = ReportFaktProdajMonth::resultReport($month, $year);
         // vd($models);
