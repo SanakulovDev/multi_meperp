@@ -257,49 +257,4 @@ class DashboardController extends \yii\web\Controller
 
 
 
-    // rezultat prodaj oylik 2023
-    // ============================================
-    // =============Sanakulov Anvar================
-    // ============================================
-    // 2023-06-25  Sanakulov Anvar
-    public function actionReportPlanMonth($month = null, $year = null)
-    {
-        if($month == null){
-            $month = date('m');
-        }
-        if($year == null){
-            $year = date('Y');
-        }
-        
-        $monthList = [
-            '01' => 'Январь',
-            '02' => 'Февраль',
-            '03' => 'Март',
-            '04' => 'Апрель',
-            '05' => 'Май',
-            '06' => 'Июнь',
-            '07' => 'Июль',
-            '08' => 'Август',
-            '09' => 'Сентябрь',
-            '10' => 'Октябрь',
-            '11' => 'Ноябрь',
-            '12' => 'Декабрь',
-        ];
-        // $year = '2021';
-        // $month = '07';
-        $monthName = $monthList[$month];
-        $models = ReportFaktProdajMonth::resultReport($month, $year);
-        // vd($models);
-        $headers = '';
-        // $models = Dashboard::getMonthResult($month, $year);
-        // $headers = Dashboard::getMonthResultTableHeaders();
-        return $this->render('report-plan-month', [
-            'models'        => $models,
-            'headers'       => $headers,
-            'month'         => $month,
-            'year'          => $year,
-            'monthName'     => $monthName,
-            'monthList'     => $monthList,
-        ]);
-    }
 }

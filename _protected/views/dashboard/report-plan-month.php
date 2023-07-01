@@ -127,6 +127,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php if(!empty($models)):?>
                     <?php $inx=1;?>
                 <?php foreach($models as $key => $model):?>
+                    <?php if(empty($model['parts'])){
+                        continue;
+                    } ?>
                     <tr class="cell-1" data-toggle="collapse" data-target=".demo-<?=$key?>">
                         <td class="bg-lighties"><?= $inx++?></td>
                         <td class="bg-lighties" colspan="2"><?= substr($model['customer_name'], 0,40)?></td>

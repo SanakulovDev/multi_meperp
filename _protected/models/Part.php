@@ -106,7 +106,7 @@ class Part extends ActiveRecord
         self::STATE_RAW => 'Базовое сырье',
         self::STATE_SEMI => 'Полуфабрикат',
         self::STATE_FINISHED => 'Готовый продукт',
-        self::STATE_CASTLE => 'Замец'
+        self::STATE_CASTLE => 'Замеc'
     ];
 
     /**

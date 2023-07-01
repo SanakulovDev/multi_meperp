@@ -8,7 +8,7 @@ use yii\helpers\Url;
 
 $notFgParts = ArrayHelper::map(
   Part::find()
-    ->where(['state' => [Part::STATE_SEMI, Part::STATE_RAW]])
+    ->where(['state' => [Part::STATE_SEMI, Part::STATE_RAW, Part::STATE_CASTLE]])
     ->all(),
   'id',
   'partinfo'

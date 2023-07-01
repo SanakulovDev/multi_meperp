@@ -13,19 +13,18 @@ ob_start(); ?>
     }
 
 <?php $this->registerCss(ob_get_clean());?>
-<div class="row" style="display:flex; align-items:center; justify-content:space-between">
-    <div class="col-md-6">
-        <h2 class="text-uppercase font-weight-bold">Материальный отчет на <span class="general-date"><?= $yesterday?></span></h2>
-    </div>
-    <div class="col-md-2">
+        <h2 class="text-uppercase font-weight-bold" style="display: inline-block; ">Материальный отчет на <span class="general-date"><?= $yesterday?></span></h2>
+    <div class=" pull-right" style="    display: flex;
+                            flex-wrap: nowrap;
+                            justify-content: space-between;
+                            align-items: center;
+                ">
         <div class="form-group">
             <label for="date" class="control-label">
                 Дата производства
             </label>
             <input type="date" id="date" value="<?= $yesterday?>"   class="form-control date">
         </div>
-    </div>
-    <div class="col-md-2">
         <button class="btn-download btn btn-info" type="button"><?= Yii::t('app', 'btn-download')?></button>
     </div>
 </div>

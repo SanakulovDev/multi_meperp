@@ -4,7 +4,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
-$this->title = Yii::t('app', 'Plan -Fakt Prodaj');
+$this->title = Yii::t('app', 'Plan -prodaj-month');
 $planSum = 0;
 $faktSum = 0;
 $balanceSum = 0;
@@ -68,7 +68,7 @@ $footerLists = [];
 <div class="dashboard-plan-prodaj">
     <div class="row" style="">
         <div class="col-md-3">
-            <h3 style="margin:0px; padding: 0px;"><?= Yii::t('app', 'Plan -Fakt Prodaj')?> - <?=$year?></h3>
+            <h3 style="margin:0px; padding: 0px;"><?= Yii::t('app', 'Plan -prodaj-month')?> - <?=$year?></h3>
         </div>
         <div class="pull-right">
             <div class="btn-group  bg-primaries" style="cursor:pointer;">
