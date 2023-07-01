@@ -355,9 +355,9 @@ class Dashboard extends \yii\db\ActiveRecord
         }
         if($secondType == 1){
             if(empty($part_id)){
-                $query = "SELECT sum(target_qty) from sales_plan where customer_id='".$customer_id."' and part_id IN(".$part_ids.")  and YEAR(target_date)='".$year."' and MONTH(target_date) between '".$month1."' and '".$month2."' and status = 1";
+                $query = "SELECT sum(target_qty) from sales_plan where customer_id='".$customer_id."' and part_id IN(".$part_ids.")  and YEAR(target_date)='".$year."' and MONTH(target_date) between '".$month1."' and '".$month2."'";
             } else{
-                $query = "SELECT sum(target_qty) from sales_plan where customer_id='".$customer_id."' and part_id='".$part_id."' and YEAR(target_date)='".$year."' and MONTH(target_date) between '".$month1."' and '".$month2."' and status = 1";
+                $query = "SELECT sum(target_qty) from sales_plan where customer_id='".$customer_id."' and part_id='".$part_id."' and YEAR(target_date)='".$year."' and MONTH(target_date) between '".$month1."' and '".$month2."'";
             }
         }
         elseif($secondType == 2){
