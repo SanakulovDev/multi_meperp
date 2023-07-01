@@ -227,6 +227,7 @@ class DashboardController extends \yii\web\Controller
     public function actionPlanProdajNew($firstType=1, $secondType=2, $year = null)
     {
         $years = [
+            2020 => 2020,   
             2021 => 2021,
             2022 => 2022,
             2023 => 2023,

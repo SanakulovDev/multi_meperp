@@ -155,7 +155,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?php $inx1 = 1;?>
                         <?php foreach($model['parts'] as $key1 => $part):?>
                             <tr class="collapse bg-primaries demo-<?=$key?>">
-                                <td class="bg-primaries"><?= $inx++?></td>
+                                <td class="bg-primaries"><?= $inx1++?></td>
                                 <td class="bg-primaries"><?= substr($part['part_name'], 0, 40)?></td>
                                 <td class="bg-primaries"><?=$part['part_color']?></td>
                                 <td class="bg-primaries"><?= divideString(round($part['plan']['quantity']),3)?></td>
