@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <ul class="dropdown-menu" role="menu">
         <?php foreach($monthList as $key=> $month):?>
             <li>
-                <?=Html::a($month, Url::to(['dashboard/report-plan-month', 'month' => $key]))?>
+                <?=Html::a($month, Url::to(['report/report-plan-month', 'month' => $key]))?>
             </li>
             <?php endforeach;?>
         </ul>

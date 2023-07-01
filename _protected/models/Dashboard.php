@@ -275,11 +275,19 @@ class Dashboard extends \yii\db\ActiveRecord
     public static function getCustomerParts($year, $customer_id)
     {
         $query = "SELECT p.id as part_id, p.part_name, p.part_color, p.part_no FROM fg_invoice 
-                    inner join fg_invoice_detail fgd on fgd.fg_invoice_id=fg_invoice.id 
-                    inner join part p on p.part_no = fgd.part_no
-                    where YEAR(fg_invoice.invoice_date)='".$year."' 
-                    and fg_invoice.customer_id='".$customer_id."' 
-                    group by fgd.part_no"; 
+                inner join fg_invoice_detail fgd on fgd.fg_invoice_id=fg_invoice.id 
+                inner join part p on p.part_no = fgd.part_no
+                where YEAR(fg_invoice.invoice_date)='".$year."' 
+                and fg_invoice.customer_id='".$customer_id."' 
+                group by p.id
+                
+                union
+
+                SELECT p.id as part_id, p.part_name, p.part_color, p.part_no FROM sales_plan
+                inner join part p on p.id = sales_plan.part_id
+                where YEAR(sales_plan.target_date)='".$year."'
+                and sales_plan.customer_id='".$customer_id."'
+                group by sales_plan.part_id"; 
         $parts = Yii::$app->db->createCommand($query)->queryAll();
 
         return $parts;
