@@ -32,7 +32,7 @@ class Dashboard extends \yii\db\ActiveRecord
         $data .= '<thead class="">';
         $data .= '<tr class="text-center">';
         $data .= '<th class="text-center">№</th>';
-        $data .= '<th class="text-center">Наименование</th>';
+        $data .= '<th class="text-center">Наименование ('.$title.')</th>';
         $data .= '<th class="text-center">№ Продукта</th>';
         $data .= '<th class="text-center">Кол-во</th>';
         $data .= '<th class="text-center">Ед. изм</th>';
@@ -153,7 +153,7 @@ class Dashboard extends \yii\db\ActiveRecord
     public static function runDate($date = null)
     {
         // $date = date('H:i');
-        // return '2022-10-02';
+        return '2022-10-02';
         // return '2022-08-03';
 
         // return '2021-05-29';

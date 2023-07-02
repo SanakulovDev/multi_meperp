@@ -15,25 +15,6 @@ class DashboardController extends \yii\web\Controller
         return $this->render('index');
     }
 
-    public function actionDownloadIndex($date = null)
-    {
-        if(empty($date)){
-            $date = Dashbard::rundate();
-        }
-        else{
-            $date = date('Y-m-d', strtotime($date));
-        }
-        $headerTitles = [
-            'ПРОИЗВЕДЕНО',
-            'ОТГРУЖЕНО',
-            'ПРИХОД',
-            'НОРМА РАСХОДА'
-        ];
-        $models1 = Dashboard::fakt($date);
-        $models2 = Dashboard::ttn($date);
-        $models3 = Dashboard::prixod($date);
-        // $models4 = Dashboard::
-    }
     // fakt
     public function actionFakt()
     {
