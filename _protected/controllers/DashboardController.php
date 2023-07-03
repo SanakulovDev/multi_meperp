@@ -205,7 +205,7 @@ class DashboardController extends \yii\web\Controller
         ]);
     }
 
-    public function actionPlanProdajNew($firstType=1, $secondType=2, $year = null)
+    public function actionPlanProdajNew($firstType=1, $secondType=1, $year = null)
     {
         $years = [
             2020 => 2020,   
