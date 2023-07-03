@@ -287,6 +287,7 @@ class Dashboard extends \yii\db\ActiveRecord
                 inner join part p on p.id = sales_plan.part_id
                 where YEAR(sales_plan.target_date)='".$year."'
                 and sales_plan.customer_id='".$customer_id."'
+                and sales_plan.status=1
                 group by sales_plan.part_id"; 
         $parts = Yii::$app->db->createCommand($query)->queryAll();
 
@@ -355,9 +356,9 @@ class Dashboard extends \yii\db\ActiveRecord
         }
         if($secondType == 1){
             if(empty($part_id)){
-                $query = "SELECT sum(target_qty) from sales_plan where customer_id='".$customer_id."' and part_id IN(".$part_ids.")  and YEAR(target_date)='".$year."' and MONTH(target_date) between '".$month1."' and '".$month2."'";
+                $query = "SELECT sum(target_qty) from sales_plan where customer_id='".$customer_id."' and part_id IN(".$part_ids.")  and YEAR(target_date)='".$year."' and MONTH(target_date) between '".$month1."' and '".$month2."' and status=1";
             } else{
-                $query = "SELECT sum(target_qty) from sales_plan where customer_id='".$customer_id."' and part_id='".$part_id."' and YEAR(target_date)='".$year."' and MONTH(target_date) between '".$month1."' and '".$month2."'";
+                $query = "SELECT sum(target_qty) from sales_plan where customer_id='".$customer_id."' and part_id='".$part_id."' and YEAR(target_date)='".$year."' and MONTH(target_date) between '".$month1."' and '".$month2."' and status=1";
             }
         }
         elseif($secondType == 2){
@@ -368,6 +369,9 @@ class Dashboard extends \yii\db\ActiveRecord
             }
         }
         $res = Yii::$app->db->createCommand($query)->queryScalar();
+        if($secondType == 2){
+            $res = $res / 1000;
+        }
         return $res?round($res):0;
     }
     public static function getFaktCountOrPrices($customer_id, $part_id=null, $year, $secondType, $month, $part_ids=null, $part_noes=null)
@@ -401,7 +405,10 @@ class Dashboard extends \yii\db\ActiveRecord
                     and MONTH(fg_invoice.invoice_date) between '".$month1."' and '".$month2."'";
         }
         $res = Yii::$app->db->createCommand($query)->queryScalar();
-        return $res?round($res):0;
+        if($secondType == 2){
+            $res = $res / 1000;
+        }
+        return $res?:0;
     
     }
 
@@ -497,5 +504,26 @@ class Dashboard extends \yii\db\ActiveRecord
 
 
 
+    }
+
+
+    public static function isNollValues($model, $type = null)
+    {
+        $flag = true;
+        foreach($model as $key => $item){
+            if(empty($type)){
+                if($item['plan'] != 0 || $item['fact'] != 0 || $item['balance'] != 0){
+                    $flag = false;
+                    break;
+                }
+            }
+            else{
+                if($item[$type] != 0){
+                    $flag = false;
+                    break;
+                }
+            }
+        }
+        return $flag;
     }
 }

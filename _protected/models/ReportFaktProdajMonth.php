@@ -60,6 +60,7 @@ class ReportFaktProdajMonth extends \yii\base\Model{
                     where YEAR(sales_plan.target_date)='".$year."'
                     and MONTH(sales_plan.target_date)='".$month."'
                     and sales_plan.customer_id='".$customer_id."'
+                    and sales_plan.status=1
                     group by sales_plan.part_id
                     "; 
         $parts = Yii::$app->db->createCommand($query)->queryAll();
@@ -100,7 +101,7 @@ class ReportFaktProdajMonth extends \yii\base\Model{
                     and YEAR(scd.target_date)='".$year."' 
                     and MONTH(scd.target_date)='".$month."'
                     and scd.customer_id='".$customer_id."'
-                    
+                    and scd.status=1
                     ";
         $planQty = Yii::$app->db->createCommand($queryQty)->queryOne();
         $data['quantity'] = $planQty['quantity']?:0;
@@ -119,7 +120,7 @@ class ReportFaktProdajMonth extends \yii\base\Model{
         $planDescPrice = Yii::$app->db->createCommand($queryDescPrice)->queryOne();
 
         $data['price'] = $planDescPrice['price']?:0;
-        $data['sum'] = $planDescPrice['price'] * $planQty['quantity'];
+        $data['sum'] = round($planDescPrice['price'] * $planQty['quantity']/1000);
         
         return $data;
     }
@@ -165,7 +166,7 @@ class ReportFaktProdajMonth extends \yii\base\Model{
                         ";
         $faktDescPrice = Yii::$app->db->createCommand($queryDescPrice)->queryOne();
         $data['price'] = $faktDescPrice['price']?:0;
-        $data['sum'] = $faktDescPrice['price'] * $faktQty['quantity'];
+        $data['sum'] = round($faktDescPrice['price'] * $faktQty['quantity']/1000);
 
         return $data;
         

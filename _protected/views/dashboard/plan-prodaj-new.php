@@ -3,6 +3,7 @@
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use app\models\Dashboard;
 
 $this->title = Yii::t('app', 'Plan -prodaj-month');
 $planSum = 0;
@@ -59,7 +60,7 @@ $footerLists = [];
     .tbl-plan{
         width: 100%;
         border-collapse: collapse;
-        height: 80vh;
+        max-height: 80vh;
         overflow: scroll;
     }
 
@@ -110,14 +111,20 @@ $footerLists = [];
             <tbody>
                 <?php $inc1 = 1;?>
                     <?php foreach($models as $customer_id => $model):?>
+                        <?php 
+                            $continue = Dashboard::isNollValues($model['planfaktbalance'], 'plan');
+                            if($continue) continue;
+                        ?>
                         <tr class="cell-1" data-toggle="collapse" data-target=".demo-<?=$customer_id?>" aria-expanded="false">
                             <td><?= $inc1?></td>
-                            <td  class="bg-lighties text-wrapp">
+                            <td  class="bg-lighties text-wrapp" colspan="2">
                                     <?= $model['customer_name']?>
                             </td>
-                            <td></td>
+                            
                             <?php foreach($model['planfaktbalance'] as $key2 => $item): ?>
-                                <?php 
+
+                                <?php
+                                    
                                     $footerLists[$key2]['plan'] = isset($footerLists[$key2]['plan']) ? $footerLists[$key2]['plan'] + $item['plan'] : $item['plan'];
                                 ?>
                                 <td class="bg-lighties text-wrapp">
