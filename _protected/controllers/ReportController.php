@@ -4140,4 +4140,51 @@ class ReportController extends AppController {
         ]);
     }
 
+    // customer types DOM or EXP Report
+    // ============================================
+    // =============Sanakulov Anvar================
+    // ============================================
+    // 2023-07-04  Sanakulov Anvar
+
+    public function actionCustomerTypesPlan($customer_type_id=1, $month=null, $year=null)
+    {
+      if(empty($month)){
+        $month = date('m');
+      }
+
+      if(empty($year)){
+        $year = date('Y');
+      }
+
+      $models = ReportFaktProdajMonth::customerTypesPlan($customer_type_id, $month, $year);
+      $monthList = [
+          '01' => 'Январь',                                                                                                                                                        
+          '02' => 'Февраль',
+          '03' => 'Март',
+          '04' => 'Апрель',
+          '05' => 'Май',
+          '06' => 'Июнь',
+          '07' => 'Июль',
+          '08' => 'Август',
+          '09' => 'Сентябрь',
+          '10' => 'Октябрь',
+          '11' => 'Ноябрь',
+          '12' => 'Декабрь',
+      ];
+      $monthName = $monthList[$month];
+      // vd($month);
+      return $this->render('dashboard/customer-types-plan', [
+        'models'              => $models,
+        'monthName'           => $monthName,
+        'customer_type_id'    => $customer_type_id,
+        'month'               => $month,
+        'year'                => $year,
+      ]);
+    }
+
+    public function actionDowloadCustomerTypesPlan($customer_type_id, $month, $year)
+    {
+
+    }
+
 }

@@ -752,6 +752,6 @@ return[
   'Year' => 'Year',
   'Plan -Fakt Prodaj' => 'Plan -Fakt Prodaj',
   'Plan -prodaj-month'  => 'Plan -prodaj-month',
-  
+  'Customer types Plan' => 'Shipment plan for',
 ];
 

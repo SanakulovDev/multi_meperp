@@ -15,10 +15,10 @@ class ReportFaktProdajMonth extends \yii\base\Model{
 
     }
     // oy bo'yicha summalardan tuzilgan plan
-    public static function resultReport($month, $year)
+    public static function resultReport($month, $year, $customer_type_id=1)
     {
         $data = [];
-        $customers = self::customers();
+        $customers = self::customers($customer_type_id);
         foreach($customers as $customer){
             $customer_id    = $customer['customer_id'];
             $customer_name  = $customer['name'];
@@ -36,9 +36,9 @@ class ReportFaktProdajMonth extends \yii\base\Model{
         return $data;
     }
 
-    public static function customers()
+    public static function customers($type_id=1)
     {
-        $query = "SELECT id as customer_id, name from customer  where customer_type_id=1 and status=1 order by id asc";
+        $query = "SELECT id as customer_id, name from customer  where customer_type_id='".$type_id."' and status=1 order by id asc";
         $customers = \Yii::$app->db->createCommand($query)->queryAll();
         return $customers;
     }
@@ -79,7 +79,7 @@ class ReportFaktProdajMonth extends \yii\base\Model{
             $data[$key]['part_no']      = $part['part_no'];
             $data[$key]['plan']         = self::getPlan($part['part_id'], $customer_id, $year, $month);
             $data[$key]['fakt']         = self::getFakt($part['part_id'], $customer_id, $year, $month);
-            $data[$key]['balance']         = self::getDiff($part['part_id'], $customer_id, $year, $month);
+            $data[$key]['balance']      = self::getDiff($part['part_id'], $customer_id, $year, $month);
         }
         return $data;
     }
@@ -185,5 +185,24 @@ class ReportFaktProdajMonth extends \yii\base\Model{
 
 
 
-    // 
+    // customer types DOM r EXP bo'yicha report
+
+    public static function customerTypesPlan($customer_type_id=1, $month, $year)
+    {
+        $data = [];
+        $customers = self::customers($customer_type_id);
+        foreach($customers as $customer){
+            $customer_id    = $customer['customer_id'];
+            $customer_name  = $customer['name'];
+            $parts          = self::getCustomerParts($year, $month, $customer_id);
+            $partIds        = ArrayHelper::getColumn($parts, 'part_id');
+            $partIds        = implode(',', $partIds);
+            $data[$customer_id]['customer_name']    = $customer_name;
+            $data[$customer_id]['customer_id']      = $customer_id;
+            $data[$customer_id]['parts']            = self::getConditionParts($customer_id, $year, $month);
+            $data[$customer_id]['part_count']       = count($data[$customer_id]['parts']);
+        }
+
+        return $data;
+    }
 }

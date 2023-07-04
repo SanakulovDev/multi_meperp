@@ -1078,5 +1078,6 @@ return [
   'Plan -Fakt Prodaj' => 'План - Факт Продаж ',
   'Plan -prodaj-month' => 'План Продаж',
   'Plan -prodaj-month1' => 'Ежемесячные продажи',
+  'Customer types Plan' => 'План отгрузки (Текущий месяц)',
 ];
 
