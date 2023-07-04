@@ -57,6 +57,9 @@ $footerLists = [];
         position: sticky;
         bottom: 0;
     }
+    tfoot td{
+        font-weight: bold;
+    }
     .tbl-plan{
         width: 100%;
         border-collapse: collapse;

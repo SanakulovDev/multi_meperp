@@ -3,6 +3,21 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 $this->title = 'Резултат продаж за '.$monthName.' месяц '.$year.' г';
 $this->params['breadcrumbs'][] = $this->title;
+$footerLists['plan'] = [
+    'quantity' => 0,
+    'price' => 0,
+    'sum' => 0,
+];
+$footerLists['fakt'] = [
+    'quantity' => 0,
+    'price' => 0,
+    'sum' => 0,
+];
+$footerLists['balance'] = [
+    'quantity' => 0,
+    'price' => 0,
+    'sum' => 0,
+];
 ?>
 <?php ob_start(); ?>
     th, td{
@@ -48,6 +63,9 @@ $this->params['breadcrumbs'][] = $this->title;
         border: 2px  solid black;
         position: sticky;
         bottom: 0;
+    }
+    tfoot td{
+        font-weight: bold;
     }
     .tbl-plan{
         width: 100%;
@@ -131,6 +149,22 @@ $this->params['breadcrumbs'][] = $this->title;
                         continue;
                     } ?>
                     <tr class="cell-1" data-toggle="collapse" data-target=".demo-<?=$key?>">
+                    <?php
+                        $footerLists['plan']['quantity'] += round($model['plan']['quantity']);
+                        $footerLists['plan']['price'] +=  round($model['plan']['price']);
+                        $footerLists['plan']['sum'] +=  round($model['plan']['sum']);
+
+                        
+                        $footerLists['fakt']['quantity'] += round($model['fakt']['quantity']);
+                        $footerLists['fakt']['price'] +=  round($model['fakt']['price']);
+                        $footerLists['fakt']['sum'] +=  round($model['fakt']['sum']);
+
+                        $footerLists['balance']['quantity'] += round($model['balance']['quantity']);
+                        $footerLists['balance']['price'] +=  round($model['balance']['price']);
+                        $footerLists['balance']['sum'] +=  round($model['balance']['sum']);
+
+
+                    ?>
                         <td class="bg-lighties"><?= $inx++?></td>
                         <td class="bg-lighties" colspan="2"><?= substr($model['customer_name'], 0,40)?></td>
                         <td class="bg-lighties"><?= divideString(round($model['plan']['quantity']),3)?></td>
@@ -182,6 +216,22 @@ $this->params['breadcrumbs'][] = $this->title;
                     </td>
                 </tr>
                 <?php endif;?>
+                <tfoot>
+                    <tr>
+                        <td class="bg-primaries" colspan="3">Итого</td>
+                        <td class="bg-primaries"><?= divideString(round($footerLists['plan']['quantity']),3)?></td>
+                        <td class="bg-primaries"><?= divideString(round($footerLists['plan']['price']),3)?></td>
+                        <td class="bg-primaries"><?= divideString(round($footerLists['plan']['sum']),3)?></td>
+
+                        <td class="bg-primaries"><?= divideString(round($footerLists['fakt']['quantity']),3)?></td>
+                        <td class="bg-primaries"><?= divideString(round($footerLists['fakt']['price']),3)?></td>
+                        <td class="bg-primaries"><?= divideString(round($footerLists['fakt']['sum']),3)?></td>
+
+                        <td class="bg-primaries" style="font-weight:bold"><?= divideString(round($footerLists['balance']['quantity']),3)?></td>
+                        <td class="bg-primaries" style="font-weight:bold"><?= divideString(round($footerLists['balance']['price']),3)?></td>    
+                        <td class="bg-primaries" style="font-weight:bold"><?= divideString(round($footerLists['balance']['sum']),3)?></td>
+                    </tr>
+                </tfoot>
             </tbody>
         </table>
     </div>
