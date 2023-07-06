@@ -866,6 +866,7 @@ return [
   'Year'  => 'Yil',
   'Plan -Fakt Prodaj' => 'Reja - Fakt sotish',
   'Plan -prodaj-month' => 'Reja - sotish oylik',
-  'Customer types Plan' => 'Yuk tashish rejasi'
+  'Customer types Plan' => 'Yuk tashish rejasi',
+  'Time' => 'Vaqt',
 ];
 ?>

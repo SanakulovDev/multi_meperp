@@ -753,5 +753,8 @@ return[
   'Plan -Fakt Prodaj' => 'Plan -Fakt Prodaj',
   'Plan -prodaj-month'  => 'Plan -prodaj-month',
   'Customer types Plan' => 'Shipment plan for',
+  'Target date' => 'Target date',
+  'Time' => 'Time',
+  'Release' => 'Release'
 ];
 

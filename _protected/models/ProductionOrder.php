@@ -317,4 +317,13 @@ class ProductionOrder extends ActiveRecord {
       7 => Yii::t('app', 'Line').' 7',
     ];
   }
+
+  // getShifts
+  public static function getShifts()
+  {
+    return [
+      1 => Yii::t('app', 'Shift').' 1',
+      2 => Yii::t('app', 'Shift').' 2',
+    ];
+  }
 }

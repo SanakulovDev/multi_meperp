@@ -1079,5 +1079,8 @@ return [
   'Plan -prodaj-month' => 'План Продаж',
   'Plan -prodaj-month1' => 'Ежемесячные продажи',
   'Customer types Plan' => 'План отгрузки (Текущий месяц)',
+  'Target date' => 'Дата производства',
+  'Time' => 'Время',
+  'Release' => 'Release'
 ];
 

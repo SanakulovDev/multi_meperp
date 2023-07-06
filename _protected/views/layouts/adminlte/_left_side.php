@@ -354,6 +354,13 @@ use yii\widgets\Menu; ?>
         'url' => ['/production-plan/index'],
         'template' => '<a href="{url}"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
+      $planning[] = [
+        //        'label' => Yii::t('app', 'JV'),
+        'label' => Yii::t('app', 'Release'),
+        'url' => ['/production-release/index'],
+        'template' => '<a href="{url}"><i class="fa fa-list"></i> <span>{label}</span></a>',
+      ];
+      
     }
     if (count($planning) > 0) {
       $m300_production[] = [

@@ -25,6 +25,7 @@ $this->title = 'План отгрузки на '.$monthName;
     .bg-lighties{
         border: 1px solid black; 
         margin: 5px 10px;
+        text-align: left;
     } 
 
     .cell-1 {
@@ -115,11 +116,11 @@ $this->title = 'План отгрузки на '.$monthName;
                        <?php if(isset($model['parts'][0])):?>
                             <td class="bg-lighties"><?= $model['parts'][0]['part_name']?></td>
                             <td class="bg-lighties"><?= divideString($model['parts'][0]['plan']['quantity']*1, 3)?></td>
-                        <?php endif;?>
+                        <?php endif;?>le
                     </tr>
                     <?php foreach($model['parts'] as $key => $part):?>
                         <tr>
-                            <?php if($key == 0) continue;?>
+                            <?php if($key == 0 || $part['plan']['quantity'] == 0) continue;?>
                             <th  class="bg-lighties"><?=$index++?></th>
                             <td class="bg-lighties"><?= $part['part_name']?></td>
                             <td class="bg-lighties"><?= divideString($part['plan']['quantity']*1, 3)?></td>
