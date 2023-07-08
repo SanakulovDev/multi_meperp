@@ -1,20 +1,19 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
-use yii\helpers\url;
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\ProductionReleaseSearch */
+/* @var $searchModel app\models\ProductionPowerSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Production Order Release');
+$this->title = Yii::t('app', 'Production Powers');
 $this->params['breadcrumbs'][] = $this->title;
-
 ?>
-<div class="production-release-index">
+<div class="production-power-index">
 
-    <h1 style="display: inline-block; margin:0; padding: 0;"><?= Html::encode($this->title) ?></h1>
+<h1 style="display: inline-block; margin:0; padding: 0;"><?= Html::encode($this->title) ?></h1>
     <div class="pull-right">
 
         <p style="margin:0; padding: 0;">
@@ -26,12 +25,12 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <?php Pjax::begin(['id' => 'pjaxGrid']); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{update}{delete} ',
@@ -41,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'buttons' => [
                     'update' => function($url, $model)  {
                         
-                        $url = Url::toRoute(['production-release/update', 'id' => $model->id]);
+                        $url = Url::toRoute(['production-power/update', 'id' => $model->id]);
                         return Html::a(
                             '<span  class="glyphicon glyphicon-pencil"></span>',
                             false,
@@ -54,7 +53,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
             ],
-
             [
                 'attribute'=> 'part_id',
                 'value' => function($model) {
@@ -64,8 +62,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterInputOptions' => [
                     'class' => 'form-control select2',
                     'prompt' => '---',
-                    'data-intro' => Yii::t('intro', 'production-release-part_id')
+                    'data-intro' => Yii::t('intro', 'production-power-part_id')
                 ],
+            ],
+            'test_pr',
+            [
+                'attribute'=> 'target_date',
+                'value' => function ($model, $index, $widget) {
+                    return $model->target_date;
+                },
+                
             ],
             [
                 'attribute'=> 'line',
@@ -79,23 +85,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     'data-intro' => Yii::t('intro', 'production-release-line')
                 ],    
             ],
-            'pr_order_number',
-            'target_date',
             [
-                    'attribute'=> 'shift',
-                    'value' => function($model) use($shifts) {
-                        return $shifts[$model->shift];
-                    },
-                    'filter' => $shifts,
-                    'filterInputOptions' => [
-                        'class' => 'form-control select2',
-                        'prompt' => '---',
-                        'data-intro' => Yii::t('intro', 'production-release-shift')
-                    ],
-            ],
-            'time',
-            'quantity',
+                'attribute' =>'unitId',
+                'value' => function($model) use($units) {
+                    return $model->unit->description;
+                },
+                'filter' => $units,
 
+            ],
+            'plan_power',
+            'max_power',
+            'special',
+
+            
         ],
     ]); ?>
 

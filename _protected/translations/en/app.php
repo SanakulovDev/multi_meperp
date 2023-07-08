@@ -755,6 +755,10 @@ return[
   'Customer types Plan' => 'Shipment plan for',
   'Target date' => 'Target date',
   'Time' => 'Time',
-  'Release' => 'Release'
+  'Release' => 'Release',
+  'Test Pr' => 'Test Pr',
+  'Power' => 'Power',
+  'Plan Power' => 'Project capacity',
+  'Max Power' => 'Max Power', 
 ];
 

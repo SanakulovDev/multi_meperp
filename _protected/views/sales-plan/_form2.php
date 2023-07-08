@@ -27,16 +27,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
 ?>
 
 <?php ob_start();?>
-  $(".dynamicform_wrapper").on("beforeInsert", function(e, item) {
-      $(item).find('.finder-partmarkid').select2();
-      $(item).find('.finder-partColorId').select2();
-      $(item).find('.datetimepicker').datetimepicker({
-        format: 'yyyy-mm-dd',
-        autoclose: true,
-        todayBtn: true
-        // Boshqa sozlovlar va parametrlar shu yerdan kiritilishi mumkin
-      });
-  });
+  
 
   $(".dynamicform_wrapper").on("afterInsert", function(e, item) {
       $(item).find('.finder-partmarkid').select2();
@@ -139,8 +130,8 @@ use wbraganca\dynamicform\DynamicFormWidget;
                                 ?>
                           </div>
                           <div class="col-md-1">
-                                <button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-minus"></i></button>
-                            </div>
+                              <button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-minus"></i></button>
+                          </div>
                         </div>
 
                   </div>

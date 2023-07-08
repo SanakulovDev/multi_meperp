@@ -868,5 +868,10 @@ return [
   'Plan -prodaj-month' => 'Reja - sotish oylik',
   'Customer types Plan' => 'Yuk tashish rejasi',
   'Time' => 'Vaqt',
+  'Release' => 'Chiqarish',
+  'Test Pr' => 'Test Pr',
+  'Power' => 'Kuch',
+  'Plan Power' => 'Reja kuchlari',
+  'Max Power' => 'Maksimal kuch', 
 ];
 ?>

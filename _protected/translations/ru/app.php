@@ -1081,6 +1081,10 @@ return [
   'Customer types Plan' => 'План отгрузки (Текущий месяц)',
   'Target date' => 'Дата производства',
   'Time' => 'Время',
-  'Release' => 'Release'
+  'Release' => 'Release',
+  'Test Pr' => 'Тестовой производство',
+  'Power' => 'Мощность',
+  'Plan Power' => 'Проектная мощность',
+  'Max Power' => 'Максимальная мощность',
 ];
 

@@ -116,7 +116,7 @@ $this->title = 'План отгрузки на '.$monthName;
                        <?php if(isset($model['parts'][0])):?>
                             <td class="bg-lighties"><?= $model['parts'][0]['part_name']?></td>
                             <td class="bg-lighties"><?= divideString($model['parts'][0]['plan']['quantity']*1, 3)?></td>
-                        <?php endif;?>le
+                        <?php endif;?>
                     </tr>
                     <?php foreach($model['parts'] as $key => $part):?>
                         <tr>

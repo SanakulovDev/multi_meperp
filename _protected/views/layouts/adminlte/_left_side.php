@@ -378,6 +378,11 @@ use yii\widgets\Menu; ?>
         'url' => ['/production-order/create'],
         'template' => '<a href="{url}"><i class="fa fa-table"></i> <span>{label}</span></a>',
       ];
+      $m300_production[]= [
+        'label' => Yii::t('app', 'Power'),
+        'url' => ['/production-power/index'],
+        'template' => '<a href="{url}"><i class="fa fa-table"></i> <span>{label}</span></a>',
+      ];
     }
     if (Yii::$app->user->can('production-order-upload')) {
       // $m300_production[] = [

@@ -112,25 +112,27 @@ class ProductionReleaseController extends Controller
         $model = $this->findModel($id);
 
         $data = [];
-        if(Yii::$app->request->isAjax){
-            if ($model->load(Yii::$app->request->post())) {
+        if ($model->load(Yii::$app->request->post())) {
                 
-                if($model->save()){
-                    $data['status'] = 1;
-                   
-                }else{
-                    $data['errors'] = $model->errors;
-                }
-                Yii::$app->response->format = Response::FORMAT_JSON;
-                return $data;
-                
+            if($model->save(false)){
+                $data['status'] = 1;
+                return $this->redirect(['index']);
+               
+            }else{
+                $data['errors'] = $model->errors;
             }
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return $data;
+            
+        }
+        if(Yii::$app->request->isAjax){
+            
             
             return $this->renderAjax('update', [
                 'model' => $model,
             ]);
         }
-        return $this->$this->redirect(['index']);
+        return $this->redirect(['index']);
     }
 
     /**
