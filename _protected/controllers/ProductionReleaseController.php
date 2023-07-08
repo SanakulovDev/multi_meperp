@@ -47,7 +47,8 @@ class ProductionReleaseController extends Controller
         $parts  = ArrayHelper::map($parts, 'id', 'part_no');
         $lines  = ProductionOrder::getLines();
         $shifts = ProductionOrder::getShifts();
-        return $this->render('index', compact('searchModel', 'dataProvider', 'parts', 'shifts', 'lines'));
+        $selectTimes = ProductionRelease::selectTimes();
+        return $this->render('index', compact('searchModel', 'dataProvider', 'parts', 'shifts', 'lines', 'selectTimes'));
     }
 
     /**
@@ -72,6 +73,7 @@ class ProductionReleaseController extends Controller
     public function actionCreate()
     {
         $model = new ProductionRelease();
+        $selectTimes = ProductionRelease::selectTimes();
         $data = [];
         if(Yii::$app->request->isAjax){
             if ($model->load(Yii::$app->request->post())) {
@@ -89,6 +91,8 @@ class ProductionReleaseController extends Controller
             
             return $this->renderAjax('create', [
                 'model' => $model,
+                'selectTimes' => $selectTimes
+            
             ]);
         }
         return $this->$this->redirect(['index']);
@@ -110,7 +114,7 @@ class ProductionReleaseController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $selectTimes = ProductionRelease::selectTimes();
         $data = [];
         if ($model->load(Yii::$app->request->post())) {
                 
@@ -128,9 +132,7 @@ class ProductionReleaseController extends Controller
         if(Yii::$app->request->isAjax){
             
             
-            return $this->renderAjax('update', [
-                'model' => $model,
-            ]);
+            return $this->renderAjax('update', compact('model', 'selectTimes'));
         }
         return $this->redirect(['index']);
     }

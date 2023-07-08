@@ -125,25 +125,7 @@ $units = ArrayHelper::map(Unit::find()->all(), 'id', 'description');
                         <?= $form->field($item, "[{$index}]line")->dropDownList($lines, ['prompt' => '----', 'class'=>'form-control select2 finder-line']) ?>
                     </div>
                     <div class="col-md-3">
-                        <?=$form->field($item, "[{$index}]time")->widget(DateTimePicker::classname(), [
-                            'type' => DateTimePicker::TYPE_COMPONENT_PREPEND,
-                            'layout' => '{picker}{input}{remove}',
-                            'removeButton' => ['position' => 'append'],
-                            'language' => 'ru',
-                            'pluginOptions' => [
-                                'autoclose' => true,
-                                'format' => 'hh:ii',
-                                'startView' => 'day',
-                                'minView' => 'day',
-                                'maxView' => 'day',
-                            ],
-                            'options' => [
-                                'autocomplete' => 'off',
-                                'placeholder' => 'HH:MM',
-                                'class' => ' form-control finder-time'
-                            ]
-                        ])->label(Yii::t('app', 'Time'));
-                        ?>
+                        <?=$form->field($item, "[{$index}]time")->dropDownList($selectTimes, $params)?>
                     </div>
                     <div class="col-md-1">
                         <?= $form->field($item, "[{$index}]unitId")->dropDownList($units,['prompt' => '----', 'class'=>'form-control select2 finder-unit']) ?>

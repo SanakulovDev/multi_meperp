@@ -18,7 +18,7 @@ class ProductionPowerSearch extends ProductionPower
     {
         return [
             [['id', 'part_id', 'line', 'shift', 'unitId'], 'integer'],
-            [['part_name', 'test_pr', 'target_date', 'plan_power', 'max_power', 'special'], 'safe'],
+            [['part_name', 'test_pr', 'target_date', 'plan_power', 'max_power', 'special', 'time'], 'safe'],
         ];
     }
 
@@ -66,6 +66,7 @@ class ProductionPowerSearch extends ProductionPower
             'unitId' => $this->unitId,
             'plan_power' => $this->plan_power,
             'max_power' => $this->max_power,
+            'time' => $this->time,
         ]);
 
         $query->andFilterWhere(['like', 'part_name', $this->part_name])

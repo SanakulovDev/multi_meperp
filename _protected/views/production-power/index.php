@@ -74,6 +74,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 
             ],
             [
+                'attribute'=> 'time',
+                'value' => function($model) use($selectTimes) {
+                    return $selectTimes[$model->time];
+                },
+                'filter' =>$selectTimes,
+                'filterInputOptions' => [
+                    'class' => 'form-control select2',
+                    'prompt' => '---',
+                    'data-intro' => Yii::t('intro', 'production-release-time')
+                ],  
+            ],
+            [
                 'attribute'=> 'line',
                 'value' => function($model) use($lines) {
                     return $lines[$model->line];

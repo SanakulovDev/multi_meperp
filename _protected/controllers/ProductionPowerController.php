@@ -7,6 +7,7 @@ use app\models\ProductionPower;
 use app\models\ProductionPowerDynamic;
 use app\models\ProductionOrder;
 use app\models\Part;
+use app\models\ProductionRelease;
 use app\models\ProductionPowerSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -78,7 +79,7 @@ class ProductionPowerController extends Controller
 
         $modelMain = new ProductionPowerDynamic();
         $models = [new ProductionPower()];
-        
+        $selectTimes = ProductionRelease::selectTimes();
         $data = [];
         if(Yii::$app->request->isAjax){
             if ($modelMain->load(Yii::$app->request->post())) {
@@ -127,6 +128,7 @@ class ProductionPowerController extends Controller
             return $this->renderAjax('_form', [
                 'modelMain' => $modelMain,
                 'models' => (empty($models)) ? [new ProductionPower()] : $models,   
+                'selectTimes' => $selectTimes,
             ]);
         }
         return $this->$this->redirect(['index']);

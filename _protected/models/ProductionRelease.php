@@ -63,4 +63,20 @@ class ProductionRelease extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Part::className(), ['id' => 'part_id']);
     }
+
+
+    // 
+    public static function selectTimes()
+    {
+
+        return [
+            0 => 'Секунды',
+            1 => 'Минуты',
+            2 => 'Часы',
+            3 => 'Дни',
+            4 => 'Недели',
+            5 => 'Месяцы',
+            6 => 'Годы',
+        ];
+    }
 }
