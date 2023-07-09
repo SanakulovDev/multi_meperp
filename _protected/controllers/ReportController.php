@@ -140,6 +140,7 @@ class ReportController extends AppController {
   }
 
   public function actionProductionPlan() {
+    return $this->redirect(["production-fact"]);
     $this->checkReportAccess();
     $this->layout = "req";
     $downloadFileNameJV = rtrim(Helpers::downloadFileName("production-plan", "1"), ".1");
@@ -163,7 +164,7 @@ class ReportController extends AppController {
     $where =
       "production_plan.production_date between '".
       $need_month.
-      "-01' and '".
+      "-01' and '". 
       $need_month.
       "-".
       $month_end_date.
@@ -244,7 +245,7 @@ class ReportController extends AppController {
                   $has_target_qty = true;
                   $table_array[$rec]["part_no"] = $prod_list->part->part_no ?? null;
                   $table_array[$rec]["wh_nm"] = $prod_plan_bydt[$prod_sana][$j]["wh_name"] ?? null;
-//                  $table_array[$rec]["product_model"] = $prod_list->part->productModel->modelname ?? null;
+    //                  $table_array[$rec]["product_model"] = $prod_list->part->productModel->modelname ?? null;
                   $table_array[$rec][$prod_sana][$j] = $prod_plan_bydt[$prod_sana][$j]["target_qty"] ?? null;
                 }
               }
@@ -4192,5 +4193,44 @@ class ReportController extends AppController {
     {
 
     }
+
+
+    // report production plan new
+    public function actionProductionFact() {
+      // $this->checkReportAccess();
+      $this->layout = "req";
+      $model = new ProductionOrder();
+
+      $need_month = isset($_POST["need_month"]) ? ($need_month = $_POST["need_month"]) : date("Y-m");
+      $month_end = date("Y-m-t", strtotime($need_month));
+      $date = date("Y-m");
+      $warehouse_id = null;
+      $part_id = null;
+
+      $lines = ProductionOrder::getLines();
+      $lines[0] = 'Все линии';
+      $type = 1;
+      ksort($lines);
+      if($post = Yii::$app->request->post()) {
+        $date         = isset($post['need_month'])? $post['need_month'] : date('Y-m');
+        $warehouse_id = isset($post['ProductionOrder']['line'])? $post['ProductionOrder']['line'] : null;
+        $part_id      = isset($post['ProductionOrder']['part_id'])? $post['ProductionOrder']['part_id'] : null;
+        $type         = isset($post['report-type'])? $post['report-type'] : 1;
+        // vd($post);
+      }
+      $countMontDays = date('t', strtotime($date));
+      $todayDay = date('d');
+      
+      $data = $this->_reportService->getProductionFakt($date, $warehouse_id, $part_id, $todayDay, $type);
+      return $this->render('production-fact', [
+        'model' => $model,
+        'need_month' => $need_month,
+        'month_end' => $countMontDays,
+        'type' => $type,
+        'data' => $data,
+        'todayDay' => $todayDay,  
+        'lines' => $lines,
+      ]);
+    } 
 
 }

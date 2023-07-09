@@ -2495,4 +2495,151 @@ class ReportService
       }
       return $all_amount_with_vat;
   }
+
+  // fakt bo'yicha qilingan otchot update qilindi
+	/*
+	@@@ Sanakulov Anvar  @@@
+	@@@ 2023-07-08   @@@
+	Create by 
+
+	*/
+
+	public  function getProductionFakt($date, $line=null, $partId=null, $todayDay, $type=1)
+	{
+		$condition = '';
+        $condition2 = '';
+		if(!empty($line)){
+			$condition .= " and po.line = $line";
+            $condition2 .= " and pp.line = $line";
+		}
+		if(!empty($partId)){
+			$condition .= " and po.part_id = $partId";
+            $condition2 .= " and pp.part_id = $partId";
+		}
+		$query = "SELECT po.line,  p.part_no, p.id as part_id,  p.part_name, p.part_color  FROM production_order po
+			inner JOIN part p on p.id = po.part_id
+			where po.line is not null  and  
+            FROM_UNIXTIME(po.created_at, \"%Y-%m\") = :date
+            $condition
+            group by po.line, po.part_id
+
+            UNION
+
+            SELECT pp.line,  p.part_no, p.id as part_id,  p.part_name, p.part_color  FROM production_plan pp
+            inner JOIN part p on p.id = pp.part_id
+            where pp.line is not null  and  
+            DATE_FORMAT(pp.production_date, '%Y-%m') = :date
+            $condition2
+            group by pp.line, pp.part_id
+		";
+        $countWhere = '';
+       
+        // query asArray
+        $parts = Yii::$app->db->createCommand($query,[':date' => $date])->queryAll();
+        if($type == 1){
+
+            $quantityFact = 'SELECT sum(po.quantity) as quantity from production_order po
+                where po.line = :line and po.part_id = :part_id and FROM_UNIXTIME(po.created_at, "%Y-%m-%d") = :date
+                ';
+            $quantityPlan = 'SELECT sum(pp.target_qty) as quantity from production_plan pp
+                where pp.line = :line and pp.part_id = :part_id and DATE_FORMAT(pp.production_date, \'%Y-%m-%d\') = :date
+                ';
+        }
+        else{
+            $quantityFact = 'SELECT sum(po.quantity) as quantity from production_order po
+                where po.line = :line and po.part_id = :part_id and FROM_UNIXTIME(po.created_at, "%Y-%m-%d") = :date 
+                and  FROM_UNIXTIME(po.created_at, "%h:%i") between  :interval1 and :interval2
+                ';
+            $quantityPlan = 'SELECT sum(pp.target_qty) as quantity from production_plan pp
+             where pp.line = :line and pp.part_id = :part_id and DATE_FORMAT(pp.production_date, \'%Y-%m-%d\') = :date
+             and pp.shift = :shift
+            ';
+        }
+
+        $monthDaysCount = date('t', strtotime($date));
+        if(!empty($parts)){
+            foreach($parts as $key => $part){
+                for($day = 1; $day <= $monthDaysCount; $day++){
+                    $quantityShift1 = 0;
+                    $quantityShift2 = 0;
+                    if($day < 10){
+                        $day = '0'.$day;
+                    }
+                    $date1  = $date . '-' . $day;
+                    if($todayDay < $day){
+                        if($type == 2){
+                            $quantityShift1 = Yii::$app->db->createCommand($quantityFact,[':date' => $date1, ':line' => $part['line'], ':part_id' => $part['part_id'], ':interval1'=>'08:00', ':interval2'=>'19:59'])->queryOne();
+                            $quantityShift2 = Yii::$app->db->createCommand($quantityFact,[':date' => $date1, ':line' => $part['line'], ':part_id' => $part['part_id'], ':interval1'=>'20:00', ':interval2'=>'07:59'])->queryOne();
+                        }
+                        else{
+                            $quantity = Yii::$app->db->createCommand($quantityFact,[':date' => $date1, ':line' => $part['line'], ':part_id' => $part['part_id']])->queryOne();
+                        }
+                    }
+                    else{
+                        if($type == 2){
+                            $quantityShift1 = Yii::$app->db->createCommand($quantityPlan,[':date' => $date1, ':line' => $part['line'], ':part_id' => $part['part_id'], ':shift'=>1])->queryOne();
+                            $quantityShift2 = Yii::$app->db->createCommand($quantityPlan,[':date' => $date1, ':line' => $part['line'], ':part_id' => $part['part_id'], ':shift'=>2])->queryOne();
+                        }
+                        else{
+                            $quantity = Yii::$app->db->createCommand($quantityPlan,[':date' => $date1, ':line' => $part['line'], ':part_id' => $part['part_id']])->queryOne();
+                        }
+                    }
+                    
+                    if($type == 2){
+                        $parts[$key]['counts'][$day.'-1'] = 1*($quantityShift1['quantity']?:0);
+                        $parts[$key]['counts'][$day.'-2'] = 1*($quantityShift2['quantity']?:0);
+                        
+                    }
+                    else{
+                        $parts[$key]['counts'][$day] = 1*($quantity['quantity']?:0);
+                    }
+                }
+                $parts[$key]['counts']['total'] = array_sum($parts[$key]['counts']);
+            }
+        }
+        
+		return $parts;
+
+	}
+
+    public function getProductionPlan($date=null, $warehouse_id=null, $partId=null)
+    {
+        $condition = '';
+		if(!empty($warehouse_id)){
+			$condition .= " and p.warehouse_id = $warehouse_id";
+		}
+		if(!empty($partId)){
+			$condition .= " and po.part_id = $partId";
+		}
+		$query = "SELECT po.line,  p.part_no, p.id as part_id,  p.part_name, p.part_color, p.warehouse_id  FROM production_order po
+			inner JOIN part p on p.id = po.part_id
+			where po.line is not null  and  
+            FROM_UNIXTIME(po.created_at, \"%Y-%m\") = :date
+            $condition
+            group by po.line, po.part_id
+            
+		";
+        // query asArray
+        $parts = Yii::$app->db->createCommand($query,[':date' => $date])->queryAll();
+        $quantityQuery = 'SELECT sum(po.quantity) as quantity from production_order po
+            where po.line = :line and po.part_id = :part_id and FROM_UNIXTIME(po.created_at, "%Y-%m-%d") = :date
+            ';
+
+        $monthDaysCount = date('t', strtotime($date));
+        if(!empty($parts)){
+            foreach($parts as $key => $part){
+                for($day = 1; $day <= $monthDaysCount; $day++){
+                    if($day < 10){
+                        $day = '0'.$day;
+                    }
+                    $date1  = $date . '-' . $day;
+                    $quantity = Yii::$app->db->createCommand($quantityQuery,[':date' => $date1, ':line' => $part['line'], ':part_id' => $part['part_id']])->queryOne();
+                    $parts[$key]['counts'][$day] = 1*($quantity['quantity']?:0);
+                }
+                $parts[$key]['counts']['total'] = array_sum($parts[$key]['counts']);
+            }
+        }
+        
+		return $parts;
+    }
 }

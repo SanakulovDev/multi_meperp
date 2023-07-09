@@ -162,7 +162,7 @@ $month_end_date = date('t', strtotime($month_end));
               if (isset($prod_list[$prod_sana])) {
                 echo $a = ($prod_list[$prod_sana][1] ?? null) ? : 0;
               } else {
-                echo $a = 0;
+                echo $a = 0;  
               }
               $amt += $a;
               ?>

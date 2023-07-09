@@ -53,6 +53,7 @@ class ProductionOrder extends ActiveRecord {
     self::EVENT_ARRIVED => '800'
   ];
 
+  
   public static function isBulkList() {
     return [1 => Yii::t('app', 'Yes'), 0 => Yii::t('app', 'No')];
   }
