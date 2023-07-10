@@ -4164,6 +4164,7 @@ class ReportController extends AppController {
       }
 
       $models = ReportFaktProdajMonth::customerTypesPlan($customer_type_id, $month, $year);
+      // vd($models);
       $monthList = [
           '01' => 'Январь',                                                                                                                                                        
           '02' => 'Февраль',

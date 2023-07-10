@@ -194,12 +194,13 @@ class ReportFaktProdajMonth extends \yii\base\Model{
         foreach($customers as $customer){
             $customer_id    = $customer['customer_id'];
             $customer_name  = $customer['name'];
-            $parts          = self::getCustomerParts($year, $month, $customer_id);
-            $partIds        = ArrayHelper::getColumn($parts, 'part_id');
-            $partIds        = implode(',', $partIds);
+            
             $data[$customer_id]['customer_name']    = $customer_name;
             $data[$customer_id]['customer_id']      = $customer_id;
             $data[$customer_id]['parts']            = self::getConditionParts($customer_id, $year, $month);
+            $data[$customer_id]['parts']            = array_filter($data[$customer_id]['parts'], function($item){
+                return $item['plan']['quantity'] > 0;
+            });
             $data[$customer_id]['part_count']       = count($data[$customer_id]['parts']);
         }
 

@@ -112,7 +112,7 @@ $this->title = 'План отгрузки на '.$monthName;
                     } ?>
                     <tr>
                         <th  class="bg-lighties"><?=$index++?></th>
-                        <td class="bg-lighties" rowspan="<?=$model['part_count']+1?>"><?=$model['customer_name']?></td>
+                        <td class="bg-lighties" rowspan="<?=$model['part_count']?>"><?=$model['customer_name']?></td>
                        <?php if(isset($model['parts'][0])):?>
                             <td class="bg-lighties"><?= $model['parts'][0]['part_name']?></td>
                             <td class="bg-lighties"><?= divideString($model['parts'][0]['plan']['quantity']*1, 3)?></td>
@@ -121,7 +121,7 @@ $this->title = 'План отгрузки на '.$monthName;
                     <?php foreach($model['parts'] as $key => $part):?>
                         
 
-                        <?php if($key == 0 || $part['plan']['quantity'] == 0) continue;?>
+                        <?php if($key == 0) continue;?>
                         <tr>
                             <th  class="bg-lighties"><?=$index++?></th>
                             <td class="bg-lighties"><?= $part['part_name']?></td>
@@ -135,7 +135,7 @@ $this->title = 'План отгрузки на '.$monthName;
     </div>
 
 </div>
-
+                        
 <?php ob_start(); ?>
     
     $(function(){
