@@ -119,14 +119,10 @@ $this->title = 'План отгрузки на '.$monthName;
                         <?php endif;?>
                     </tr>
                     <?php foreach($model['parts'] as $key => $part):?>
-                        <?php 
-                            if($part['plan']['quantity'] == 0){
-                                continue;   
-                            }
-                        ?>
+                        
 
+                        <?php if($key == 0 || $part['plan']['quantity'] == 0) continue;?>
                         <tr>
-                            <?php if($key == 0 || $part['plan']['quantity'] == 0) continue;?>
                             <th  class="bg-lighties"><?=$index++?></th>
                             <td class="bg-lighties"><?= $part['part_name']?></td>
                             <td class="bg-lighties"><?= divideString($part['plan']['quantity']*1, 3)?></td>

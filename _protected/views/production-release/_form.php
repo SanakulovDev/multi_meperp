@@ -85,13 +85,13 @@ $shifts = ProductionOrder::getShifts();
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'hh:ii',  
-                    'startView' => 'day',
-                    'minView' => 'day',
-                    'maxView' => 'day',
+                    // 'startView' => 'day',
+                    // 'minView' => 'day',
+                    // 'maxView' => 'day',
                 ],
                 'options' => [
                     'autocomplete' => 'off',
-                    'placeholder' => 'MM:SS',
+                    'placeholder' => 'HH:MM',
                     'class' => ' form-control'
                 ]
             ]);?>
