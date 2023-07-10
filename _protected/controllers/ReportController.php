@@ -3934,7 +3934,8 @@ class ReportController extends AppController {
         ) a
         left join part p on a.part_id = p.id
         left join contract_source cs on p.contract_source_id = cs.id
-        order by p.part_no
+        
+
     ";
     // $query = "
     //     select p.id as part_id, p.part_no,p.part_name,p.part_color, p.remark, cs.name csourse from part p

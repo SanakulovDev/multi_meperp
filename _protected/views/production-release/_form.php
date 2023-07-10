@@ -85,9 +85,9 @@ $shifts = ProductionOrder::getShifts();
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'hh:ii',  
-                    // 'startView' => 'day',
-                    // 'minView' => 'day',
-                    // 'maxView' => 'day',
+                    'startView' => 'day',
+                    // 'minView' => 'hour',
+                    // 'maxView' => 'hour',
                 ],
                 'options' => [
                     'autocomplete' => 'off',

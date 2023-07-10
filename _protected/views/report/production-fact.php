@@ -225,7 +225,7 @@ $footerLists = [];
 								<tr>
 									<td class="bg-primaries" ><?=$item['line']?></td>
 									<td class="bg-primaries" ><?=$item['part_no']?></td>
-									<td class="bg-primaries" ><?=$item['part_name']?></td>
+									<td class="bg-primaries" style="text-align:left;"><?= substr($item['part_name'], 0, 20)?></td>
 									<td class="bg-primaries" ><?=$item['part_color']?></td>
 									<?php foreach($item['counts'] as $day => $count):?>
 										<?php 
