@@ -137,7 +137,7 @@ $units = ArrayHelper::map(Unit::find()->all(), 'id', 'description');
                         <?= $form->field($item, "[{$index}]max_power")->textInput(["type" => 'number']) ?>
                     </div>
                     <div class="col-md-2">
-                        <?= $form->field($item, "[{$index}]special")->textInput(["maxlength" => true]) ?>
+                        <?= $form->field($item, "[{$index}]special")->textInput(["type" => 'number']) ?>
                     </div>
                     <div class="col-md-1">
                         <button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-minus"></i></button>

@@ -8,12 +8,12 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\models\ProductionPowerSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Production Powers');
+$this->title = Yii::t('app', 'Power');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="production-power-index">
 
-<h1 style="display: inline-block; margin:0; padding: 0;"><?= Html::encode($this->title) ?></h1>
+<h1 style="display: inline-block; margin:0; padding: 0;"><?php // Html::encode($this->title) ?></h1>
     <div class="pull-right">
 
         <p style="margin:0; padding: 0;">

@@ -270,10 +270,10 @@ class CalculateProduct extends \yii\db\ActiveRecord
                 if($containerInvoice){
                     $date = date('d.m.Y',strtotime($containerInvoice->app_arr_at));
                     $dateTime = strtotime($containerInvoice->app_arr_at);
-                    // if($dateTime >= $todayTime){
+                    if($dateTime >= $todayTime){
                         $data['date']         = $date;
                         $data['quantity']     = $invoice_detail->qty*1;
-                    // }
+                    }
                    
                 }
                

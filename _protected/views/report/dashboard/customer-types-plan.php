@@ -82,9 +82,11 @@ $this->title = 'План отгрузки на '.$monthName;
     </div>
     <div class="col-md-2">
         <button class="customer-type btn-secondary " data-id="1">Внутренный рынок</button>
-        <button class="customer-type btn" data-id="2">Экспорт</button>
     </div>
-    
+    <div class="col-md-2">
+        <button class="customer-type btn" data-id="2">Экспорт</button>
+
+    </div>
     <div class="pull-right1" style="display: flex;">
         <!-- dropdown month list -->
         <button class="btn btn-info" id="excel-export"><?=Yii::t('app', 'btn-download')?></button>

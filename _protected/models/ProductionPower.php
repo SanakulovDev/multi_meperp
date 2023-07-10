@@ -59,7 +59,7 @@ class ProductionPower extends \yii\db\ActiveRecord
             'unitId' => Yii::t('app', 'All units'),
             'plan_power' => Yii::t('app', 'Plan Power'),
             'max_power' => Yii::t('app', 'Max Power'),
-            'special' => Yii::t('app', 'Special'),
+            'special' => Yii::t('app', 'Mixer кол-во'),
             'Time' => Yii::t('app', 'Time'),
         ];
     }

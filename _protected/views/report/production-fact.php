@@ -64,8 +64,9 @@ $footerLists = [];
 		bottom: 0;
 	}
 	.bg-primaries{
-        background-color: #DDEBF6;
+        background-color: #6abdff !important;
         border: 2px solid black; margin: 5px 10px;
+		font-weight: bold;
     }
     .bg-lighties{
         border: 1px solid black; 
@@ -223,10 +224,10 @@ $footerLists = [];
 						<tbody>
 							<?php foreach($data as $item):?>
 								<tr>
-									<td class="bg-primaries" ><?=$item['line']?></td>
-									<td class="bg-primaries" ><?=$item['part_no']?></td>
-									<td class="bg-primaries" style="text-align:left;"><?= substr($item['part_name'], 0, 20)?></td>
-									<td class="bg-primaries" ><?=$item['part_color']?></td>
+									<td class="" ><?=$item['line']?></td>
+									<td class="" ><?=$item['part_no']?></td>
+									<td class="" style="text-align:left;"><?= substr($item['part_name'], 0, 20)?></td>
+									<td class="" ><?=$item['part_color']?></td>
 									<?php foreach($item['counts'] as $day => $count):?>
 										<?php 
 											$footerLists[$day] = $footerLists[$day] + $count;
