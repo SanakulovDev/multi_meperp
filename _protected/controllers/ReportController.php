@@ -3932,7 +3932,7 @@ class ReportController extends AppController {
                 select r.id rid,r.part_id,r.calc_at, w.* from req_detail_plan w left join req r on w.req_id = r.id
                 where w.type in(:type_d, :type_l, :type_c, :type_s)
         ) a
-        right join part p on a.part_id = p.id
+        left join part p on a.part_id = p.id
         left join contract_source cs on p.contract_source_id = cs.id
         order by p.part_no
     ";
