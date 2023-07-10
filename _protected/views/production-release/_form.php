@@ -77,7 +77,24 @@ $shifts = ProductionOrder::getShifts();
             <?= $form->field($model, 'shift')->dropDownList($shifts, $params) ?>
         </div>
         <div class="col-md-3">
-            <?=$form->field($model, 'time')->dropDownList($selectTimes, $params)?>
+            <?=$form->field($model, 'time')->widget(DateTimePicker::classname(), [
+                'type' => DateTimePicker::TYPE_COMPONENT_PREPEND,
+                'layout' => '{picker}{input}{remove}',
+                'removeButton' => ['position' => 'append'],
+                'language' => 'ru',
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'hh:ii',  
+                    'startView' => 'day',
+                    'minView' => 'day',
+                    'maxView' => 'day',
+                ],
+                'options' => [
+                    'autocomplete' => 'off',
+                    'placeholder' => 'MM:SS',
+                    'class' => ' form-control'
+                ]
+            ]);?>
         </div>
         <div class="col-md-3">
             <?= $form->field($model, 'quantity')->textInput() ?>

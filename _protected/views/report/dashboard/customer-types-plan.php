@@ -119,6 +119,12 @@ $this->title = 'План отгрузки на '.$monthName;
                         <?php endif;?>
                     </tr>
                     <?php foreach($model['parts'] as $key => $part):?>
+                        <?php 
+                            if($part['plan']['quantity'] == 0){
+                                continue;   
+                            }
+                        ?>
+
                         <tr>
                             <?php if($key == 0 || $part['plan']['quantity'] == 0) continue;?>
                             <th  class="bg-lighties"><?=$index++?></th>
