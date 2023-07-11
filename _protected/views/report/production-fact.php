@@ -47,7 +47,8 @@ $footerLists = [];
 		
 	}
 	.bg-warning{
-		background-color: #f39c12!important;
+		background-color: #6abdff!important;
+		font-weight: bold;
 	}
 	th, td{
         border: 2px solid grey!important;
@@ -332,7 +333,7 @@ ob_start();?>
 			excel.generate("<?=$this->title?>-<?= date('Y-m-d H:i:s')?>.xlsx");    
 
 
-			$(".tbl-plan").tableFixer({'left' : 3, 'head': false, 'foot': false});
+			$(".tbl-plan").tableFixer({'left' : 3});
 		}
 	});
 <?php $this->registerJs(ob_get_clean(), yii\web\View::POS_END);?>

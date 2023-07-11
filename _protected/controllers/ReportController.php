@@ -4191,10 +4191,6 @@ class ReportController extends AppController {
       ]);
     }
 
-    public function actionDowloadCustomerTypesPlan($customer_type_id, $month, $year)
-    {
-
-    }
 
 
     // report production plan new

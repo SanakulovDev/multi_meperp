@@ -115,15 +115,19 @@ $this->title = 'План отгрузки на '.$monthName;
                     <tr>
                         <th  class="bg-lighties"><?=$index++?></th>
                         <td class="bg-lighties" rowspan="<?=$model['part_count']?>"><?=$model['customer_name']?></td>
-                       <?php if(isset($model['parts'][0])):?>
-                            <td class="bg-lighties"><?= $model['parts'][0]['part_name']?></td>
-                            <td class="bg-lighties"><?= divideString($model['parts'][0]['plan']['quantity']*1, 3)?></td>
+                        <?php $indexx = 0;?>
+                       <?php if(isset($model['parts'])):?>
+                            <?php foreach($model['parts'] as $key => $part):?>
+                                <?php $indexx = $key;?>
+                                <td class="bg-lighties"><?= $part['part_name']?></td>
+                                <td class="bg-lighties"><?= divideString($part['plan']['quantity']*1, 3)?></td>
+                                <?php break;?>
+                            <?php endforeach;?>
                         <?php endif;?>
                     </tr>
                     <?php foreach($model['parts'] as $key => $part):?>
-                        
 
-                        <?php if($key == 0) continue;?>
+                        <?php if($indexx == $key) continue;?>
                         <tr>
                             <th  class="bg-lighties"><?=$index++?></th>
                             <td class="bg-lighties"><?= $part['part_name']?></td>
