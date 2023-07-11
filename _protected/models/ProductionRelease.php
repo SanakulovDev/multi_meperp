@@ -35,8 +35,8 @@ class ProductionRelease extends \yii\db\ActiveRecord
     {
         return [
             [['part_id', 'part_name', 'line', 'pr_order_number', 'target_date', 'shift', 'time', 'quantity'], 'required'],
-            [['part_id', 'line', 'quantity'], 'integer'],
-            [['target_date'], 'safe'],
+            [['part_id', 'line', 'quantity', 'created_by'], 'integer'],
+            [['target_date', 'created', 'updated'], 'safe'],
             [['part_name', 'pr_order_number', 'shift', 'time'], 'string', 'max' => 255],
         ];
     }

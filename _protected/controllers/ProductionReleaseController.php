@@ -77,7 +77,8 @@ class ProductionReleaseController extends Controller
         $data = [];
         if(Yii::$app->request->isAjax){
             if ($model->load(Yii::$app->request->post())) {
-                
+                $model->part_name = $model->part->part_name;
+                $model->created_by = Yii::$app->user->identity->id;
                 if($model->save()){
                     $data['status'] = 1;
                    
@@ -117,7 +118,7 @@ class ProductionReleaseController extends Controller
         $selectTimes = ProductionRelease::selectTimes();
         $data = [];
         if ($model->load(Yii::$app->request->post())) {
-                
+            $model->part_name = $model->part->part_name;
             if($model->save(false)){
                 $data['status'] = 1;
                 return $this->redirect(['index']);
@@ -165,5 +166,21 @@ class ProductionReleaseController extends Controller
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+    public function actionGenerateOrderNumber()
+    {
+        if($post = Yii::$app->request->post()){
+            $date = date('Y-m-d', strtotime($post['date']));
+            $year = date('Y', strtotime($date));
+            $year = substr($year, 2);
+            $month = date('m', strtotime($date));
+            $day = date('d', strtotime($date));
+            $line = $post['line'];
+            $lastId = ProductionRelease::find()->select('id')->orderBy('id DESC')->one();
+            $lastId = $lastId->id + 1;
+            $orderNumber = $year.$month.$day.$line.$lastId;
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return $orderNumber;
+        }
     }
 }

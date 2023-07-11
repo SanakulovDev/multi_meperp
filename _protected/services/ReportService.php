@@ -2542,7 +2542,7 @@ class ReportService
                 where po.line = :line and po.part_id = :part_id and FROM_UNIXTIME(po.created_at, "%Y-%m-%d") = :date
                 ';
             $quantityPlan = 'SELECT sum(pp.target_qty) as quantity from production_plan pp
-                where pp.line = :line and pp.part_id = :part_id and DATE_FORMAT(pp.production_date, \'%Y-%m-%d\') = :date
+                where pp.line = :line and pp.part_id = :part_id and pp.production_date = :date
                 ';
         }
         else{
@@ -2551,7 +2551,7 @@ class ReportService
                 and  FROM_UNIXTIME(po.created_at, "%h:%i") between  :interval1 and :interval2
                 ';
             $quantityPlan = 'SELECT sum(pp.target_qty) as quantity from production_plan pp
-             where pp.line = :line and pp.part_id = :part_id and DATE_FORMAT(pp.production_date, \'%Y-%m-%d\') = :date
+             where pp.line = :line and pp.part_id = :part_id and pp.production_date = :date
              and pp.shift = :shift
             ';
         }
@@ -2566,7 +2566,7 @@ class ReportService
                         $day = '0'.$day;
                     }
                     $date1  = $date . '-' . $day;
-                    if($todayDay < $day){
+                    if($todayDay > $day){
                         if($type == 2){
                             $quantityShift1 = Yii::$app->db->createCommand($quantityFact,[':date' => $date1, ':line' => $part['line'], ':part_id' => $part['part_id'], ':interval1'=>'08:00', ':interval2'=>'19:59'])->queryOne();
                             $quantityShift2 = Yii::$app->db->createCommand($quantityFact,[':date' => $date1, ':line' => $part['line'], ':part_id' => $part['part_id'], ':interval1'=>'20:00', ':interval2'=>'07:59'])->queryOne();

@@ -4220,6 +4220,9 @@ class ReportController extends AppController {
       $todayDay = date('d');
       
       $data = $this->_reportService->getProductionFakt($date, $warehouse_id, $part_id, $todayDay, $type);
+
+
+      // vd($data);
       return $this->render('production-fact', [
         'model' => $model,
         'need_month' => $need_month,

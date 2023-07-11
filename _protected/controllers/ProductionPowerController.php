@@ -97,9 +97,10 @@ class ProductionPowerController extends Controller
                         foreach ($models as $index => $item) {
                             
                             $item->part_id      = $modelMain->part_id;
-                            $item->part_name    = $modelMain->part_name;
+                            $item->part_name    = $item->part->part_name;
                             $item->test_pr      = $modelMain->test_pr;
                             $item->target_date  = $modelMain->target_date;
+                            $item->created_by   = Yii::$app->user->identity->id;
                             if($flag = $item->save(false)){
                                 $data['status'] = 1;
                             }else{

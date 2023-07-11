@@ -36,8 +36,8 @@ class ProductionPower extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['part_id', 'line', 'shift', 'unitId'], 'integer'],
-            [['target_date'], 'safe'],
+            [['part_id', 'line', 'shift', 'unitId','created_by'], 'integer'],
+            [['target_date', 'created', 'updated'], 'safe'],
             [['part_name', 'test_pr', 'plan_power', 'max_power', 'special', 'time'], 'string', 'max' => 255],
             [['line', 'unitId', 'plan_power', 'time', 'max_power', 'special'], 'required', 'on' => self::SCENARIO_DYNAMIC],
         ];

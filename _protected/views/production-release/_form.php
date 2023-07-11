@@ -25,7 +25,8 @@ $form = ActiveForm::begin([
 $lines = ProductionOrder::getLines();
 
 $parts = Part::find()->where(['status' => Part::STATUS_ACTIVE])->all();
-$items = ArrayHelper::map($parts, 'id', 'part_no');
+$items1 = ArrayHelper::map($parts, 'id', 'part_no');
+$items2 = ArrayHelper::map($parts, 'id', 'part_name');
 $params = [
   'prompt' => '---',
   'class' => 'form-control select2',
@@ -39,10 +40,10 @@ $shifts = ProductionOrder::getShifts();
 
     <div class="row">
         <div class="col-md-3">
-             <?= $form->field($model, 'part_id')->dropDownList($items, $params) ?>
+             <?= $form->field($model, 'part_id')->dropDownList($items1, $params) ?>
         </div>
         <div class="col-md-3">
-            <?= $form->field($model, 'part_name')->textInput(['maxlength' => true, 'readonly'=>true]) ?>
+            <?= $form->field($model, 'part_name')->dropDownList($items2, $params) ?>
         </div>
         <div class="col-md-3">
             <?= $form->field($model, 'line')->dropDownList($lines, $params) ?>
@@ -109,27 +110,44 @@ $shifts = ProductionOrder::getShifts();
 </div>
 
 <?php ActiveForm::end(); ?>
-<?php $partsUrl = Url::to(['part/get-partname'], true);
+<?php $partsUrl = Url::to(['production-release/generate-order-number'], true);
   ob_start();?>
     $('#productionrelease-part_id').on('change', function() {
         let id = $(this).val();
-        load(id);
+        $('#productionrelease-part_name').val(id);
+        load();
     })
-    function load(partId) {
-      var url = "<?= $partsUrl?>";
-      $.ajax({
-        //dataType: "json",
-        type: "GET",
-        url: url,
-        data: {
-          id: partId,
-        },
-        success: function(response){
-            $('#productionrelease-part_name').val(response.partname);        
-        },
-        error: function(response){
-          console.log(response);
-        }
-      });
+    $('#productionrelease-part_name').on('change', function() {
+        let id = $(this).val();
+        $('#productionrelease-part_id').val(id);
+        load();
+    })
+    load();
+    $('#productionrelease-target_date').on('change', function() {
+        load();
+    })
+    $('#productionrelease-line').on('change', function() {
+        load();
+    });
+    function load() {
+        var url = "<?= $partsUrl?>";
+        let date = $('#productionrelease-target_date').val();
+        let line = $('#productionrelease-line').val();
+        $.ajax({
+            //dataType: "json",
+            type: "POST",
+            url: url,
+            data: {
+                date: date,
+                line: line
+            },
+            success: function(response){
+                console.log(response);
+                $('#productionrelease-pr_order_number').val(response);        
+            },
+            error: function(response){
+            console.log(response);
+            }
+        });
     }
 <?php $this->registerJs(ob_get_clean(), \yii\web\View::POS_READY )?>

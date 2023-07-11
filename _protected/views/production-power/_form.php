@@ -27,7 +27,8 @@ $form = ActiveForm::begin([
 $lines = ProductionOrder::getLines();
 
 $parts = Part::find()->where(['status' => Part::STATUS_ACTIVE])->all();
-$items = ArrayHelper::map($parts, 'id', 'part_no');
+$items1 = ArrayHelper::map($parts, 'id', 'part_no');
+$items2 = ArrayHelper::map($parts, 'id', 'part_name');
 $params = [
   'prompt' => '---',
   'class' => 'form-control select2',
@@ -53,10 +54,10 @@ $units = ArrayHelper::map(Unit::find()->all(), 'id', 'description');
 
     <div class="row">
         <div class="col-md-3">
-            <?= $form->field($modelMain, 'part_id')->dropDownList($items, $params) ?>
+            <?= $form->field($modelMain, 'part_id')->dropDownList($items1, $params) ?>
         </div>
         <div class="col-md-3">
-            <?= $form->field($modelMain, 'part_name')->textInput(['maxlength' => true, 'readonly'=>true]) ?>
+            <?= $form->field($modelMain, 'part_name')->dropDownList($items2, $params) ?>
         </div>
         <div class="col-md-3">
             <?= $form->field($modelMain, 'test_pr')->dropDownList($lines, ['prompt' => '----', 'class'=>'form-control select2']) ?>
@@ -157,7 +158,7 @@ $units = ArrayHelper::map(Unit::find()->all(), 'id', 'description');
     
 </div>
 <?php ActiveForm::end(); ?>
-<?php $partsUrl = Url::to(['part/get-partname'], true);
+<?php $partsUrl = Url::to(['production-release/generate-order-number'], true);
   ob_start();?>
 
     $(".dynamicform_wrapper").on("afterInsert", function(e, item) {
@@ -194,23 +195,31 @@ $units = ArrayHelper::map(Unit::find()->all(), 'id', 'description');
 
     $('#productionpowerdynamic-part_id').on('change', function() {
         let id = $(this).val();
-        load(id);
+        $('#productionpowerdynamic-part_name').val(id);
     })
-    function load(partId) {
-      var url = "<?= $partsUrl?>";
-      $.ajax({
-        //dataType: "json",
-        type: "GET",
-        url: url,
-        data: {
-          id: partId,
-        },
-        success: function(response){
-            $('#productionpowerdynamic-part_name').val(response.partname);        
-        },
-        error: function(response){
-          console.log(response);
-        }
-      });
+    $('#productionpowerdynamic-part_name').on('change', function() {
+        let id = $(this).val();
+        $('#productionpowerdynamic-part_id').val(id);
+    })
+    function load() {
+        var url = "<?= $partsUrl?>";
+        let date = $('#productionpowerdynamic-target_date').val();
+        let line = $('#productionrelease-line').val();
+        $.ajax({
+            //dataType: "json",
+            type: "POST",
+            url: url,
+            data: {
+                date: date,
+                line: line
+            },
+            success: function(response){
+                console.log(response);
+                $('#productionrelease-pr_order_number').val(response);        
+            },
+            error: function(response){
+            console.log(response);
+            }
+        });
     }
 <?php $this->registerJs(ob_get_clean(), \yii\web\View::POS_READY )?>
