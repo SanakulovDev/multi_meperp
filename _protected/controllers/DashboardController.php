@@ -146,6 +146,7 @@ class DashboardController extends \yii\web\Controller
             }
             $nowTime = date('d.m.Y H:i:s', time()).' AM';
             $data = Dashboard::todayProductionByHtml($line);
+            // vd($data);
             return json_encode([
                 'nowTime'   => $nowTime,
                 'html'      => $data,

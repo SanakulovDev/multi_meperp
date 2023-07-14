@@ -14,7 +14,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="production-release-index">
 
-    <h1 style="display: inline-block; margin:0; padding: 0;"><?= Html::encode($this->title) ?></h1>
     <div class="pull-right">
 
         <p style="margin:0; padding: 0;">

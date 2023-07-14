@@ -2595,6 +2595,9 @@ class ReportService
                     }
                 }
                 $parts[$key]['counts']['total'] = array_sum($parts[$key]['counts']);
+                if($parts[$key]['counts']['total'] == 0){
+                    unset($parts[$key]);
+                }
             }
         }
         

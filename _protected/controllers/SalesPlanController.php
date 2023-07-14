@@ -165,7 +165,7 @@ class SalesPlanController extends AppController
     if (Yii::$app->getRequest()->isAjax) {
       if ($model->load(Yii::$app->request->post())) {
         $model->target_date = $model->target_date . ':01';
-        if ($model->save()) {
+        if ($model->save(false)) {
           $data['status'] = 1;
         } else {
           $data['status'] = 0;
@@ -278,8 +278,8 @@ class SalesPlanController extends AppController
 
     if (Yii::$app->getRequest()->isAjax) {
       if ($model->load(Yii::$app->request->post())) {
-        $model->target_date = $model->target_date . ':01';
-        if ($model->save()) {
+        $model->target_date = $model->target_date . '-01';
+        if ($model->save(false)) {
           $data['status'] = 1;
         } else {
           $data['status'] = 0;

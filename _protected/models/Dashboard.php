@@ -172,7 +172,20 @@ class Dashboard extends \yii\db\ActiveRecord
             $date = date('Y-m-d');
         }
         $shift = self::getShift();
-        $query = "SELECT part_id, line, shift from production_plan where production_date='".$date."' and line is not null and shift='".$shift."' group by part_id, line order by line asc";
+        $query = "
+        
+        SELECT part_id, line, shift from production_plan where production_date='".$date."' and line is not null and shift='".$shift."' group by part_id, line 
+        
+        union 
+
+        SELECT part_id, line,
+        CASE 
+          WHEN  FROM_UNIXTIME(created_at, \"%h:%i\")  between '08:00' and '19:59' THEN 1
+        ELSE 2
+        end as shift
+        
+        from production_order where DATE(FROM_UNIXTIME(created_at))='".$date."' and line is not null  group by part_id, line, shift
+        ";
         $response = Yii::$app->db->createCommand($query)->queryAll();
         return $response;
         
@@ -203,7 +216,7 @@ class Dashboard extends \yii\db\ActiveRecord
             }
             $data['data'][] = [
                 'part_id'       => $part['part_id'],
-                'part_name'     => substr(Part::getPartName($part['part_id']), 0, 45),
+                'part_name'     => substr(Part::getPartName($part['part_id']), 0, 25),
                 'line'          => $part['line'].'-'.Yii::t('app', 'Line'),
                 'lineNumber'    => $part['line'],
                 'shift'         => $part['shift'].'-'.Yii::t('app', 'Shift'),

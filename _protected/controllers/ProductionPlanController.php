@@ -204,7 +204,7 @@ class ProductionPlanController extends AppController {
     $model = new ProductionPlan();
     if(Yii::$app->getRequest()->isAjax) {
       if($model->load(Yii::$app->request->post())) {
-        if($model->save()) {
+        if($model->save(false)) {
           $data['status'] = 1;
           $w_house = Warehouse::find()
             ->where(["id" => $model["warehouse_id"]])
@@ -301,7 +301,7 @@ class ProductionPlanController extends AppController {
     $model = $this->findModel($id);
     if(Yii::$app->getRequest()->isAjax) {
       if($model->load(Yii::$app->request->post())) {
-        if($model->save()) {
+        if($model->save(false)) {
           $data['status'] = 1;
         } else {
           $data['status'] = 0;
@@ -340,7 +340,7 @@ class ProductionPlanController extends AppController {
         $model->production_plan_id = $id;
         $model->created_at = time();
         $model->created_by = Yii::$app->user->id;
-        if($model->save()) {
+        if($model->save(false)) {
           $data['status'] = 1;
         } else {
           $data['status'] = 0;
