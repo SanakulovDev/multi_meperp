@@ -2660,7 +2660,7 @@ class ReportService
                   FROM production_order po
                   inner JOIN part p on p.id = po.part_id
                   where po.line is not null  and  
-                  FROM_UNIXTIME(po.created_at, \"%Y-%m-%d %h:%i\") between :date11 and :date22
+                  FROM_UNIXTIME(po.created_at, \"%Y-%m-%d %H:%i\") between :date11 and :date22
                   group by po.line,  po.part_id
 
                   UNION
@@ -2677,7 +2677,7 @@ class ReportService
 
         $queryFact = "SELECT sum(po.quantity) as quantity from production_order po
             where po.part_id = :part_id  and po.line = :line
-            and FROM_UNIXTIME(po.created_at, \"%Y-%m-%d %h:%i\") between :interval1 and :interval2
+            and FROM_UNIXTIME(po.created_at, \"%Y-%m-%d %H:%i\") between :interval1 and :interval2
         ";
 
 
