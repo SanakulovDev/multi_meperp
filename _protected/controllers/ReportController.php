@@ -4234,4 +4234,31 @@ class ReportController extends AppController {
       ]);
     } 
 
+
+    // 2023-07-14 Sanakulov Anvar
+
+
+    public function actionProductionPlanFactDaily()
+    {
+      $date = date('d.m.Y', strtotime('-1 day'));
+      $date2 = date('Y-m-d', strtotime('-1 day'));
+      $beginDate = date("Y-m-d");
+      $endDate  = date("Y-m-d", strtotime($date.'+3 day'));
+      $dateList = [];
+
+      while (strtotime($beginDate) <= strtotime($endDate)) {
+        $dateList[] = date('d-M', strtotime($beginDate));
+        $beginDate = date ("Y-m-d", strtotime("+1 day", strtotime($beginDate)));
+      }
+      $data = $this->_reportService->productionPlanFactDaily($date2);
+      // vd($data);  
+      return $this->render('production-plan-fact-daily', [
+        'date'    => $date,
+        'data'    => $data,
+        'endDate' => $endDate,  
+
+        'dateList' => $dateList,
+      ]);
+    }
+
 }
