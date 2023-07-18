@@ -2608,42 +2608,42 @@ class ReportService
     public function getProductionPlan($date=null, $warehouse_id=null, $partId=null)
     {
         $condition = '';
-		if(!empty($warehouse_id)){
-			$condition .= " and p.warehouse_id = $warehouse_id";
-		}
-		if(!empty($partId)){
-			$condition .= " and po.part_id = $partId";
-		}
-		$query = "SELECT po.line,  p.part_no, p.id as part_id,  p.part_name, p.part_color, p.warehouse_id  FROM production_order po
-			inner JOIN part p on p.id = po.part_id
-			where po.line is not null  and  
-            FROM_UNIXTIME(po.created_at, \"%Y-%m\") = :date
-            $condition
-            group by po.line, po.part_id
-            
-		";
-        // query asArray
-        $parts = Yii::$app->db->createCommand($query,[':date' => $date])->queryAll();
-        $quantityQuery = 'SELECT sum(po.quantity) as quantity from production_order po
-            where po.line = :line and po.part_id = :part_id and FROM_UNIXTIME(po.created_at, "%Y-%m-%d") = :date
-            ';
+      if(!empty($warehouse_id)){
+        $condition .= " and p.warehouse_id = $warehouse_id";
+      }
+      if(!empty($partId)){
+        $condition .= " and po.part_id = $partId";
+      }
+      $query = "SELECT po.line,  p.part_no, p.id as part_id,  p.part_name, p.part_color, p.warehouse_id  FROM production_order po
+        inner JOIN part p on p.id = po.part_id
+        where po.line is not null  and  
+              FROM_UNIXTIME(po.created_at, \"%Y-%m\") = :date
+              $condition
+              group by po.line, po.part_id
+              
+      ";
+          // query asArray
+          $parts = Yii::$app->db->createCommand($query,[':date' => $date])->queryAll();
+          $quantityQuery = 'SELECT sum(po.quantity) as quantity from production_order po
+              where po.line = :line and po.part_id = :part_id and FROM_UNIXTIME(po.created_at, "%Y-%m-%d") = :date
+              ';
 
-        $monthDaysCount = date('t', strtotime($date));
-        if(!empty($parts)){
-            foreach($parts as $key => $part){
-                for($day = 1; $day <= $monthDaysCount; $day++){
-                    if($day < 10){
-                        $day = '0'.$day;
-                    }
-                    $date1  = $date . '-' . $day;
-                    $quantity = Yii::$app->db->createCommand($quantityQuery,[':date' => $date1, ':line' => $part['line'], ':part_id' => $part['part_id']])->queryOne();
-                    $parts[$key]['counts'][$day] = 1*($quantity['quantity']?:0);
-                }
-                $parts[$key]['counts']['total'] = array_sum($parts[$key]['counts']);
-            }
-        }
-        
-		return $parts;
+          $monthDaysCount = date('t', strtotime($date));
+          if(!empty($parts)){
+              foreach($parts as $key => $part){
+                  for($day = 1; $day <= $monthDaysCount; $day++){
+                      if($day < 10){
+                          $day = '0'.$day;
+                      }
+                      $date1  = $date . '-' . $day;
+                      $quantity = Yii::$app->db->createCommand($quantityQuery,[':date' => $date1, ':line' => $part['line'], ':part_id' => $part['part_id']])->queryOne();
+                      $parts[$key]['counts'][$day] = 1*($quantity['quantity']?:0);
+                  }
+                  $parts[$key]['counts']['total'] = array_sum($parts[$key]['counts']);
+              }
+          }
+          
+      return $parts;
     }
 
 
@@ -2700,13 +2700,13 @@ class ReportService
             $yesterDayPlan = $yesterDayPlanShift1 + $yesterDayPlanShift2;
             $parts[$key]['yesterDay'][0]['plan'] = $yesterDayPlan?:0;
             $parts[$key]['yesterDay'][0]['fact'] = $yesterDayFact?:0;
-            $parts[$key]['yesterDay'][0]['diff'] = $yesterDayPlan - $yesterDayFact;
+            $parts[$key]['yesterDay'][0]['diff'] = $yesterDayFact - $yesterDayPlan;
             $parts[$key]['yesterDay'][1]['plan'] = $yesterDayPlanShift1?:0;
             $parts[$key]['yesterDay'][1]['fact'] = $yesterDayFactShift1?:0;
-            $parts[$key]['yesterDay'][1]['diff'] = $yesterDayPlanShift1 - $yesterDayFactShift1;
+            $parts[$key]['yesterDay'][1]['diff'] = $yesterDayFactShift1 - $yesterDayPlanShift1;
             $parts[$key]['yesterDay'][2]['plan'] = $yesterDayPlanShift2?:0;
             $parts[$key]['yesterDay'][2]['fact'] = $yesterDayFactShift2?:0; 
-            $parts[$key]['yesterDay'][2]['diff'] = $yesterDayPlanShift2 - $yesterDayFactShift2;  
+            $parts[$key]['yesterDay'][2]['diff'] = $yesterDayFactShift2 - $yesterDayPlanShift2;  
 
             for($i=$date22; $i <= $endDate; $i = date("Y-m-d", strtotime($i.'+1 day'))){
                 $day1 = date("Y-m-d", strtotime($i.'+1 day'));
@@ -2718,6 +2718,42 @@ class ReportService
         }
         return $parts;
         
+    }
+
+
+    // Part Requirement shorts
+
+    public function getRequirementShorts()
+    {
+        $fromCurrentWeek = date("Y-m-d", strtotime('monday this week'));
+        $toCurrentWeek = date("Y-m-d", strtotime('sunday this week'));
+        
+        $fromNextWeek = date("Y-m-d", strtotime('monday next week'));
+        $toNextWeek = date("Y-m-d", strtotime('sunday next week'));
+
+        $fromCurrentMonth = date("Y-m-01");
+        $toCurrentMonth = date("Y-m-t");
+        
+        $query = "SELECT p.id as part_id, ps.id pcId,  sum(pp.target_qty) as qty, ps.amount  FROM production_plan pp 
+            INNER JOIN part p on p.id = pp.part_id
+            INNER JOIN product_specification ps on ps.part_id = p.id
+            where pp.production_date between :date1 and :date2
+            GROUP BY pp.part_id
+        ";
+
+
+
+        $partListMonthly = Yii::$app->db->createCommand($query,
+            [':date1' => $fromCurrentMonth, ':date2' => $toCurrentMonth])
+        ->queryAll();
+        
+
+        $query2 = "SELECT * FROM product_specification_item  psi
+            inner join product_specification ps on ps.id=psi.product_specification_id
+            INNER JOIN part p on p.id = pp.part_id
+        ";
+
+      return $partListMonthly;
     }
 
 }

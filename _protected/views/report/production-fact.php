@@ -89,6 +89,9 @@ $footerLists = [];
         position: sticky;
         left: 0px;
     }
+    .border-color1{
+      border-color: #6abdff !important;
+    }
 <?php $this->registerCss(ob_get_clean()); ?>
 
 	<div class="req-index ">
@@ -200,7 +203,10 @@ $footerLists = [];
 										$bgClass = 'bg-warning';	
 									}
 									?>
-								<th class="bg-primaries" colspan="<?= $type?>" class="<?= $bgClass?>" style="text-align:center"> <?=sprintf("%02d", $i)?> </th>
+								<th class="bg-primaries"  class="<?= $bgClass?>  " style="text-align:center; border-right-color: #6abdff !important;"> <?=sprintf("%02d", $i)?> </th>
+                <?php if($type == 2):?>
+                  <th class="bg-primaries"  class="<?= $bgClass?>" style="text-align:center; border-left-color: #6abdff !important;"></th>
+                <?php endif;?>
 								<?php endfor;  ?>
 								<th class="bg-primaries" rowspan="<?= $type?>"><?=Yii::t('app', 'Total')?></th>
 							</tr>
@@ -249,12 +255,15 @@ $footerLists = [];
 							<?php endforeach;?>	
 						</tbody>
 						<tfoot>
-							<tr>
+							<tr class="tfoot1">
 
-								<td class="bg-primaries" colspan="4">Итого</td>
+								<td class="bg-primaries" style="border-right:none!important;"></td>
+								<td class="bg-primaries" style="border-right:none!important; border-left: none!important;"></td>
+								<td class="bg-primaries" style="border-right:none!important; border-left: none!important;">Итого</td>
+								<td class="bg-primaries" style="border-right:none!important; border-left: none!important;"></td>
 
 								<?php foreach($footerLists as $count):?>
-									<td class="bg-primaries"><?=divideString($count, 3)?></td>
+									<td class="bg-primaries" data-sum="<?= $count*1?>"><?=divideString($count, 3)?></td>
 								<?php endforeach;?>
 							</tr>
 						</tfoot>
@@ -335,6 +344,24 @@ ob_start();?>
 
 			$(".tbl-plan").tableFixer({'left' : 3});
 		}
+     <!-- table tfoot column value 0 is delete column -->
+
+     $('.tfoot1 td').each(function(){
+      let plan = $(this).data('sum');
+      var table  = $('table');
+      var rowCount = table.find('tr').length;
+      let index = $(this).index();
+        if(plan !== undefined && plan == 0){
+          if(<?=$type?> == 1){
+            $('table').find('tr').each(function(){
+              $(this).find('td').eq(index).remove();
+              $(this).find('th').eq(index).remove();
+            })
+          }
+        }
+     })
+    
+
 	});
 <?php $this->registerJs(ob_get_clean(), yii\web\View::POS_END);?>
 <?php $this->registerJsFile('/themes/excel/jquery-3.5.1.min.js', ['position' => \yii\web\View::POS_HEAD]); ?>
