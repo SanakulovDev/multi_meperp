@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
     }
 
     .content-index{
-        height: 75vh;
+        max-height: 75vh;
         overflow-y: scroll;
         display:flex;
         justify-content: center;

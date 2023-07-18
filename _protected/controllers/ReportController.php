@@ -3926,30 +3926,29 @@ class ReportController extends AppController {
   {
     // $this->checkReportAccess();
     $this->layout = "req";
-    $query = "
-        select p.part_no,p.part_name,p.part_color, p.remark, cs.name csourse, a.*  from
-        (
-                select r.id rid,r.part_id,r.calc_at, w.* from req_detail_plan w left join req r on w.req_id = r.id
-                where w.type = :type_d or w.type = :type_l or w.type = :type_c or w.type = :type_s
-        ) a
-        left join part p on a.part_id = p.id
-        left join contract_source cs on p.contract_source_id = cs.id
-        order by p.part_no
+    // $query = "
+    //     select p.part_no,p.part_name,p.part_color, p.remark, cs.name csourse, a.*  from
+    //     (
+    //             select r.id rid,r.part_id,r.calc_at, w.* from req_detail_plan w left join req r on w.req_id = r.id
+    //             where w.type = :type_d or w.type = :type_l or w.type = :type_c or w.type = :type_s
+    //     ) a
+    //     left join part p on a.part_id = p.id
+    //     left join contract_source cs on p.contract_source_id = cs.id
+    //     order by p.part_no
 
-      ";
-      $data_daily = Yii::$app->db
-        ->createCommand($query, [
-          ":type_d" => CoverageController::TYPE_DAILY,
-          ":type_l" => CoverageController::TYPE_LOCAL_DAILY,
-          ":type_c" => CoverageController::TYPE_LOCAL_CONS,
-          ":type_s" => CoverageController::TYPE_LOCAL_SEMI,
-        ])
-        ->queryAll();
-        $currentWeek = date("W");
+    //   ";
+    //   $data_daily = Yii::$app->db
+    //     ->createCommand($query, [
+    //       ":type_d" => CoverageController::TYPE_DAILY,
+    //       ":type_l" => CoverageController::TYPE_LOCAL_DAILY,
+    //       ":type_c" => CoverageController::TYPE_LOCAL_CONS,
+    //       ":type_s" => CoverageController::TYPE_LOCAL_SEMI,
+    //     ])
+    //     ->queryAll();
       $data = $this->_reportService->getRequirementShorts($filter);
-      vd($data);
-    return $this->render("requirement-short", [
-      "data_daily" => $data_daily,
+      // vd($data);
+    return $this->render("requirement-short2", [
+      "data_daily" => $data,
       'filter'   => $filter
     ]);      
 
