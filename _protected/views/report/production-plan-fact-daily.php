@@ -156,6 +156,8 @@ $(function(){
     let cash = $(this).data('cash');
     if(cash < 0){
       $(this).css('background-color', 'rgb(246 81 81)');
+      $(this).css('color', '#fff');
+      $(this).css('font-weight', 'bold');
     }
   })
 

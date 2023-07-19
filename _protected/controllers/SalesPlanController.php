@@ -146,12 +146,14 @@ class SalesPlanController extends AppController
 
       } else {
         [$partColorsAll, $partMarksAll, $customersAll] = self::allDictionaries();
+        $parts = ArrayHelper::map(Part::find()->all(), 'id', 'part_name');
         return $this->renderAjax('_form2', [
           'modelMain' => $modelMain,
           'models' => (empty($models)) ? [new SalesPlan()] : $models,
           'partColorsAll' => $partColorsAll,
           'partMarksAll' => $partMarksAll,
           'customersAll' => $customersAll,
+          'parts2'   => $parts
         ]);
       }
     } else {

@@ -177,6 +177,27 @@ class DashboardController extends \yii\web\Controller
                     $model->serial_number = $model->generateSerialNumber();
                     // vd($model);
                     if($model->save(false)){
+
+
+                      $xozir_time = date("H:i");
+                      $shift = Yii::$app->params["shifts"];
+                      $shift_1 = $shift["1"]["0"];
+                      $shift_2 = $shift["2"]["0"]["0"];
+                      $shift_1_p1 = date("H:i", strtotime($shift_1) + 60 * 60);
+                      $shift_1_m1 = date("H:i", strtotime($shift_1) - 1);
+                      $shift_2_p1 = date("H:i", strtotime($shift_2) + 60 * 60);
+                      $shift_2_m1 = date("H:i", strtotime($shift_2) - 1);
+                      $prev_shift = 0;
+                      $shift_crt_at = time();
+                      if ($xozir_time >= $shift_1 && $xozir_time < $shift_1_p1) {
+                        $prev_shift = 1;
+                        $shift_crt_at = strtotime(date("Ymd") . $shift_1_m1);
+                      } elseif ($xozir_time >= $shift_2 && $xozir_time < $shift_2_p1) {
+                        $prev_shift = 1;
+                        $shift_crt_at = strtotime(date("Ymd") . $shift_2_m1);
+                      }
+
+                        $crtResult = ProductionOrder::createProdOrders($post, $shift_crt_at);
                         $data['status'] = 1;
                         $data['message'] = 'Success';
                         Yii::$app->response->format = Response::FORMAT_JSON;

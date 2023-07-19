@@ -53,7 +53,7 @@ class ProductionPower extends \yii\db\ActiveRecord
             'part_id' => Yii::t('app', 'Part ID'),
             'part_name' => Yii::t('app', 'Part name'),
             'test_pr' => Yii::t('app', 'Test Pr'),
-            'target_date' => Yii::t('app', 'Target date'),
+            'target_date' => Yii::t('app', 'Дата Запуска'),
             'line' => Yii::t('app', 'Line'),
             'shift' => Yii::t('app', 'Shift'),
             'unitId' => Yii::t('app', 'All units'),

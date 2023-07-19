@@ -97,7 +97,7 @@ use wbraganca\dynamicform\DynamicFormWidget;
                       ?>
                         <div class="row" style="display: flex;align-items: center;justify-content: center;">
                           <div class="col-md-2">
-                            <?= $form->field($model, "[{$index}]partMarkId")->dropDownList($partMarksAll, ['class' => "form-control select2 finder-partmarkid", 'prompt'=>'---'])?>
+                            <?= $form->field($model, "[{$index}]partMarkId")->dropDownList($parts2, ['class' => "form-control select2 finder-partmarkid", 'prompt'=>'---'])?>
                           </div>
                           <div class="col-md-2">
                             <?= $form->field($model, "[{$index}]partColorId")->dropDownList($partColorsAll, ['class' => 'form-control select2 finder-partColorId', 'prompt'=>'---'])?>
