@@ -162,22 +162,18 @@ class DashboardController extends \yii\web\Controller
                 $post = Yii::$app->request->post();
                 // $post = (object) $post;
                 if($model->load($post)){
-                    $model->quantity_of_copy    = 1;
-                    $model->current_event       = ProductionOrder::EVENT_PRODUCED;
-                    $model->current_seq         = $model->getCurrentSeq($model->part_id) + 1;
-                    $model->is_printed          = 0;
-                    $model->is_label            = 2;
-                    $model->created_by          = Yii::$app->user->id;
-                    $model->created_at          = time();
-                    $model->updated_at          = time();
+                  $post['ProductionOrder']['quantity_of_copy']    = 1;
+                  $post['produced']                               = 1;
+                  $post['model']                                  = 1;
+                  $post['side']                                   = 'LH';
+                  $post['floc']                                   = 1;
+
+                  // return json_encode($post['ProductionOrder']);
                     $spec = ProductSpecification::find()
                     ->where(["part_id" => $model->part_id, "status" => ProductSpecification::STATUS_ACTIVE])
                     ->one();
                     $model->product_specification_id = $spec?$spec->id:null;
                     $model->serial_number = $model->generateSerialNumber();
-                    // vd($model);
-                    if($model->save(false)){
-
 
                       $xozir_time = date("H:i");
                       $shift = Yii::$app->params["shifts"];
@@ -202,7 +198,6 @@ class DashboardController extends \yii\web\Controller
                         $data['message'] = 'Success';
                         Yii::$app->response->format = Response::FORMAT_JSON;
                         return $data;
-                    }
                 }
             }
 

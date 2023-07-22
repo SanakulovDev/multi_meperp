@@ -180,7 +180,7 @@ class Dashboard extends \yii\db\ActiveRecord
 
         SELECT part_id, line,
         CASE 
-          WHEN  FROM_UNIXTIME(created_at, \"%h:%i\")  between '08:00' and '19:59' THEN 1
+          WHEN  FROM_UNIXTIME(created_at, \"%H:%i\")  between '08:00' and '19:59' THEN 1
         ELSE 2
         end as shift
         
