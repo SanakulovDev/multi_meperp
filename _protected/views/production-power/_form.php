@@ -160,7 +160,7 @@ $units = ArrayHelper::map(Unit::find()->all(), 'id', 'description');
 <?php ActiveForm::end(); ?>
 <?php $partsUrl = Url::to(['production-release/generate-order-number'], true);
   ob_start();?>
-
+    $("#modalError").find(".help-block").css({"text-align":"center", "font-size": "25px"});
     $(".dynamicform_wrapper").on("afterInsert", function(e, item) {
         $(item).find('.finder-part_id').select2();
         $(item).find('.finder-unit').select2();

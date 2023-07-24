@@ -2731,7 +2731,7 @@ class ReportService
         $fromNextWeek = date("Y-m-d", strtotime('monday next week'));
         $toNextWeek = date("Y-m-d", strtotime('sunday next week'));
 
-        $fromCurrentMonth = date("Y-m-01");
+        $fromCurrentMonth = date("Y-m-d");
         $toCurrentMonth = date("Y-m-t");
         $query = "SELECT sum(pp.target_qty * psi.usage_qty / ps.amount) as qty  FROM production_plan pp 
             INNER JOIN product_specification ps on ps.part_id = pp.part_id

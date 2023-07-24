@@ -71,4 +71,15 @@ class ProductionPower extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Unit::className(), ['id' => 'unitId']);
     }
+
+    // inspect already
+    public static function alreadyExists($item)
+    {
+      $query = "SELECT * from production_power where part_id = ".$item->part_id." and line=".$item->line;
+      $power = Yii::$app->db->createCommand($query)->queryOne();
+      if(!empty($power)){
+        return false;
+      }
+      return true;
+    }
 }

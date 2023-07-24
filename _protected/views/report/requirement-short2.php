@@ -19,7 +19,7 @@
                 <span id="calc_at" style="font-size: 14px;color: #a29393;"><?=$loading?></span>
             </h3>
             <p class="pull-right" style="margin: 0px">
-              <?=Html::a(Yii::t('app', 'btn-download'), ['download-requirement-short'], ['class' => 'btn btn-info btn-sm', 'id' => 'btnDownload'])?>
+              <?=Html::a(Yii::t('app', 'btn-download'), ['#'], ['class' => 'btn btn-info btn-sm', 'id' => 'btnDownload'])?>
             </p>
             <div style="clear: both;"></div>
         </div>
@@ -52,7 +52,6 @@
       <tbody>
           <?php $i = 0; ?>
           <?php foreach($data_daily as $row):?>
-            <?php $i++; ?>
             <?php $averageUsage =  round(Part::findOne($row['part_id'])->averageUsage)?>
             <?php 
               if($filter == 1){
@@ -60,7 +59,8 @@
                   continue;
                 }
               }
-            ?>
+              ?>
+              <?php $i++; ?>
             <tr <?=($i%2 == 0) ? 'class="tr_odd"' : ''?>>
                 <td class="text-center"><?=$i?></td>
                 <td class="text-center"><?=$row['part_no']?></td>

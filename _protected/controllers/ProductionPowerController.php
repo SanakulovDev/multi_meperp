@@ -101,18 +101,18 @@ class ProductionPowerController extends Controller
                             $item->test_pr      = $modelMain->test_pr;
                             $item->target_date  = $modelMain->target_date;
                             $item->created_by   = Yii::$app->user->identity->id;
-                            if($flag = $item->save(false)){
+                            $res = ProductionPower::alreadyExists($item);
+                            if($res && ($flag = $item->save(false))){
                                 $data['status'] = 1;
                             }else{
                                 $data['status'] = 0;
-                                $data['errors'] = $item->errors;
+                                $data['errors'] = 'Data already exists';
                                 break;
                             }
                         }
                       if ($flag) {
                           $transaction->commit();
                           Yii::$app->response->format = Response::FORMAT_JSON;
-                          $data['status'] = 1;
         
                           return $data;
                       }
