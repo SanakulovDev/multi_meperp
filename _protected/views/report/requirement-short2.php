@@ -6,10 +6,8 @@
 
     $this->title = Yii::t('app', 'Part requirement Short');
 	  $this->params['breadcrumbs'][] = $this->title;
-    $loading = '<img src="/themes/adminlte/img/loading.gif">';
 	  
 ?>
-<?php //echo $this->render('../common/_loading'); ?>
 <div class="req-index">
     <div class="panel">
         <div class="panel-heading">
@@ -29,59 +27,64 @@
         <a href="<?= \yii\helpers\Url::to(['report/requirement-short'])?>" class="btn btn-danger">Очистить фильтра</a>
       </div>    </div>
 
+    <div class="man-content" style="max-height: 80vh;
+    overflow: scroll;
+    position: relative;">
 
-    <table class="table table-req" id="fix_table_d">
-      <thead>
-                <tr class="tr_head">
-                    <th style="width: 30px;" class="text-center">№</th>
-                    <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Part')?></th>
-                    <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Part color')?></th>
-                    <th style="width: 100px;" class="text-center"><?=mb_strtoupper(Yii::t('app', 'Part name'))?></th>
-                    <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Type')?></th>
-                    <!-- <th style="width: 100px;" class="text-center"><?php //echo Yii::t('app', 'Average usage')?></th> -->
-                    <th style="width: 100px;" class="text-center">Количество остатка</th>
-                    <!-- <th style="width: 100px;" class="text-center">1 нед</th>
-                    <th style="width: 100px;" class="text-center">Баланс</th>
-                    <th style="width: 100px;" class="text-center">след нед</th>
-                    <th style="width: 100px;" class="text-center">Баланс</th> -->
-                    <th style="width: 100px;" class="text-center">1месяц</th>
-                    <th style="width: 100px;" class="text-center">Баланс</th>
-                </tr>
-      </thead>
-      
-      <tbody>
-          <?php $i = 0; ?>
-          <?php foreach($data_daily as $row):?>
-            <?php $averageUsage =  round(Part::findOne($row['part_id'])->averageUsage)?>
-            <?php 
-              if($filter == 1){
-                if($averageUsage == 0){
-                  continue;
+      <table class="table table-req" id="fix_table_d">
+        <thead style="    position: sticky;
+    top: 0;">
+                  <tr class="tr_head">
+                      <th style="width: 30px;" class="text-center">№</th>
+                      <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Part')?></th>
+                      <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Part color')?></th>
+                      <th style="width: 100px;" class="text-center"><?=mb_strtoupper(Yii::t('app', 'Part name'))?></th>
+                      <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Type')?></th>
+                      <!-- <th style="width: 100px;" class="text-center"><?php //echo Yii::t('app', 'Average usage')?></th> -->
+                      <th style="width: 100px;" class="text-center">Количество остатка</th>
+                      <!-- <th style="width: 100px;" class="text-center">1 нед</th>
+                      <th style="width: 100px;" class="text-center">Баланс</th>
+                      <th style="width: 100px;" class="text-center">след нед</th>
+                      <th style="width: 100px;" class="text-center">Баланс</th> -->
+                      <th style="width: 100px;" class="text-center">1месяц</th>
+                      <th class="balance" style="width: 100px;" class="text-center">Баланс</th>
+                  </tr>
+        </thead>
+        
+        <tbody>
+            <?php $i = 0; ?>
+            <?php foreach($data_daily as $row):?>
+              <?php $averageUsage =  round(Part::findOne($row['part_id'])->averageUsage)?>
+              <?php 
+                if($filter == 1){
+                  if($averageUsage == 0){
+                    continue;
+                  }
                 }
-              }
-              ?>
-              <?php $i++; ?>
-            <tr <?=($i%2 == 0) ? 'class="tr_odd"' : ''?>>
-                <td class="text-center"><?=$i?></td>
-                <td class="text-center"><?=$row['part_no']?></td>
-                <td class="text-center" title="<?=$row['remark']?>"><?=$row['part_color']?></td>
-                <td style="max-width: 150px;" class="td-nowrap"><?=mb_strtoupper($row['part_name'])?></td>
-                <td class="text-center"><?=$row['csourse']?></td>
-                 <!-- <td style="text-align: center" class="text-right"><?php //echo $averageUsage?></td> -->
-                <td style="text-align: center"><?php echo number_format($row['stock'], 0, ',', ' ')?></td>
-            
-                <!-- <td style="text-align: center"><?php //echo number_format($row['current_week']*1, 0, ',', ' ') ;  ?></td> -->
-                <!-- <td style="text-align: center"><?php //echo number_format($row['currentWeekBalance'], 0, ',', ' ') ;  ?></td> -->
-                <!-- <td style="text-align: center"><?php //echo number_format($row['next_week']*1, 0, ',', ' ') ;  ?></td> -->
-                <!-- <td style="text-align: center"><?php //echo number_format($row['nextWeekBalance'], 0, ',', ' ') ;  ?></td> -->
-                <td style="text-align: center"><?php echo number_format($row['current_month'], 0, ',', ' ') ?></td>
-                <td style="text-align: center"><?php echo number_format($row['currentMonthBalance'], 0, ',', ' ') ?></td>
-            </tr>
-          <?php endforeach; ?>
-      </tbody>
+                ?>
+                <?php $i++; ?>
+              <tr <?=($i%2 == 0) ? 'class="tr_odd"' : ''?>>
+                  <td class="text-center"><?=$i?></td>
+                  <td class="text-center"><?=$row['part_no']?></td>
+                  <td class="text-center" title="<?=$row['remark']?>"><?=$row['part_color']?></td>
+                  <td style="max-width: 150px;" class="td-nowrap"><?=mb_strtoupper($row['part_name'])?></td>
+                  <td class="text-center"><?=$row['csourse']?></td>
+                  <!-- <td style="text-align: center" class="text-right"><?php //echo $averageUsage?></td> -->
+                  <td style="text-align: center"><?php echo number_format($row['stock'], 0, ',', ' ')?></td>
+              
+                  <!-- <td style="text-align: center"><?php //echo number_format($row['current_week']*1, 0, ',', ' ') ;  ?></td> -->
+                  <!-- <td class="balance" data-cash="<?php //echo $row['currentWeekBalance']?>" style="text-align: center"><?php //echo number_format($row['currentWeekBalance'], 0, ',', ' ') ;  ?></td> -->
+                  <!-- <td style="text-align: center"><?php //echo number_format($row['next_week']*1, 0, ',', ' ') ;  ?></td> -->
+                  <!-- <td   class="balance" data-cash="<?php //echo $row['nextWeekBalance']?>" style="text-align: center"><?php //echo number_format($row['nextWeekBalance'], 0, ',', ' ') ;  ?></td> -->
+                  <td style="text-align: center"><?php echo number_format($row['current_month'], 0, ',', ' ') ?></td>
+                  <td class="balance" data-cash="<?=$row['currentMonthBalance']?>" style="text-align: center"><?php echo number_format($row['currentMonthBalance'], 0, ',', ' ') ?></td>
+              </tr>
+            <?php endforeach; ?>
+        </tbody>
 
 
-    </table>
+      </table>
+    </div>
 </div>
 <?
 
@@ -131,7 +134,20 @@
       let tableId = $('.table-req').attr('id');
 			exportExcel(tableId);
     })		
-		$('#loading').hide();
+
+
+
+
+    $(document).ready(function(){
+      $('.balance').each(function(){
+        let cash = $(this).data('cash');
+        if(cash < 0){
+          $(this).css('background-color', '#e46c6c');
+          $(this).css('color', 'white');
+          $(this).css('font-weight', 'bold');
+        }
+      })
+    })
 
 	
 <?php $this->registerJs(ob_get_clean());?>
