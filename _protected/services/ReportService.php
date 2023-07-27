@@ -2784,7 +2784,7 @@ class ReportService
             $generalPartList[$key]['stock'] = round($part['stock']*1);
 
             $generalPartList[$key]['currentWeekBalance']  = $generalPartList[$key]['stock'] - $generalPartList[$key]['current_week'];
-            $generalPartList[$key]['nextWeekBalance']     = $generalPartList[$key]['stock'] - $generalPartList[$key]['next_week'];
+            $generalPartList[$key]['nextWeekBalance']     = $generalPartList[$key]['currentWeekBalance'] - $generalPartList[$key]['next_week'];
             $generalPartList[$key]['currentMonthBalance'] = $generalPartList[$key]['stock'] - $generalPartList[$key]['current_month'];
         }
 
