@@ -3925,7 +3925,7 @@ class ReportController extends AppController {
   public function actionRequirementShort($filter=null)
   {
     // $this->checkReportAccess();
-    $this->layout = "req";
+    // $this->layout = "req";
     // $query = "
     //     select p.part_no,p.part_name,p.part_color, p.remark, cs.name csourse, a.*  from
     //     (

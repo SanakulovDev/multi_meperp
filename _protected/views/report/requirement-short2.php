@@ -11,30 +11,27 @@
 <div class="req-index">
     <div class="panel">
         <div class="panel-heading">
-                <img style="height:28px;" src="/img/mep1.jpg" title="<?php echo Yii::$app->params['comp_name'] ?>" class="pull-left"/>
-                <h3 class="pull-left" style="margin: 5px 0px -5px 10px;">
-                <?=Yii::t('app', $this->title)?>
-                <span id="calc_at" style="font-size: 14px;color: #a29393;"><?=$loading?></span>
-            </h3>
+              <div class="pull-left">
+                <a href="<?= \yii\helpers\Url::to(['report/requirement-short', 'filter' => 1])?>" class="btn btn-success">Фильтр</a>
+                <a href="<?= \yii\helpers\Url::to(['report/requirement-short'])?>" class="btn btn-danger">Очистить фильтра</a>
+              </div>
             <p class="pull-right" style="margin: 0px">
               <?=Html::a(Yii::t('app', 'btn-download'), ['#'], ['class' => 'btn btn-info btn-sm', 'id' => 'btnDownload'])?>
             </p>
             <div style="clear: both;"></div>
         </div>
 
-      <div class="">
-        <a href="<?= \yii\helpers\Url::to(['report/requirement-short', 'filter' => 1])?>" class="btn btn-success">Фильтр</a>
-        <a href="<?= \yii\helpers\Url::to(['report/requirement-short'])?>" class="btn btn-danger">Очистить фильтра</a>
-      </div>    </div>
+          
+    </div>
 
-    <div class="main-content" style="max-height: 80vh;
+    <div class="man-content" style="max-height: 80vh;
     overflow: scroll;
     position: relative;">
 
       <table class="table table-req" id="fix_table_d">
         <thead style="    position: sticky;
     top: 0;">
-                  <tr class="tr_head">
+                  <tr class="tr_head" style="background-color: #c7c0c0;">
                       <th style="width: 30px;" class="text-center">№</th>
                       <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Part')?></th>
                       <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Part color')?></th>
