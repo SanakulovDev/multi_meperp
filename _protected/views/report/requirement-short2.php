@@ -27,7 +27,7 @@
         <a href="<?= \yii\helpers\Url::to(['report/requirement-short'])?>" class="btn btn-danger">Очистить фильтра</a>
       </div>    </div>
 
-    <div class="man-content" style="max-height: 80vh;
+    <div class="main-content" style="max-height: 80vh;
     overflow: scroll;
     position: relative;">
 

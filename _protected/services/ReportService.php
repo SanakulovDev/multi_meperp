@@ -2789,7 +2789,8 @@ class ReportService
         }
 
 
-
+      $columns = array_column($generalPartList, 'currentMonthBalance');
+      array_multisort($columns, SORT_ASC, $generalPartList);
       return $generalPartList;
     }
 

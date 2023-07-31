@@ -134,7 +134,7 @@ ob_start();
                   <td class="bg-lighties"><?= $model->time?></td>
                   <td class="bg-lighties"><?= divideString($model->powerPlan?$model->powerPlan->special:0 , 3)?></td>
                   <td class="bg-lighties"><?= divideString($model->fact*1, 3)?></td>
-                  <td class="bg-lighties"><?= divideString((($model->powerPlan?$model->powerPlan->special:0) - $model->fact), 3)?></td>
+                  <td class="bg-lighties balance"><?= divideString((($model->powerPlan?$model->powerPlan->special:0) - $model->fact), 3)?></td>
                 </tr>
               </tbody>
           </table>
@@ -186,7 +186,7 @@ ob_start();
           
          
 
-          <?php if(!empty($model2)):?>
+          <?php if(!empty($model3)):?>
             <div class="row">
               <div class="col-md-10">
                 <table class="table table-bordered table2">
@@ -204,7 +204,7 @@ ob_start();
                   </thead>
                   <tbody>
                   <?php $index = 0;?>
-                    <?php foreach($model2 as $item):?>
+                    <?php foreach($model3 as $item):?>
                       <?php if($item->part  && $item->part->state !== 2):?>
                         <?php
                           $qty = 0;

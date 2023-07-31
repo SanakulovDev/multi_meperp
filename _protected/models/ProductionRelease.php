@@ -97,16 +97,35 @@ class ProductionRelease extends \yii\db\ActiveRecord
 
     // norma rasxod product_specification_item 
     const STATUS_ACTIVE = 1;
-    public static function getProductSpecificationItems($part_id,$forma=0)
+    public static function getProductSpecificationItems($part_id,$forma=0, $state = 1)
     {
       $model = ProductSpecification::find()->where(['part_id' => $part_id, 'status' => self::STATUS_ACTIVE])->one();
-
+      $data = [];
       if($model){
         if($forma == 1){
           return $model;
         }
         $items = $model->productSpecificationItems;
-        return $items;
+        foreach($items as $item){
+          
+          if($item->part){
+            if($state == 1){
+              if($item->part->state != 2){
+                $data[] = $item;
+              }
+            }
+            elseif($state == 2){
+              if($item->part->state == 2){
+                $data[] = $item;
+              }
+            }
+            else{
+              $data[] = $item;
+            }
+            // return $item;
+          }
+        }
+        return $data;
       }
       return null;
     }

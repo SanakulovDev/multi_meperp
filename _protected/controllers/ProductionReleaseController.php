@@ -62,10 +62,11 @@ class ProductionReleaseController extends Controller
         $lines  = ProductionOrder::getLines();
         $shifts = ProductionOrder::getShifts();
         $model = $this->findModel($id);
-        $model2 = ProductionRelease::getProductSpecificationItems($model->part_id);
+        $model2 = ProductionRelease::getProductSpecificationItems($model->part_id, 0, 2);
+        $model3 = ProductionRelease::getProductSpecificationItems($model->part_id, 0, 1);
         $mainProductSpecification = ProductionRelease::getProductSpecificationItems($model->part_id, 1);
-        // vd($mainProductSpecification);
-        return $this->render('view', compact('model', 'lines', 'shifts', 'model2', 'mainProductSpecification', 'id'));  
+        // vd($model2);
+        return $this->render('view', compact('model', 'lines', 'shifts', 'model2', 'model3', 'mainProductSpecification', 'id'));  
     }
 
     /**
