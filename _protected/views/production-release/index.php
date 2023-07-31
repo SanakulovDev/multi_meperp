@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{update}{delete} ',
+                'template' => '{update}{view}{delete} ',
                 'header' => '<i class="fa fa-fw fa-gears"></i>',
                 'headerOptions' => ['style' => 'min-width:50px;text-align:center;vertical-align:middle;color:#3c8dbc;'],
                 'contentOptions' => ['style' => 'min-width:50px;text-align:center;vertical-align:middle;'],

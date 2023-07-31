@@ -873,5 +873,6 @@ return [
   'Power' => 'Kuch',
   'Plan Power' => 'Reja kuchlari',
   'Max Power' => 'Maksimal kuch', 
+  'Production Order Number' => 'Ishlab chiqarish buyurtma raqami',
 ];
 ?>

@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use app\models\Part;
 use app\models\ProductionOrder;
+use app\models\ProductionPower;
 /**
  * This is the model class for table "production_release".
  *
@@ -38,6 +39,7 @@ class ProductionRelease extends \yii\db\ActiveRecord
             [['part_id', 'line', 'quantity', 'created_by'], 'integer'],
             [['target_date', 'created', 'updated'], 'safe'],
             [['part_name', 'pr_order_number', 'shift', 'time'], 'string', 'max' => 255],
+            [['fact'], 'number']
         ];
     }
 
@@ -56,6 +58,7 @@ class ProductionRelease extends \yii\db\ActiveRecord
             'shift' => Yii::t('app', 'Shift'),
             'time' => Yii::t('app', 'Time'),
             'quantity' => Yii::t('app', 'Quantity'),
+            'fact' => Yii::t('app', 'Fact'),
         ];
     }
 
@@ -78,5 +81,33 @@ class ProductionRelease extends \yii\db\ActiveRecord
             5 => 'Месяцы',
             6 => 'Годы',
         ];
+    }
+
+    // production power integration
+    public  function getPowerPlan()
+    {
+      return $this->hasOne(ProductionPower::className(), ['part_id' => 'part_id', 'line' => 'line']);
+    }
+
+    // fact
+    public function getPowerFact()
+    {
+      return 0;
+    }
+
+    // norma rasxod product_specification_item 
+    const STATUS_ACTIVE = 1;
+    public static function getProductSpecificationItems($part_id,$forma=0)
+    {
+      $model = ProductSpecification::find()->where(['part_id' => $part_id, 'status' => self::STATUS_ACTIVE])->one();
+
+      if($model){
+        if($forma == 1){
+          return $model;
+        }
+        $items = $model->productSpecificationItems;
+        return $items;
+      }
+      return null;
     }
 }

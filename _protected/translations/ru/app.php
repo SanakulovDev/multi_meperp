@@ -1088,5 +1088,8 @@ return [
   'Max Power' => 'Максимальная мощность',
   'Day' => 'День',
   'Production Plan Fact Daily' => 'План/Факт производства(ежедневный)',
+  'Production Order Number' => 'Номер производственного заказа',
+  'remark' => 'Примечание',
+
 ];
 

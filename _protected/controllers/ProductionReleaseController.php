@@ -62,7 +62,10 @@ class ProductionReleaseController extends Controller
         $lines  = ProductionOrder::getLines();
         $shifts = ProductionOrder::getShifts();
         $model = $this->findModel($id);
-        return $this->render('view', compact('model', 'lines', 'shifts'));
+        $model2 = ProductionRelease::getProductSpecificationItems($model->part_id);
+        $mainProductSpecification = ProductionRelease::getProductSpecificationItems($model->part_id, 1);
+        // vd($mainProductSpecification);
+        return $this->render('view', compact('model', 'lines', 'shifts', 'model2', 'mainProductSpecification', 'id'));  
     }
 
     /**
@@ -182,5 +185,31 @@ class ProductionReleaseController extends Controller
             Yii::$app->response->format = Response::FORMAT_JSON;
             return $orderNumber;
         }
+    }
+
+
+
+
+    // 2023-07-31
+    // Sanakulov Anvar
+    public function actionAddFact()
+    {
+      $post = Yii::$app->request->post();
+      if($post && isset($post['id']) && isset($post['fact'])){
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $model = ProductionRelease::findOne($post['id']);
+        $model->fact += $post['fact'];
+        if($model->save()){
+          return [
+            'status' => 1,
+          ];
+        }
+        
+        return [
+          'status' => 0,
+          'errors' => $model->errors,
+        ];
+        
+      }
     }
 }
