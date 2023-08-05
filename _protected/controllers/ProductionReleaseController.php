@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\ProductionRelease;
+use app\models\ProductionReleaseItem;
 use app\models\ProductionOrder;
 use app\models\Part;
 use app\models\ProductionReleaseSearch;
@@ -13,6 +14,7 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
+use app\models\Model;
 /**
  * ProductionReleaseController implements the CRUD actions for ProductionRelease model.
  */
@@ -61,12 +63,46 @@ class ProductionReleaseController extends Controller
     {
         $lines  = ProductionOrder::getLines();
         $shifts = ProductionOrder::getShifts();
-        $model = $this->findModel($id);
-        $model2 = ProductionRelease::getProductSpecificationItems($model->part_id, 0, 2);
+        $model  = $this->findModel($id);
+        $model2 = ProductionRelease::getProductSpecificationItems($model->part_id, 0, 0);
         $model3 = ProductionRelease::getProductSpecificationItems($model->part_id, 0, 1);
         $mainProductSpecification = ProductionRelease::getProductSpecificationItems($model->part_id, 1);
-        // vd($model2);
-        return $this->render('view', compact('model', 'lines', 'shifts', 'model2', 'model3', 'mainProductSpecification', 'id'));  
+        $dataSiro = ProductionRelease::getData($model2, $model);
+        $dataZames = ProductionRelease::getData($model3, $model);
+        $releaseIds = ProductionRelease::getReleaseId($model->part_id);
+        // vd($releaseIds); 
+        $dynamicModels = [ new ProductionReleaseItem()];
+        $post = Yii::$app->request->post();
+        if($post){
+          $dynamicModels = Model::createMultiple(ProductionReleaseItem::classname());
+          Model::loadMultiple($dynamicModels, $post);
+          // vd($post);
+          $valid = Model::validateMultiple($dynamicModels);
+          if($valid){
+            $transaction = \Yii::$app->db->beginTransaction();
+            try {
+                foreach ($dynamicModels as $dynamicModel) {
+                  $modelItem = ProductionReleaseItem::find()->where(['release_id' => $id])->andWhere(['partId' => $dynamicModel->partId])->one();
+                  if(empty($modelItem)){
+                    $modelItem = new ProductionReleaseItem();
+                  }
+                  $modelItem->setAttributes($dynamicModel->attributes);
+                  // vd($modelItem);
+                  if (! ($flag = $modelItem->save())) {
+                    $transaction->rollBack();
+                    break;
+                  }
+                }
+              if ($flag) {
+                $transaction->commit();
+                return $this->redirect(['view', 'id' => $model->id]);
+              }
+            } catch (Exception $e) {
+              $transaction->rollBack();
+            }
+          }
+        }
+        return $this->render('view', compact('model', 'lines', 'shifts', 'dataSiro', 'dataZames', 'mainProductSpecification', 'id', 'releaseIds', 'dynamicModels'));  
     }
 
     /**

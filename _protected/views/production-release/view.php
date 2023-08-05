@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\ProductionRelease */
@@ -11,6 +12,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Castle'), 'url' => [
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ob_start();
+
 ?>
     .header{
       height: 50px;
@@ -32,6 +34,7 @@ ob_start();
       padding: 7px 45px;
       border: 2px solid black;
       font-weight: bold;
+      cursor: pointer;  
     }
     th, td{
       text-align: left;
@@ -70,6 +73,21 @@ ob_start();
     .submit-btn{
       cursor: pointer;
     }
+    label{
+      float: left;
+    }
+    table input[type='checkbox']{
+      width: 40px;
+      height: 40px;
+    }
+    .wrapper-item{
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+    }
+    table input[type="number"]{
+      width: 100px;
+    }
 
 <?php $this->registerCss(ob_get_clean());?>
 <div class="production-release-view">
@@ -81,15 +99,14 @@ ob_start();
             <?= Yii::t('app', 'Line')?>
           </span>
         </div>
-        <?php foreach($lines as $line):?>
+        <?php foreach($lines as $key => $line):?>
           <?php $class ="";
-              $line = preg_replace('/[^0-9]/', '', $line);
-              if($model->line == $line){
+              if($model->line == $key){
                 $class = "bg-succesies";
               }
           ?>
           <div class="col-md-1 ">
-            <span class="bg-primaries  line <?=$class?>"><?= $line?></span>
+            <span data-releaseId="<?=$releaseIds[$key-1]?>" class="bg-primaries  line <?=$class?>"><?= $key?></span>
           </div>
         <?php endforeach;?>
       </div>
@@ -140,8 +157,9 @@ ob_start();
           </table>
           <br>
         </div>
+        <!-- Data Siro -->
         <div class="col-md-10">
-          <?php if(!empty($model2)):?>
+          <?php if(!empty($dataSiro)):?>
             <h3>Базовые сыря</h3>
             <table class="table table-bordered table2">
               <thead>
@@ -157,24 +175,22 @@ ob_start();
               </thead>
               <tbody>
                 <?php $index = 0;?>
-                <?php foreach($model2 as $item):?>
-                  <?php if($item->part  && $item->part->state == 2):?>
+                <?php foreach($dataSiro as $item):?>
                     <?php
-                      $qty = 0;
-                      $qty = $item->usage_qty /  $mainProductSpecification->amount * $model->quantity;
-                      $protsent = 0;
+                      // $qty = 0;
+                      // $qty = $item->usage_qty /  $mainProductSpecification->amount * $model->quantity;
+                      // $protsent = 0;
 
-                      $protsent = $item->usage_qty /  $model->quantity * 100;
+                      // $protsent = $qty /  $model->quantity * 100;
                     ?>
                     <tr>
                       <td class="bg-lighties"><?= ++$index?></td>
-                      <td class="bg-lighties"><?= $item->part->part_name?></td>
-                      <td class="bg-lighties"><?= divideString(round($qty*1), 3)?></td>
-                      <td class="bg-lighties"><?= $item->part->unit->unit_value?></td>
-                      <td class="bg-lighties"><?= $protsent?>%</td>
+                      <td class="bg-lighties"><?= $item['part_name']?></td>
+                      <td class="bg-lighties"><?= divideString($item['main_qty'], 3)?></td>
+                      <td class="bg-lighties"><?= $item['unit']?></td>
+                      <td class="bg-lighties"><?= $item['protsent']?>%</td>
                     </tr>
                     
-                  <?php endif;?>
                 <?php endforeach;?>
               </tbody>
             </table>
@@ -185,80 +201,116 @@ ob_start();
       
           
          
+        <!-- Data Zames -->
+          <?php if(!empty($dataZames)):?>
+            <?php 
+              function findMiddleIndex($array) {
+                $length = count($array);
+                
+                if ($length % 2 == 0) {
+                    // Dizi uzunluğu çiftse
+                    $middleIndex = $length / 2 - 1;
+                } else {
+                    // Dizi uzunluğu tekse
+                    $middleIndex = floor($length / 2);
+                }
+            
+                return $middleIndex;
+            }
+            
+            // Test için örnek bir dizi
+            $middleIndex = findMiddleIndex($dataZames);
 
-          <?php if(!empty($model3)):?>
+              ?>
             <div class="row">
               <div class="col-md-10">
-                <table class="table table-bordered table2">
-                  <thead>
-                    <tr>
-                      <th class="bg-primaries">№</th>
-                      <th class="bg-primaries"><?= Yii::t('app', 'Calculation name')?></th>
-                      <th class="bg-primaries"><?= Yii::t('app', 'Quantity')?></th>
-                      <th class="bg-primaries"><?= Yii::t('app', 'Unit')?></th>
-                      <th class="bg-primaries">Консентрация</th>
-                      <th class="bg-primaries right-border"><?= Yii::t('app', 'Fakt')?></th>
-                      <th class="bg-primaries left-border"></th>
-                      <th class="bg-primaries"><?= Yii::t('app', 'remark')?></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  <?php $index = 0;?>
-                    <?php foreach($model3 as $item):?>
-                      <?php if($item->part  && $item->part->state !== 2):?>
-                        <?php
-                          $qty = 0;
-                          $qty = $item->usage_qty /  $mainProductSpecification->amount * $model->quantity;
-                          $protsent = 0;
-
-                          $protsent = $item->usage_qty /  $model->quantity * 100;
-                        ?>
+                  <?php $form = ActiveForm::begin()?>
+                    <table class="table table-bordered table2">
+                      <thead>
                         <tr>
-                          <td class="bg-lighties"><?= ++$index?></td>
-                          <td class="bg-lighties"><?= $item->part->part_name?></td>
-                          <td class="bg-lighties"><?= divideString(round($qty*1, 2), 3)?></td>
-                          <td class="bg-lighties"><?= $item->part->unit->unit_value?></td>
-                          <td class="bg-lighties"><?= $protsent?>%</td>
-                          <td class="bg-lighties">
-                            <label for="vehicle-<?=$index?>">OK</label>
-                            <input type="checkbox" id="vehicle-<?=$index?>" name="vehicle1" value="<?=$index?>">
-                          </td>
-                          <td class="bg-lighties">
-                              
-                          </td>
-                          <td class="bg-lighties">
-
-                          </td>
-                          
+                          <th class="bg-primaries">№</th>
+                          <th class="bg-primaries"><?= Yii::t('app', 'Calculation name')?></th>
+                          <th class="bg-primaries"><?= Yii::t('app', 'Quantity')?></th>
+                          <th class="bg-primaries"><?= Yii::t('app', 'Unit')?></th>
+                          <th class="bg-primaries">Консентрация</th>
+                          <th class="bg-primaries right-border"><?= Yii::t('app', 'Fakt')?></th>
+                          <th class="bg-primaries left-border right-border"></th>
+                          <th class="bg-primaries left-border right-border"></th>
+                          <th class="bg-primaries"><?= Yii::t('app', 'remark')?></th>
                         </tr>
-                        
-                      <?php endif;?>
-                    <?php endforeach;?>
-                  </tbody>
-                </table>
-              </div>
-              <div class="col-md-2">
-                    <div class="row">
-                        <div class="col-md-12">
+                      </thead>
+                      <tbody>
+                      <?php $index = 0;?>
+                        <?php foreach($dataZames as $key => $item):?>
+                            
+                            <tr>
+                              <td class="bg-lighties">
+                                <?= ++$index?>
+                                <input type="hidden" value="<?=$id?>" name="ProductionReleaseItem[<?=$index-1?>][release_id]">
+                            </td>
+                              <td class="bg-lighties">
+                                <?= $item['part_name']?>
+                                <input type="hidden" value="<?=$item['part_id']?>" name="ProductionReleaseItem[<?=$index-1?>][partId]">
+                            </td>
+                              <td class="bg-lighties"><?= divideString($item['main_qty'], 3)?></td>
+                              <td class="bg-lighties"><?= $item['unit']?></td>
+                              <td class="bg-lighties"><?= $item['protsent']?>%</td>
+                              <td class="bg-lighties">
+                                <div class="wrapper-item">
+                                  <label for="vehicle-<?=$index?>">OK</label>
+                                  <input type="checkbox" data-id="<?=$index?>"  id="vehicle-<?=$index?>" value="<?= $item['status']?>"  class="form-checkbox" name="ProductionReleaseItem[<?=$index-1?>][status]">
+                                </div>
+                              </td>
+                              <td class="bg-lighties">
+                                  <!-- Umumiy table ni o'rtasiga  checkbox qo'yish kerak -->
+                                  <?php if($middleIndex == $key):?>
+                                    <div class="wrapper-item">
+                                      <label for="general-checkbox">OK</label>
+                                      <input type="checkbox" id="general-checkbox" name="general-checkbox">
+                                    </div>
+                                  <?php endif;?>
+                              </td>
+                              <td class="bg-lighties">
+                                  <input type="number" value="<?= $item['qty']?>" name="ProductionReleaseItem[<?=$index-1?>][qty]" id="fact-input-<?=$index?>" class="form-control" readonly>
+                                </td>
+                                <td class="bg-lighties">
+                                <input type="text" value="<?= $item['comment']?>" name="ProductionReleaseItem[<?=$index-1?>][comment]" class="form-control"  id="comment-input-<?=$index?>">
+
+                              </td>
+                              
+                            </tr>
+                            
+                        <?php endforeach;?>
+                      </tbody>
+                    </table>
+                    <button type="submit" class="submit-btn2 btn btn-success" style="float: right;">Сохранить</button>
+                  <?php ActiveForm::end();?>
+                </div>
+                <div class="col-md-2">
+                      <div class="row">
+                          <div class="col-md-12">
+                              <div class="box1 bg-primaries">
+                                  <span style="font-size: 45px;">№  <?= $id?></span>
+                              </div>
+                          </div>
+                          <div class="col-md-12 " style="margin-top: 20px;">
                             <div class="box1 bg-primaries">
-                                <span style="font-size: 45px;">№  <?= $id?></span>
+                              <span style="font-size: 25px;">Количество замесов</span>
+                              <input type="number" class="form-control zamess-input" required>
                             </div>
-                        </div>
-                        <div class="col-md-12 " style="margin-top: 20px;">
-                          <div class="box1 bg-primaries">
-                            <span style="font-size: 25px;">Количество замесов</span>
-                            <input type="number" class="form-control zamess-input" required>
                           </div>
-                        </div>
-                        <div class="col-md-12 " style="margin-top: 20px;">
-                          <div class="box1 submit-btn bg-primaries">
-                            <span  style="font-size: 45px;">OK</span>
+                          <div class="col-md-12 " style="margin-top: 20px;">
+                            <div class="box1 submit-btn bg-primaries">
+                              <span  style="font-size: 45px;">OK</span>
+                            </div>
                           </div>
-                        </div>
-                    </div>
+                      </div>
+                </div>
               </div>
-            </div>
+                <!-- submit btn -->
+                
             
+
           <?php endif; ?>
 
 
@@ -292,6 +344,69 @@ $(function(){
         alert('Ошибка');
       }
     }) 
+  })
+
+
+
+  // form checkbox
+  $('body').on('click', '.form-checkbox', function(){
+    let id = $(this).data('id');
+    if ($(this).is(':checked')) {
+      $('#fact-input-'+id).removeAttr('readonly');
+      $(this).val(1);
+    }
+    else{
+      $(this).val(0);
+      $('#fact-input-'+id).attr('readonly', true);
+    }
+    
+  })
+
+
+  $('.form-checkbox').each(function(){
+    let id        = $(this).data('id');
+    let variable  = $(this).val();
+    if(variable == 1){
+      $('#fact-input-'+id).removeAttr('readonly');
+      $(this).attr('checked', true);
+    }
+    else{
+      $('#fact-input-'+id).attr('readonly', true);
+      $(this).removeAttr('checked');
+    }
+  })
+
+  // general checkbox
+  $('body').on('click', '#general-checkbox', function(){
+    if ($(this).is(':checked')) {
+      $('.form-checkbox').each(function(){
+        $(this).val(1);
+        let id = $(this).data('id');
+        //prop checked
+        $(this).prop('checked', true);
+        $('#fact-input-'+id).removeAttr('readonly');
+      })
+    }
+    else{
+      $('.form-checkbox').each(function(){
+        $(this).removeAttr('checked');
+        $(this).prop('checked', false);
+        $(this).val(0);
+        let id = $(this).data('id');
+        $('#fact-input-'+id).attr('readonly', true);
+      })
+    }
+  })
+
+
+  // header qismidagi buttonlarni href qilish
+  $('body').on('click', '.line', function(){
+    let id = $(this).data('releaseid');
+    if(id == 0){
+      alert('Нет данных');
+      return false;
+    }
+    window.location.href = '<?=Yii::$app->urlManager->createUrl(['production-release/view'])?>'+'?id='+id;
   })
 
 

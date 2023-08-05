@@ -89,11 +89,7 @@ class ProductionRelease extends \yii\db\ActiveRecord
       return $this->hasOne(ProductionPower::className(), ['part_id' => 'part_id', 'line' => 'line']);
     }
 
-    // fact
-    public function getPowerFact()
-    {
-      return 0;
-    }
+    
 
     // norma rasxod product_specification_item 
     const STATUS_ACTIVE = 1;
@@ -110,12 +106,12 @@ class ProductionRelease extends \yii\db\ActiveRecord
           
           if($item->part){
             if($state == 1){
-              if($item->part->state != 2){
+              if($item->part->state != 0){
                 $data[] = $item;
               }
             }
-            elseif($state == 2){
-              if($item->part->state == 2){
+            elseif($state == 0){
+              if($item->part->state == $state){
                 $data[] = $item;
               }
             }
@@ -128,5 +124,51 @@ class ProductionRelease extends \yii\db\ActiveRecord
         return $data;
       }
       return null;
+    }
+
+
+    public static function  getData($models, $item)
+    {
+      $mainSpecification = self::getProductSpecificationItems($item->part_id, 1);
+      $data = [];
+      if(!empty($models)){
+        foreach($models as $key => $model){
+            $productionReleaseItems = ProductionReleaseItem::find()->where(['release_id' => $item->id])->andWhere(['partId' => $model->part_id])->one();
+            $data[$key]['part_id'] = $model->part_id;
+            $data[$key]['part_name'] = $model->part? substr($model->part->part_no.'  '.$model->part->part_name, 0, 45) : '';
+            $data[$key]['main_qty']  = round($model->usage_qty / $mainSpecification->amount * $item->quantity, 2);
+            $data[$key]['unit'] = $item->part->unit->unit_value;
+            $data[$key]['protsent'] = round($data[$key]['main_qty'] / $item->quantity * 100, 2);
+            $data[$key]['qty'] = $productionReleaseItems? round($productionReleaseItems->qty) : 0;
+            $data[$key]['comment'] = $productionReleaseItems? $productionReleaseItems->comment : '';
+            $data[$key]['status'] = $productionReleaseItems? $productionReleaseItems->status : 0;
+          }
+      }
+      return $data;
+    }
+
+    // get release production_release_item
+    public function getReleaseItems()
+    {
+      return $this->hasMany(ProductionReleaseItem::className(), ['release_id' => 'id']);
+    }
+
+
+
+    // partId berilganda barcha liniyalardagi releaseId larni olish
+    public static function getReleaseId($partId)
+    {
+      $data       = [];
+      $lines      = ProductionOrder::getLines();
+      foreach($lines as $key => $line){
+        $model      = ProductionRelease::find()->where(['part_id' => $partId, 'line' => $key])->one();
+        if($model){
+          $data[]   = $model->id;
+        }
+        else{
+          $data[]   = 0;
+        }
+      }
+      return $data;
     }
 }
