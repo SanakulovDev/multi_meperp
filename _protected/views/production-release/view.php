@@ -30,7 +30,7 @@ ob_start();
 		    background-color: #f2f2f2;
         font-weight: bold;
     } 
-    .header .line{
+    .line {
       padding: 7px 45px;
       border: 2px solid black;
       font-weight: bold;
@@ -65,7 +65,7 @@ ob_start();
       text-align: center;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
       border: 2px solid black;
       font-weight: bold;
       flex-direction: column;
@@ -295,8 +295,8 @@ ob_start();
                           </div>
                           <div class="col-md-12 " style="margin-top: 20px;">
                             <div class="box1 bg-primaries">
-                              <span style="font-size: 25px;">Количество замесов</span>
-                              <input type="number" class="form-control zamess-input" required>
+                              <span style="font-size: 20px;">Количество замесов</span>
+                              <input type="number"  style="height: 40px;"class="form-control zamess-input" required>
                             </div>
                           </div>
                           <div class="col-md-12 " style="margin-top: 20px;">
@@ -352,12 +352,12 @@ $(function(){
   $('body').on('click', '.form-checkbox', function(){
     let id = $(this).data('id');
     if ($(this).is(':checked')) {
-      $('#fact-input-'+id).removeAttr('readonly');
+      $('#fact-input-'+id).attr('readonly', true);
       $(this).val(1);
     }
     else{
       $(this).val(0);
-      $('#fact-input-'+id).attr('readonly', true);
+      $('#fact-input-'+id).removeAttr('readonly');
     }
     
   })
@@ -367,11 +367,11 @@ $(function(){
     let id        = $(this).data('id');
     let variable  = $(this).val();
     if(variable == 1){
-      $('#fact-input-'+id).removeAttr('readonly');
+      $('#fact-input-'+id).attr('readonly', true);
       $(this).attr('checked', true);
     }
     else{
-      $('#fact-input-'+id).attr('readonly', true);
+      $('#fact-input-'+id).removeAttr('readonly');
       $(this).removeAttr('checked');
     }
   })
@@ -382,9 +382,9 @@ $(function(){
       $('.form-checkbox').each(function(){
         $(this).val(1);
         let id = $(this).data('id');
+        $('#fact-input-'+id).attr('readonly', true);
         //prop checked
         $(this).prop('checked', true);
-        $('#fact-input-'+id).removeAttr('readonly');
       })
     }
     else{
@@ -393,7 +393,7 @@ $(function(){
         $(this).prop('checked', false);
         $(this).val(0);
         let id = $(this).data('id');
-        $('#fact-input-'+id).attr('readonly', true);
+        $('#fact-input-'+id).removeAttr('readonly');
       })
     }
   })
