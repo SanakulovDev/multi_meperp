@@ -69,13 +69,13 @@ class ProductionReleaseController extends Controller
         $mainProductSpecification = ProductionRelease::getProductSpecificationItems($model->part_id, 1);
 
         $special = $model->powerPlan?$model->powerPlan->special:0;
+        $model->mixerPlan = $special;
         if($special > 0){
           $model->planQty = $model->quantity / $special;
         }
         else{
           $model->planQty = 0;
         }
-
         $dataSiro = ProductionRelease::getData($model2, $model);
         $dataZames = ProductionRelease::getData($model3, $model);
         $releaseIds = ProductionRelease::getReleaseId($model->target_date);
