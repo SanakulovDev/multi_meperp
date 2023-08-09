@@ -67,12 +67,21 @@ class ProductionReleaseController extends Controller
         $model2 = ProductionRelease::getProductSpecificationItems($model->part_id, 0, 0);
         $model3 = ProductionRelease::getProductSpecificationItems($model->part_id, 0, 1);
         $mainProductSpecification = ProductionRelease::getProductSpecificationItems($model->part_id, 1);
+
+        $special = $model->powerPlan?$model->powerPlan->special:0;
+        if($special > 0){
+          $model->planQty = $model->quantity / $special;
+        }
+        else{
+          $model->planQty = 0;
+        }
+
         $dataSiro = ProductionRelease::getData($model2, $model);
         $dataZames = ProductionRelease::getData($model3, $model);
-        // vd($model->target_date);
         $releaseIds = ProductionRelease::getReleaseId($model->target_date);
-        // vd($releaseIds); 
         $dynamicModels = [ new ProductionReleaseItem()];
+
+
         $post = Yii::$app->request->post();
         if($post){
           $dynamicModels = Model::createMultiple(ProductionReleaseItem::classname());

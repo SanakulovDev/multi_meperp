@@ -29,6 +29,8 @@ class ProductionRelease extends \yii\db\ActiveRecord
         return 'production_release';
     }
 
+    public $planQty = 0;
+
     /**
      * {@inheritdoc}
      */
@@ -39,7 +41,7 @@ class ProductionRelease extends \yii\db\ActiveRecord
             [['part_id', 'line', 'quantity', 'created_by'], 'integer'],
             [['target_date', 'created', 'updated'], 'safe'],
             [['part_name', 'pr_order_number', 'shift', 'time'], 'string', 'max' => 255],
-            [['fact'], 'number']
+            [['fact', 'planQty'], 'number']
         ];
     }
 
@@ -136,9 +138,9 @@ class ProductionRelease extends \yii\db\ActiveRecord
             $productionReleaseItems = ProductionReleaseItem::find()->where(['release_id' => $item->id])->andWhere(['partId' => $model->part_id])->one();
             $data[$key]['part_id'] = $model->part_id;
             $data[$key]['part_name'] = $model->part? substr($model->part->part_no.'  '.$model->part->part_name, 0, 45) : '';
-            $data[$key]['main_qty']  = round($model->usage_qty / $mainSpecification->amount * $item->quantity, 2);
+            $data[$key]['main_qty']  = round($model->usage_qty / $mainSpecification->amount * $item->planQty);
             $data[$key]['unit'] = $item->part->unit->unit_value;
-            $data[$key]['protsent'] = round($data[$key]['main_qty'] / $item->quantity * 100, 2);
+            $data[$key]['protsent'] = round($data[$key]['main_qty'] / $item->quantity * 100, 2  );
             $data[$key]['qty'] = $productionReleaseItems? round($productionReleaseItems->qty) : 0;
             $data[$key]['comment'] = $productionReleaseItems? $productionReleaseItems->comment : '';
             $data[$key]['status'] = $productionReleaseItems? $productionReleaseItems->status : 0;

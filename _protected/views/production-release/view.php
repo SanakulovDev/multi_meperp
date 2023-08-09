@@ -153,9 +153,9 @@ ob_start();
                   <td class="bg-lighties"><?= divideString($model->quantity, 3)?></td>
                   <td class="bg-lighties"><?= date('d.m.Y', strtotime($model->target_date))?></td>
                   <td class="bg-lighties"><?= $model->time?></td>
-                  <td class="bg-lighties"><?= divideString($model->powerPlan?$model->powerPlan->special:0 , 3)?></td>
+                  <td class="bg-lighties"><?= divideString($model->planQty, 3)?></td>
                   <td class="bg-lighties"><?= divideString($model->fact*1, 3)?></td>
-                  <td class="bg-lighties balance"><?= divideString((($model->powerPlan?$model->powerPlan->special:0) - $model->fact), 3)?></td>
+                  <td class="bg-lighties balance"><?= divideString(($model->planQty - $model->fact), 3)?></td>
                 </tr>
               </tbody>
           </table>
