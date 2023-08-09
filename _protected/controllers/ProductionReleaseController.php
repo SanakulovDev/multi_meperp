@@ -71,7 +71,7 @@ class ProductionReleaseController extends Controller
         $special = $model->powerPlan?$model->powerPlan->special:0;
         $model->mixerPlan = $special;
         if($special > 0){
-          $model->planQty = $model->quantity / $special;
+          $model->planQty = round($model->quantity / $special);
         }
         else{
           $model->planQty = 0;
