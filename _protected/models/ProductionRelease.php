@@ -156,12 +156,13 @@ class ProductionRelease extends \yii\db\ActiveRecord
 
 
     // partId berilganda barcha liniyalardagi releaseId larni olish
-    public static function getReleaseId($partId)
+    public static function getReleaseId($date)
     {
       $data       = [];
       $lines      = ProductionOrder::getLines();
+      $todayDate  = date('Y-m-d');
       foreach($lines as $key => $line){
-        $model      = ProductionRelease::find()->where(['part_id' => $partId, 'line' => $key])->one();
+        $model      = ProductionRelease::find()->where(['line' => $key])->andWhere(['target_date'=>$date])->orderBy(['id'=>SORT_ASC])->one();
         if($model){
           $data[]   = $model->id;
         }

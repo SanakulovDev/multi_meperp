@@ -69,7 +69,8 @@ class ProductionReleaseController extends Controller
         $mainProductSpecification = ProductionRelease::getProductSpecificationItems($model->part_id, 1);
         $dataSiro = ProductionRelease::getData($model2, $model);
         $dataZames = ProductionRelease::getData($model3, $model);
-        $releaseIds = ProductionRelease::getReleaseId($model->part_id);
+        // vd($model->target_date);
+        $releaseIds = ProductionRelease::getReleaseId($model->target_date);
         // vd($releaseIds); 
         $dynamicModels = [ new ProductionReleaseItem()];
         $post = Yii::$app->request->post();
@@ -87,6 +88,12 @@ class ProductionReleaseController extends Controller
                     $modelItem = new ProductionReleaseItem();
                   }
                   $modelItem->setAttributes($dynamicModel->attributes);
+                  if(in_array($modelItem->qty, [0, null])){
+                    $modelItem->status = 1;
+                  }
+                  if(empty($modelItem->status)){
+                    $modelItem->status = 0;
+                  }
                   // vd($modelItem);
                   if (! ($flag = $modelItem->save())) {
                     $transaction->rollBack();

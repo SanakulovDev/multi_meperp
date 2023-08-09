@@ -88,6 +88,10 @@ ob_start();
     table input[type="number"]{
       width: 100px;
     }
+    h3{
+      margin: 0;
+      padding: 0;
+    }
 
 <?php $this->registerCss(ob_get_clean());?>
 <div class="production-release-view">
@@ -141,7 +145,7 @@ ob_start();
                     <th  class="bg-primaries"><?=Yii::t('app', 'Balance')?></th>
 
                   </tr>
-              </thead>
+              </thead>  
               <tbody>
                 <tr>
                   <td class="bg-lighties"><?= $model->pr_order_number?></td>
@@ -224,6 +228,7 @@ ob_start();
               ?>
             <div class="row">
               <div class="col-md-10">
+                <h3>Замес</h3>
                   <?php $form = ActiveForm::begin()?>
                     <table class="table table-bordered table2">
                       <thead>
@@ -271,7 +276,7 @@ ob_start();
                                   <?php endif;?>
                               </td>
                               <td class="bg-lighties">
-                                  <input type="number" value="<?= $item['qty']?>" name="ProductionReleaseItem[<?=$index-1?>][qty]" id="fact-input-<?=$index?>" class="form-control" readonly>
+                                  <input type="number" class="fact-quantity form-control" data-id="<?=$index?>" value="<?= $item['qty']?>" name="ProductionReleaseItem[<?=$index-1?>][qty]" id="fact-input-<?=$index?>">
                                 </td>
                                 <td class="bg-lighties">
                                 <input type="text" value="<?= $item['comment']?>" name="ProductionReleaseItem[<?=$index-1?>][comment]" class="form-control"  id="comment-input-<?=$index?>">
@@ -351,14 +356,21 @@ $(function(){
   // form checkbox
   $('body').on('click', '.form-checkbox', function(){
     let id = $(this).data('id');
-    if ($(this).is(':checked')) {
-      $('#fact-input-'+id).attr('readonly', true);
-      $(this).val(1);
+    let factQty = $('#fact-input-'+id).val();
+    if(factQty != 0 &&  factQty != ''){
+      $(this).prop('checked', false);
     }
     else{
-      $(this).val(0);
-      $('#fact-input-'+id).removeAttr('readonly');
+      if ($(this).is(':checked')) {
+        $('#fact-input-'+id).attr('readonly', true);
+        $(this).val(1);
+      }
+      else{
+        $(this).val(0);
+        $('#fact-input-'+id).removeAttr('readonly');
+      }
     }
+    
     
   })
 
@@ -366,25 +378,39 @@ $(function(){
   $('.form-checkbox').each(function(){
     let id        = $(this).data('id');
     let variable  = $(this).val();
-    if(variable == 1){
-      $('#fact-input-'+id).attr('readonly', true);
-      $(this).attr('checked', true);
+    let factQty = $('#fact-input-'+id).val();
+    if(factQty != '' && factQty != '0'){
+      $(this).prop('checked', false);
     }
     else{
-      $('#fact-input-'+id).removeAttr('readonly');
-      $(this).removeAttr('checked');
+      if(variable == 1){
+        $('#fact-input-'+id).attr('readonly', true) ;
+        let factQty = $('#fact-input-'+id).val();
+        $(this).prop('checked', true);
+      }
+      else{
+        $('#fact-input-'+id).removeAttr('readonly');
+        $(this).removeAttr('checked');
+      }
     }
+    
   })
 
   // general checkbox
   $('body').on('click', '#general-checkbox', function(){
     if ($(this).is(':checked')) {
       $('.form-checkbox').each(function(){
-        $(this).val(1);
         let id = $(this).data('id');
-        $('#fact-input-'+id).attr('readonly', true);
-        //prop checked
-        $(this).prop('checked', true);
+        let factQty = $('#fact-input-'+id).val();
+        if(factQty != '' && factQty != '0'){
+          $(this).prop('checked', false);
+        }
+        else{
+          $(this).val(1);
+          $('#fact-input-'+id).attr('readonly', true);
+          //prop checked
+          $(this).prop('checked', true);
+        }
       })
     }
     else{
@@ -409,7 +435,15 @@ $(function(){
     window.location.href = '<?=Yii::$app->urlManager->createUrl(['production-release/view'])?>'+'?id='+id;
   })
 
-
+  function factVallidate(id){
+    let factQty = $('#fact-input-'+id).val();
+    if(factQty != '' || factQty != 0){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
   function ajaxFunc(url, data, type, callback){
     $.ajax({
       url: url,
