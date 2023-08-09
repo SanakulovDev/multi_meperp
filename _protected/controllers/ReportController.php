@@ -1273,7 +1273,7 @@ class ReportController extends AppController {
     $rateRUB = CurrencyRate::currentRate(Currency::findOneCurrencyCode("RUB")->id);
     $part = Part::find()
                 ->with("unit")
-                ->where(["state" => [Part::STATE_RAW, Part::STATE_FINISHED]])
+                ->where(["state" => [Part::STATE_RAW, Part::STATE_FINISHED, Part::STATE_CASTLE]])
                 ->all();
     $raws = [];
     $products = [];
