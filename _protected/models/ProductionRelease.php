@@ -141,7 +141,7 @@ class ProductionRelease extends \yii\db\ActiveRecord
             $data[$key]['part_name'] = $model->part? substr($model->part->part_no.'  '.$model->part->part_name, 0, 45) : '';
             $data[$key]['main_qty']  = round($model->usage_qty / $mainSpecification->amount * $item->mixerPlan, 2);
             $data[$key]['unit'] = $item->part->unit->unit_value;
-            $data[$key]['protsent'] = round($data[$key]['main_qty'] / $item->quantity * 100, 2  );
+            $data[$key]['protsent'] = round($model->usage_qty / $mainSpecification->amount * 100, 2  );
             $data[$key]['qty'] = $productionReleaseItems? round($productionReleaseItems->qty) : 0;
             $data[$key]['comment'] = $productionReleaseItems? $productionReleaseItems->comment : '';
             $data[$key]['status'] = $productionReleaseItems? $productionReleaseItems->status : 0;

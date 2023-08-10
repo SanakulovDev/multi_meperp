@@ -210,8 +210,13 @@ class Dashboard extends \yii\db\ActiveRecord
         $nowTime = date('d.m.Y H:i:s', time()).' AM';
         $data['nowTime'] = $nowTime;
         $data['data'] = [];
+        $shift = self::getShift();
+
         foreach($partList as $part){
             if(!empty($line) && $line != $part['line']){
+                continue;
+            }
+            if($part['shift'] != $shift){
                 continue;
             }
             $data['data'][] = [
