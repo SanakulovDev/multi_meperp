@@ -49,7 +49,6 @@ class CalculateProductController extends \yii\web\Controller
             $data .= '<tr class="item-'.$id.'">';    
             $data .= '<td><div class="bg-lighties">'.($id+1).'</div></td>';
             $data .= '<td>';
-            // form group
             $data .= '<div class="form-group field-calculateproduct-'.$id.'-type">';
             $data .= '<select class="select2 form-control part_id" data-id="'.$id.'" name="CalculateProduct['.$id.'][part_id]" id="calculateproduct-'.$id.'-part_id">';
             $data .= '<option value="">---</option>';
@@ -60,14 +59,10 @@ class CalculateProductController extends \yii\web\Controller
             $data .= '</div>';
             $data .= '</td>';
             $data .= '<td>';
-            // form  group
             $data .= '<div class="form-group field-calculateproduct-'.$id.'-quantity">';
             $data .= '<input type="number" data-id="'.$id.'" class="form-control quantity text-right" placeholder="0" name="CalculateProduct['.$id.'][quantity]" id="calculateproduct-'.$id.'-quantity">';
             $data .= '</div>';
             $data .= '</td>';
-            // $data .= '<td class="text-center">';
-            // $data .= '<button style="border: 2px solid black;" class="btn btn-danger text-center remove-product-item" data-id="'.$id.'"><i class="fa fa-trash"></i></button>';
-            // $data .= '</td>';
             $data .= '</tr>';
             return $data;
         }

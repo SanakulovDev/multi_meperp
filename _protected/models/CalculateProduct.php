@@ -108,12 +108,10 @@ class CalculateProduct extends \yii\db\ActiveRecord
     public static function table($models, $part_ids)
     {
         
-        // modelsni aylantirib jadval ko'rinishiga olib kelamiz
-        // part_ids -bu hamma mahsulot uchun umumiy bo'ladigan product_specification itemdan olingan part_id lar
         $headerPartNames = self::getPartNames($part_ids);
         $table = '';
         $table .= '<div class="col-md-12">';
-        $table .= '<table class="table">';
+        $table .= '<table class="table table1">';
         $table .= '<thead >';
         $table .= '<tr style="text-align:center">';
         $table .= '<th rowspan="2" style="width: 100px;">
@@ -136,12 +134,18 @@ class CalculateProduct extends \yii\db\ActiveRecord
         }
         $table .= '<th rowspan="2" style="width: 200px;"><div class="bg-primaries">'.Yii::t('app', 'Required Stock').'</div></th>';
         $table .= '<th rowspan="2"><div class="bg-primaries">'.Yii::t('app', 'Balance').'</div></th>';
-        $table .= '<th style="margin:0px; padding:0px!important;" colspan="2"><div class="bg-primaries" style="margin:0px!important;">'.Yii::t('app', 'Next Arrival').'</div></th> ';
+        // $table .= '<th style="margin:0px; padding:0px!important;" ><div class="bg-primaries" style="margin:0px!important;">'.Yii::t('app', 'Next Arrival').'</div></th> ';
+        $table .= '<th><div class="bg-primaries">'.Yii::t('app', 'Date').'</div></th>';
+        $table .= '<th><div class="bg-primaries">'.Yii::t('app', 'Quantity').'</div</th>';
         $table .= '</tr>';
-        $table .= '<tr>';
-        $table .= '<th style="margin:0px; padding:0px!important;"><div class="bg-primaries" style="margin:0px!important;">'.Yii::t('app', 'Date').'</div></th>';
-        $table .= '<th style="margin:0px; padding:0px!important;"><div class="bg-primaries" style="margin:0px!important;">'.Yii::t('app', 'Quantity').'</div</th>';
-        $table .= '</tr>';
+        // $table .= '<tr>';
+        // $table .= '<th></th>';
+        // $table .= '<th></th>';
+        // $table .= '<th></th>';
+        // $table .= '<th></th>';
+        // $table .= '<th></th>';
+        // $table .= '<th></th>';
+        // $table .= '</tr>';
 
         $table .= '</thead>';
         $table .= '<tbody>';
@@ -158,7 +162,6 @@ class CalculateProduct extends \yii\db\ActiveRecord
             $table .= '<td><div class="bg-lighties">'.$item['product_name'].'</div></td>';
             $table .= '<td><div class="bg-lighties">'.$item['current_stock'].'</div></td>';
             if(!empty($item['avl_items'])){
-                // vd($item['avl_items']);
                 foreach($item['avl_items'] as $key2 => $avl_item){
                     if($avl_item['avl_stock'] === 'xxx'){
                         $table .= '<td><div style="background-color:#faa2a2" class="bg-lighties">X</div></td>';
@@ -218,7 +221,7 @@ class CalculateProduct extends \yii\db\ActiveRecord
         if(!empty($part_ids) && !empty($quantities) && count($part_ids) == count($quantities)) {
             $table .='<h2 class="text-uppercase" style="font-weight: bold;">'.Yii::t('app', 'Availability for shipment').'</h2>';
             $table .='<div class="col-md-10">';
-            $table .='<table class="table">';
+            $table .='<table class="table table1">';
             $table .='<thead>';
             $table .='<tr>';
             $table .='<th style="width: 100px;"><div class="bg-primaries">№</div></th>';
@@ -226,6 +229,10 @@ class CalculateProduct extends \yii\db\ActiveRecord
             $table .='<th><div class="bg-primaries">'.Yii::t('app', 'Quantity').'</div></th>';
             $table .='<th><div class="bg-primaries">'.Yii::t('app', 'AVL').'</div></th>';
             $table .='<th><div class="bg-primaries">'.Yii::t('app', 'Balance').'</div></th>';
+            $table .= '<th></th>';
+            $table .= '<th></th>';
+            $table .= '<th></th>';
+            $table .= '<th></th>';
             $table .='</tr>';
             $table .='</thead>';
             $table .='<tbody>';
@@ -246,6 +253,10 @@ class CalculateProduct extends \yii\db\ActiveRecord
                 $table .='<td><div class="bg-lighties">'.$quantities[$key].'</div></td>';
                 $table .='<td><div class="bg-lighties">'.$avl.  '</div></td>';
                 $table .='<td><div class="bg-lighties" '.$style.'>'.$balance.'</div></td>';
+                $table .='<td></td>';
+                $table .='<td></td>';
+                $table .='<td></td>';
+                $table .='<td></td>';
                 $table .='</tr>';
             }
             $table .='</tbody>';

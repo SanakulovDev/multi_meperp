@@ -59,7 +59,8 @@ $partlist = PechatProduct::getPartsList();
     }
     .dashboard-row, .header-row{
         transform: translateX(95px);
-        //border: 1.5px solid black; margin: 20px; padding: 20px;
+        margin: 0;
+        padding: 0;
     }
    
 <?php  $content = ob_get_clean();?>
@@ -67,7 +68,10 @@ $partlist = PechatProduct::getPartsList();
 <div class="row  " style=" align-items:center; justify-content:center">
 
     <div class="col-md-10 header-row" style="">  
-    <h2 class="text-uppercase" style="font-weight: bold;"><?= Yii::t('app','Availability Calculator')?></h2>
+    <div class="">
+      <h2 class="text-uppercase" style="font-weight: bold; margin:0; padding: 0; display: inline-block;"><?= Yii::t('app','Availability Calculator')?></h2>
+      <button class="btn-download btn btn-info pull-right" type="button"><?= Yii::t('app', 'btn-download')?></button>
+    </div>
         <div class="col-md-8">
 
             <!-- activeform begin -->
@@ -98,14 +102,10 @@ $partlist = PechatProduct::getPartsList();
                                     </div>
                                 </td>
                                 <td>
-                                    <!-- <div class="bg-lighties"> -->
                                         <?= $form->field($model, "[$key]part_id")->dropDownList($partlist, ['prompt' => '---', 'class' => 'select2 form-control part_id', 'data-id'=>$key])->label(false) ?>
-                                    <!-- </div> -->
                                 </td>
                                 <td>
-                                    <!-- <div class="bg-lighties"> -->
                                         <?= $form->field($model, "[$key]quantity")->textInput(['class' => 'form-control quantity text-right', 'data-id'=>$key, 'type'=>'number', 'placeholder'=>'0'])->label(false) ?>
-                                    <!-- </div> -->
                                 </td>
 
                                
@@ -115,13 +115,11 @@ $partlist = PechatProduct::getPartsList();
                 </table>
                 <div class="row">  
                     <div class="col-md-4">  
-                        <!-- <button class="btn add-product-item" data-lastid="1" ><i class="fa fa-2x fa-plus"></i></button> -->
                         <button type="submit" class="btn submit-btn text-uppercase  btn-lg">ok</button>
 
                     </div>
                     <div class="col-md-8">
                         <div class="loader-ajax">
-                            <!-- loadinf.gif -->
                             <img src="./img/loader.gif" class="hide loader-ajax" width="500px" style="margin:0; padding:0;" alt="">        
                         </div>
 

@@ -1281,7 +1281,7 @@ class ReportController extends AppController {
       if($p->state == Part::STATE_RAW) {
         $raws[] = $p;
       }
-      if($p->state == Part::STATE_FINISHED) {
+      if(in_array($p->state , [Part::STATE_FINISHED, Part::STATE_CASTLE])) {
         $products[] = $p;
       }
     }
