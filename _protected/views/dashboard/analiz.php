@@ -149,7 +149,7 @@ $(function(){
 
     $('.line').on('click', function(){
         let id = $(this).data('id');
-        window.location.href = '<?= Url::to(['dashboard/analiz'])?>?line='+id;
+        window.location.href = '<?= Url::to(['dashboard/analiz'])?>?line='+id+'&status=1';
     })
 
     function ajaxFunc(url, param, type, callback){
@@ -201,16 +201,19 @@ $(function(){
     })
 
     // har 5 soniyada liniyalar almashsin
-    setInterval(function(){
-      let line = '<?=$term?>';
-      if(line == 7){
-        line = 0;
-      }
-      else{
-        line++;
-      }
-      window.location.href = '<?= Url::to(['dashboard/analiz'])?>?line='+line;
-    }, 5000);
+    if(<?= $status?> ==  0){
+       setInterval(function(){
+        let line = '<?=$term?>';
+        if(line == 7){
+          line = 0;
+        }
+        else{
+          line++;
+        }
+        window.location.href = '<?= Url::to(['dashboard/analiz'])?>?line='+line;
+      }, 5000);
+    }
+   
 })
 
 <?php $this->registerJs(ob_get_clean());?>

@@ -125,14 +125,18 @@ class DashboardController extends \yii\web\Controller
 
 
     // action analiz
-    public function actionAnaliz($line=0)
+    public function actionAnaliz($line=0, $status = 0)
     {
+      if($line == 0){
+        $status = 0;
+      }
        $this->layout='req';
        $lines = ProductionOrder::getLines();
        $lines = array_merge([0 => 'Все'], $lines);
         return $this->render('analiz', [
             'lines' => $lines,
             'term'  => $line,
+            'status' => $status,
         ]);
     }   
 
