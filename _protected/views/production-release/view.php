@@ -353,7 +353,7 @@ ob_start();
     </div>
 </div>
 
-<div class="pdf-print-view">
+<div class="pdf-print-view hide">
     <div class="header">
       <!-- <div class="row" style="display: flex; justify-content: space-between;align-items: center; margin-bottom: 20px; flex-direction:column;">
         
