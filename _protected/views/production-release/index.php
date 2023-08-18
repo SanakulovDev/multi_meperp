@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use yii\helpers\url;
+use yii\bootstrap\Modal;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ProductionReleaseSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -33,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{update}{view}{delete} ',
+                'template' => '{update}{view}{delete}{history}',
                 'header' => '<i class="fa fa-fw fa-gears"></i>',
                 'headerOptions' => ['style' => 'min-width:50px;text-align:center;vertical-align:middle;color:#3c8dbc;'],
                 'contentOptions' => ['style' => 'min-width:50px;text-align:center;vertical-align:middle;'],
@@ -51,13 +52,29 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]
                         );
                     },
+                    'history' => function($url, $model)  {
+                        
+                        $url = Url::toRoute(['production-release/history', 'id' => $model->id]);
+                        return Html::a(
+                            '<span  class="glyphicon glyphicon-time"></span>',
+                            false,
+                            [
+                                'class' => 'modalButtonHistory',
+                                'value' => $url,
+                                'title' => Yii::t('app', 'History'),
+                                'data-id' => $model->id,
+                                'data-status' => $model->status,
+                            ]
+                        );
+                    },
+                    
                 ],
             ],
 
             [
                 'attribute'=> 'part_id',
                 'value' => function($model) {
-                    return $model->part->part_no.' '.$model->part->part_name;
+                    return substr($model->part->part_no.' '.$model->part->part_name, 0, 45);
                 },
                 'filter' => $parts,
                 'filterInputOptions' => [
@@ -99,5 +116,52 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 
     <?php Pjax::end(); ?>
-
+    <!-- Modal -->
+    <?php
+        Modal::begin([
+            'id' => 'modal-release',
+            'header' => '<h4 class="modal-title">'.Yii::t('app', 'History').'</h4>',
+            'size' => 'modal-md',
+            'footer' => '
+              <a href="javascript:void(0)" class="btn btn-success close-release" >Закрыть Релезов</a>
+              ',
+        ]);
+        echo "<div id='modalContent'></div>";
+        Modal::end();
+    ?>
 </div>
+<?php  ob_start();?>
+$(function(){
+    $('.modalButtonHistory').click(function(){
+        $('#modal-release').modal('show')
+            .find('#modalContent')
+            .load($(this).attr('value'));
+        let status = $(this).attr('data-status');
+        if(status == 0){
+            $('#modal-release').find('.close-release').hide();
+        }
+        else{
+            $('#modal-release').find('.close-release').show();
+        }
+        $('#modal-release').find('.close-release').attr('data-id', $(this).attr('data-id'));
+    });
+
+    $('body').on('click', '.close-release', function(){
+        var id = $(this).attr('data-id');
+        $.ajax({
+            url: '/production-release/close-release',
+            type: 'GET',
+            data: {id: id},
+            success: function(data){
+                $('#modal-release').modal('hide');
+                $.pjax.reload({container: '#pjaxGrid'});
+            }
+        });
+    })
+
+})
+
+
+
+
+<?php $this->registerJs(ob_get_clean()); ?>

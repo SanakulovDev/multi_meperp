@@ -13,7 +13,7 @@ class ProductionPlanSearch extends ProductionPlan{
 	 */
 	public function rules(){
 		return [
-			[['id', 'part_id', 'warehouse_id', 'shift', 'target_qty', 'line'], 'integer'],
+			[['id', 'part_id', 'warehouse_id', 'shift', 'target_qty', 'line', 'type'], 'integer'],
 			[['production_date','comment'], 'safe'],
 		];
 	}
@@ -48,6 +48,39 @@ class ProductionPlanSearch extends ProductionPlan{
 		}
 		$query->joinWith(['warehouse', 'part','planComment']);
 		// grid filtering conditions
+    $this->type == 0;
+		$query->andFilterWhere(
+			[
+				'id'                           => $this->id,
+				'production_plan.part_id'      => $this->part_id,
+				'production_date'              => $this->production_date,
+				'production_plan.warehouse_id' => $this->warehouse_id,
+				'shift'                        => $this->shift,
+				'target_qty'                   => $this->target_qty,
+				'line'                         => $this->line,
+			])->orderBy(['production_date' => SORT_DESC])->all();
+
+    $query->andFilterWhere(['like', 'production_plan_comment.comment', $this->comment]);
+		return $dataProvider;
+	}
+  public function searchMonthly($params){
+		$query = ProductionPlan::find();
+		// add conditions that should always apply here
+		$dataProvider = new ActiveDataProvider(
+			[
+				'query' => $query,
+				'sort' => ['defaultOrder'=>'production_date desc']
+			]
+		);
+		$this->load($params);
+		if(!$this->validate()){
+			// uncomment the following line if you do not want to return any records when validation fails
+			// $query->where('0=1');
+			return $dataProvider;
+		}
+		$query->joinWith(['warehouse', 'part','planComment']);
+		// grid filtering conditions
+    $this->type == 1;
 		$query->andFilterWhere(
 			[
 				'id'                           => $this->id,

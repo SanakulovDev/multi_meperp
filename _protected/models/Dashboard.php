@@ -247,6 +247,10 @@ class Dashboard extends \yii\db\ActiveRecord
         $data = self::todayProductionByData($line);
         $html = '';
         foreach($data['data'] as $model){
+            // fact ==plan bo'lsa continue
+            if($model['fakt'] >= $model['plan']){
+                continue;
+            }
             $html .= '<div class="item-row">';
             $html .= '<div class="row " style="margin: 50px 0 25px 0;">';
             $html .= '<div class="col-md-3 text-left">';

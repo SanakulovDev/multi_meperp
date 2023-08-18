@@ -1090,6 +1090,7 @@ return [
   'Production Plan Fact Daily' => 'План/Факт производства(ежедневный)',
   'Production Order Number' => 'Номер производственного заказа',
   'remark' => 'Примечание',
+  'This release is closed' => 'Этот релиз закрыт',
 
 ];
 

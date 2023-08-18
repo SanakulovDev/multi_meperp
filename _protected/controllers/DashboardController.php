@@ -125,7 +125,7 @@ class DashboardController extends \yii\web\Controller
 
 
     // action analiz
-    public function actionAnaliz($line=null)
+    public function actionAnaliz($line=0)
     {
        $this->layout='req';
        $lines = ProductionOrder::getLines();

@@ -15,6 +15,7 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use app\models\Model;
+use app\models\ProductionReleaseFactHistory;
 /**
  * ProductionReleaseController implements the CRUD actions for ProductionRelease model.
  */
@@ -61,9 +62,14 @@ class ProductionReleaseController extends Controller
      */
     public function actionView($id)
     {
+        $identity = Yii::$app->user->identity;
         $lines  = ProductionOrder::getLines();
         $shifts = ProductionOrder::getShifts();
         $model  = $this->findModel($id);
+        if($model && $model->status == 0){
+          Yii::$app->session->setFlash('error', Yii::t('app', 'This release is closed'));
+          return $this->redirect(['index']);
+        }
         $model2 = ProductionRelease::getProductSpecificationItems($model->part_id, 0, 0);
         $model3 = ProductionRelease::getProductSpecificationItems($model->part_id, 0, 1);
         $mainProductSpecification = ProductionRelease::getProductSpecificationItems($model->part_id, 1);
@@ -80,7 +86,6 @@ class ProductionReleaseController extends Controller
         $dataZames = ProductionRelease::getData($model3, $model);
         $releaseIds = ProductionRelease::getReleaseId($model->target_date);
         $dynamicModels = [ new ProductionReleaseItem()];
-
 
         $post = Yii::$app->request->post();
         if($post){
@@ -247,15 +252,24 @@ class ProductionReleaseController extends Controller
     // Sanakulov Anvar
     public function actionAddFact()
     {
+      $identity = Yii::$app->user->identity;
       $post = Yii::$app->request->post();
+      $productionReleaseFactHistory = new ProductionReleaseFactHistory();
+      Yii::$app->response->format = Response::FORMAT_JSON;
+
+
       if($post && isset($post['id']) && isset($post['fact'])){
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        $model = ProductionRelease::findOne($post['id']);
-        $model->fact += $post['fact'];
-        if($model->save()){
-          return [
-            'status' => 1,
-          ];
+        $productionReleaseFactHistory->releaseId  = $post['id'];
+        $productionReleaseFactHistory->quantity   = $post['fact'];
+        $productionReleaseFactHistory->userId     = $identity->id;
+        if($productionReleaseFactHistory->save(false)){
+          $model = ProductionRelease::findOne($post['id']);
+          $model->fact += $post['fact'];
+          if($model->save()){
+            return [
+              'status' => 1,
+            ];
+          }
         }
         
         return [
@@ -263,6 +277,35 @@ class ProductionReleaseController extends Controller
           'errors' => $model->errors,
         ];
         
+      }
+    }
+
+
+    // release fact history
+    public function actionHistory($id)
+    {
+        $model = ProductionRelease::findOne($id);
+        if($model){
+
+          $history = ProductionReleaseFactHistory::find()->where(['releaseId' => $id])->all();
+          if(Yii::$app->request->isAjax){
+            return $this->renderAjax('history', compact('model', 'history'));
+          }
+          return $this->render('history', compact('model', 'history'));
+        }
+    }
+
+
+
+    // close zames 
+    public function actionCloseRelease($id)
+    {
+      $model = ProductionRelease::findOne($id);
+      if($model){
+        $model->status = 0;
+        if($model->save()){
+          return $this->redirect(['index']);
+        }
       }
     }
 }

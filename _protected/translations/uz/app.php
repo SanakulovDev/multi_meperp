@@ -874,5 +874,6 @@ return [
   'Plan Power' => 'Reja kuchlari',
   'Max Power' => 'Maksimal kuch', 
   'Production Order Number' => 'Ishlab chiqarish buyurtma raqami',
+  'This release is closed' => 'Ushbu chiqarish yopilgan',
 ];
 ?>

@@ -193,14 +193,24 @@ $(function(){
         let data = form.serialize();
         console.log(data);
         ajaxFunc(url, data, 'POST', function(data){
-            //let response = JSON.parse(data);
-            console.log(data);
             if(data.status == 1){
                 $('.modal').modal('hide');
                 $('.refresh').trigger('click');
             }
         })
     })
+
+    // har 5 soniyada liniyalar almashsin
+    setInterval(function(){
+      let line = '<?=$term?>';
+      if(line == 7){
+        line = 0;
+      }
+      else{
+        line++;
+      }
+      window.location.href = '<?= Url::to(['dashboard/analiz'])?>?line='+line;
+    }, 5000);
 })
 
 <?php $this->registerJs(ob_get_clean());?>
