@@ -1092,6 +1092,6 @@ return [
   'remark' => 'Примечание',
   'This release is closed' => 'Этот релиз закрыт',
   'Production plans monthly' => 'Планы производства ежемесячно',
-
+  'Monthly Requirement Short' => 'Обеспеченность',
 ];
 

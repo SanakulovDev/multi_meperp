@@ -3,11 +3,11 @@ namespace app\controllers;
 
 use app\components\Helpers;
 use app\models\Part;
-use app\models\ProductionPlan;
+use app\models\ProductionMonthlyPlan;
 use app\services\TelegramService;
 use app\models\ProductSpecification;
 use app\models\ProductionPlanComment;
-use app\models\ProductionPlanSearch;
+use app\models\ProductionMonthlyPlanSearch;
 use app\models\UploadForm;
 use app\models\UserWarehouse;
 use app\models\Warehouse;
@@ -34,12 +34,12 @@ use yii\web\Controller;
 class ProductionPlanMonthlyController extends Controller {
 
   /**
-   * Lists all ProductionPlan models.
+   * Lists all ProductionMonthlyPlan models.
    *
    * @return mixed
    */
   public function actionIndex() {
-    $searchModel = new ProductionPlanSearch();
+    $searchModel = new ProductionMonthlyPlanSearch();
     if(!Yii::$app->request->queryParams) {
       $searchModel->production_date = date('Y-m');
     }
@@ -64,7 +64,7 @@ class ProductionPlanMonthlyController extends Controller {
   }
 
   public function actionValidate($id = null) {
-    $model = $id === null ? new ProductionPlan() : ProductionPlan::findOne($id);
+    $model = $id === null ? new ProductionMonthlyPlan() : ProductionMonthlyPlan::findOne($id);
     if(Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
       Yii::$app->response->format = Response::FORMAT_JSON;
       return ActiveForm::validate($model);
@@ -81,9 +81,9 @@ class ProductionPlanMonthlyController extends Controller {
 
   public function actionIndex_report() {
     $need_month = (isset($_POST['need_month'])) ? $_POST['need_month'] : 0;
-    $shift = (isset($_POST['ProductionPlan']['shift'])) ? $_POST['ProductionPlan']['shift'] : 0;
-    $warehouse_id = (isset($_POST['ProductionPlan']['warehouse_id'])) ? $_POST['ProductionPlan']['warehouse_id'] : 0;
-    $model = new ProductionPlan();
+    $shift = (isset($_POST['ProductionMonthlyPlan']['shift'])) ? $_POST['ProductionMonthlyPlan']['shift'] : 0;
+    $warehouse_id = (isset($_POST['ProductionMonthlyPlan']['warehouse_id'])) ? $_POST['ProductionMonthlyPlan']['warehouse_id'] : 0;
+    $model = new ProductionMonthlyPlan();
     $where = "";
     if($need_month) {
       $where .= "production_plan.production_date between '".$need_month."-01' and '".$need_month."-31'";
@@ -97,7 +97,7 @@ class ProductionPlanMonthlyController extends Controller {
     if($where) {
       $DB_part_list = Part::find()
                           ->joinWith([
-                            "productionPlans" => function($query) use ($where) {
+                            "productionMonthlyPlans" => function($query) use ($where) {
                               $query->onCondition($where);
                             }
                           ])
@@ -109,7 +109,7 @@ class ProductionPlanMonthlyController extends Controller {
       $DB_part_list = Part::find()
                           ->where('status=1 and production_plan.part_id is not null')
                           ->joinWith([
-                              "productionPlans" => function($query) use ($need_month) {
+                              "productionMonthlyPlans" => function($query) use ($need_month) {
                                 $query->onCondition("production_plan.production_date between '".$need_month."-01' and '".$need_month."-31'");
                               }
                             ]
@@ -130,17 +130,17 @@ class ProductionPlanMonthlyController extends Controller {
   }
 
   /**
-   * Creates a new ProductionPlan model.
+   * Creates a new ProductionMonthlyPlan model.
    * If creation is successful, the browser will be redirected to the 'view' page.
    *
    * @return mixed
    */
   public function actionCreate() {
     $modelMain = new ProductionPlanShort();
-    $models	= [new ProductionPlan];
+    $models	= [new ProductionMonthlyPlan];
     if(Yii::$app->getRequest()->isAjax) {
       if($modelMain->load(Yii::$app->request->post())) {
-		  $models = Model::createMultiple(ProductionPlan::classname());
+		  $models = Model::createMultiple(ProductionMonthlyPlan::classname());
 		  Model::loadMultiple($models, Yii::$app->request->post());
 		//   vd($models);
         $valid = $modelMain->validate();
@@ -175,7 +175,7 @@ class ProductionPlanMonthlyController extends Controller {
                   	$tg["part_id"] 			= $spec->code;
                   	$tg["shift"] 			= $model->shift;
                   	$tg["target_qty"] 		= $model->target_qty;
-                  //TelegramService::productionPlan($tg);
+                  //TelegramService::productionMonthlyPlan($tg);
               	}
             if ($flag) {
                 // $transaction->commit();
@@ -193,7 +193,7 @@ class ProductionPlanMonthlyController extends Controller {
       } else {
         return $this->renderAjax('_form2', [
           'modelMain' 	=> $modelMain,
-          'models' 		=> (empty($models))?[new ProductionPlan]:$models
+          'models' 		=> (empty($models))?[new ProductionMonthlyPlan]:$models
         ]);
       }
     } else {
@@ -204,7 +204,7 @@ class ProductionPlanMonthlyController extends Controller {
 
   //dynamicform create
   public function actionCreate2() {
-    $model = new ProductionPlan();
+    $model = new ProductionMonthlyPlan();
     if(Yii::$app->getRequest()->isAjax) {
       if($model->load(Yii::$app->request->post())) {
         if($model->save(false)) {
@@ -220,7 +220,7 @@ class ProductionPlanMonthlyController extends Controller {
           $tg["part_id"] = $spec["code"];
           $tg["shift"] = $model["shift"];
           $tg["target_qty"] = $model["target_qty"];
-          TelegramService::productionPlan($tg);
+          TelegramService::productionMonthlyPlan($tg);
         } else {
           $data['status'] = 0;
           $data['errors'] = $model->getErrors();
@@ -235,7 +235,7 @@ class ProductionPlanMonthlyController extends Controller {
     }
   }
   /**
-   * Updates an existing ProductionPlan model.
+   * Updates an existing ProductionMonthlyPlan model.
    * If update is successful, the browser will be redirected to the 'view' page.
    *
    * @param int $id
@@ -248,12 +248,12 @@ class ProductionPlanMonthlyController extends Controller {
     $generalModel = $this->findModel($id);
     $modelMain->part_id 	= $generalModel->part_id;
     $modelMain->warehouse_id = $generalModel->warehouse_id;
-    $models = ProductionPlan::findAll($id);
+    $models = ProductionMonthlyPlan::findAll($id);
 
       if(Yii::$app->getRequest()->isAjax) {
         if($modelMain->load(Yii::$app->request->post())) {
         $oldIDs = ArrayHelper::map($models, 'id', 'id');
-        $models = Model::createMultiple(ProductionPlan::classname(), $models);
+        $models = Model::createMultiple(ProductionMonthlyPlan::classname(), $models);
         Model::loadMultiple($models, Yii::$app->request->post());
         $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($models, 'id', 'id')));
         
@@ -265,7 +265,7 @@ class ProductionPlanMonthlyController extends Controller {
         $transaction = \Yii::$app->db->beginTransaction();
         try {
           if (!empty($deletedIDs)) {
-            ProductionPlan::deleteAll(['id' => $deletedIDs]);
+            ProductionMonthlyPlan::deleteAll(['id' => $deletedIDs]);
           }
           foreach ($models as $model) {
             $model->part_id 		= $modelMain->part_id;
@@ -292,7 +292,7 @@ class ProductionPlanMonthlyController extends Controller {
         } else {
           return $this->renderAjax('_form2', [
             'modelMain' => $modelMain,
-        'models' => (empty($models)) ? [new ProductionPlan] : $models
+        'models' => (empty($models)) ? [new ProductionMonthlyPlan] : $models
           ]);
         }
       } else {
@@ -322,7 +322,7 @@ class ProductionPlanMonthlyController extends Controller {
     }
   }
   /**
-   * Comment an existing ProductionPlan definition.
+   * Comment an existing ProductionMonthlyPlan definition.
    * If comment is successful, the browser will be redirected to the 'view' page.
    *
    * @param int $id
@@ -359,7 +359,7 @@ class ProductionPlanMonthlyController extends Controller {
   }
 
   /**
-   * Deletes an existing ProductionPlan model.
+   * Deletes an existing ProductionMonthlyPlan model.
    * If deletion is successful, the browser will be redirected to the 'index' page.
    *
    * @param int $id
@@ -389,7 +389,7 @@ class ProductionPlanMonthlyController extends Controller {
     foreach($user_warehouse as $wh) {
       $wh_ids[] = $wh->warehouse->id;
     }
-    $model = new ProductionPlan();
+    $model = new ProductionMonthlyPlan();
     $model_uploadForm = new UploadForm();
     if(!file_exists('uploads')) {
       FileHelper::createDirectory('uploads');
@@ -455,18 +455,18 @@ class ProductionPlanMonthlyController extends Controller {
             if($part_date <= $today) {
               if(Yii::$app->params['plan_freeze_time'] > 0) {
                 /** 1-smena chegaralangan vaqt oralig`i uchun */
-                if(ProductionPlan::allowEdit(1, $part_date) == 1) {
+                if(ProductionMonthlyPlan::allowEdit(1, $part_date) == 1) {
                   $insert_data11[] = [$part_id, $part_date, $part_warehouse_id, 1, $target_qty1];
 //                  $insert_data21[] = [$part_id, $part_date, $part_warehouse_id, 2, $target_qty2];
                 }
                 /** 2-smena chegaralangan vaqt oralig`i uchun */
                 if( // bugungi 2-smenadan boshlab
-                  (ProductionPlan::allowEdit(2, $part_date) == 1) &&
+                  (ProductionMonthlyPlan::allowEdit(2, $part_date) == 1) &&
                   time() >= strtotime(Yii::$app->params['shifts']['1']['0'])
                 ) {
                   $insert_data21[] = [$part_id, $part_date, $part_warehouse_id, 2, $target_qty2];
                 } elseif( // kechagi 2-smenadan boshlab
-                  (ProductionPlan::allowEdit(2, $kecha) == 1) &&
+                  (ProductionMonthlyPlan::allowEdit(2, $kecha) == 1) &&
                   time() >= strtotime(Yii::$app->params['shifts']['2']['1']['0']) &&
                   time() < strtotime(Yii::$app->params['shifts']['2']['1']['1'])
                 ) {
@@ -553,27 +553,27 @@ class ProductionPlanMonthlyController extends Controller {
           if($yil_oy >= date("Y-m")) {
             if($yil_oy == date("Y-m")) {
               if(count($insert_data11) > 0 || count($insert_data1) > 0) {
-                ProductionPlan::deleteAll(
+                ProductionMonthlyPlan::deleteAll(
                   "shift=1 and production_date between '".$today."' and '".$month_end."' and part_id in(".$part_ids.")"
                 );
               }
               if(count($insert_data21) > 0 || count($insert_data1) > 0) {
-                ProductionPlan::deleteAll(
+                ProductionMonthlyPlan::deleteAll(
                   "shift=2 and production_date between '".$today."' and '".$month_end."' and part_id in(".$part_ids.")"
                 );
               }
               if(count($insert_data22) > 0) {
-                ProductionPlan::deleteAll(
+                ProductionMonthlyPlan::deleteAll(
                   "shift=2 and production_date between '".$kecha."' and '".$month_end."' and part_id in(".$part_ids.")"
                 );
               }
-              ProductionPlan::deleteAll(
+              ProductionMonthlyPlan::deleteAll(
                 "production_date between '".$erta."' and '".$month_end."' and part_id in(".$part_ids.")"
               );
             }
             if($yil_oy > date("Y-m")) {
               if(count($insert_data3) > 0) {
-                ProductionPlan::deleteAll(
+                ProductionMonthlyPlan::deleteAll(
                   "production_date between '".$yil_oy."-01' and '".$month_end."' and part_id in(".$part_ids.")"
                 );
               }
@@ -613,7 +613,7 @@ class ProductionPlanMonthlyController extends Controller {
   }
 
   public function actionUploadToday() {
-    $model = new ProductionPlan();
+    $model = new ProductionMonthlyPlan();
     $model_uploadForm = new UploadForm();
     $user_id = Yii::$app->user->id;
     $user_warehouse = UserWarehouse::find()->select('warehouse_id')
@@ -642,9 +642,9 @@ class ProductionPlanMonthlyController extends Controller {
         $err_text = "";
         $err = 0;
         /** 1-smena chegaralangan vaqt oralig`i uchun */
-        $allowShift1 = (ProductionPlan::allowEdit(1, $today) == 1) ? 1 : 0;
+        $allowShift1 = (ProductionMonthlyPlan::allowEdit(1, $today) == 1) ? 1 : 0;
         /** 2-smena chegaralangan vaqt oralig`i uchun */
-        $allowShift2 = (ProductionPlan::allowEdit(2, $today) == 1) ? 1 : 0;
+        $allowShift2 = (ProductionMonthlyPlan::allowEdit(2, $today) == 1) ? 1 : 0;
         for($rows = 4; $rows <= ($data['highestRow']); $rows++) {
           $part_no = $data['values'][$rows - 4][0][0];
           $part = Part::findOne(['part_no' => $part_no, 'status' => 1]);
@@ -773,12 +773,12 @@ class ProductionPlanMonthlyController extends Controller {
           $transaction = Yii::$app->db->beginTransaction();
           try {
             if(count($insert_data1) > 0) {
-              ProductionPlan::deleteAll(
+              ProductionMonthlyPlan::deleteAll(
                 "shift=1 and production_date = '".$today."' and part_id in(".$part_ids1.")"
               );
             }
             if(count($insert_data2) > 0) {
-              ProductionPlan::deleteAll(
+              ProductionMonthlyPlan::deleteAll(
                 "shift=2 and production_date = '".$today."' and part_id in(".$part_ids2.")"
               );
             }
@@ -996,16 +996,16 @@ class ProductionPlanMonthlyController extends Controller {
   }
 
   /**
-   * Finds the ProductionPlan model based on its primary key value.
+   * Finds the ProductionMonthlyPlan model based on its primary key value.
    * If the model is not found, a 404 HTTP exception will be thrown.
    *
    * @param int $id
    *
-   * @return ProductionPlan the loaded model
+   * @return ProductionMonthlyPlan the loaded model
    * @throws NotFoundHttpException if the model cannot be found
    */
   protected function findModel($id) {
-    if(($model = ProductionPlan::findOne($id)) !== null) {
+    if(($model = ProductionMonthlyPlan::findOne($id)) !== null) {
       return $model;
     }
     throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));

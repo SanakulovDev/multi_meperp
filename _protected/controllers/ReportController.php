@@ -3953,6 +3953,17 @@ class ReportController extends AppController {
     ]);      
 
   }
+
+  //monthly requirement short
+  public function actionMonthlyRequirementShort()
+  {
+    $data = $this->_reportService->getMonthlyRequirementShorts($filter);
+    // vd($data);
+    return $this->render("requirement-monthly-short", [
+      "data_daily" => $data,
+      'filter'   => $filter
+    ]);      
+  }
   // excel import
   public function actionDownloadRequirementShort()
   {

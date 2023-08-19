@@ -2793,5 +2793,79 @@ class ReportService
       array_multisort($columns, SORT_ASC, $generalPartList);
       return $generalPartList;
     }
+    //monthly requirement shorts
+    public function getMonthlyRequirementShorts()
+    {
+        $fromCurrentWeek = date("Y-m-d", strtotime('monday this week'));
+        $toCurrentWeek = date("Y-m-d", strtotime('sunday this week'));
+        
+        $fromNextWeek = date("Y-m-d", strtotime('monday next week'));
+        $toNextWeek = date("Y-m-d", strtotime('sunday next week'));
 
+        $fromCurrentMonth = date("Y-m").'-01';
+        $toCurrentMonth = date("Y-m-t");
+        $query = "SELECT sum(pp.target_qty * psi.usage_qty / ps.amount) as qty  FROM production_monthly_plan pp 
+            INNER JOIN product_specification ps on ps.part_id = pp.part_id
+            INNER JOIN product_specification_item psi on psi.product_specification_id = ps.id
+            where pp.production_date between :date1 and :date2
+            and pp.part_id = :part_id and ps.status = 1
+            
+        ";
+
+
+
+        
+        
+
+        $query2 = "SELECT p.id as part_id, p.part_no, p.part_color, p.part_name, cs.name csourse, sum(s.qty) as stock FROM part  p
+                  inner JOIN contract_source cs on p.contract_source_id = cs.id
+                  INNER JOIN stock s on s.part_id = p.id
+                  left join product_specification_item psi on psi.part_id = p.id
+                  GROUP BY p.id
+                  ORDER by p.part_no DESC
+        ";
+
+        $generalPartList = Yii::$app->db->createCommand($query2)->queryAll();
+
+        foreach($generalPartList as $key => $part){
+            $currentWeek = [];
+            $nextWeek = [];
+            $currentMonth = [];
+            $currentWeek = Yii::$app->db->createCommand($query, [':date1' => $fromCurrentWeek, ':date2' => $toCurrentWeek, ':part_id' => $part['part_id']])->queryAll();
+            if(!empty($currentWeek)){
+              $currentWeek = array_sum(array_column($currentWeek, 'qty'));
+            }
+            // return $currentWeek;
+            $generalPartList[$key]['current_week'] = $currentWeek?(round($currentWeek)):0;
+
+            $nextWeek = Yii::$app->db->createCommand($query, [':date1' => $fromNextWeek, ':date2' => $toNextWeek, ':part_id' => $part['part_id']])->queryAll();
+            
+            if(!empty($nextWeek)){
+              $nextWeek = array_sum(array_column($nextWeek, 'qty'));
+            }
+
+            $generalPartList[$key]['next_week'] = $nextWeek?(round($nextWeek)):0;
+            
+            $currentMonth = Yii::$app->db->createCommand($query, [':date1' => $fromCurrentMonth, ':date2' => $toCurrentMonth, ':part_id' => $part['part_id']])->queryAll();
+            // if($part['part_id'] == 237){
+            //   return $part['part_id'];
+            // }
+            if(!empty($currentMonth)){
+              $currentMonth = array_sum(array_column($currentMonth, 'qty'));
+            }
+
+            $generalPartList[$key]['current_month'] = $currentMonth?(round($currentMonth)):0;
+            $part['stock'] = round($part['stock']*1);
+            $generalPartList[$key]['stock'] = round($part['stock']*1);
+
+            $generalPartList[$key]['currentWeekBalance']  = $generalPartList[$key]['stock'] - $generalPartList[$key]['current_week'];
+            $generalPartList[$key]['nextWeekBalance']     = $generalPartList[$key]['currentWeekBalance'] - $generalPartList[$key]['next_week'];
+            $generalPartList[$key]['currentMonthBalance'] = $generalPartList[$key]['stock'] - $generalPartList[$key]['current_month'];
+        }
+
+
+      $columns = array_column($generalPartList, 'currentMonthBalance');
+      array_multisort($columns, SORT_ASC, $generalPartList);
+      return $generalPartList;
+    }
 }

@@ -876,5 +876,6 @@ return [
   'Production Order Number' => 'Ishlab chiqarish buyurtma raqami',
   'This release is closed' => 'Ushbu chiqarish yopilgan',
   'Production plans monthly' => 'Ishlab chiqarish rejasini oylik',
+  'Monthly Requirement Short' => 'Xavfsizlik'
 ];
 ?>
