@@ -1091,6 +1091,7 @@ return [
   'Production Order Number' => 'Номер производственного заказа',
   'remark' => 'Примечание',
   'This release is closed' => 'Этот релиз закрыт',
+  'Production plans monthly' => 'Планы производства ежемесячно',
 
 ];
 

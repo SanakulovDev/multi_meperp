@@ -56,10 +56,10 @@ use yii\widgets\ActiveForm;
           'language' => 'ru',
           'pluginOptions' => [
             'autoclose' => true,
-            'format' => 'yyyy-mm-dd',
-            'startView' => 'month',
-            'minView' => 'month',
-            'maxView' => 'month',
+            'format' => 'yyyy-mm',
+            'startView' => 'year',
+            'minView' => 'year',
+            'maxView' => 'year',
           ],
           'options' => [
             'autocomplete' => 'off',

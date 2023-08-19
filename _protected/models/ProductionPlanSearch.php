@@ -85,7 +85,7 @@ class ProductionPlanSearch extends ProductionPlan{
 			[
 				'id'                           => $this->id,
 				'production_plan.part_id'      => $this->part_id,
-				'production_date'              => $this->production_date,
+				'production_date'              => $this->production_date.'-01',
 				'production_plan.warehouse_id' => $this->warehouse_id,
 				'shift'                        => $this->shift,
 				'target_qty'                   => $this->target_qty,

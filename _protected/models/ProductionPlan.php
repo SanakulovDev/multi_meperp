@@ -37,6 +37,8 @@ class ProductionPlan extends ActiveRecord {
   }
 
   /**
+   * type == 0 bu kunlik plan
+   * type == 1 bu oylik plan
    * {@inheritdoc}
    */
   public function rules() {

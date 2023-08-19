@@ -29,8 +29,9 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
 use yii\widgets\ActiveForm;
+use yii\web\Controller; 
 
-class ProductionPlanMonthlyController extends AppController {
+class ProductionPlanMonthlyController extends Controller {
 
   /**
    * Lists all ProductionPlan models.
@@ -40,7 +41,7 @@ class ProductionPlanMonthlyController extends AppController {
   public function actionIndex() {
     $searchModel = new ProductionPlanSearch();
     if(!Yii::$app->request->queryParams) {
-      $searchModel->production_date = date('Y-m-d');
+      $searchModel->production_date = date('Y-m');
     }
     $dataProvider = $searchModel->searchMonthly(Yii::$app->request->queryParams);
     $user_warehouse = Yii::$app->user->identity->warehouseIds;
@@ -153,6 +154,8 @@ class ProductionPlanMonthlyController extends AppController {
               	foreach ($models as $index => $model) {
                   	$model->part_id = $modelMain->part_id;
                     $model->warehouse_id = $modelMain->warehouse_id;
+                    $model->production_date .= '-01';
+                    $model->type = 1;
                     $model->clearErrors();
                     // vd($model->save(false));
                     if (! ($flag = $model->save(false))) {

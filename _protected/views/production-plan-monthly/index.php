@@ -10,7 +10,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\models\ProductionPlanSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /** @var TYPE_NAME $warehouses */
-$this->title = Yii::t('app', 'Production plans');
+$this->title = Yii::t('app', 'Production plans monthly');
 $this->params['breadcrumbs'][] = $this->title;
 $canUpdate = Yii::$app->user->can('production-plan-update');
 $canDelete = Yii::$app->user->can('production-plan-delete');

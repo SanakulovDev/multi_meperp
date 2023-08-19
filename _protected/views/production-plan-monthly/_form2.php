@@ -30,22 +30,27 @@ $smena_list = [
 ?>
 <!-- Dynamicform for js -->
 <?php ob_start();?>
-jQuery(".dynamicform_wrapper").on("afterInsert", function(e, item) {
+jQuery(".dynamicform_wrapper").on("beforeInsert", function(e, item) {
     jQuery(".dynamicform_wrapper .panel-title-address").each(function(index) {
-        $(item).find('.datetimepicker').date();
+    });
+});
+jQuery(".dynamicform_wrapper").on("afterInsert", function(e, item) {
+    $(item).find('.datetimepicker').datetimepicker({
+      format: 'yyyy-mm',
+      autoclose: true,
+      todayBtn: true,
+      startView: 'year',
+      minView: 'year',
+      maxView: 'year',
+      // Boshqa sozlovlar va parametrlar shu yerdan kiritilishi mumkin
+    });
+    jQuery(".dynamicform_wrapper .panel-title-address").each(function(index) {
         jQuery(this).html((index + 1))
     });
 });
 
 jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
     jQuery(".dynamicform_wrapper .panel-title-address").each(function(index) {
-        $(item).find('.datetimepicker').datetimepicker({
-                                            format: 'yyyy-mm-dd',
-                                            autoclose: true,
-                                            todayBtn: true
-                                            // Boshqa sozlovlar va parametrlar shu yerdan kiritilishi mumkin
-                                        });
-        
         jQuery(this).html((index + 1))
     });
 });
@@ -120,7 +125,24 @@ jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
                         <div class="row" style="display: flex;align-items: center;justify-content: center;">
                             <div class="col-md-4">
                                 <label class="form-group has-float-label">
-                                    <?=$form->field($model, "[{$index}]production_date")->textInput(['class' => 'datetimepicker form-control', 'type'=>'date'])?>
+                                    <?=$form->field($model, "[{$index}]production_date")->widget(DateTimePicker::classname(), [
+                                            'type' => DateTimePicker::TYPE_COMPONENT_PREPEND,
+                                            'layout' => '{picker}{input}{remove}',
+                                            'removeButton' => ['position' => 'append'],
+                                            'language' => 'ru',
+                                            'pluginOptions' => [
+                                                'autoclose' => true,
+                                                'format' => 'yyyy-mm',
+                                                'startView' => 'year',
+                                                'minView' => 'year',
+                                                'maxView' => 'year',
+                                            ],
+                                            'options' => [
+                                                'autocomplete' => 'off',
+                                                'placeholder' => 'YYYY-MM',
+                                                'class' => ' form-control datetimepicker'
+                                            ]
+                                        ]);?>
                                     <span><?=Yii::t('app', 'Production date')?></span>
                                 </label>
                             </div>

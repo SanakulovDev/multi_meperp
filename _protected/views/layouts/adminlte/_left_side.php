@@ -360,6 +360,12 @@ use yii\widgets\Menu; ?>
         'url' => ['/production-release/index'],
         'template' => '<a href="{url}"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
+      $planning[] = [
+        //        'label' => Yii::t('app', 'JV'),
+        'label' => Yii::t('app', 'Monthly Planning'),
+        'url' => ['/production-plan-monthly/index'],
+        'template' => '<a href="{url}"><i class="fa fa-list"></i> <span>{label}</span></a>',
+      ];
       
     }
     if (count($planning) > 0) {
