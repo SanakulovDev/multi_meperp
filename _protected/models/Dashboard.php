@@ -251,6 +251,9 @@ class Dashboard extends \yii\db\ActiveRecord
             // if($model['fakt'] >= $model['plan']){
             //     continue;
             // }
+            if($model['plan'] == 0){
+                continue;
+            }
             $html .= '<div class="item-row">';
             $html .= '<div class="row " style="margin: 50px 0 25px 0;">';
             $html .= '<div class="col-md-3 text-left">';
