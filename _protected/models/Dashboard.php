@@ -248,10 +248,7 @@ class Dashboard extends \yii\db\ActiveRecord
         $html = '';
         foreach($data['data'] as $model){
             // fact ==plan bo'lsa continue
-            // if($model['fakt'] >= $model['plan']){
-            //     continue;
-            // }
-            if($model['plan'] == 0){
+            if($model['fakt'] >= $model['plan'] || $model['plan'] == 0){
                 continue;
             }
             $html .= '<div class="item-row">';
