@@ -245,12 +245,77 @@ class Dashboard extends \yii\db\ActiveRecord
     public static function todayProductionByHtml($line=null)
     {
         $data = self::todayProductionByData($line);
+        // data multisort
+        $columns = array_column($data['data'], 'lineNumber');
+        array_multisort($columns, SORT_ASC, $data['data']);
         $html = '';
-        foreach($data['data'] as $model){
-            // fact ==plan bo'lsa continue
-            if($model['fakt'] >= $model['plan'] || $model['plan'] == 0){
-                continue;
+        $count = 0;
+        $lines = ProductionOrder::getLines();
+        $resultData = [];
+        $sumData = [];
+        $sumData2 = [];
+        foreach($lines as $key =>  $item){
+          if(!empty($line)){
+            if($key == $line){
+              $count = count($data['data']);
+              if($count > 1){
+                foreach($data['data'] as $model){
+                  if(($model['fakt'] >= $model['plan']) || $model['plan'] == 0){
+                    $sumData[] = $model;
+                  }
+                  else{
+                    $sumData2[] = $model;
+                  }
+                }
+                if(!empty($sumData2)){
+                  $resultData = $sumData2;
+                }
+                elseif(!empty($sumData)){
+                  $resultData[] = $sumData[0];
+                }
+              }
+              else{
+                $resultData = $data['data'];
+              }
+              
+             
+              continue;
             }
+          }
+          else{
+            $sumData = [];
+            $sumData2 = [];
+            $count = 0;
+                foreach($data['data'] as $model){
+                  if($model['lineNumber'] == $key){
+                    $count++;
+                    if(($model['fakt'] >= $model['plan']) || $model['plan'] == 0){
+                      $sumData[] = $model;
+                    }
+                    else{
+                      $sumData2[] = $model;
+                    }
+                  }
+                  
+                }
+                  
+                  if(!empty($sumData2)){
+                    $resultData = array_merge($resultData, $sumData2);
+                  }
+                  elseif(!empty($sumData)){
+                    $resultData[] =  $sumData[0];
+                  }
+                  
+                
+           
+            // return $resultData;
+            
+            continue;
+
+          }
+        }
+        // return $resultData;
+        foreach($resultData as $model){
             $html .= '<div class="item-row">';
             $html .= '<div class="row " style="margin: 50px 0 25px 0;">';
             $html .= '<div class="col-md-3 text-left">';
