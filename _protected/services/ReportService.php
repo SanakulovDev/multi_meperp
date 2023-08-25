@@ -2815,12 +2815,13 @@ class ReportService
 
 
         
-        
+        //sklad siro
 
         $query2 = "SELECT p.id as part_id, p.part_no, p.part_color, p.part_name, cs.name csourse, sum(s.qty) as stock FROM part  p
                   inner JOIN contract_source cs on p.contract_source_id = cs.id
                   INNER JOIN stock s on s.part_id = p.id
                   left join product_specification_item psi on psi.part_id = p.id
+                  where p.warehouse_id =1
                   GROUP BY p.id
                   ORDER by p.part_no DESC
         ";
