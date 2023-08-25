@@ -2809,8 +2809,6 @@ class ReportService
             INNER JOIN product_specification_item psi on psi.product_specification_id = ps.id
             where pp.production_date between :date1 and :date2
             and pp.part_id = :part_id and ps.status = 1
-            and pp.warehouse_id = 1
-            
         ";
 
 
