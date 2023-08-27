@@ -2814,7 +2814,7 @@ class ReportService
 
 
         
-        //sklad siro
+        //sklad si
 
         $query2 = "SELECT p.id as part_id, p.part_no, p.part_color, p.part_name, cs.name csourse, sum(s.qty) as stock FROM part  p
                   inner JOIN contract_source cs on p.contract_source_id = cs.id

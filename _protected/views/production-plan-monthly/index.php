@@ -119,7 +119,12 @@ $canUpload = Yii::$app->user->can('production-plan-upload');
             ],
             'visible' => $canUpdate || $canDelete || $canComment
           ],
-          'production_date',
+          [
+            'attribute' => 'production_date',
+            'value' => function($model){
+              return date('Y-m', strtotime($model->production_date));
+            }
+          ],
           'shift',
           [
             'attribute' => 'warehouse_id',

@@ -64,12 +64,12 @@ class ProductionMonthlyPlanSearch extends ProductionMonthlyPlan{
 		return $dataProvider;
 	}
   public function searchMonthly($params){
+    // vd($params);
 		$query = ProductionMonthlyPlan::find();
 		// add conditions that should always apply here
 		$dataProvider = new ActiveDataProvider(
 			[
 				'query' => $query,
-				'sort' => ['defaultOrder'=>'production_date desc']
 			]
 		);
 		$this->load($params);
@@ -78,20 +78,20 @@ class ProductionMonthlyPlanSearch extends ProductionMonthlyPlan{
 			// $query->where('0=1');
 			return $dataProvider;
 		}
-		$query->joinWith(['warehouse', 'part','planComment']);
 		// grid filtering conditions
 		$query->andFilterWhere(
 			[
 				'id'                           => $this->id,
-				'production_plan.part_id'      => $this->part_id,
-				'production_date'              => $this->production_date.'-01',
-				'production_plan.warehouse_id' => $this->warehouse_id,
+				'part_id'      => $this->part_id,
+				'production_date'              => !empty($this->production_date)?($this->production_date.'-01'):'',
+				'warehouse_id' => $this->warehouse_id,
 				'shift'                        => $this->shift,
 				'target_qty'                   => $this->target_qty,
 				'line'                         => $this->line,
 			])->orderBy(['production_date' => SORT_DESC])->all();
 
     $query->andFilterWhere(['like', 'production_plan_comment.comment', $this->comment]);
+    vd($query);
 		return $dataProvider;
 	}
 }

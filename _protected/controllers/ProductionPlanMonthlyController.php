@@ -303,7 +303,9 @@ class ProductionPlanMonthlyController extends Controller {
   public function actionUpdate($id) {
     $model = $this->findModel($id);
     if(Yii::$app->getRequest()->isAjax) {
+      $model->production_date = date('Y-m', strtotime($model->production_date));
       if($model->load(Yii::$app->request->post())) {
+        $model->production_date .= '-01';
         if($model->save(false)) {
           $data['status'] = 1;
         } else {
