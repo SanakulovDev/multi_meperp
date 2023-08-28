@@ -2808,7 +2808,8 @@ class ReportService
             INNER JOIN product_specification ps on ps.part_id = pp.part_id
             INNER JOIN product_specification_item psi on psi.product_specification_id = ps.id
             where pp.production_date between :date1 and :date2
-            and pp.part_id = :part_id and ps.status = 1
+            and psi.part_id = :part_id and ps.status = 1
+            group by pp.part_id
         ";
 
 
@@ -2816,13 +2817,11 @@ class ReportService
         
         //sklad si
 
-        $query2 = "SELECT p.id as part_id, p.part_no, p.part_color, p.part_name, cs.name csourse, sum(s.qty) as stock FROM part  p
-                  inner JOIN contract_source cs on p.contract_source_id = cs.id
-                  INNER JOIN stock s on s.part_id = p.id
-                  left join product_specification_item psi on psi.part_id = p.id
-                  where p.warehouse_id =1
-                  GROUP BY p.id
-                  ORDER by p.part_no DESC
+        $query2 = "SELECT p.id as part_id, p.part_no, p.part_color, p.part_name, cs.name csourse, s.qty as stock FROM product_specification_item  psi
+            INNER JOIN part p on p.id = psi.part_id
+            INNER JOIN contract_source cs on p.contract_source_id = cs.id
+            INNER JOIN stock s on s.part_id = psi.part_id
+            GROUP BY psi.part_id
         ";
 
         $generalPartList = Yii::$app->db->createCommand($query2)->queryAll();
