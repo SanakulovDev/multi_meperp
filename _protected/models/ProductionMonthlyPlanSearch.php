@@ -91,7 +91,6 @@ class ProductionMonthlyPlanSearch extends ProductionMonthlyPlan{
 			])->orderBy(['production_date' => SORT_DESC])->all();
 
     $query->andFilterWhere(['like', 'production_plan_comment.comment', $this->comment]);
-    vd($query);
 		return $dataProvider;
 	}
 }
