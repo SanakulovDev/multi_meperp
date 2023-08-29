@@ -2860,6 +2860,7 @@ class ReportService
             $generalPartList[$key]['currentWeekBalance']  = $generalPartList[$key]['stock'] - $generalPartList[$key]['current_week'];
             $generalPartList[$key]['nextWeekBalance']     = $generalPartList[$key]['currentWeekBalance'] - $generalPartList[$key]['next_week'];
             $generalPartList[$key]['currentMonthBalance'] = $generalPartList[$key]['stock'] - $generalPartList[$key]['current_month'];
+            $generalPartList[$key]['averageUsage']        = Part::findOne($row['part_id'])->averageUsage?:0;
         }
 
 

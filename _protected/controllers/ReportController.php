@@ -3955,10 +3955,10 @@ class ReportController extends AppController {
   }
 
   //monthly requirement short
-  public function actionMonthlyRequirementShort()
+  public function actionMonthlyRequirementShort($filter=null)
   {
     $data = $this->_reportService->getMonthlyRequirementShorts($filter);
-    // vd($data);
+    // vd($filter);
     return $this->render("requirement-monthly-short", [
       "data_daily" => $data,
       'filter'   => $filter
