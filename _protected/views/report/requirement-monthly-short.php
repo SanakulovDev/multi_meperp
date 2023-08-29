@@ -37,7 +37,7 @@
                       <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Part color')?></th>
                       <th style="width: 100px;" class="text-center"><?=mb_strtoupper(Yii::t('app', 'Part name'))?></th>
                       <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Type')?></th>
-                      <th style="width: 100px;" class="text-center"><?php echo Yii::t('app', 'Average usage')?></th>
+                      <!-- <th style="width: 100px;" class="text-center"><?php //echo Yii::t('app', 'Average usage')?></th> -->
                       <th style="width: 100px;" class="text-center">Количество остатка</th>
                       <!-- <th style="width: 100px;" class="text-center">1 нед</th>
                       <th style="width: 100px;" class="text-center">Баланс</th>
@@ -65,7 +65,7 @@
                   <td class="text-center" title="<?=$row['remark']?>"><?=$row['part_color']?></td>
                   <td style="max-width: 150px;" class="td-nowrap"><?=mb_strtoupper($row['part_name'])?></td>
                   <td class="text-center"><?=$row['csourse']?></td>
-                  <td style="text-align: center" class="text-right"><?php echo $row['averageUsage']?></td>
+                  <!-- <td style="text-align: center" class="text-right"><?php //echo $row['averageUsage']?></td> -->
                   <td style="text-align: center"><?php echo number_format($row['stock'], 0, ',', ' ')?></td>
               
                   <!-- <td style="text-align: center"><?php //echo number_format($row['current_week']*1, 0, ',', ' ') ;  ?></td> -->
