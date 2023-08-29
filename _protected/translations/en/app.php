@@ -760,5 +760,6 @@ return[
   'Power' => 'Power',
   'Plan Power' => 'Project capacity',
   'Max Power' => 'Max Power', 
+  'btn-delete-all' => '<i class="glyphicon glyphicon-trash"></i>&nbsp;&nbsp;Delete all',
 ];
 

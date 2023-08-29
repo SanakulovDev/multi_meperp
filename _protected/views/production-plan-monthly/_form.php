@@ -55,29 +55,6 @@ $lines = ProductionOrder::getLines();
 			<span><?=Yii::t('app', 'Location')?></span>
 		</label>
 	</div>
-	<div class="col-lg-4">
-		<label class="form-group has-float-label">
-      <?=$form->field($model, 'production_date')->widget(DateTimePicker::classname(), [
-        'type' => DateTimePicker::TYPE_COMPONENT_PREPEND,
-        'layout' => '{picker}{input}{remove}',
-        'removeButton' => ['position' => 'append'],
-        'language' => 'ru',
-        'pluginOptions' => [
-          'autoclose' => true,
-          'format' => 'yyyy-mm',
-          'startView' => 'year',
-          'minView' => 'year',
-          'maxView' => 'year',
-        ],
-        'options' => [
-          'autocomplete' => 'off',
-          'placeholder' => 'YYYY-MM-DD',
-          'class' => ' form-control'
-        ]
-      ]);?>
-			<span><?=Yii::t('app', 'Production date')?></span>
-		</label>
-	</div>
 </div>
 <div class="row">
 	<div class="col-lg-4">

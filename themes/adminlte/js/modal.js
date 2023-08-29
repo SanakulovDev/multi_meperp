@@ -50,7 +50,10 @@ $(document).ready(function () {
     });
 
     // delete record
-    $(document).on('click', '.modalButtonDelete', function () {
+    $(document).on('click', '.modalButtonDelete', function (e) {
+
+			e.preventDefault();
+			console.log($(this).data('href'));
         $("#modalDelete")
             .find(".modalFormDelete")
             .data('href', $(this).data('href'))

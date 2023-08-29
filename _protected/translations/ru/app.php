@@ -1093,5 +1093,6 @@ return [
   'This release is closed' => 'Этот релиз закрыт',
   'Production plans monthly' => 'Планы производства ежемесячно',
   'Monthly Requirement Short' => 'Обеспеченность',
+  'btn-delete-all' => '<i class="glyphicon glyphicon-trash"></i>&nbsp;&nbsp;Удалить все',
 ];
 

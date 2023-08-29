@@ -876,6 +876,7 @@ return [
   'Production Order Number' => 'Ishlab chiqarish buyurtma raqami',
   'This release is closed' => 'Ushbu chiqarish yopilgan',
   'Production plans monthly' => 'Ishlab chiqarish rejasini oylik',
-  'Monthly Requirement Short' => 'Xavfsizlik'
+  'Monthly Requirement Short' => 'Xavfsizlik',
+  'btn-delete-all' => '<i class="glyphicon glyphicon-trash"></i> Barchasini o\'chirish',  
 ];
 ?>

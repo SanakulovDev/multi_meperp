@@ -154,7 +154,7 @@ class ProductionPlanMonthlyController extends Controller {
               	foreach ($models as $index => $model) {
                   	$model->part_id = $modelMain->part_id;
                     $model->warehouse_id = $modelMain->warehouse_id;
-                    $model->production_date .= '-01';
+                    $model->production_date = date('Y-m').'-01';
                     $model->type = 1;
                     $model->clearErrors();
                     // vd($model->save(false));
@@ -207,6 +207,7 @@ class ProductionPlanMonthlyController extends Controller {
     $model = new ProductionMonthlyPlan();
     if(Yii::$app->getRequest()->isAjax) {
       if($model->load(Yii::$app->request->post())) {
+        $model->production_date = date('Y-m').'-01';
         if($model->save(false)) {
           $data['status'] = 1;
           $w_house = Warehouse::find()
@@ -305,7 +306,6 @@ class ProductionPlanMonthlyController extends Controller {
     if(Yii::$app->getRequest()->isAjax) {
       $model->production_date = date('Y-m', strtotime($model->production_date));
       if($model->load(Yii::$app->request->post())) {
-        $model->production_date .= '-01';
         if($model->save(false)) {
           $data['status'] = 1;
         } else {
@@ -372,7 +372,7 @@ class ProductionPlanMonthlyController extends Controller {
   public function actionDelete($id) {
     Yii::$app->response->format = Response::FORMAT_JSON;
     $model = $this->findModel($id);
-    if($model && $model->production_date >= date('Y-m-d')) {
+    if($model) {
       if($model->delete()) {
         return [
           "status" => 1
@@ -383,7 +383,16 @@ class ProductionPlanMonthlyController extends Controller {
       "status" => 0
     ];
   }
-
+  public function actionDeleteAll() {
+    Yii::$app->response->format = Response::FORMAT_JSON;
+    //table truncate
+    $table = ProductionMonthlyPlan::tableName();
+    Yii::$app->db->createCommand("TRUNCATE TABLE $table")->execute();
+    return [
+      "status" => 1
+    ];
+    return $this->redirect(['index']);
+  }
   public function actionUpload() {
     $user_id = Yii::$app->user->id;
     $user_warehouse = UserWarehouse::find()->where('user_id='.$user_id)->select('warehouse_id')->all();

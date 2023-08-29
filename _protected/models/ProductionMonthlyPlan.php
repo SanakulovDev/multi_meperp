@@ -41,7 +41,7 @@ class ProductionMonthlyPlan extends ActiveRecord {
    */
   public function rules() {
     return [
-      [['part_id', 'production_date', 'warehouse_id', 'shift', 'line'], 'required'],
+      [['part_id', 'warehouse_id', 'shift', 'line'], 'required'],
       [['part_id', 'warehouse_id', 'shift', 'target_qty', 'line', 'type'], 'integer'],
       [['part_id', 'production_date', 'warehouse_id', 'shift'], 'unique',
         'targetAttribute' => ['part_id', 'production_date', 'warehouse_id', 'shift']

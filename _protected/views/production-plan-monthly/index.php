@@ -5,6 +5,7 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
+use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ProductionPlanSearch */
@@ -28,6 +29,15 @@ $canUpload = Yii::$app->user->can('production-plan-upload');
               ['create'], [
                 'class' => 'btn btn-success btn-sm form-modal mr-lg-5',
                 'data-intro' => Yii::t('intro', 'add-new-record')
+              ]
+            )?>
+            <?=Html::button(Yii::t('app', 'btn-delete-all'),
+              [
+                'class' => 'btn btn-info btn-sm modalButtonDelete mr-lg-5',
+                'data-intro' => Yii::t('intro', 'delete-all-records'),
+                'data-grid' => 'pjaxGrid',
+                'data-status' => 1,
+                'data-href' => Url::toRoute(['delete-all'])
               ]
             )?>
           <?php endif; ?>
@@ -118,12 +128,6 @@ $canUpload = Yii::$app->user->can('production-plan-upload');
               },
             ],
             'visible' => $canUpdate || $canDelete || $canComment
-          ],
-          [
-            'attribute' => 'production_date',
-            'value' => function($model){
-              return date('Y-m', strtotime($model->production_date));
-            }
           ],
           'shift',
           [

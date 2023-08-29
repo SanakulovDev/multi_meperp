@@ -123,29 +123,7 @@ jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
                         }
                     ?>
                         <div class="row" style="display: flex;align-items: center;justify-content: center;">
-                            <div class="col-md-4">
-                                <label class="form-group has-float-label">
-                                    <?=$form->field($model, "[{$index}]production_date")->widget(DateTimePicker::classname(), [
-                                            'type' => DateTimePicker::TYPE_COMPONENT_PREPEND,
-                                            'layout' => '{picker}{input}{remove}',
-                                            'removeButton' => ['position' => 'append'],
-                                            'language' => 'ru',
-                                            'pluginOptions' => [
-                                                'autoclose' => true,
-                                                'format' => 'yyyy-mm',
-                                                'startView' => 'year',
-                                                'minView' => 'year',
-                                                'maxView' => 'year',
-                                            ],
-                                            'options' => [
-                                                'autocomplete' => 'off',
-                                                'placeholder' => 'YYYY-MM',
-                                                'class' => ' form-control datetimepicker'
-                                            ]
-                                        ]);?>
-                                    <span><?=Yii::t('app', 'Production date')?></span>
-                                </label>
-                            </div>
+                        
                             <div class="col-md-2">
                                 <label class="form-group has-float-label">
                                     <?=$form->field($model, "[{$index}]shift")->dropDownList($smena_list, ['prompt'=>'---'])?>
