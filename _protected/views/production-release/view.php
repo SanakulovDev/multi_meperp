@@ -557,8 +557,8 @@ ob_start();
             <?php 
         
             
-            // Test için örnek bir dizi
-            $middleIndex = findMiddleIndex($dataZames);
+              // Test için örnek bir dizi
+              $middleIndex = findMiddleIndex($dataZames);
 
               ?>
             <div class="row">
