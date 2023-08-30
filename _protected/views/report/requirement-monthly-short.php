@@ -53,7 +53,7 @@
             <?php foreach($data_daily as $row):?>
               <?php 
                 if($filter == 1){
-                  if($row['averageUsage'] == 0){
+                  if($row['current_month'] == 0){
                     continue;
                   }
                 }

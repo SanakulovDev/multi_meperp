@@ -136,26 +136,22 @@ class ProductionPlanMonthlyController extends Controller {
    * @return mixed
    */
   public function actionCreate() {
-    $modelMain = new ProductionPlanShort();
     $models	= [new ProductionMonthlyPlan];
     if(Yii::$app->getRequest()->isAjax) {
-      if($modelMain->load(Yii::$app->request->post())) {
-		  $models = Model::createMultiple(ProductionMonthlyPlan::classname());
-		  Model::loadMultiple($models, Yii::$app->request->post());
-		//   vd($models);
-        $valid = $modelMain->validate();
-        $valid = Model::validateMultiple($models) ;
-		    $valid = true;
+      if(Yii::$app->request->post()) {
+        $models = Model::createMultiple(ProductionMonthlyPlan::classname());
+        Model::loadMultiple($models, Yii::$app->request->post());
+        $valid = Model::validateMultiple($models);
         if($valid){
           // $transaction = \Yii::$app->db->beginTransaction();
 
           // try{
-            $flag = true;
+                $flag = true;
               	foreach ($models as $index => $model) {
-                  	$model->part_id = $modelMain->part_id;
-                    $model->warehouse_id = $modelMain->warehouse_id;
                     $model->production_date = date('Y-m').'-01';
                     $model->type = 1;
+                    $model->shift = 1;
+                    $model->line = 1;
                     $model->clearErrors();
                     // vd($model->save(false));
                     if (! ($flag = $model->save(false))) {
@@ -192,7 +188,6 @@ class ProductionPlanMonthlyController extends Controller {
         
       } else {
         return $this->renderAjax('_form2', [
-          'modelMain' 	=> $modelMain,
           'models' 		=> (empty($models))?[new ProductionMonthlyPlan]:$models
         ]);
       }
@@ -304,7 +299,6 @@ class ProductionPlanMonthlyController extends Controller {
   public function actionUpdate($id) {
     $model = $this->findModel($id);
     if(Yii::$app->getRequest()->isAjax) {
-      $model->production_date = date('Y-m', strtotime($model->production_date));
       if($model->load(Yii::$app->request->post())) {
         if($model->save(false)) {
           $data['status'] = 1;

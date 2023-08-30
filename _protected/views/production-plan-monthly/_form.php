@@ -55,26 +55,14 @@ $lines = ProductionOrder::getLines();
 			<span><?=Yii::t('app', 'Location')?></span>
 		</label>
 	</div>
-</div>
-<div class="row">
-	<div class="col-lg-4">
-		<label class="form-group has-float-label">
-      <?=$form->field($model, 'shift')->textInput()?>
-			<span><?=Yii::t('app', 'Shift')?></span>
-		</label>
-	</div>
+	
 	<div class="col-lg-4">
 		<label class="form-group has-float-label">
       <?=$form->field($model, 'target_qty')->textInput()?>
 			<span><?=Yii::t('app', 'Target qty')?></span>
 		</label>
 	</div>
-  <div class="col-lg-4">
-    <label class="form-group has-float-label">
-      <?= $form->field($model, 'line')->dropDownList($lines, ['prompt' => '. . .', 'class' => 'form-control select2'])->label(false) ?>
-      <span><?= Yii::t('app', 'Line')?></span>
-    </label>
-  </div>
+  
 </div>
 
 <?php ActiveForm::end(); ?>

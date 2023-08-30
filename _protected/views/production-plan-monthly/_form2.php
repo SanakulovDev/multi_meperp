@@ -17,9 +17,6 @@ if(!$model->isNewRecord) {
 }
 $form = ActiveForm::begin([
   'id' => 'dynamic-form',
-  'enableAjaxValidation' => true,
-  'validateOnType' => false,
-  'validationUrl' => $validationUrl,
   'options' => ['class' => 'modalForm']
 ]);
 $lines = ProductionOrder::getLines();
@@ -31,19 +28,12 @@ $smena_list = [
 <!-- Dynamicform for js -->
 <?php ob_start();?>
 jQuery(".dynamicform_wrapper").on("beforeInsert", function(e, item) {
+    $(item).find('.select2').select2();
     jQuery(".dynamicform_wrapper .panel-title-address").each(function(index) {
     });
 });
 jQuery(".dynamicform_wrapper").on("afterInsert", function(e, item) {
-    $(item).find('.datetimepicker').datetimepicker({
-      format: 'yyyy-mm',
-      autoclose: true,
-      todayBtn: true,
-      startView: 'year',
-      minView: 'year',
-      maxView: 'year',
-      // Boshqa sozlovlar va parametrlar shu yerdan kiritilishi mumkin
-    });
+    $(item).find('.select2').select2();
     jQuery(".dynamicform_wrapper .panel-title-address").each(function(index) {
         jQuery(this).html((index + 1))
     });
@@ -61,32 +51,18 @@ jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
     margin: 0px!important
 }
 <?php $this->registerCss(ob_get_clean());?>
+<?php 
+  $cond_pt = (!Yii::$app->user->can('admin')) ? ['and', ['in', 'warehouse_id', Yii::$app->user->identity->warehouseIds]] : '';
+  $parts = Part::find()->with(['warehouse' => function($q) {
+  $q->andWhere(['warehouse_type' => [Warehouse::TYPE_PHYSICAL, Warehouse::TYPE_SHOP]]);
+  }
+  ]);
+  $parts = $parts->where($cond_pt)->andWhere(['status' => Part::STATUS_ACTIVE])->all();
+  $items = ArrayHelper::map($parts, 'id', 'part_no');
+  $params = ['prompt' => '. . .', 'class' => 'form-control select2 plan-part_id'];
+  $cond_wh = (!Yii::$app->user->can('admin')) ? ['warehouse.id' => Yii::$app->user->identity->warehouseIds] : '';
+?>
 <div class="row">
-    <div class="col-lg-4">
-        <?
-        $cond_pt = (!Yii::$app->user->can('admin')) ? ['and', ['in', 'warehouse_id', Yii::$app->user->identity->warehouseIds]] : '';
-        $parts = Part::find()->with(['warehouse' => function($q) {
-        $q->andWhere(['warehouse_type' => [Warehouse::TYPE_PHYSICAL, Warehouse::TYPE_SHOP]]);
-        }
-        ]);
-        $parts = $parts->where($cond_pt)->andWhere(['status' => Part::STATUS_ACTIVE])->all();
-        $items = ArrayHelper::map($parts, 'id', 'part_no');
-        $params = ['prompt' => '. . .', 'class' => 'form-control select2'];
-        ?>
-        <label class="form-group has-float-label">
-            <?=$form->field($modelMain, 'part_id')->dropDownList($items, $params)?>
-            <span><?=Yii::t('app', 'Part No')?></span>
-        </label>
-    </div>
-    <div class="col-lg-4">
-        <? $cond_wh = (!Yii::$app->user->can('admin')) ? ['warehouse.id' => Yii::$app->user->identity->warehouseIds] : ''; ?>
-        <label class="form-group has-float-label">
-            <?=$form->field($modelMain, 'warehouse_id')->dropDownList(ArrayHelper::map(Warehouse::find()->where($cond_wh)->all(), 'id', 'name'),
-                ['prompt' => '. . .', 'class' => 'form-control select2']
-              );?>
-            <span><?=Yii::t('app', 'Location')?></span>
-        </label>
-    </div>
     <!-- <div class="col-md-2">
         <button type="button" class="pull-right add-item btn btn-success btn-xs"><i class="fa fa-plus fa-2x"></i></button>
     </div> -->
@@ -106,6 +82,8 @@ jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
             'shift',
             'target_qty',
             'line',
+            'part_id', 
+            'warehouse_id',
         ],
     ]); ?>
 <div class="panel panel-default">
@@ -124,24 +102,27 @@ jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
                     ?>
                         <div class="row" style="display: flex;align-items: center;justify-content: center;">
                         
-                            <div class="col-md-2">
-                                <label class="form-group has-float-label">
-                                    <?=$form->field($model, "[{$index}]shift")->dropDownList($smena_list, ['prompt'=>'---'])?>
-                                    <span><?=Yii::t('app', 'Shift')?></span>
-                                </label>
-                            </div>
-                            <div class="col-md-2">
+                        <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                                <?=$form->field($model, "[{$index}]part_id")->dropDownList($items, $params)?>
+                                <span><?=Yii::t('app', 'Part No')?></span>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-group has-float-label">
+                                <?=$form->field($model, "[{$index}]warehouse_id")->dropDownList([],
+                                    ['prompt' => '. . .', 'class' => 'form-control select2 plan-warehouse_id']
+                                  );?>
+                                <span><?=Yii::t('app', 'Location')?></span>
+                            </label>
+                        </div>
+                            <div class="col-md-4">
                                 <label class="form-group has-float-label">
                                     <?=$form->field($model, "[{$index}]target_qty")->textInput()?>
                                     <span><?=Yii::t('app', 'Target qty')?></span>
                                 </label>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-group has-float-label">
-                                    <?= $form->field($model, "[{$index}]line")->dropDownList($lines, ['prompt' => '. . .', 'class' => 'form-control select2'])->label(false) ?>
-                                    <span><?= Yii::t('app', 'Line')?></span>
-                                </label>
-                            </div>
+                            
                             <div class="col-md-1">
                                 <button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-minus"></i></button>
                             </div>
@@ -155,55 +136,26 @@ jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
 
 <?
 $urlOrder = Url::to(['production-plan/wh-list-by-part'], true);
-$script1 = <<< JS
-$(document).ready(function() {	
-	var part_id = $('#productionplanshort-part_id').children("option:selected"). val();
-	if(part_id>0){
-		let url = '$urlOrder' + '?id=' + part_id;
-	$.get(url, function(data, status){
-	  // clear
-	  $('#productionplanshort-warehouse_id').find('option').remove();
-	  // append
-	  $.each(data, function () {
-	    $('#productionplanshort-warehouse_id').append(new Option(this.text, this.id));
-	  });	  
-	  var data = {
-      "id": $("#productionplanhort-warehouse_id option:first").val(),
-      "text": $("#productionplanshort-warehouse_id option:first").text()
-    };    
-    $('#productionplanshort-warehouse_id').trigger({
-        type: 'select2:select',
-        params: {
-            data: data
-        }
+ob_start();?>
+
+$(function(){
+    $('body').on('change', '.plan-part_id', function(){
+        var part_id = $(this).val();
+        var warehouse_id = $(this).closest('.item').find('.plan-warehouse_id').attr('id');
+        $('#'+warehouse_id).empty();
+        $.ajax({
+            url: '<?=$urlOrder?>',
+            type: 'GET',
+            data: {id: part_id},
+            success: function(data){
+              $.each(data, function(index, value){
+                $('#'+warehouse_id).append('<option selected value="'+value.id+'">'+value.text+'</option>');
+                
+              });
+            }
+        });
     });
-	 });
-	}
-	
-	$(document).on("select2:select", "#productionplanshort-part_id", function(e) {
-	 let data = e.params.data;
-	 let url = '$urlOrder'+'?id='+data.id;
-	 $.get(url, function(data, status){
-	  // clear
-	  $('#productionplanshort-warehouse_id').find('option').remove();
-	  // append
-	  $.each(data, function () {
-	    $('#productionplanshort-warehouse_id').append(new Option(this.text, this.id));
-	  });	  
-	  var data = {
-      "id": $("#productionplanshort-warehouse_id option:first").val(),
-      "text": $("#productionplanshort-warehouse_id option:first").text()
-    };    
-    $('#productionplanshort-warehouse_id').trigger({
-        type: 'select2:select',
-        params: {
-            data: data
-        }
-    });
-	 });
-	});
-	
 });
-JS;
-$this->registerJs($script1);
+<?php
+$this->registerJs(ob_get_clean());
 ?>
