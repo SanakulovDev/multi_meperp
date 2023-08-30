@@ -761,5 +761,7 @@ return[
   'Plan Power' => 'Project capacity',
   'Max Power' => 'Max Power', 
   'btn-delete-all' => '<i class="glyphicon glyphicon-trash"></i>&nbsp;&nbsp;Delete all',
+  'btn-pdf-siro' => '<i class="glyphicon glyphicon-print"></i>&nbsp;&nbsp;Print SIRO',
+  'btn-pdf-zames' => '<i class="glyphicon glyphicon-print"></i>&nbsp;&nbsp;Print ZAMES',
 ];
 

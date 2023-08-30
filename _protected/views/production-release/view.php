@@ -141,9 +141,14 @@ ob_start();
             <span data-releaseId="<?=$releaseIds[$key-1]?>" class="bg-primaries  line <?=$class?>"><?= $key?></span>
           </div>
         <?php endforeach;?>
-        <div class="col-md-2">
-          <?=Html::button(Yii::t('app', 'btn-pdf'), ['class' => 'btn btn-info btn-sm  pull-right', 'id' => 'generate-pdf'])?>
+        <div class="col-md-1">
+          <?=Html::button(Yii::t('app', 'btn-pdf-siro'), ['class' => 'btn btn-info btn-sm  pull-right', 'id' => 'generate-pdf-siro'])?>
         </div>
+        
+        <div class="col-md-1">
+          <?=Html::button(Yii::t('app', 'btn-pdf-zames'), ['class' => 'btn btn-info btn-sm  pull-right', 'id' => 'generate-pdf-zames'])?>
+        </div>
+
       </div>
     </div>
     <div class="wrapper-center-content">
@@ -352,8 +357,8 @@ ob_start();
 
     </div>
 </div>
-
-<div class="pdf-print-view hide">
+<!-- Siro -->
+<div class="pdf-print-view siro hide">
     <div class="header">
       <!-- <div class="row" style="display: flex; justify-content: space-between;align-items: center; margin-bottom: 20px; flex-direction:column;">
         
@@ -472,8 +477,83 @@ ob_start();
       
           
          
-        <!-- Data Zames -->
-          <?php if(!empty($dataZames)):?>
+      
+
+
+    </div>
+    
+</div>
+<!-- Zames -->
+<div class="pdf-print-view zames hide">
+    <div class="header">
+      <!-- <div class="row" style="display: flex; justify-content: space-between;align-items: center; margin-bottom: 20px; flex-direction:column;">
+        
+      </div> -->
+      <div class="row" style="display: flex; justify-content: space-between;align-items: center;">
+        <div class="col-md-2">
+          <div class="box2 bg-primaries">
+              <span style="font-size: 25px;">№  <?= $id?></span>
+          </div>
+        </div>
+        <div class="col-md-2 ">
+          <span class="bg-primaries line">
+            <?= Yii::t('app', 'Line')?>
+          </span>
+        </div>
+        <?php foreach($lines as $key => $line):?>
+          <?php $class ="";
+              if($model->line == $key){
+                $class = "bg-secondaries";
+              }
+          ?>
+          <div class="col-md-1 ">
+            <span data-releaseId="<?=$releaseIds[$key-1]?>" class="bg-primaries11  line <?=$class?>"><?= $key?></span>
+          </div>
+        <?php endforeach;?>
+
+      </div>
+    </div> 
+    <div class="col-md-12">
+        <table class="tbl_plan table table-bordered table1" style="margin: 0px!important;">
+            <thead>
+                <tr>
+                  <th class="bg-primaries11 bottom-border"><?= Yii::t('app', 'Production Order Number')?></th>
+                  <th class="bg-primaries11 bottom-border"><?= Yii::t('app', 'Наименование')?></th>
+                  <th class="bg-primaries11 bottom-border"><?= Yii::t('app', 'Quantity')?></th>
+                  <th  class="right-border bg-primaries11">начала</th>
+                  <th  class="left-border bg-primaries11"></th>
+                  <th  class="right-border bg-primaries11"></th>
+                  <th  class="center-border bg-primaries11"><?=Yii::t('app', 'Castle')?></th>
+                  <th  class="left-border bg-primaries11"></th>
+                </tr>
+                <tr>
+                  <th  class="top-border right-border bg-primaries11"></th>
+                  <th  class="top-border right-border bg-primaries11"></th>
+                  <th  class="top-border right-border bg-primaries11"></th>
+                  <th  class="bg-primaries11"><?=Yii::t('app', 'Date')?></th>
+                  <th  class="bg-primaries11"><?=Yii::t('app', 'Time')?></th>
+                  
+                  <th  class="bg-primaries11"><?=Yii::t('app', 'Plan')?></th>
+                  <th  class="bg-primaries11"><?=Yii::t('app', 'Fakt')?></th>
+                  <th  class="bg-primaries11"><?=Yii::t('app', 'Balance')?></th>
+                </tr>
+            </thead>  
+            <tbody>
+              <tr>
+                <td class="bg-lighties11"><?= $model->pr_order_number?></td>
+                <td class="bg-lighties11"><?= substr($model->part->part_no.$model->part->part_name, 0, 25)?></td>
+                <td class="bg-lighties11"><?= divideString($model->quantity, 3)?></td>
+                <td class="bg-lighties11"><?= date('d.m.Y', strtotime($model->target_date))?></td>
+                <td class="bg-lighties11"><?= $model->time?></td>
+                <td class="bg-lighties11"><?= divideString($model->planQty, 3)?></td>
+                <td class="bg-lighties11"><?= divideString($model->fact*1, 3)?></td>
+                <td class="bg-lighties11 balance"><?= divideString(($model->planQty - $model->fact), 3)?></td>
+              </tr>
+            </tbody>
+        </table>
+    </div>
+     <!-- Data Zames -->
+     <?php if(!empty($dataZames)):?>
             <?php 
         
             
@@ -543,18 +623,13 @@ ob_start();
                       </tbody>
                     </table>
                   <?php ActiveForm::end();?>
-                </div>
-                
               </div>
-                <!-- submit btn -->
+                
+            </div>
                 
             
 
-          <?php endif; ?>
-
-
-    </div>
-    
+      <?php endif; ?>         
 </div>
 
 <?php ob_start();?>
@@ -695,14 +770,28 @@ $(function(){
 })
 
   // PDF yaratish tugmasiga bosilganda
-  $('#generate-pdf').on("click", function (e) {
+  $('#generate-pdf-siro').on("click", function (e) {
     e.preventDefault();
     
-    var pdfarea = $('.pdf-print-view').html()
+    var pdfarea = $('.siro').html()
 		//console.log($('#printarea1').html());
 		var opt     = {
 			margin: 5,
-			filename: 'File.pdf',
+			filename: 'Сыря.pdf',
+			image: { type: 'png', quality: 0.98 },
+			html2canvas: { scale: 1  },
+			jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+		}
+		html2pdf(pdfarea, opt)
+  });
+  
+  $('#generate-pdf-zames').on("click", function (e) {
+    e.preventDefault();
+    
+    var pdfarea = $('.zames').html()
+		var opt     = {
+			margin: 5,
+			filename: 'Замес.pdf',
 			image: { type: 'png', quality: 0.98 },
 			html2canvas: { scale: 1  },
 			jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
