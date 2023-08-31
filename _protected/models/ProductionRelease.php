@@ -143,8 +143,12 @@ class ProductionRelease extends \yii\db\ActiveRecord
             $productionReleaseItems = ProductionReleaseItem::find()->where(['release_id' => $item->id])->andWhere(['partId' => $model->part_id])->one();
             $data[$key]['part_id'] = $model->part_id;
             $data[$key]['part_name'] = $model->part? substr($model->part->part_no.'  '.$model->part->part_name, 0, 45) : '';
-            $data[$key]['main_qty']  = round(1000 * $model->usage_qty / $mainSpecification->amount * $item->mixerPlan, 2);
-            $data[$key]['unit'] = 'грамм';
+            $data[$key]['main_qty']  = round($model->usage_qty / $mainSpecification->amount * $item->mixerPlan, 2);
+            $data[$key]['unit'] = $item->part->unit->unit_value;
+            $data[$key]['main_qty2']  = round(1000 * $model->usage_qty / $mainSpecification->amount * $item->mixerPlan, 2);
+            $data[$key]['unit2'] = 'грамм';
+
+            
             $data[$key]['protsent'] = round($model->usage_qty / $mainSpecification->amount * 100, 2  );
             $data[$key]['qty'] = $productionReleaseItems? round($productionReleaseItems->qty) : 0;
             $data[$key]['comment'] = $productionReleaseItems? $productionReleaseItems->comment : '';

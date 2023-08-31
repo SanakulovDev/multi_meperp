@@ -273,6 +273,8 @@ ob_start();
                           <th class="bg-primaries"><?= Yii::t('app', 'Calculation name')?></th>
                           <th class="bg-primaries"><?= Yii::t('app', 'Quantity')?></th>
                           <th class="bg-primaries"><?= Yii::t('app', 'Unit')?></th>
+                          <th class="bg-primaries"><?= Yii::t('app', 'Quantity')?></th>
+                          <th class="bg-primaries"><?= Yii::t('app', 'Unit')?></th>
                           <th class="bg-primaries">Консентрация</th>
                           <th class="bg-primaries right-border"><?= Yii::t('app', 'Fakt')?></th>
                           <th class="bg-primaries left-border right-border"></th>
@@ -295,6 +297,10 @@ ob_start();
                             </td>
                               <td class="bg-lighties"><?= divideString($item['main_qty'], 3)?></td>
                               <td class="bg-lighties"><?= $item['unit']?></td>
+                              
+                              <td class="bg-lighties"><?= divideString($item['main_qty2'], 3)?></td>
+                              <td class="bg-lighties"><?= $item['unit2']?></td>
+
                               <td class="bg-lighties"><?= $item['protsent']?>%</td>
                               <td class="bg-lighties">
                                 <div class="wrapper-item">
@@ -572,6 +578,8 @@ ob_start();
                           <th class="bg-primaries11"><?= Yii::t('app', 'Calculation name')?></th>
                           <th class="bg-primaries11"><?= Yii::t('app', 'Quantity')?></th>
                           <th class="bg-primaries11"><?= Yii::t('app', 'Unit')?></th>
+                          <th class="bg-primaries11"><?= Yii::t('app', 'Quantity')?></th>
+                          <th class="bg-primaries11"><?= Yii::t('app', 'Unit')?></th>
                           <th class="bg-primaries11">Консентрация</th>
                           <th class="bg-primaries11 right-border"><?= Yii::t('app', 'Fakt')?></th>
                           <!-- <th class="bg-primaries11 left-border right-border"></th> -->
@@ -594,6 +602,8 @@ ob_start();
                             </td>
                               <td class="bg-lighties11"><?= divideString($item['main_qty'], 3)?></td>
                               <td class="bg-lighties11"><?= $item['unit']?></td>
+                              <td class="bg-lighties11"><?= divideString($item['main_qty2'], 3)?></td>
+                              <td class="bg-lighties11"><?= $item['unit2']?></td>
                               <td class="bg-lighties11"><?= $item['protsent']?>%</td>
                               <!-- <td class="bg-lighties11">
                                 <div class="wrapper-item">
