@@ -4258,7 +4258,7 @@ class ReportController extends AppController {
         $beginDate = date ("Y-m-d", strtotime("+1 day", strtotime($beginDate)));
       }
       $data = $this->_reportService->productionPlanFactDaily($date2);
-      // vd($data);  
+      // vd($data);    
       return $this->render('production-plan-fact-daily', [
         'date'    => $date,
         'data'    => $data,

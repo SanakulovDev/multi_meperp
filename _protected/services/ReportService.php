@@ -2674,7 +2674,7 @@ class ReportService
         $date22 = date("Y-m-d", strtotime($yesterDay.'+1 day'));
         $parts = Yii::$app->db->createCommand($query,[':date1' => $yesterDay, ':date2' => $endDate, ':date11' => $yesterDay.' 08:00', ':date22' => $date22.' 07:59'])->queryAll();
 
-
+        // return $parts;
         $queryFact = "SELECT sum(po.quantity) as quantity from production_order po
             where po.part_id = :part_id  and po.line = :line
             and FROM_UNIXTIME(po.created_at, \"%Y-%m-%d %H:%i\") between :interval1 and :interval2
@@ -2689,13 +2689,13 @@ class ReportService
         
         $today = date("Y-m-d", strtotime($yesterDay.'+1 day'));
         foreach($parts as $key =>  $part){
-            $yesterDayFact = Yii::$app->db->createCommand($queryFact,[':part_id' => $part['part_id'], ':line' => $part['line'], ':interval1'=> $yesterDay.' 08:00', ':interval2'=>$today.' 07:59'])->queryOne()['quantity'];
+            $yesterDayFact = Yii::$app->db->createCommand($queryFact,[':part_id' => $part['part_id'], ':line' => $part['line'], ':interval1'=> $yesterDay.' 08:00', ':interval2'=>$today.' 07:59'])->queryScalar();
             
             $yesterDayPlanShift1 = Yii::$app->db->createCommand($queryPlan,[':date' => $yesterDay, ':line' => $part['line'], ':part_id' => $part['part_id'], ':shift' => 1])->queryOne()['quantity'];
-            $yesterDayFactShift1 = Yii::$app->db->createCommand($queryFact,[':part_id' => $part['part_id'], ':line' => $part['line'], ':interval1'=>$yesterDay.' 08:00', ':interval2'=>$yesterDay.' 19:59'])->queryOne()['quantity'];
+            $yesterDayFactShift1 = Yii::$app->db->createCommand($queryFact,[':part_id' => $part['part_id'], ':line' => $part['line'], ':interval1'=>$yesterDay.' 08:00', ':interval2'=>$yesterDay.' 19:59'])->queryScalar();
             
             $yesterDayPlanShift2 = Yii::$app->db->createCommand($queryPlan,[':date' => $yesterDay, ':line' => $part['line'], ':part_id' => $part['part_id'], ':shift' => 2])->queryOne()['quantity'];
-            $yesterDayFactShift2 = Yii::$app->db->createCommand($queryFact,[':part_id' => $part['part_id'], ':line' => $part['line'], ':interval1'=>$yesterDay.' 20:00', ':interval2'=>$today.' 07:59'])->queryOne()['quantity'];
+            $yesterDayFactShift2 = Yii::$app->db->createCommand($queryFact,[':part_id' => $part['part_id'], ':line' => $part['line'], ':interval1'=>$yesterDay.' 20:00', ':interval2'=>$today.' 07:59'])->queryScalar();
             
             $yesterDayPlan = $yesterDayPlanShift1 + $yesterDayPlanShift2;
             $parts[$key]['yesterDay'][0]['plan'] = $yesterDayPlan?:0;
@@ -2710,9 +2710,9 @@ class ReportService
 
             for($i=$date22; $i <= $endDate; $i = date("Y-m-d", strtotime($i.'+1 day'))){
                 $day1 = date("Y-m-d", strtotime($i.'+1 day'));
-                $planShift1 = Yii::$app->db->createCommand($queryPlan,[':date' => $i, ':line' => $part['line'], ':part_id' => $part['part_id'], ':shift' => 1])->queryOne()['quantity'];
-                $planShift1 = Yii::$app->db->createCommand($queryPlan,[':date' => $i, ':line' => $part['line'], ':part_id' => $part['part_id'], ':shift' => 2])->queryOne()['quantity'];
-                $fact = Yii::$app->db->createCommand($queryFact,[':part_id' => $part['part_id'], ':line' => $part['line'], ':interval1'=> $i.' 08:00', ':interval2'=>$day1.' 07:59'])->queryOne()['quantity'];
+                $planShift1 = Yii::$app->db->createCommand($queryPlan,[':date' => $i, ':line' => $part['line'], ':part_id' => $part['part_id'], ':shift' => 1])->queryScalar();
+                $planShift2 = Yii::$app->db->createCommand($queryPlan,[':date' => $i, ':line' => $part['line'], ':part_id' => $part['part_id'], ':shift' => 2])->queryScalar();
+                $fact = Yii::$app->db->createCommand($queryFact,[':part_id' => $part['part_id'], ':line' => $part['line'], ':interval1'=> $i.' 08:00', ':interval2'=>$day1.' 07:59'])->queryScalar();
                 $parts[$key]['days'][$i]['plan'] = $planShift1 + $planShift2;
             }
         }

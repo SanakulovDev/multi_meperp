@@ -457,13 +457,13 @@ use yii\widgets\Menu; ?>
         'template' => '<a href="{url}"><i class="fa fa-list-ul"></i> <span>{label}</span></a>',
       ];
     }
-    // if (Yii::$app->user->can('pechat-product')) {
+    if (Yii::$app->user->can('pechat-product')) {
       $m210_whm[] = [
         'label'     => Yii::t('app', 'BIRKA'),
         'url'       => ['/pechat-product'],
         'template'  => '<a href="{url}"> <span class="ml-4">{label}</span></a>',
       ];
-    // }
+    }
     if (Yii::$app->user->can('document-type-index')) {
       $m230_directory[] = [
         'label' => Yii::t('app', 'Document types'),
@@ -579,6 +579,13 @@ use yii\widgets\Menu; ?>
         'label' => 'Posts',
         'url' => ['/fg-invoice/index'],
         'template' => '<a href="/posts/index"><i class="fa fa-list"></i> <span>{label}</span></a>',
+      ];
+    }
+    if(Yii::$app->user->can('dashboard-analiz')){
+      $m_new[] = [
+        'label' => 'Результат производства',
+        'url' => ['/dashboard/analiz'],
+        'template' => '<a href="/dashboard/analiz"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
     }
     if (Yii::$app->user->can('fg-invoice-index')) {

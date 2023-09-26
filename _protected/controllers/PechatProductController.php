@@ -10,13 +10,14 @@ use kartik\mpdf\Pdf;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use app\controllers\AppController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * PechatProductController implements the CRUD actions for PechatProduct model.
  */
-class PechatProductController extends Controller
+class PechatProductController extends AppController
 {
     /**
      * {@inheritdoc}
