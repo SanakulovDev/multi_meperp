@@ -30,6 +30,8 @@ use app\models\VisitorSearch;
 use app\rbac\models\Role;
 use app\services\ReportService;
 use app\models\ReportFaktProdajMonth;
+use app\models\ProductSpecification;
+use app\models\ProductSpecificationItem;
 
 use yii\helpers\Url;
 use DateInterval;
@@ -3963,6 +3965,27 @@ class ReportController extends AppController {
       "data_daily" => $data,
       'filter'   => $filter
     ]);      
+  }
+  /**
+   * Sanakulov Anvar
+   * 2023-10-25
+   * @sanakulov_Dev
+   * Dopolnitelna ko'rish
+   */
+  public function actionAdditionalMonthlyRequirementShort($part_id, $qty=0)
+  {
+    $part = Part::findOne($part_id);
+    $product_specification = ProductSpecification::find()
+      ->where(['part_id' => $part_id])
+      ->andWhere(['status' => 1])
+      ->one();
+    $items = [];
+    if($product_specification){
+      $items = ProductSpecificationItem::find()
+        ->where(['product_specification_id' => $product_specification->id])
+        ->all();
+    }
+    return $this->render('additional-monthly-requirement-short', compact('part','items', 'product_specification', 'qty'));
   }
   // excel import
   public function actionDownloadRequirementShort()

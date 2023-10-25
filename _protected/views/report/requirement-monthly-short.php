@@ -72,7 +72,9 @@
                   <!-- <td class="balance" data-cash="<?php //echo $row['currentWeekBalance']?>" style="text-align: center"><?php //echo number_format($row['currentWeekBalance'], 0, ',', ' ') ;  ?></td> -->
                   <!-- <td style="text-align: center"><?php //echo number_format($row['next_week']*1, 0, ',', ' ') ;  ?></td> -->
                   <!-- <td   class="balance" data-cash="<?php //echo $row['nextWeekBalance']?>" style="text-align: center"><?php //echo number_format($row['nextWeekBalance'], 0, ',', ' ') ;  ?></td> -->
-                  <td style="text-align: center"><?php echo number_format($row['current_month'], 0, ',', ' ') ?></td>
+                  <td style="text-align: center">
+                    <?= Html::a(number_format($row['current_month'], 0, ',', ' '), ['additional-monthly-requirement-short', 'part_id'=>$row['part_id'], 'qty' => $row['current_month']], ['target'=>'_blank']) ?>
+                  </td>
                   <td class="balance" data-cash="<?=$row['currentMonthBalance']?>" style="text-align: center"><?php echo number_format($row['currentMonthBalance'], 0, ',', ' ') ?></td>
               </tr>
             <?php endforeach; ?>
