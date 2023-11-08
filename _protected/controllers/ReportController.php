@@ -3975,17 +3975,10 @@ class ReportController extends AppController {
   public function actionAdditionalMonthlyRequirementShort($part_id, $qty=0)
   {
     $part = Part::findOne($part_id);
-    $product_specification = ProductSpecification::find()
-      ->where(['part_id' => $part_id])
-      ->andWhere(['status' => 1])
-      ->one();
-    $items = [];
-    if($product_specification){
-      $items = ProductSpecificationItem::find()
-        ->where(['product_specification_id' => $product_specification->id])
-        ->all();
-    }
-    return $this->render('additional-monthly-requirement-short', compact('part','items', 'product_specification', 'qty'));
+
+    $items = $this->_reportService->getAdditionalMonthlyRequirementShort($part_id, $qty);
+    // vd($items);
+    return $this->render('additional-monthly-requirement-short', compact('part','items', 'qty'));
   }
   // excel import
   public function actionDownloadRequirementShort()

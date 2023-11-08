@@ -2868,4 +2868,26 @@ class ReportService
       array_multisort($columns, SORT_ASC, $generalPartList);
       return $generalPartList;
     }
+
+    /**
+     * Sanakulov Anvar
+     * 2023-11-06
+     * @sanakulov_Dev
+     * AdditionalMonthlyRequirementShort Item
+     */
+    public function getAdditionalMonthlyRequirementShort($partId, $qty)
+    {
+        $query = 'SELECT p.part_name, p.part_no, p.part_color, p.remark  , (pmp.target_qty*psi.usage_qty)/ps.amount  as amount, pmp.target_qty as qty FROM `product_specification_item`  psi
+          inner JOIN product_specification ps on psi.product_specification_id=ps.id
+          inner JOIN production_monthly_plan pmp on ps.part_id=pmp.part_id
+          inner join part p on pmp.part_id = p.id
+          WHERE psi.part_id=:partId and ps.status=1
+          and pmp.production_date between :date1 and :date2
+        	';
+
+        $fromCurrentMonth = date("Y-m").'-01';
+        $toCurrentMonth = date("Y-m-t");
+        $models = Yii::$app->db->createCommand($query, [':date1' => $fromCurrentMonth, ':date2' => $toCurrentMonth, ':partId' => $partId])->queryAll();
+        return $models;
+    }
 }

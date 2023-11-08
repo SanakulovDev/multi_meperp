@@ -88,16 +88,16 @@ use yii\helpers\Html;
       <tbody>
         <?php foreach ($items as $item):?>
           <tr>
-            <td class="bg-ligties"><?= $item->part?$item->part->part_no:''?></td>
-            <td class="bg-ligties"><?= $item->part?$item->part->part_name:''?></td>
-            <td class="bg-ligties"><?= $item->part?$item->part->part_color:''?></td>
-            <td class="bg-ligties">0</td>
-            <td class="bg-ligties"><?= $item->part?$item->part->remark:''?></td>
-            <td class="bg-ligties text-right"><?= round($item->usage_qty/$product_specification->amount * 100, 2)?></td>
-            <td class="bg-ligties text-right"><?= round($item->usage_qty/$product_specification->amount * $qty, 2)?></td>
+            <td class="bg-ligties"><?= $item["part_no"]?></td>
+            <td class="bg-ligties"><?= $item["part_name"]?></td>
+            <td class="bg-ligties"><?= $item["part_color"]?></td>
+            <td class="bg-ligties"><?= $item["qty"]?></td>
+            <td class="bg-ligties"><?= $item["remark"]?></td>
+            <td class="bg-ligties text-right"><?= (round($item['amount'], 2)/round($item['qty'], 2))*100?></td>
+            <td class="bg-ligties text-right"><?= round($item['amount'], 2)?></td>
           </tr>
         <?php endforeach;?>
-      </tbody>
+      </tbody>  
       <tfoot>
         <tr>
           <td><?= Yii::t('app',  'Total')?></td>
