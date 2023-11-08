@@ -216,7 +216,51 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
 
 
 
-      'contract',
+      [
+        'attribute' => 'contract',
+        'format' => 'raw',
+        'value' => function($model){
+            if(mb_strlen($model->contract) > 30){
+              return mb_substr($model->contract,0, 30);
+            }
+            return $model->contract;
+        }
+      ],
+
+      [
+        'attribute' => '',
+        'format' => 'html',
+        'label' => 'Марка',
+        'value' => function($model){
+          $html = '';
+          if(isset($model->fgInvoiceDetails)){
+            $items = $model->fgInvoiceDetails;
+            foreach($items as $item){
+              $html .= mb_substr($item->part_name." ".$item->part->part_color, 0, 30)."<br\>";
+            }
+          
+          }
+          return $html;
+        }
+      ],
+      
+      [
+        'attribute' => '',
+        'format' => 'html',
+        'label' => 'Количество',
+        'value' => function($model){
+          $html = '';
+          if(isset($model->fgInvoiceDetails)){
+            $items = $model->fgInvoiceDetails;
+            foreach($items as $item){
+              $html .= $item->qty."<br\>";
+            }
+          
+          }
+          return $html;
+        }
+      ],
+
 //      'rec_person_fullname',
 //      'rec_person_regno',
 //      'driver',
