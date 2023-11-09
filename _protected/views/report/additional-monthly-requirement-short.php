@@ -67,13 +67,18 @@ use yii\helpers\Html;
           <span><?= $part->part_no?></span>
           <span><?= $part->part_name?></span>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-3">
             <?= $qty?> кг
         </div>
+        <p class="pull-right" style="margin: 0px">
+        <?=Html::a(Yii::t('app', 'btn-download'), ['#'], ['class' => 'btn btn-info btn-sm', 'id' => 'btnDownload'])?>
+      </p>
       </div>
+      
+            <div style="clear: both;"></div>
   </div>
   <div class="main-content">
-    <table class="table tbl_plan">
+    <table class="table tbl_plan" id="tbl_plan2">
       <thead>
           <tr>
             <th class="bg-primaries">№ гп</th>
@@ -93,7 +98,7 @@ use yii\helpers\Html;
             <td class="bg-ligties"><?= $item["part_color"]?></td>
             <td class="bg-ligties"><?= $item["qty"]?></td>
             <td class="bg-ligties"><?= $item["remark"]?></td>
-            <td class="bg-ligties text-right"><?= (round($item['amount'], 2)/round($item['qty'], 2))*100?></td>
+            <td class="bg-ligties text-right"><?= round((round($item['amount'], 2)/$qty)*100) ?></td>
             <td class="bg-ligties text-right"><?= round($item['amount'], 2)?></td>
           </tr>
         <?php endforeach;?>
@@ -108,3 +113,56 @@ use yii\helpers\Html;
   </div>
   
 </div>
+
+<?php ob_start();?>
+    function exportExcel(tableId){
+			var excel = $JExcel.new("Calibri light 10");            
+			excel.set( {sheet:0,value:"Sheet 1" } );
+			
+			var table = document.getElementById(tableId);
+			var limit = table.rows.length;
+			var cells = table.rows[0].cells.length;
+
+			// alert(cells);
+
+			var headers = [];
+
+			for (var i = 0; i < cells; i++) {
+				headers.push(table.rows[0].cells[i].innerHTML);
+			}
+
+
+		
+			var formatHeader=excel.addStyle({
+				border: "none,none,none,thin #333333",font: "Calibri 12 #000 B"}
+			);                                                         
+
+			for (var i=0;i< headers.length;i++){              // Loop headers
+				excel.set(0,i,0,headers[i],formatHeader);    // Set CELL header text & header format
+				excel.set(0,i,undefined,"auto");             // Set COLUMN width to auto 
+			}
+						
+			for (var i=1; i < limit; i++){                                    // Generate 50 rows
+				for(var j = 0; j < cells; j++){
+					if(table.rows[i].cells[j] !== undefined)
+					excel.set(0,j,i,table.rows[i].cells[j].innerHTML);                    // This column is a TEXT
+				}
+			}
+
+			excel.generate("<?= $part->part_name?>-<?= date('Y-m-d H:i:s')?>.xlsx");    
+
+
+			$(".tbl-plan").tableFixer({'left' : 3});
+		}
+		$('#btnDownload').on('click', function(e){
+      e.preventDefault();
+      let tableId = $('.tbl_plan').attr('id');
+			exportExcel(tableId);
+    })	
+
+<?php $this->registerJs(ob_get_clean()); ?>
+<?php $this->registerJsFile('/themes/excel/jquery-3.5.1.min.js', ['position' => \yii\web\View::POS_HEAD]); ?>
+<?php $this->registerJsFile('/themes/excel/myexcel.js', ['position' => \yii\web\View::POS_HEAD]); ?>
+<?php $this->registerJsFile('/themes/excel/jszip.js', ['position' => \yii\web\View::POS_HEAD]); ?>
+<?php $this->registerJsFile('/themes/excel/myscript.js', ['position' => \yii\web\View::POS_HEAD]); ?>
+<?php $this->registerJsFile('/themes/excel/FileSaver.js', ['position' => \yii\web\View::POS_HEAD]); ?>
