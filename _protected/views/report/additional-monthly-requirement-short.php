@@ -98,8 +98,8 @@ use yii\helpers\Html;
             <td class="bg-ligties"><?= $item["part_color"]?></td>
             <td class="bg-ligties"><?= $item["qty"]?></td>
             <td class="bg-ligties"><?= $item["remark"]?></td>
-            <td class="bg-ligties text-right"><?= round((round($item['amount'], 2)/$qty)*100) ?></td>
-            <td class="bg-ligties text-right"><?= round($item['amount'], 2)?></td>
+            <td class="bg-ligties text-right"><?= round((round($item['amount'])/$qty)*100) ?></td>
+            <td class="bg-ligties text-right"><?= round($item['amount'])?></td>
           </tr>
         <?php endforeach;?>
       </tbody>  
