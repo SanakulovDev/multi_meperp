@@ -16,6 +16,7 @@ class m230926_191217_add_dashboard_analiz_permission_roles extends Migration
         'dashboard-analiz',
         'dashboard-analiz-ajax',
         'dashboard-analiz-form-modal',
+        'document-index'
       ];
       foreach($arr as $item){
          $this->batchInsert('{{%auth_item_child}}', ['parent', 'child'], [
