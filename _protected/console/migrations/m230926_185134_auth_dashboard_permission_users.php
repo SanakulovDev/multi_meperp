@@ -18,7 +18,7 @@ class m230926_185134_auth_dashboard_permission_users extends Migration
         'dashboard-ttn',
         'dashboard-prixod',
         'dashboard-norma-rasxod',
-        // 'dashboard-analiz',
+        'dashboard-analiz',
         'dashboard-analiz-ajax',
         'dashboard-analiz-form-modal',
         'dashboard-plan-prodaj',
