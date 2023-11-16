@@ -581,13 +581,15 @@ use yii\widgets\Menu; ?>
         'template' => '<a href="/posts/index"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
     }
-    if(Yii::$app->user->can('dashboard-analiz')){
-      $m_new[] = [
-        'label' => 'Результат производства',
-        'url' => ['/dashboard/analiz'],
-        'template' => '<a href="/dashboard/analiz"><i class="fa fa-list"></i> <span>{label}</span></a>',
-      ];
+    $role = Yii::$app->getUser()->identity->role->item_name;
+    if($role == 'monitor'){
+        $m_new[] = [
+          'label' => 'Результат производства',
+          'url' => ['/dashboard/analiz'],
+          'template' => '<a href="/dashboard/analiz"><i class="fa fa-list"></i> <span>{label}</span></a>',
+        ];
     }
+    
     if (Yii::$app->user->can('fg-invoice-index')) {
       $m500_sales[] = [
         'label' => Yii::t('app', 'Waybill'),
