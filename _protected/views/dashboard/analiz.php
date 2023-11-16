@@ -15,7 +15,7 @@ body{
     justify-content: center;
 }
 .header{
-    margin-top: 60px;
+    margin-top: 20px;
     position:sticky;
     padding: 0 25px 30px 25px;
     z-index: 10000;
@@ -63,9 +63,17 @@ body{
 .control-label{
     font-size: 14px;
 }
+.btn-light{
+  background-color: grey;
+  color: #222;
+}
 <?php $this->registerCss(ob_get_clean());?>
-<div class="container" style="text-align:center">
-
+<div class="container-fluid" style="text-align:center">
+    <div class="row">
+      <div class="col-md-12" style="text-align: right">
+          <?= Html::a(Yii::t('app', 'Logout'), ['/site/logout'], ['class'=> 'btn btn-light', 'data-method'=>'POST'])?>
+      </div>
+    </div>
     <div class="row header">
         <div class="col-md-5  text-right">
             <span class="color-primary"><?= Yii::t('app', 'Production result')?></span>
