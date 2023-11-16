@@ -8,7 +8,7 @@ use app\models\ProductSpecification;
 use app\models\ReportFaktProdajMonth;
 use yii\web\Response;
 use app\controllers\AppController;
-use yii\web\Controller;
+use yii\base\Controller;
 
 class DashboardController extends Controller
 {
