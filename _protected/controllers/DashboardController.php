@@ -8,8 +8,9 @@ use app\models\ProductSpecification;
 use app\models\ReportFaktProdajMonth;
 use yii\web\Response;
 use app\controllers\AppController;
+use yii\web\Controller;
 
-class DashboardController extends AppController
+class DashboardController extends Controller
 {
     public function actionIndex()
     {
