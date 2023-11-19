@@ -50,7 +50,7 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
     <? if(Yii::$app->user->can('fg-invoice-xls')) { ?>
       <?=Html::a(
         Yii::t('app', 'btn-download'),
-        ['xls', 'FactorySearch' => ($_GET['FactorySearch'] ?? null)],
+        ['xls', 'FgInvoiceSearch' => ($_GET['FgInvoiceSearch'] ?? null)],
         [
           'class' => 'btn btn-info btn-sm',
           'data-intro' => Yii::t('intro', 'download-button')

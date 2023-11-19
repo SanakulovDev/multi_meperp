@@ -124,6 +124,10 @@ class FgInvoice extends ActiveRecord {
   public function getFgInvoiceDetails() {
     return $this->hasMany(FgInvoiceDetail::className(), ['fg_invoice_id' => 'id']);
   }
+  
+  public function getFgInvoiceDetails2() {
+    return $this->hasOne(FgInvoiceDetail::className(), ['fg_invoice_id' => 'id']);
+  }
 
   public function getFgInvoiceWaybills() {
     return $this->hasMany(FgInvoiceWaybill::className(), ['fg_invoice_id' => 'id']);

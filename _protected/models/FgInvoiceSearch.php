@@ -82,7 +82,7 @@
 			}
 //			echo "<pre>"; print_r($query->createCommand()->rawSql);echo "</pre>";
 			if($mode == 'excel'){
-				$query->joinWith(['factory', 'customer']);
+				$query->joinWith(['factory', 'customer', 'fgInvoiceDetails2']);
 				$file = Yii::createObject(
 					[
 						'class' => 'codemix\excelexport\ExcelFile',
@@ -107,6 +107,8 @@
 									'vat',
 									'excise',
 									'comment',
+                  'fgInvoiceDetails2.part_name',
+                  'fgInvoiceDetails2.qty',
 									'confirmed_at',
 									'confirmed_by',
 									'createdBy.fullname',
@@ -131,12 +133,14 @@
 									'13' => Yii::t('app', 'QQS % xisobida'),
 									'14' => Yii::t('app', 'Аксиз налог % xisobida'),
 									'15' => Yii::t('app', 'Comment'),
-									'16' => Yii::t('app', 'Confirmed at'),
-									'17' => Yii::t('app', 'Confirmed by'),
-									'18' => Yii::t('app', 'Created by'),
-									'19' => Yii::t('app', 'Created at'),
-									'20' => Yii::t('app', 'Updated by'),
-									'21' => Yii::t('app', 'Updated at'),
+									'16' => Yii::t('app', 'Марка'),
+									'17' => Yii::t('app', 'Количество'),
+									'18' => Yii::t('app', 'Confirmed at'),
+									'19' => Yii::t('app', 'Confirmed by'),
+									'20' => Yii::t('app', 'Created by'),
+									'21' => Yii::t('app', 'Created at'),
+									'22' => Yii::t('app', 'Updated by'),
+									'23' => Yii::t('app', 'Updated at'),
 								],
 							],
 						]
