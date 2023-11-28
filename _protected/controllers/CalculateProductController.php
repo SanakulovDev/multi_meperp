@@ -5,6 +5,9 @@ use Yii;
 use app\models\CalculateProduct;
 use app\models\PechatProduct;
 use app\models\Stock;
+use app\models\Customer;
+use yii\helpers\ArrayHelper;
+use yii\web\Response;
 class CalculateProductController extends \yii\web\Controller
 {
     public $title;
@@ -100,6 +103,39 @@ class CalculateProductController extends \yii\web\Controller
                 'data2' => $response,
             ]);
         }
+    }
+
+    /**
+     * Anvar Sanakulov
+     * 2023-11-14
+     * @sanakulov_Dev
+     * yangi customerlar uchun otchot qilimoqda
+     * 
+     */
+    public function actionCustomers($term=1)
+    {
+      $customers = ArrayHelper::map(Customer::find()->all(), 'id', 'name');
+      // vd($customers);
+      $model = new CalculateProduct();
+      return $this->render('customers', compact('model','customers','term'));
+    }
+
+    public function actionCustomersAjax()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        if(Yii::$app->request->isAjax && Yii::$app->request->isPost){
+          $post = Yii::$app->request->post();
+          if(isset($post['customerId']) && isset($post['fromDate']) && isset($post['toDate']) && isset($post['term'])){
+            $customerId = $post['customerId'];
+            $from       = $post['fromDate'];
+            $to         = $post['toDate'];
+            $term       = $post['term'];
+            $items      = CalculateProduct::customers($customerId, $from, $to, $term);
+            // vd($items);
+            return $this->renderAjax('customers-ajax', compact('items', 'term'));
+          }
+        }
+        
     }
 
     

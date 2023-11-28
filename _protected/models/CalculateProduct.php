@@ -21,12 +21,17 @@ class CalculateProduct extends \yii\db\ActiveRecord
     public $type;
 
     //rules
+    public $customerId;
+    public $fromDate;
+    public $toDate;
+
     public function rules()
     {
         return [
-            [['part_id'], 'integer'],
+            [['part_id', 'customerId'], 'integer'],
             [['quantity'], 'number'],
             [['type'], 'string', 'max' => 255],
+            [['from_date', 'toDate'], 'safe']
         ];
     }
 
@@ -292,5 +297,30 @@ class CalculateProduct extends \yii\db\ActiveRecord
             
         }
         return $data;
+    }
+    /**
+     * Anvar Sanakulov
+     * 2023-11-19
+     * @sanakulov_Dev
+     * 
+     */
+    public static function customers($customerId, $from, $to, $term=1)
+    {
+        $query = "SELECT 
+            fgt.part_name, fgt.part_no, fgt.qty, fgt.price, fg.invoice_no, fg.invoice_date, fg.contract, fg.contract_date,
+            w.waybill_no, w.waybill_date, ct.name
+          from fg_invoice  fg
+          inner join fg_invoice_detail fgt on fgt.fg_invoice_id = fg.id
+          inner join fg_invoice_waybill fgw on fgw.fg_invoice_id = fg.id
+          inner join customer ct on fg.customer_id=ct.id
+          inner join waybill w on fgw.waybill_id=w.id
+          where ct.id=$customerId  and fg.invoice_date between '$from' and '$to'
+          order by fg.invoice_date desc
+          ";
+
+        $res = Yii::$app->db->createCommand($query)->queryAll();
+        $res2 = Yii::$app->db->createCommand($query)->getRawSql();
+        // vd($res2);
+        return $res;
     }
 }

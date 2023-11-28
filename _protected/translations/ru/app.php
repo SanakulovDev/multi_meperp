@@ -717,7 +717,7 @@ return [
   'Waybill' => 'Транспортная накладная',
   'Waybills' => 'Транспортная накладная',
   'Waybill no' => 'СФ',
-  'Waybill date' => 'Дата ТТН',
+  'Waybill date' => 'Дата СФ',
   'Type of record' => 'Тип записи',
   'Upload production count' => 'Загрузить производственный заказ',
   'Upload prod. order' => 'Загрузить произ.заказ',

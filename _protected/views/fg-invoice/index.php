@@ -253,7 +253,7 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
           if(isset($model->fgInvoiceDetails)){
             $items = $model->fgInvoiceDetails;
             foreach($items as $item){
-              $html .= ($item->qty*1)."<br\>";
+              $html .= (  $item->qty*1)."<br\>";
             }
           
           }
