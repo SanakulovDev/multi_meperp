@@ -100,6 +100,13 @@ $(function() {
       $('.dashboard').html(data);
     });
   })
+
+  $('.export-btn').on('click', function(e){
+        let tableId = $('body').find('.tbl_plan').attr('id');
+        exportExcel(tableId);
+        //window.open('data:application/vnd.ms-excel,' + $('#'+tableId).html());
+        //e.preventDefault();
+    });
   function ajaxRequest(type='POST', callback){
     let url         = '<?= Url::to('/calculate-product/customers-ajax')?>';
     let customerId = $('#calculateproduct-customerid').val();
@@ -124,6 +131,43 @@ $(function() {
       }
     })
   }
+
+
+  function exportExcel(tableId){
+		var excel = $JExcel.new("Calibri light 10");            
+		excel.set( {sheet:0,value:"Sheet 1" } );
+		
+		var table = document.getElementById(tableId);
+		var limit = table.rows.length;
+		var cells = table.rows[0].cells.length;
+		// alert(cells);
+		var headers = [];
+		for (var i = 0; i < cells; i++) {
+			headers.push(table.rows[0].cells[i].innerHTML);
+		}
+	
+		var formatHeader=excel.addStyle({
+			border: "none,none,none,thin #333333",font: "Calibri 12 #000 B"}
+		);                                                         
+		for (var i=0;i< headers.length;i++){              // Loop headers
+			excel.set(0,i,0,headers[i],formatHeader);    // Set CELL header text & header format
+			excel.set(0,i,undefined,"auto");             // Set COLUMN width to auto 
+		}
+					
+		for (var i=1; i < limit; i++){                                    // Generate 50 rows
+			for(var j = 0; j < cells; j++){
+				if(table.rows[i].cells[j] !== undefined)
+				excel.set(0,j,i,table.rows[i].cells[j].innerHTML);                    // This column is a TEXT
+			}
+		}
+		excel.generate("Отчет о содержании Счет-фактуры на основе информации ТТН на 2023-<?= date('Y-m-d H:i:s', time())?>.xlsx");    
+		$(".tbl-plan").tableFixer({'left' : 3});
+	}
 })
 
-<?php $this->registerJs(ob_get_clean());
+<?php $this->registerJs(ob_get_clean());?>
+<?php $this->registerJsFile('/themes/excel/jquery-3.5.1.min.js', ['position' => \yii\web\View::POS_HEAD]); ?>
+<?php $this->registerJsFile('/themes/excel/myexcel.js', ['position' => \yii\web\View::POS_HEAD]); ?>
+<?php $this->registerJsFile('/themes/excel/jszip.js', ['position' => \yii\web\View::POS_HEAD]); ?>
+<?php $this->registerJsFile('/themes/excel/myscript.js', ['position' => \yii\web\View::POS_HEAD]); ?>
+<?php $this->registerJsFile('/themes/excel/FileSaver.js', ['position' => \yii\web\View::POS_HEAD]); ?>
