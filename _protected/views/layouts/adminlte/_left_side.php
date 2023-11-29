@@ -610,6 +610,15 @@ use yii\widgets\Menu; ?>
         'url' => ['/fg-invoice/contract-factory'],
         'template' => '<a href="{url}"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
+
+      
+      $m500_sales[] = [
+        'label' => Yii::t('app', 'Reports'),
+        'url' => ['/calculate-product/customers'],
+        'template' => '<a href="{url}"><i class="fa fa-list"></i> <span>{label}</span></a>',
+      ];
+
+
     }
     
     if (Yii::$app->user->can('sales-plan-index')) {
