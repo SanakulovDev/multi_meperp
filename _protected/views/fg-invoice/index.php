@@ -21,6 +21,7 @@ $canView = Yii::$app->user->can('fg-invoice-view');
 $canConfirm = Yii::$app->user->can('fg-invoice-confirm');
 $canReject = Yii::$app->user->can('fg-invoice-reject');
 $canPrint = Yii::$app->user->can('fg-invoice-print');
+// vd($_GET['FgInvoiceSearch']);
 ?>
 <div class="fg-invoice-index">
   <div class="pull-right">
@@ -50,7 +51,7 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
     <? if(Yii::$app->user->can('fg-invoice-xls')) { ?>
       <?=Html::a(
         Yii::t('app', 'btn-download'),
-        ['xls', 'FgInvoiceSearch' => ($_GET['FgInvoiceSearch'] ?? null)],
+        ['xls', 'FgInvoiceSearch' => ($_GET['FgInvoiceSearch'] ?: null)],
         [
           'class' => 'btn btn-info btn-sm',
           'data-intro' => Yii::t('intro', 'download-button')
@@ -253,7 +254,7 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
           if(isset($model->fgInvoiceDetails)){
             $items = $model->fgInvoiceDetails;
             foreach($items as $item){
-              $html .= (  $item->qty*1)."<br\>";
+              $html .= (divideString(round($item->qty*1), 3))."<br\>";
             }
           
           }
