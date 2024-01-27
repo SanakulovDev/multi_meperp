@@ -78,6 +78,7 @@ return [
   'btn-create-inv' => '<i class="glyphicon glyphicon-plus"></i> Приход (Инвойс)',
   'btn-create-local-issue' => '<i class="glyphicon glyphicon-plus"></i> Расход (Даваль.)',
   'btn-create-doc' => '<i class="glyphicon glyphicon-plus"></i> Расход (Склад)',
+  'btn-create-info' => '<i class="glyphicon glyphicon-plus"></i> Расход (Склад производство)',
   'btn-update' => '<i class="glyphicon glyphicon-pencil"></i> Изменить',
   'btn-update-act' => '<i class="glyphicon glyphicon-pencil"></i> Изменить',
   'btn-edit' => '<i class="glyphicon glyphicon-pencil"></i> Редактировать',

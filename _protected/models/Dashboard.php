@@ -125,7 +125,7 @@ class Dashboard extends \yii\db\ActiveRecord
             $qisqartma  = $quantity / $productSpecification->amount;
 
         }
-        $query = " SELECT part.part_name, part.part_no, part.part_color as part_color,  usage_qty * '".$qisqartma."'  as quantity FROM product_specification_item psi 
+        $query = " SELECT part.id as part_id, part.part_name, part.part_no, part.part_color as part_color,  usage_qty * '".$qisqartma."'  as quantity FROM product_specification_item psi 
             LEFT JOIN part ON part.id = psi.part_id 
             where 
             psi.product_specification_id = '".$productSpecification->id."'
@@ -153,7 +153,7 @@ class Dashboard extends \yii\db\ActiveRecord
     public static function runDate($date = null)
     {
         // $date = date('H:i');
-        return '2022-10-02';
+        // return '2022-10-02';
         // return '2022-08-03';
 
         // return '2021-05-29';

@@ -14,6 +14,7 @@ use app\models\ProductionOrderUploadForm;
 use app\models\ProductModel;
 use app\models\ProductSpecification;
 use app\models\Stock;
+use app\models\StockInfoWrapper;
 use app\models\User;
 use app\models\Warehouse;
 use Yii;
@@ -115,6 +116,8 @@ class ProductionOrderController extends AppController
    */
   public function actionCreate()
   {
+
+    $stock_info_wrapper_list = StockInfoWrapper::all();
     $post_params = Yii::$app->request->post();
     $model = new ProductionOrder(["scenario" => "create"]);
     $model->quantity_of_copy = 1;
@@ -156,7 +159,7 @@ class ProductionOrderController extends AppController
           Yii::$app->session->setFlash("error", $err_sms);
           return $this->render(
             "create",
-            array_merge(["model" => $model, "prev_shift" => $prev_shift], self::loadDictionaries())
+            array_merge(["model" => $model, "prev_shift" => $prev_shift, 'stock_info_wrapper_list' => $stock_info_wrapper_list], self::loadDictionaries())
           );
         }
       }
@@ -188,6 +191,7 @@ class ProductionOrderController extends AppController
           "model" => $model,
           "prev_shift" => $prev_shift,
           "modelsToPrint" => $modelsToPrint ?? null,
+          'stock_info_wrapper_list' => $stock_info_wrapper_list
         ],
         self::loadDictionaries()
       )
@@ -592,7 +596,7 @@ class ProductionOrderController extends AppController
     $models = ArrayHelper::map(ProductModel::find()->all(), "id", "modelinfo");
     $flocs = ArrayHelper::map(
       Warehouse::find()
-        ->where(["warehouse_type" => [Warehouse::TYPE_SHOP, Warehouse::TYPE_OUTSOURCING]])
+        ->where(["warehouse_type" => [Warehouse::TYPE_SHOP, Warehouse::TYPE_OUTSOURCING, Warehouse::TYPE_STOCKINFO]])
         ->all(),
       "id",
       "name"

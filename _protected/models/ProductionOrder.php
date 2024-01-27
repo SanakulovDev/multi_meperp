@@ -86,7 +86,7 @@ class ProductionOrder extends ActiveRecord {
     return [
       [['part_id', 'current_seq', 'quantity', 'line'], 'required'],
       [['quantity_of_copy'], 'required', 'on' => 'create'],
-      [['part_id', 'is_bulk', 'product_specification_id', 'current_seq', 'is_printed', 'is_label', 'created_by', 'updated_by', 'created_at', 'updated_at', 'line'], 'integer'],
+      [['part_id', 'is_bulk', 'product_specification_id', 'current_seq', 'is_printed', 'is_label', 'created_by', 'updated_by', 'created_at', 'updated_at', 'line', 'stock_info_wrapper_id'], 'integer'],
       [['current_event'], 'string', 'max' => 3],
       [['serial_number'], 'string', 'max' => 50],
       ['quantity', 'number'],
@@ -120,6 +120,7 @@ class ProductionOrder extends ActiveRecord {
       'is_bulk' => Yii::t('app', 'BULK'),
       'product_specification_id' => Yii::t('app', 'Production specification'),
       'line' => Yii::t('app', 'Line'),
+      'stock_info_wrapper_id' => Yii::t('app', 'Stock Info Code')
     ];
   }
 
@@ -160,7 +161,13 @@ class ProductionOrder extends ActiveRecord {
   public function getUpdatedBy() {
     return $this->hasOne(User::className(), ['id' => 'updated_by']);
   }
-
+  /**
+   * getStockInfoWrapper
+   */
+  public function getStockInfoWrapper()
+  {
+    return $this->hasOne(StockInfoWrapper::className(), ['id'=>'stock_info_wrapper_id']);
+  }
   /**
    * @return ActiveQuery
    */

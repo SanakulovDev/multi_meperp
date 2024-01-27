@@ -122,7 +122,7 @@ class Stock extends ActiveRecord {
     }
   }
 
-  public static function issue($wh_id, $data) {
+  public static function issue($wh_id, $data, $stock_info=false) {
     $errorlist = [];
     $transaction = Yii::$app->db->beginTransaction();
     $key = 0;
@@ -132,11 +132,24 @@ class Stock extends ActiveRecord {
       if($stock_item) {
         if(($stock_item->qty - $item['qty']) >= 0) {
           $stock_item->qty = $stock_item->qty - $item['qty'];
+          /**
+           * Anvar Sanakulov
+           * 2024-01-25
+           * @sanakulov_Dev
+           * StockInfo ga yozadigan joyi
+           */
+          if($stock_info){
+            $stockInfo = new StockInfo();
+            $stockInfo->stock_info_wrapper_id = $item['stock_info_wrapper_id'];
+            $stockInfo->part_id = $item['part_id'];
+            $stockInfo->qty = $item['qty'];
+            $stockInfo->save(false);
+          }
           if(!$stock_item->save()) {
             $errorlist[] = 'Stock change problem! Part : '.$stock_item->part->part_no;
           }
         } else {
-          $errorlist[] = $stock_item->part->partinfo.', '.Yii::t('app', 'Stock').' : '.$stock_item->qty;
+          $errorlist[] = $stock_item->part->partinfo.', '.Yii::t('app', 'Stock').' : '.($stock_item->qty*1);
         }
       } else {
         $errorlist[] = Part::findOne($item['part_id'])->partinfo.', '.Yii::t('app', 'Stock').' : 0';

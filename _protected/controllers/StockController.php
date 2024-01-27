@@ -7,6 +7,8 @@ use app\models\Part;
 use app\models\Stock;
 use app\models\StockUploadForm;
 use app\models\StockSearch;
+use app\models\StockInfo;
+use app\models\StockInfoSearch;
 use app\models\Warehouse;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -58,6 +60,18 @@ class StockController extends AppController
 		die;
 	}
 
+  /**
+   * Stock Info actionXlsInfo
+   */
+  public function actionXlsInfo()
+	{
+		ini_set('memory_limit', '-1');
+		ini_set('max_execution_time', '-1');
+		$searchModel = new StockInfoSearch();
+		$xsl_file = $searchModel->search(Yii::$app->request->queryParams, 'excel');
+		$xsl_file->send(Helpers::downloadFileName('stock-info'));
+		die;
+	}
 
 	public function actionUpload()
 	{
@@ -269,4 +283,33 @@ class StockController extends AppController
 			return Yii::$app->user->identity->warehouseNames;
 		}
 	}
+  /**
+   * Anvar Sanakulov
+   * 2024-01-23
+   * @sanakulov_Dev
+   * actionInfo
+   */
+  public function actionInfo()
+  {
+    $searchModel = new StockInfoSearch();
+		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+		if (!in_array(Yii::$app->user->identity->rolename, ['admin', 'superadmin', 'observer', 'report']) ) {
+				$dataProvider->query->andWhere(['stock_info.warehouse_id' => Yii::$app->user->identity->warehouseIds]);
+		}
+		
+	
+		$countQuery = clone $dataProvider->query;
+		$total = 0;
+		foreach ($countQuery->all() as $row) {
+			$total += $row->qty;
+		}
+		$parts = ArrayHelper::map(Part::find()->all(), 'id', 'partinfo');
+		return $this->render('info', [
+			'searchModel' => $searchModel,
+			'dataProvider' => $dataProvider,
+			'parts' => $parts,
+			'user_warehouses' => $this->userWarehouses,
+			'total' => $total,
+		]);
+  }
 }

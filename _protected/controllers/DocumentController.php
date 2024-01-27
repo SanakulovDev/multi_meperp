@@ -15,6 +15,8 @@ use app\models\DocumentUploadForm;
 use app\models\Part;
 use app\models\ProductionOrder;
 use app\models\Stock;
+use app\models\StockInfo;
+use app\models\StockInfoWrapper;
 use app\models\Supplier;
 use app\models\Warehouse;
 use Yii;
@@ -302,6 +304,161 @@ class DocumentController extends AppController
 			}
 		} else {
 			return $this->render('create', [
+				'model' => $model,
+				'modelItems' => $modelItems,
+				'isNewRecord' => $isNewRecord,
+				'user_warehouses' => $this->userWarehouses,
+			]);
+		}
+	}
+
+  /**
+   * Anvar Sanakulov
+   * 2024-01-24 21:44
+   * @sanakulov_Dev
+   * actionCreateInfo
+   */
+  public function actionCreateInfo()
+	{
+		$document_type_id = 2; // nakladnoy
+		$model = new Document();
+		$modelItems = new DocumentDetail();
+		$model->docdate = date('d.m.Y');
+		$errorlist = [];
+		$isNewRecord = true;
+
+    // Stock Info Wrapper
+    $stockInfoWrapper = new StockInfoWrapper();
+
+		if ($model->load(Yii::$app->request->post())) {
+      
+			// vd(Yii::$app->request->post());
+			if (is_array($_POST['items']['detail']) and count($_POST['items']['detail']) < 2) {
+				$errorlist = [
+					'details' => [
+						'no_item' => [
+							[Yii::t('app', 'You must select at least one part.')]
+						]
+					]
+				];
+				return $this->render('create-info', [
+					'errorlist' => $errorlist ?? null,
+					'model' => $model,
+					'items' => $_POST['items'],
+					'modelItems' => $modelItems,
+					'isNewRecord' => $isNewRecord,
+					'user_warehouses' => $this->userWarehouses,
+				]);
+			}
+			// $transaction = Yii::$app->db->beginTransaction();
+			$model->document_type_id = $document_type_id;
+			$model->docnum = DocumentType::generateDocnum($document_type_id);
+			$model->docdate = date("Y-m-d", strtotime($model->docdate));
+      $model->to_warehouse_id = 0;
+			if ($model->save(false)) {
+        /**
+         * Stock Info Wrapper table insert informations
+         */
+        $stockInfoWrapper->warehouse_id = $model->from_warehouse_id;
+        $stockInfoWrapper->document_id = $model->id;
+        $stockInfoWrapper->comment = $model->comment;
+        $stockInfoWrapper->type_id = $model->type_id;
+        $stockInfoWrapper->give_user_id = Yii::$app->user->id;
+        $stockInfoWrapper->save(false);
+        
+        // vd($model->errors);
+				if (is_array($_POST['items']['detail']) and count($_POST['items']['detail']) > 1) {
+					$data = []; // for stock fucntion
+					foreach ($_POST['items']['detail'] as $key => $value) {
+						if ($key == 0) {
+							continue;
+						}
+						$item = new DocumentDetail();
+						$item->document_id = $model->id;
+						$item->part_id = $_POST['items']['detail'][$key];
+						$item->qty = $_POST['items']['quantity'][$key];
+						$hasSubParts = Part::findOne($item->part_id)->hasSubParts ?? null;
+						if ($hasSubParts and $model->fromWarehouse->warehouse_type != Warehouse::TYPE_PHYSICAL) {
+							$item->sub = 1;
+						}
+						if (!$item->save()) {
+							$errorlist[$_POST['items']['num'][$key]] = $item->getErrors();
+						} else {
+							// produce changes
+							if (false and $hasSubParts and $model->fromWarehouse->warehouse_type != Warehouse::TYPE_PHYSICAL) {
+								// agar bu detal sub bomda ota detal bolsa va rasxod qilayotgan sklad fizicheskiy bolmasa uni bollarini rasxod qilamiz
+								$dataSub = [];
+								foreach ($item->part->subParts as $subPart) {
+									// har bir sub detalni ulock boyicha rasxod qilib chiqamiz
+									if ($model->from_warehouse_id == $subPart->warehouse_id) {
+										$dataSub = [
+											[
+												'part_id' => $subPart->sub_part_id,
+												'qty' => $item->qty * $subPart->usage_qty
+											]
+										];
+										$stockResultSub = Stock::issueFromShop($subPart->warehouse_id, $dataSub);
+                    
+										if (!$stockResultSub['success']) {
+											$errorlist[$_POST['items']['num'][$key]] = [[Yii::t('app', 'Issue problem')]];
+										}
+										// sub table ga rasxod qilingan detallarni yozib qoyamiz
+										$documentDetailSub = new DocumentDetailSub();
+										$documentDetailSub->document_id = $model->id;
+										$documentDetailSub->part_id = $subPart->part_id;
+										$documentDetailSub->sub_part_id = $subPart->sub_part_id;
+										$documentDetailSub->qty = $item->qty * $subPart->usage_qty;
+										$documentDetailSub->warehouse_id = $subPart->warehouse_id;
+										if (!$documentDetailSub->save()) {
+											$errorlist[$_POST['items']['num'][$key]] = [[Yii::t('app', 'Document sub-detail insert problem')]];
+										}
+									}
+								}
+							} else {
+								// agar bu detal sub bomda ota detal bolmasa yoki rasxod qilayotgan sklad fizicheskiy bolsa uni o'zini rasxod qilamiz
+								unset($tmpArr);
+
+  
+
+
+								$tmpArr['part_id'] = $item->part_id;
+								$tmpArr['qty'] = $item->qty;
+                $tmpArr['stock_info_wrapper_id'] = $stockInfoWrapper->id;
+								$data[] = $tmpArr;
+							}
+						}
+					}
+					// shu joyda stock table ga ham change qilish kk
+					// - from_wh dan agar ostatkasi yetsa kamaytirish
+					$stockResult = Stock::issue($model->from_warehouse_id, $data, true);
+				}
+				if (count($errorlist) == 0 and $stockResult['success']) {
+					// $transaction->commit();
+					// $this->writeToDocHistory($model->id, $this->action->id);
+					Yii::$app->session->setFlash('success', Yii::t('app', 'Document created successfully.'));
+					return $this->redirect(['index']);
+				} else {
+					// $transaction->rollBack();
+					return $this->render('create-info', [
+						'errorlist' => ['details' => $errorlist, 'stock' => $stockResult['errorlist'] ?? null],
+						'model' => $model,
+						'items' => $_POST['items'],
+						'modelItems' => $modelItems,
+						'isNewRecord' => $isNewRecord,
+						'user_warehouses' => $this->userWarehouses,
+					]);
+				}
+			} else {
+				return $this->render('create-info', [
+					'model' => $model,
+					'items' => $_POST['items'],
+					'modelItems' => $modelItems,
+					'isNewRecord' => $isNewRecord,
+					'user_warehouses' => $this->userWarehouses,
+				]);
+			}
+		} else {
+			return $this->render('create-info', [
 				'model' => $model,
 				'modelItems' => $modelItems,
 				'isNewRecord' => $isNewRecord,

@@ -39,8 +39,7 @@
 			self::ADJ_RECEIPT => 'Receipt',
 			self::ADJ_ISSUE => 'Issue',
 		];
-
-		public $action, $adj, $adj_wh_id, $filter_from, $filter_to;
+		public $action, $adj, $adj_wh_id, $filter_from, $filter_to, $type_id;
 
 		public function fields()
 		{
@@ -105,7 +104,7 @@
 				[['supplier_id'], 'required', 'on' => 'scenario_req_supp'],
 				[['comment'], 'required', 'on' => 'act'],
 				[['docdate', 'status', 'action', 'adj_wh_id', 'adj'], 'safe'],
-				[['supplier_id', 'document_type_id', 'from_warehouse_id', 'to_warehouse_id', 'created_by', 'created_at', 'updated_by', 'updated_at'], 'integer'],
+				[['supplier_id', 'document_type_id', 'from_warehouse_id', 'to_warehouse_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'type_id'], 'integer'],
 				[['docnum', 'series'], 'string', 'max' => 255],
 				[['comment'], 'string', 'max' => 1000],
 				[['serial_number'], 'string', 'max' => 50],

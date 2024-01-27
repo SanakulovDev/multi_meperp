@@ -61,6 +61,9 @@ $cansShopDisconfirm = Yii::$app->user->can('document-shop-disconfirm');
 							<?= Html::a(Yii::t('app', 'btn-create-act'), ['create-act'], ['class' => 'btn btn-danger  btn-sm']) ?>
 						<? } ?>
 					<? } ?>
+          <?php if(Yii::$app->user->can('document-create-info')):?>
+            <?= Html::a(Yii::t('app', 'btn-create-info'), ['create-info'], ['class' => 'btn btn-success  btn-sm']) ?>
+          <?php endif;?>
 				</div>
 				<div class="form-group">
 				<? if (Yii::$app->user->can('document-issue')) { ?>

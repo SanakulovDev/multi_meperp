@@ -30,67 +30,28 @@ $lines = ProductionOrder::getLines();
     <div class="row">
         <div class="col-lg-2 col-md-2">
             <div class="form-group">
-                <label><?=Yii::t('app', 'Floc')?></label>
-              <?=Html::dropDownList('floc', null, $flocs, ['id' => 'select_floc', 'class' => 'form-control select2', 'prompt' => '*', 'data-url' => Url::toRoute('part/get-parts-by-model-and-side')])?>
+              <?=$form->field($model, 'warehouse_id')->dropDownList($flocs, ['class' => 'form-control select2', 'id'=>'select_floc', 'options' => $options, 'prompt' => Yii::t('app', '...'), 'data-url' => Url::toRoute(['part/get-parts-by-model-and-side'])])?>
             </div>
         </div>
-        <div class="col-lg-2 col-md-2 hidden select_stock_info_wrapper">
-          <div class="form-group">
-            <label><?= Yii::t('app', 'Stock Info')?></label>
-            <?= Html::dropDownList('stock_info_wrapper_id',null, $stock_info_wrapper_list, ['id' => 'select_stock_info_wrapper', 'class' => 'form-control select2', 'prompt' => '*',])?>
-          </div>
-        </div>
-        <div class="col-lg-2 col-md-2">
-            <div class="form-group">
-                <label><?=Yii::t('app', 'Product model')?></label>
-              <?=Html::dropDownList('model', null, $models, ['id' => 'select_model', 'class' => 'form-control select2', 'prompt' => '*', 'data-url' => Url::toRoute('part/get-parts-by-model-and-side')])?>
-            </div>
-        </div>
-        <div class="col-lg-1 col-md-1">
-            <div class="form-group">
-                <label><?=Yii::t('app', 'Side')?></label>
-              <?=Html::dropDownList('side', null, ['LH' => 'LH', 'RH' => 'RH', 'FR' => 'FR', 'RR' => 'RR'], ['id' => 'select_side', 'class' => 'form-control select2', 'prompt' => '*', 'data-url' => Url::toRoute('part/get-parts-by-model-and-side')])?>
-            </div>
-        </div>
-        <div class="col-lg-5 col-md-5">
+        <div class="col-lg-3 col-md-5">
           <?=$form->field($model, 'part_id')->dropDownList($parts_withptnm, ['class' => 'form-control select2', 'options' => $options, 'prompt' => Yii::t('app', '...'), 'data-url' => Url::toRoute(['part/get-partname'])])?>
         </div>
-    </div>
+    <!-- </div>
 
-    <div class="row">
+    <div class="row"> -->
         <div class="col-lg-2 col-md-2">
           <? //=$form->field($model, 'quantity')->textInput(['maxlength' => 6, 'type' => 'number', 'min' => 1, 'max' => 999999])?>
-          <?=$form->field($model, 'quantity')->textInput()?>
-        </div>
-        <div class="col-lg-2 col-md-2">
-          <?=$form->field($model, 'quantity_of_copy')->textInput(['maxlength' => 2, 'type' => 'number', 'min' => 1, 'max' => 99])?>
+          <?=$form->field($model, 'qty')->textInput()?>
         </div>
         <div class="col-lg-2 col-md-2">
             <!-- line column drodownList activeform -->
           <?=$form->field($model, 'line')->dropDownList($lines, ['class' => 'form-control select2','prompt' => Yii::t('app', '...')])?>
         </div>
-      <? if($prev_shift == 1){ ?>
-          <div class="col-lg-2 col-md-2">
-              <div style="font-weight: bold"> <?=Yii::t('app', 'Shift')?> </div>
-              <div class="grp_kecha btn-group btn-toggle" data-toggle="buttons">
-                  <label class="kecha btn btn-primary active">
-                      <input name="shift" value="0" type="radio"> <?=Yii::t('app', 'Current')?>
-                  </label>
-                  <label class="kecha btn btn-default">
-                      <input name="shift" value="1" checked="" type="radio"> <?=Yii::t('app', 'Preview')?>
-                  </label>
-              </div>
-          </div>
-      <? } ?>
-      <?php
-      $is_produced = true;
-      echo Html::hiddenInput('produced', $is_produced);
-      ?>
-        <div class="col-lg-4 col-md-4">
+      
+        <div class="col-lg-2 col-md-2">
             <div class="form-group" style="margin-top: 25px;">
                 <label class="control-label"></label>
               <?=Html::submitButton(Yii::t('app', 'btn-save-and-print'), ['class' => 'btn btn-success btn-sm'])?>
-              <?=Html::a(Yii::t('app', 'btn-all-po'), ['index'], ['class' => 'btn btn-default btn-sm'])?>
             </div>
         </div>
     </div>
@@ -122,8 +83,8 @@ $(document).ready(function() {
            
     });
     
-    $('#productionorder-part_id').on('select2:select', function (e) {
-    $('#productionorder-quantity').val($(e.params.data.element).data('pack-size'));    
+    $('#stockinfowrapper-part_id').on('select2:select', function (e) {
+    $('#stockinfowrapper-qty').val($(e.params.data.element).data('pack-size'));    
     var elemant = $(this);        
         var part_id = $(this).val();
         var url     = $(this).attr('data-url')        
@@ -143,6 +104,35 @@ $(document).ready(function() {
     */
       
     });
+
+
+    $('#select_floc').change(function (e){
+        var floc     = $(this).val()
+        var model_id = 1; 
+        var url      = $(this).attr('data-url')
+        console.log(url)
+        $.ajax({
+                dataType: 'json',
+                type: 'GET',
+                url: url + '?floc=' + floc + '&model_id=' + model_id,
+                success: function (data){
+                  $('#stockinfowrapper-part_id').each(function (i, obj){
+                    var el = $(this)
+                    el.html('')
+                    el.append($('<option>', {
+                      value: '',
+                      text: 'Выберите...',
+                    }))
+                    $.each(data, function (k, part){
+                      el.append($('<option>', {
+                        value: part.id,
+                        text: part.info,
+                      }))
+                    })
+                  })
+                },
+              })
+      })
   });
 <?php $this->registerJs(ob_get_clean());
 ?>

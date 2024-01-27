@@ -20,6 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'models' => $models,
         'flocs' => $flocs,
         'prev_shift' => $prev_shift,
+        'stock_info_wrapper_list' => $stock_info_wrapper_list
       ])?>
     </div>
 

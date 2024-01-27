@@ -117,6 +117,15 @@ use yii\widgets\Menu; ?>
         'template' => '<a href="{url}"><i class="fa fa-bar-chart"></i> <span>{label}</span></a>',
       ];
     }
+    
+    if (Yii::$app->user->can('stock-info')) {
+      $m210_whm[] = [
+        'label' => Yii::t('app', 'Stock Info'),  
+        'url' => ['/stock-info-wrapper/index'],
+        'template' => '<a href="{url}"><i class="fa fa-bar-chart"></i> <span>{label}</span></a>',
+      ];
+    }
+
     // For admin or superadmin (development)
 
     if (Yii::$app->user->can('mold-index')) {

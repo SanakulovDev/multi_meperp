@@ -49,6 +49,7 @@
 		const TYPE_SHOP        = 1;
 		const TYPE_VIRTUAL     = 2;
 		const TYPE_OUTSOURCING = 3;
+    const TYPE_STOCKINFO   = 4;
 
 		const COVERABLE_YES = true;
 		const COVERABLE_NO  = false;
