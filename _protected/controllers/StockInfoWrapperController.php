@@ -6,6 +6,7 @@ use Yii;
 use app\models\StockInfoWrapper;
 use app\models\StockInfoWrapperSearch;
 use yii\web\Controller;
+use yii\web\Response;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -228,5 +229,28 @@ class StockInfoWrapperController extends Controller
         "name"
       );
       return compact("parts", "parts_withptnm", "users", "options", "models", "flocs");
+    }
+
+
+    /** 
+     * Anvar Sanakulov
+     * 2024-01-28
+     * 
+     * ajax code Part List
+     */
+    public function actionGetStockPartList($id)
+    {
+      Yii::$app->response->format = Response::FORMAT_JSON;
+      $data = [];
+      $model = $this->findModel($id);
+      if($model && $model->part){
+        $part = $model->part;
+        $data[] = [
+          'id'    => $part->id,
+          'info'  => $part->part_no.' '.$part->part_name.' ('.($part->part_color).') '. $part->remark
+        ];
+      }
+
+      return $data;
     }
 }

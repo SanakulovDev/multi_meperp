@@ -347,7 +347,7 @@ class PartController extends AppController {
                  ->andFilterWhere([
                    'warehouse_id' => $floc,
                   //  'product_model_id' => $model_id,
-                   'side' => $side
+                  //  'side' => $side
                  ])->all();
     $data = [];
     foreach($parts as $part) {

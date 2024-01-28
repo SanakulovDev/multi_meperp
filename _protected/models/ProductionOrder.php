@@ -7,7 +7,7 @@ use Da\QrCode\QrCode;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
-
+use app\models\StockInfoWrapper;
 /**
  * This is the model class for table "production_order".
  *
@@ -254,7 +254,7 @@ class ProductionOrder extends ActiveRecord {
   }
 
 
-  public static function createProdOrders($post_params, $shift_crt_at) {
+  public static function createProdOrders($post_params, $shift_crt_at, $stock_info = false) {
     $err = 0;
     $err_sms = '';
     $modelPo = new ProductionOrder();
@@ -272,6 +272,20 @@ class ProductionOrder extends ActiveRecord {
     $spec = ProductSpecification::find()->where(['part_id' => $modelPo->part_id, 'status' => ProductSpecification::STATUS_ACTIVE])->one();
     $modelPo->product_specification_id = $spec ? $spec->id : null;
     if($modelPo->save()) {
+      // vd($modelPo); 
+      if($stock_info){
+        $data['wrapper_id'] = $modelPo->stock_info_wrapper_id;
+        $data['p_order_id'] = $modelPo->id;
+        $stock_issue = StockInfoWrapper::issue($data, $modelPo->quantity);
+        if(!$stock_issue['success']){
+          $err = 1;
+          $message = '';
+          // vd($stock_issue);
+          $errors = implode($stock_issue['errorList']);
+          $err_sms = Yii::t('app', $message.'<br>'.$errors);
+        }
+      }
+      
       if($modelPo->is_label === ProductionOrder::LABEL_ACTUAL){
         $result = self::writeToMonitor(
           $modelPo,

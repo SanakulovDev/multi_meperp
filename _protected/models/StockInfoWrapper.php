@@ -4,6 +4,8 @@ namespace app\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use app\models\StockInfoSub;
+use app\models\ProductionOrder;
 
 /**
  * This is the model class for table "{{%stock_info_wrapper}}".
@@ -51,7 +53,7 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
     {
         return [
             [['warehouse_id', 'line', 'qty', 'part_id'], 'required'],
-            [['warehouse_id', 'type_id', 'give_user_id', 'document_id', 'line', 'part_id'], 'integer'],
+            [['warehouse_id', 'type_id', 'give_user_id', 'document_id', 'line', 'part_id', 'status'], 'integer'],
             [['created_at', 'updated_at', 'date'], 'safe'],
             [['qty'], 'number'],
             [['code', 'comment'], 'string', 'max' => 255],
@@ -79,6 +81,7 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
             'qty' => Yii::t('app', 'Quantity'),
             'line' => Yii::t('app', 'Line'),
             'date'  => Yii::t('app', 'Date'),
+            'status'  => Yii::t('app', 'Status'),
         ];
     }
 
@@ -114,9 +117,21 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
     {
         return $this->hasMany(StockInfo::className(), ['stock_info_wrapper_id' => 'id']);
     }
+    
+    public function getStockInfoSubs()
+    {
+        return $this->hasMany(StockInfoSub::className(), ['stock_info_wrapper_id' => 'id']);
+    }
 
+    /**
+     * Har bir stock_info uchun UNIQUE CODE beriladi
+     */
     public function afterSave($insert, $changedAttributes)
     {
+      if($this->qty == 0){
+        $this->status = 0;
+        $this->save(false);
+      }
       if($insert){
         $this->code = sprintf("%06s", $this->id);
         $this->save();
@@ -126,6 +141,79 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
 
     pubLic static function all()
     {
-      return ArrayHelper::map(self::find()->all(), 'id', 'code');
+      return ArrayHelper::map(self::find()->where(['status' => 1])->all(), 'id', 'code');
+    }
+  
+    public  function countPOrder($id)
+    {
+      $query = "SELECT count(distinct(p_order_id)) as count from stock_info_sub where stock_info_wrapper_id=$id";
+      $result = Yii::$app->db->createCommand($query)->queryScalar();
+      return $result;
+    } 
+
+    /**
+     * Anvar Sanakulov
+     * 2024-01-28
+     * issue
+     */
+    public static function issue($data, $quantity)
+    {
+      if($data){
+        $errorList = [];
+        $transaction = Yii::$app->db->beginTransaction();
+        $model = self::findOne($data['wrapper_id']);
+        
+        if($model){
+          if($model->qty >= $quantity){
+            $foiz = $quantity / $model->qty *100;
+            $model->qty -= $quantity;
+            if(!$model->save(false)){
+              $errorList[] = 'Stock Info Wrapper save errors: '.$model->errors;
+            }
+            if($model->stockInfos){
+              foreach($model->stockInfos as $key => $item){
+                $delta = ($foiz *$item->qty)/100;
+                $item->qty -= $delta;
+                if(!$item->save(false)){
+                  $errorList[]='Some change Stock Info save Errors: '.$item->errors;
+                }
+                $stock_info_sub =  new StockInfoSub();
+                $stock_info_sub->qty = $delta;
+                $stock_info_sub->percent = $foiz;
+                $stock_info_sub->stock_info_id = $item->id;
+                $stock_info_sub->stock_info_wrapper_id = $data['wrapper_id'];
+                $stock_info_sub->p_order_id = $data['p_order_id'];
+                $stock_info_sub->give_user_id = Yii::$app->user->id;
+                if(!$stock_info_sub->save(false)){
+                  $errorList[]='Stock Info Sub Save Errors: '. $stock_info_sub->errors();
+                }
+              }
+            }else{
+              $errorList[]=$model->code.', '.Yii::t('app', 'Stock Info').'   '.$model->qty;
+            }
+            
+          }
+          else{
+            $errorList[]=$model->code.', '.Yii::t('app', 'Stock Info').'   '.$model->qty;
+          }
+        }
+        else{
+          $errorList[]= Yii::t('app','Stock Info');
+        }
+        if(count($errorList) == 0){
+          $transaction->commit();
+          return [
+            'success' => true,
+            'errorList' => $errorList
+          ];
+        } else {
+          $transaction->rollBack();
+    
+          return [
+            'success' => false,
+            'errorList' => $errorList
+          ];
+        }
+      }
     }
 }

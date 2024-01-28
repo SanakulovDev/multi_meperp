@@ -75,6 +75,11 @@ class StockInfo extends \yii\db\ActiveRecord
   public function getStockInfoWrapper() {
     return $this->hasOne(StockInfoWrapper::className(), ['id' => 'warehouse_id']);
   }
+  
+  public function getSubs() {
+    return $this->hasMany(StockInfoSub::className(), ['stock_info_id' => 'id']);
+  }
+
 
   // get stock
   public static function getStockPart($part_id)

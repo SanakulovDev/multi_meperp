@@ -20,19 +20,35 @@ $this->params['breadcrumbs'][] = $this->title;
           <thead>
             <tr>
               <th class="text-center"><?= Yii::t('app', '#')?></th>
-              <th><?= Yii::t('app', 'Part')?></th>
-              <th><?= Yii::t('app', 'Quantity')?></th>
+              <th class="text-center"><?= Yii::t('app', 'Part')?></th>
+              <th class="text-center"><?= Yii::t('app', 'Quantity')?></th>
+              <?php if($model->stockInfos):?>
+                <?php $count = $model->countPOrder($model->id);?>
+                <?php if($count > 0):?>
+                  <?php for($i= 0; $i <$count; $i++):?>
+                      <th colspan="2" class="text-center"><?= Yii::t('app', 'Fakt')?>-<?= $i+1?></th>
+                  <?php endfor;?>
+                <?php endif;?>
+              <?php endif;?>
             </tr>
           </thead>
+          <tbody>
           <?php foreach($model->stockInfos as $key => $item):?>
-            <tbody>
               <tr>
-                <th class="text-center"><?= $key+1?></th>
-                <th><?= $item->part?$item->part->partinfo:' --- '?></th>
-                <th><?= $item->qty?></th>
+                <td class="text-center"><?= $key+1?></td>
+                <td><?= $item->part?$item->part->partinfo:' --- '?></td>
+                <td><?= $item->qty?></td>
+                <?php //vd($item->subs[0]->qty);?>
+                <?php if($item->subs):?>
+                  <?php foreach($item->subs as $i => $sub):?>
+                    <td><?= $sub->qty?></td>
+                    <td><?= $sub->percent?>%</td>
+                  <?php endforeach;?>
+                <?php endif;?>
+
               </tr>
+              <?php endforeach;?>
             </tbody>
-          <?php endforeach;?>
         </table>
     <?php endif;?>
 

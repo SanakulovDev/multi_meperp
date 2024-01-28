@@ -34,19 +34,18 @@ $lines = ProductionOrder::getLines();
               <?=Html::dropDownList('floc', null, $flocs, ['id' => 'select_floc', 'class' => 'form-control select2', 'prompt' => '*', 'data-url' => Url::toRoute('part/get-parts-by-model-and-side')])?>
             </div>
         </div>
-        <div class="col-lg-2 col-md-2 hidden select_stock_info_wrapper">
+        <div class="col-lg-2 col-md-2  select_stock_info_wrapper">
           <div class="form-group">
-            <label><?= Yii::t('app', 'Stock Info')?></label>
-            <?= Html::dropDownList('stock_info_wrapper_id',null, $stock_info_wrapper_list, ['id' => 'select_stock_info_wrapper', 'class' => 'form-control select2', 'prompt' => '*',])?>
+            <?=$form->field($model, 'stock_info_wrapper_id')->dropDownList($stock_info_wrapper_list, ['class' => 'form-control select2', 'options' => $options, 'prompt' => Yii::t('app', '...'), 'data-url' => Url::toRoute(['stock-info-wrapper/get-stock-part-list'])])?>
           </div>
         </div>
-        <div class="col-lg-2 col-md-2">
+        <div class="col-lg-2 col-md-2 select-model">
             <div class="form-group">
                 <label><?=Yii::t('app', 'Product model')?></label>
               <?=Html::dropDownList('model', null, $models, ['id' => 'select_model', 'class' => 'form-control select2', 'prompt' => '*', 'data-url' => Url::toRoute('part/get-parts-by-model-and-side')])?>
             </div>
         </div>
-        <div class="col-lg-1 col-md-1">
+        <div class="col-lg-1 col-md-1 select-side">
             <div class="form-group">
                 <label><?=Yii::t('app', 'Side')?></label>
               <?=Html::dropDownList('side', null, ['LH' => 'LH', 'RH' => 'RH', 'FR' => 'FR', 'RR' => 'RR'], ['id' => 'select_side', 'class' => 'form-control select2', 'prompt' => '*', 'data-url' => Url::toRoute('part/get-parts-by-model-and-side')])?>
@@ -103,15 +102,58 @@ $lines = ProductionOrder::getLines();
 
 <?php ob_start();?>
 $(document).ready(function() {
-    $('#select_floc').on('change', function(){
-      let key = $(this).val();
-      if(key == 11){
-        $('.select_stock_info_wrapper').removeClass('hidden');
-      }
-      else{
-        $('.select_stock_info_wrapper').addClass('hidden');
-        $('.select_stock_info_wrapper').val('');
-      }
+
+  let floc = $('#select_floc').val();
+  if(floc != 11){
+    $('.select_stock_info_wrapper').addClass('hidden');
+  }
+  $('#select_floc').on('change', function(){
+    let key = $(this).val();
+    if(key == 11){
+      $('.select_stock_info_wrapper').removeClass('hidden');
+      $('.select-model').addClass('hidden');
+      $('.select-side').addClass('hidden');
+      $('#select_model').val('');
+      $('#select_side').val('');
+
+    }
+    else{
+      $('.select_stock_info_wrapper').addClass('hidden');
+      $('.select-model').removeClass('hidden');
+      $('.select-side').removeClass('hidden');
+      $('#productionorder-stock_info_wrapper_id').val('');  
+    }
+  })
+
+
+    $('#productionorder-stock_info_wrapper_id').on('change', function(e){
+      e.preventDefault();
+      let id = $(this).val();
+      let url = '/stock-info-wrapper/get-stock-part-list';
+      $.ajax({
+		      dataType: 'json',
+		      type: 'GET',
+		      url: url,
+          data: {
+            id: id
+          },
+		      success: function (data){
+			      $('#productionorder-part_id').each(function (i, obj){
+				      var el = $(this)
+				      el.html('')
+				      el.append($('<option>', {
+					      value: '',
+					      text: 'Выберите...',
+				      }))
+				      $.each(data, function (k, part){
+					      el.append($('<option>', {
+					       value: part.id,
+					       text: part.info,
+					      }))
+				      })
+			      })
+		      },
+	      })
     })
     $('.grp_kecha').click(function() {
         $(this).find('.kecha').toggleClass('active');        

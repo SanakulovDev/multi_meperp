@@ -147,9 +147,14 @@ class ProductionOrderController extends AppController
         ->one();
       $post_params["ProductionOrder"]["product_specification_id"] = $spec ? $spec->id : null;
       $new_ids = [];
+      $errorList  = [];
+      $data       = [];
+
+      
+
       for ($q = 1; $q <= $post_params["ProductionOrder"]["quantity_of_copy"]; $q++) {
         $crtResult = [];
-        $crtResult = ProductionOrder::createProdOrders($post_params, $shift_crt_at);
+        $crtResult = ProductionOrder::createProdOrders($post_params, $shift_crt_at, true);
         if ($crtResult["success"] != true) {
           $err = 1;
           $message = "Production order not created. Something is wrong.";
