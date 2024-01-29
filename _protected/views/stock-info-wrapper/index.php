@@ -35,8 +35,8 @@ $this->params['breadcrumbs'][] = $this->title;
               'class' => 'yii\grid\ActionColumn',
               'template' => '{view}{delete}',
               'header' => '<i class="fa fa-fw fa-gears"></i>',
-              'headerOptions' => ['style' => 'max-width:20px;text-align:center;vertical-align:middle;color:#3c8dbc;'],
-              'contentOptions' => ['style' => 'max-width:20px;text-align:center;vertical-align:middle;'],
+              'headerOptions' => ['style' => 'max-width:60px;text-align:center;vertical-align:middle;color:#3c8dbc;'],
+              'contentOptions' => ['style' => 'max-width:60px;text-align:center;vertical-align:middle;'],
               
             ],
             'code',
