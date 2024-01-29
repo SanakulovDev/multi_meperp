@@ -6,14 +6,14 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\StockInfoWrapper */
 
-$this->title = $model->code;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Stock Info Wrappers'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = $model->part?$model->part->partinfo:$model->code;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Stock Info'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = $model->part?$model->part->partinfo:$this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="stock-info-wrapper-view">
 
-    <h1><?= Html::encode($model->code) ?></h1>
+    <h1><?= Html::encode($this->title) ?></h1>
 
     <?php if($model->stockInfos):?>
         <table id="w0" class="table table-striped table-bordered detail-view">

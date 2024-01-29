@@ -7,7 +7,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\models\StockInfoWrapperSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Stock Info Wrappers');
+$this->title = Yii::t('app', 'Stock Info');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="stock-info-wrapper-index">
