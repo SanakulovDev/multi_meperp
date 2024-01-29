@@ -128,10 +128,6 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
-      if($this->qty == 0){
-        $this->status = 0;
-        $this->save(false);
-      }
       if($insert){
         $this->code = sprintf("%06s", $this->id);
         $this->save();
@@ -167,6 +163,9 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
           if($model->qty >= $quantity){
             $foiz = $quantity / $model->qty *100;
             $model->qty -= $quantity;
+            if($model->qty == 0){
+              $model->status = 0;
+            }
             if(!$model->save(false)){
               $errorList[] = 'Stock Info Wrapper save errors: '.$model->errors;
             }
