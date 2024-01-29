@@ -92,6 +92,7 @@ class Stock extends ActiveRecord {
     foreach($data as $key => $item) {
       $stock_item = Stock::find()->where(['warehouse_id' => $wh_id, 'part_id' => $item['part_id']])->one();
       if($stock_item) {
+        // vd($item);
         $stock_item->qty = $stock_item->qty + $item['qty'];
         if(!$stock_item->save()) {
           $errorlist[] = 'Stock change problem! Part : '.$stock_item->part->partinfo;

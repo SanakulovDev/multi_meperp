@@ -190,15 +190,16 @@ class StockInfoWrapperController extends Controller
         }
         if($model->stockInfos){
           foreach($model->stockInfos as $item){
-            $item->qty = 0;
-            if(!empty($item->save(false))){
-              $errorList[]='Stock Info Save Errors'.$item->errors;
-            }
             unset($tmpArr);
             $tmpArr['part_id'] = $item->part_id;
             $tmpArr['qty']     = $item->qty;
             $tmpArr['info_id'] = $item->id;
             $data[] = $tmpArr;
+            $item->qty = 0;
+            if(!empty($item->save(false))){
+              $errorList[]='Stock Info Save Errors'.$item->errors;
+            }
+            
           }
 
           $stockResult = Stock::receipt(1, $data);
