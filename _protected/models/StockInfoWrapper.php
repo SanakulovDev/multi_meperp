@@ -28,6 +28,14 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 0;
+    public function statusList() {
+      return [
+        self::STATUS_ACTIVE => Yii::t('app', 'Актив'),
+        self::STATUS_INACTIVE => Yii::t('app', 'Не актив'),
+      ];
+    }
     public static function tableName()
     {
         return '{{%stock_info_wrapper}}';

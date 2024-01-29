@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
           ],
             [
               'class' => 'yii\grid\ActionColumn',
-              'template' => '{view} ',
+              'template' => '{view}{delete}',
               'header' => '<i class="fa fa-fw fa-gears"></i>',
               'headerOptions' => ['style' => 'max-width:20px;text-align:center;vertical-align:middle;color:#3c8dbc;'],
               'contentOptions' => ['style' => 'max-width:20px;text-align:center;vertical-align:middle;'],
@@ -59,6 +59,29 @@ $this->params['breadcrumbs'][] = $this->title;
               }
             ],
             'date',
+            [
+              'filter' => $searchModel->statusList(),
+              'attribute' => 'status',
+              'headerOptions' => ['style' => 'width: 100px;text-align: center;vertical-align:middle;'],
+              'contentOptions' => ['style' => 'width: 100px;text-align: center;vertical-align:middle;'],
+              'content' => function ($model, $column) {
+                $sts_value = $model->status;
+                switch ($sts_value) {
+                case 1:
+                  $class = 'success';
+                  $sts_name = '✔';
+                  $sts_title = Yii::t('app', 'Active');
+                  break;
+                case 0:
+                  $class = 'danger';
+                  $sts_name = '✖';
+                  $sts_title = Yii::t('app', 'Inactive');
+                  break;
+                }
+                $html = Html::tag('span', Html::encode($sts_name), ['title' => $sts_title, 'class' => 'label label-' . $class]);
+                return $sts_value === null ? $column->grid->emptyCell : $html;
+              },
+            ],
             //'updated_at',
 
             

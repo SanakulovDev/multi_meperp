@@ -173,9 +173,49 @@ class StockInfoWrapperController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        if($model->qty == 0 || $model->status == 0){
+          Yii::$app->session->setFlash('danger', 'Невозможно удалить');
+          return $this->redirect(['index']);
+        }
+        $model->qty = 0;
+        $model->status = 0;
+        $data = [];
+        $tmpArr = [];
+        
+        $errorList = [];
+        $transaction = Yii::$app->db->beginTransaction();
+        if(!empty($model->save(false))){
+          $errorList[]='Stock Info Wrapper saving errors. Something wrong';
+        }
+        if($model->stockInfos){
+          foreach($model->stockInfos as $item){
+            $item->qty = 0;
+            if(!empty($item->save(false))){
+              $errorList[]='Stock Info Save Errors'.$item->errors;
+            }
+            unset($tmpArr);
+            $tmpArr['part_id'] = $item->part_id;
+            $tmpArr['qty']     = $item->qty;
+            $tmpArr['info_id'] = $item->id;
+            $data[] = $tmpArr;
+          }
 
-        return $this->redirect(['index']);
+          $stockResult = Stock::receipt(1, $data);
+          if($stockResult['success']){
+            $transaction->commit();
+            Yii::$app->session->setFlash('success', 'Saved Successfully');
+            return $this->redirect(['index']);
+          }
+          if(count($errorList) > 0){
+            $transaction->rollBack();
+            Yii::$app->session->setFlash('danger', $errorList);
+            return $this->redirect(['index']);
+          }
+          
+        }
+
+        
     }
 
     /**
