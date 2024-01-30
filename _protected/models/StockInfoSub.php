@@ -37,7 +37,7 @@ class StockInfoSub extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['stock_info_id', 'stock_info_wrapper_id', 'p_order_id', 'give_user_id'], 'integer'],
+            [['stock_info_id', 'stock_info_wrapper_id', 'p_order_id', 'give_user_id', 'status'], 'integer'],
             [['qty', 'percent'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['give_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['give_user_id' => 'id']],
@@ -62,6 +62,7 @@ class StockInfoSub extends \yii\db\ActiveRecord
             'updated_at' => Yii::t('app', 'Updated'),
             'give_user_id' => Yii::t('app', 'User'),
             'percent' => Yii::t('app', 'Percent'),
+            'status' => Yii::t('app', 'Status'),
         ];
     }
 

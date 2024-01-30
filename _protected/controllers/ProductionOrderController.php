@@ -505,10 +505,19 @@ class ProductionOrderController extends AppController
       }
     }
     $errorlist = [];
-    $transaction = Yii::$app->db->beginTransaction();
+    // $transaction = Yii::$app->db->beginTransaction();
     if ($model->is_label == ProductionOrder::LABEL_ACTUAL) {
       // Komponent ostatkasiga qo'shish, part ostatkasidan kamaytirish
-      $resultCons = Stock::deconsumption($model, 0);
+      $resultCons["success"] = true;
+      if(empty($model->stock_info_wrapper_id)){
+        $resultCons = Stock::deconsumption($model, 0);
+      }
+      else{
+        $data['wrapper_id'] = $model->stock_info_wrapper_id;
+        $data['p_order_id'] = $model->id;
+        $resultCons = StockInfoWrapper::receipt($data, $model->quantity);
+      }
+      // vd($resultCons);
       if ($resultCons["success"] != 1) {
         $errorlist = $resultCons["errorlist"];
       }
@@ -548,15 +557,15 @@ class ProductionOrderController extends AppController
 
     if ($model->delete() and $resultCons["success"] == 1 && $model->is_label === ProductionOrder::LABEL_ACTUAL){
         if ($deleteError == true) {
-          $transaction->rollBack();
+          // $transaction->rollBack();
           Yii::$app->session->setFlash("error", Yii::t("app", "Production order not removed. Something is wrong."));
         } else {
-          $transaction->commit();
+          // $transaction->commit();
           Yii::$app->session->setFlash("success", Yii::t("app", "Production order successfully removed."));
         }
       }
     } else {
-      $transaction->rollBack();
+      // $transaction->rollBack();
       Yii::$app->session->setFlash("error", Yii::t("app", "Production order not removed. Something is wrong."));
     }
     return $this->redirect([

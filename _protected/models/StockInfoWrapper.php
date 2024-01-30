@@ -150,7 +150,7 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
   
     public  function countPOrder($id)
     {
-      $query = "SELECT count(distinct(p_order_id)) as count from stock_info_sub where stock_info_wrapper_id=$id";
+      $query = "SELECT count(distinct(p_order_id)) as count from stock_info_sub where stock_info_wrapper_id=$id and status=1";
       $result = Yii::$app->db->createCommand($query)->queryScalar();
       return $result;
     } 
@@ -219,6 +219,57 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
           return [
             'success' => false,
             'errorList' => $errorList
+          ];
+        }
+      }
+    }
+
+    public static function receipt($data, $quantity)
+    {
+      if($data){
+        $errorList = [];
+        $transaction = Yii::$app->db->beginTransaction();
+        $model = self::findOne($data['wrapper_id']);
+        if($model){
+          $model->qty += $quantity;
+          $model->status = 1;
+          if(!$model->save(false)){
+            $errorList[]='Saving Something wrong';
+          }
+          if($model->stockInfos){
+            foreach($model->stockInfos as $info){
+              if($info->subs){
+                foreach($info->subs as $sub){
+                  if($sub->p_order_id == $data['p_order_id']){
+                    $info->qty += $sub->qty;
+                    $sub->delete();
+                  }
+                  if(!$info->save(false)){
+                    $errorList[] = 'Stock Info saving Errors';
+                  }
+                }
+              }
+              
+
+            }
+          }
+          
+        }
+        else{
+          $errorList[] = 'Stock Info yo\'q';
+        }
+
+        if(!empty($errorList)){
+          $transaction->rollBack();
+          return [
+            'status' => false,
+            'errorList' => $errorList
+          ];
+        }
+        else{
+          $transaction->commit();
+          return  [
+            'status' => true
           ];
         }
       }

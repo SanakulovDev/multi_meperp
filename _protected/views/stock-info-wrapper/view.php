@@ -37,12 +37,14 @@ $this->params['breadcrumbs'][] = $model->part?$model->part->partinfo:$this->titl
               <tr>
                 <td class="text-center"><?= $key+1?></td>
                 <td><?= $item->part?$item->part->partinfo:' --- '?></td>
-                <td><?= $item->qty?></td>
+                <td class="text-center"><?= $item->qty?></td>
                 <?php //vd($item->subs[0]->qty);?>
                 <?php if($item->subs):?>
                   <?php foreach($item->subs as $i => $sub):?>
-                    <td><?= $sub->qty?></td>
-                    <td><?= $sub->percent?>%</td>
+                    <?php if($sub->status == 1):?>
+                      <td class="text-center"><?= $sub->qty?></td>
+                      <td class="text-center"><?= $sub->percent?>%</td>
+                    <?php endif;?>
                   <?php endforeach;?>
                 <?php endif;?>
 

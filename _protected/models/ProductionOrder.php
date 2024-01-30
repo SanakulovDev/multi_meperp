@@ -273,7 +273,7 @@ class ProductionOrder extends ActiveRecord {
     $modelPo->product_specification_id = $spec ? $spec->id : null;
     if($modelPo->save()) {
       // vd($modelPo); 
-      if($stock_info){
+      if($stock_info && $modelPo->stock_info_wrapper_id){
         $data['wrapper_id'] = $modelPo->stock_info_wrapper_id;
         $data['p_order_id'] = $modelPo->id;
         $stock_issue = StockInfoWrapper::issue($data, $modelPo->quantity);
@@ -297,7 +297,10 @@ class ProductionOrder extends ActiveRecord {
       }
 
       if($modelPo->current_event == ProductionOrder::EVENT_PRODUCED) {
-        $resultCons = Stock::consumption($modelPo);
+        $resultCons['success'] = true;
+        if(empty($modelPo->stock_info_wrapper_id)){
+          $resultCons = Stock::consumption($modelPo);
+        }
         if($resultCons['success'] != 1) {
           $err = 1;
           $message = 'Production order not created. Something is wrong.';
