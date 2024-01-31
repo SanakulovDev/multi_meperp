@@ -86,11 +86,15 @@ class Stock extends ActiveRecord {
     return $this->hasOne(Warehouse::className(), ['id' => 'warehouse_id']);
   }
 
-  public static function receipt($wh_id, $data) {
+  public static function receipt($wh_id, $data, $stock_info=false) {
     $errorlist = [];
     $transaction = Yii::$app->db->beginTransaction();
     foreach($data as $key => $item) {
-      $stock_item = Stock::find()->where(['warehouse_id' => $wh_id, 'part_id' => $item['part_id']])->one();
+      if($stock_info){
+        $stock_item = Stock::find()->where(['warehouse_id' => $item['wh_id'], 'part_id' => $item['part_id']])->one();
+      }else{
+        $stock_item = Stock::find()->where(['warehouse_id' => $wh_id, 'part_id' => $item['part_id']])->one();
+      }
       if($stock_item) {
         // vd($item);
         $stock_item->qty = $stock_item->qty + $item['qty'];
@@ -129,7 +133,13 @@ class Stock extends ActiveRecord {
     $key = 0;
     foreach($data as $item) {
       $key++;
-      $stock_item = Stock::find()->where(['warehouse_id' => $wh_id, 'part_id' => $item['part_id']])->one();
+      if($stock_info){
+        $stock_item = Stock::find()->where(['warehouse_id' => $item['wh_id'], 'part_id' => $item['part_id']])->one();
+      }
+      else{
+        $stock_item = Stock::find()->where(['warehouse_id' => $wh_id, 'part_id' => $item['part_id']])->one();
+      }
+      // vd($stock_item);
       if($stock_item) {
         if(($stock_item->qty - $item['qty']) >= 0) {
           $stock_item->qty = $stock_item->qty - $item['qty'];
@@ -143,6 +153,7 @@ class Stock extends ActiveRecord {
             $stockInfo = new StockInfo();
             $stockInfo->stock_info_wrapper_id = $item['stock_info_wrapper_id'];
             $stockInfo->part_id = $item['part_id'];
+            $stockInfo->warehouse_id = $item['wh_id'];
             $stockInfo->qty = $item['qty'];
             $stockInfo->save(false);
           }

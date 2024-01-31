@@ -84,6 +84,7 @@ class StockInfoWrapperController extends Controller
         if ($model->load(Yii::$app->request->post())) {
           $transaction = Yii::$app->db->beginTransaction();
           $part_models = Dashboard::normaRasxoda($model->part_id,null, $model->qty);
+          
           $data = [];
           $tmpArr = [];
           try{
@@ -96,10 +97,10 @@ class StockInfoWrapperController extends Controller
                     $tmpArr['part_id'] = $item['part_id'];
                     $tmpArr['qty'] = $item['quantity'];
                     $tmpArr['stock_info_wrapper_id'] = $model->id;
+                    $tmpArr['wh_id'] = $item['warehouse_id'];
                     $data[] = $tmpArr;
                   
                 }
-                
                 $stockResult = Stock::issue(1, $data, true);
                 // vd($stockResult);
                 if ($stockResult['success']) {
@@ -189,11 +190,20 @@ class StockInfoWrapperController extends Controller
           $errorList[]='Stock Info Wrapper saving errors. Something wrong';
         }
         if($model->stockInfos){
+          $part_id = $model->part_id;
           foreach($model->stockInfos as $item){
+            $part_id2 = $item->part_id;
+            $query = "SELECT psi.warehouse_id from product_specification ps  
+              inner join product_specification_item psi on psi.product_specification_id = ps.id
+              where ps.part_id=$part_id and psi.part_id=$part_id2 and ps.status=1
+            ";
+            $warehouseId = Yii::$app->db->createCommand($query)->queryScalar();
+            // vd($warehouse);
             unset($tmpArr);
             $tmpArr['part_id'] = $item->part_id;
             $tmpArr['qty']     = $item->qty;
             $tmpArr['info_id'] = $item->id;
+            $tmpArr['wh_id']   = $warehouseId;
             $data[] = $tmpArr;
             $item->qty = 0;
             if(!empty($item->save(false))){
@@ -201,8 +211,7 @@ class StockInfoWrapperController extends Controller
             }
             
           }
-
-          $stockResult = Stock::receipt(1, $data);
+          $stockResult = Stock::receipt(1, $data, true);
           if($stockResult['success']){
             $transaction->commit();
             Yii::$app->session->setFlash('success', 'Saved Successfully');

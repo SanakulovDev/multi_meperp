@@ -125,7 +125,7 @@ class Dashboard extends \yii\db\ActiveRecord
             $qisqartma  = $quantity / $productSpecification->amount;
 
         }
-        $query = " SELECT part.id as part_id, part.part_name, part.part_no, part.part_color as part_color,  usage_qty * '".$qisqartma."'  as quantity FROM product_specification_item psi 
+        $query = " SELECT part.id as part_id, part.part_name, part.part_no, part.part_color as part_color,  usage_qty * '".$qisqartma."'  as quantity, psi.warehouse_id FROM product_specification_item psi 
             LEFT JOIN part ON part.id = psi.part_id 
             where 
             psi.product_specification_id = '".$productSpecification->id."'
