@@ -298,9 +298,9 @@ class ProductionOrder extends ActiveRecord {
 
       if($modelPo->current_event == ProductionOrder::EVENT_PRODUCED) {
         $resultCons['success'] = true;
-        if(empty($modelPo->stock_info_wrapper_id)){
+        // if(empty($modelPo->stock_info_wrapper_id)){
           $resultCons = Stock::consumption($modelPo);
-        }
+        // }
         if($resultCons['success'] != 1) {
           $err = 1;
           $message = 'Production order not created. Something is wrong.';

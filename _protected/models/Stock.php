@@ -90,11 +90,11 @@ class Stock extends ActiveRecord {
     $errorlist = [];
     $transaction = Yii::$app->db->beginTransaction();
     foreach($data as $key => $item) {
-      if($stock_info){
+      // if($stock_info){
         $stock_item = Stock::find()->where(['warehouse_id' => $item['wh_id'], 'part_id' => $item['part_id']])->one();
-      }else{
-        $stock_item = Stock::find()->where(['warehouse_id' => $wh_id, 'part_id' => $item['part_id']])->one();
-      }
+      // }else{
+      //   $stock_item = Stock::find()->where(['warehouse_id' => $wh_id, 'part_id' => $item['part_id']])->one();
+      // }
       if($stock_item) {
         // vd($item);
         $stock_item->qty = $stock_item->qty + $item['qty'];
