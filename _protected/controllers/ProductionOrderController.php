@@ -131,6 +131,7 @@ class ProductionOrderController extends AppController
     $shift_2_m1 = date("H:i", strtotime($shift_2) - 1);
     $prev_shift = 0;
     $shift_crt_at = time();
+    
     if ($xozir_time >= $shift_1 && $xozir_time < $shift_1_p1) {
       $prev_shift = 1;
       $shift_crt_at = strtotime(date("Ymd") . $shift_1_m1);
@@ -515,7 +516,37 @@ class ProductionOrderController extends AppController
         $data['p_order_id'] = $model->id;
         $resultCons = StockInfoWrapper::receipt($data, $model->quantity);
       }
+      $data = [];
+      $tmpArr = [];
+      $mixStock['success'] = true;
+      if($model->mix_quantity > 0){
+        $tmpArr['part_id'] = $model->part_id;
+        $tmpArr['qty'] = $model->mix_quantity;
+        $data[]=$tmpArr;
+        $mixStock = Stock::issue(12, $data);
+      }
+      // vd($data);
+      unset($tmpArr);
+      unset($data);
+
+      $data = [];
+      $tmpArr = [];
+      $trashStock['success'] = true;
+      if($model->trash_quantity > 0){
+        $tmpArr['part_id'] = $model->part_id;
+        $tmpArr['qty'] = $model->trash_quantity;
+        $data[]=$tmpArr;
+        $trashStock = Stock::issue(13, $data);
+      }
       // vd($resultCons);
+      if(!$mixStock['success']){
+        $errorlist = $mixStock['errorlist'];
+      }
+      
+      if(!$trashStock['success']){
+        $errorlist = $trashStock['errorlist'];
+      }
+
       if ($resultCons["success"] != 1) {
         $errorlist = $resultCons["errorlist"];
       }

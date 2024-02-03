@@ -51,6 +51,9 @@
 		const TYPE_OUTSOURCING = 3;
     const TYPE_STOCKINFO   = 4;
 
+    const TYPE_MIX = 5;
+    const TYPE_TRASH = 5;
+
 		const COVERABLE_YES = true;
 		const COVERABLE_NO  = false;
 

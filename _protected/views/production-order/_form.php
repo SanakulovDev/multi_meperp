@@ -61,6 +61,14 @@ $lines = ProductionOrder::getLines();
           <? //=$form->field($model, 'quantity')->textInput(['maxlength' => 6, 'type' => 'number', 'min' => 1, 'max' => 999999])?>
           <?=$form->field($model, 'quantity')->textInput()?>
         </div>
+        
+        <div class="col-lg-2 col-md-2 mix_quantity hidden">
+          <?=$form->field($model, 'mix_quantity')->textInput()?>
+        </div>
+        <div class="col-lg-2 col-md-2 trash_quantity hidden">
+          <?=$form->field($model, 'trash_quantity')->textInput()?>
+        </div>
+
         <div class="col-lg-2 col-md-2">
           <?=$form->field($model, 'quantity_of_copy')->textInput(['maxlength' => 2, 'type' => 'number', 'min' => 1, 'max' => 99])?>
         </div>
@@ -106,22 +114,32 @@ $(document).ready(function() {
   let floc = $('#select_floc').val();
   if(floc != 11){
     $('.select_stock_info_wrapper').addClass('hidden');
+    $('.mix_quantity').addClass('hidden');
+    $('.trash_quantity').addClass('hidden');
+
   }
   $('#select_floc').on('change', function(){
     let key = $(this).val();
     if(key == 11){
       $('.select_stock_info_wrapper').removeClass('hidden');
+      $('.mix_quantity').removeClass('hidden');
+      $('.trash_quantity').removeClass('hidden');
       $('.select-model').addClass('hidden');
       $('.select-side').addClass('hidden');
       $('#select_model').val('');
       $('#select_side').val('');
+      
 
     }
     else{
       $('.select_stock_info_wrapper').addClass('hidden');
+      $('.mix_quantity').addClass('hidden');
+      $('.trash_quantity').addClass('hidden');
       $('.select-model').removeClass('hidden');
       $('.select-side').removeClass('hidden');
       $('#productionorder-stock_info_wrapper_id').val('');  
+      $('#productionorder-mix_quantity').val(0);
+      $('#productionorder-trash_quantity').val(0);
     }
   })
 

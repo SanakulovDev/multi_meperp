@@ -89,7 +89,7 @@ class ProductionOrder extends ActiveRecord {
       [['part_id', 'is_bulk', 'product_specification_id', 'current_seq', 'is_printed', 'is_label', 'created_by', 'updated_by', 'created_at', 'updated_at', 'line', 'stock_info_wrapper_id'], 'integer'],
       [['current_event'], 'string', 'max' => 3],
       [['serial_number'], 'string', 'max' => 50],
-      ['quantity', 'number'],
+      [['quantity', 'mix_quantity', 'trash_quantity'], 'number'],
       ['quantity', 'compare', 'compareValue' => 0, 'operator' => '>', 'on' => 'create'],
       ['quantity', 'compare', 'compareValue' => 0, 'operator' => '>=', 'on' => 'create-isbulk'],
       [['quantity_of_copy'], 'integer', 'min' => 1, 'max' => 99],
@@ -120,7 +120,9 @@ class ProductionOrder extends ActiveRecord {
       'is_bulk' => Yii::t('app', 'BULK'),
       'product_specification_id' => Yii::t('app', 'Production specification'),
       'line' => Yii::t('app', 'Line'),
-      'stock_info_wrapper_id' => Yii::t('app', 'Stock Info Code')
+      'stock_info_wrapper_id' => Yii::t('app', 'Stock Info'),
+      'mix_quantity' => Yii::t('app', 'Mix quantity'),
+      'trash_quantity' => Yii::t('app', 'Trash quantity')
     ];
   }
 
@@ -285,6 +287,29 @@ class ProductionOrder extends ActiveRecord {
           $err_sms = Yii::t('app', $message.'<br>'.$errors);
         }
       }
+      unset($data);
+      $data = [];
+      $tmpArr = [];
+      $mixStock['success'] = true;
+      if($modelPo->mix_quantity > 0){
+        $tmpArr['part_id'] = $modelPo->part_id;
+        $tmpArr['qty'] = $modelPo->mix_quantity;
+        $data[]=$tmpArr;
+        $mixStock = Stock::receipt(12, $data);
+      }
+      // vd($data);
+      unset($tmpArr);
+      unset($data);
+
+      $data = [];
+      $tmpArr = [];
+      $trashStock['success'] = true;
+      if($modelPo->trash_quantity > 0){
+        $tmpArr['part_id'] = $modelPo->part_id;
+        $tmpArr['qty'] = $modelPo->trash_quantity;
+        $data[]=$tmpArr;
+        $trashStock = Stock::receipt(13, $data);
+      }
       
       if($modelPo->is_label === ProductionOrder::LABEL_ACTUAL){
         $result = self::writeToMonitor(
@@ -308,6 +333,21 @@ class ProductionOrder extends ActiveRecord {
           $err_sms = Yii::t('app', $message.'<br>'.$errors);
         }
       }
+
+      if(!$mixStock['success']){
+          $err = 1;
+          $message = 'Mix Sklad not created. Something is wrong.';
+          $errors = implode('<br>', $mixStock['errorlist']);
+          $err_sms = Yii::t('app', $message.'<br>'.$errors);
+      }
+      
+      if(!$trashStock['success']){
+          $err = 1;
+          $message = 'Trash Sklad not created. Something is wrong.';
+          $errors = implode('<br>', $trashStock['errorlist']);
+          $err_sms = Yii::t('app', $message.'<br>'.$errors);
+      }
+
       $new_ids[] = $modelPo->id;
     } else {
       $err = 1;

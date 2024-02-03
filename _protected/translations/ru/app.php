@@ -1097,6 +1097,8 @@ return [
   'btn-delete-all' => '<i class="glyphicon glyphicon-trash"></i>&nbsp;&nbsp;Удалить все',
   'btn-pdf-siro' => '<i class="glyphicon glyphicon-print"></i>&nbsp;&nbsp;Скаяать СИРО',
   'btn-pdf-zames' => '<i class="glyphicon glyphicon-print"></i>&nbsp;&nbsp;Скаяать Замес',
-  'Stock Info' => 'Производственный склад'
+  'Stock Info' => 'Производственный склад',
+  'Mix quantity' => 'Микс Кол-во',
+  'Trash quantity' => 'Мусор Кол-во'
 ];
 

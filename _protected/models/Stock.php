@@ -106,7 +106,7 @@ class Stock extends ActiveRecord {
         $stock->warehouse_id = $wh_id;
         $stock->part_id = $item['part_id'];
         $stock->qty = $item['qty'];
-        if(!$stock->save()) {
+        if(!$stock->save(false)) {
           $errorlist[] = 'Stock insert problem! Part : '.Part::findOne($item['part_id'])->partinfo;
         }
       }
