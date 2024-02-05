@@ -1099,6 +1099,8 @@ return [
   'btn-pdf-zames' => '<i class="glyphicon glyphicon-print"></i>&nbsp;&nbsp;Скаяать Замес',
   'Stock Info' => 'Производственный склад',
   'Mix quantity' => 'Микс Кол-во',
-  'Trash quantity' => 'Мусор Кол-во'
+  'Trash quantity' => 'Мусор Кол-во',
+  'Default' => 'По умолчанию',
+  'Current status' => 'Текущее состояние' 
 ];
 

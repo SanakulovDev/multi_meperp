@@ -41,7 +41,7 @@ class ProductionPlanMonthlyController extends Controller {
   public function actionIndex() {
     $searchModel = new ProductionMonthlyPlanSearch();
     if(!Yii::$app->request->queryParams) {
-      $searchModel->production_date = date('Y-m');
+      // $searchModel->production_date = date('Y-m');
     }
     $dataProvider = $searchModel->searchMonthly(Yii::$app->request->queryParams);
     $user_warehouse = Yii::$app->user->identity->warehouseIds;
@@ -52,13 +52,22 @@ class ProductionPlanMonthlyController extends Controller {
       ? ['and', ['in', 'warehouse_id', $user_warehouse], ['not in', 'state', 0], ['status' => [1]]]
       : ['and', ['not in', 'state', 0], ['status' => [1]]];
     $query_part = Part::find()->where($cond_part);
+
+
+    $countQuery = clone $dataProvider->query;
+		$total = 0;
+		foreach ($countQuery->all() as $row) {
+			$total += $row->target_qty;
+		}
+
     $parts = ArrayHelper::map($query_part->all(), 'id', 'part_no');
     return $this->render('index',
       compact(
         'searchModel',
         'dataProvider',
         'warehouses',
-        'parts'
+        'parts',
+        'total'
       )
     );
   }
@@ -452,7 +461,6 @@ class ProductionPlanMonthlyController extends Controller {
           }
           $xls_product_list[] = $part_no;
           $val_pos = 3;
-//            echo "<pre>"; print_r($today);echo "</pre>";
           for($j = 0; $j < $month_end_cols; $j++) {
             $part_date = date('Y-m-d', strtotime($month_begin.' +'.$j.' day'));
             $target_qty1 = is_numeric($data['values'][$rows - 4][0][$val_pos]) ? $data['values'][$rows - 4][0][$val_pos] : 0;
@@ -462,7 +470,6 @@ class ProductionPlanMonthlyController extends Controller {
                 /** 1-smena chegaralangan vaqt oralig`i uchun */
                 if(ProductionMonthlyPlan::allowEdit(1, $part_date) == 1) {
                   $insert_data11[] = [$part_id, $part_date, $part_warehouse_id, 1, $target_qty1];
-//                  $insert_data21[] = [$part_id, $part_date, $part_warehouse_id, 2, $target_qty2];
                 }
                 /** 2-smena chegaralangan vaqt oralig`i uchun */
                 if( // bugungi 2-smenadan boshlab
@@ -1020,13 +1027,36 @@ class ProductionPlanMonthlyController extends Controller {
     Yii::$app->response->format = Response::FORMAT_JSON;
     $partWhIds = Part::find()->select('warehouse_id')->where(['id' => $id]);
     $list = Warehouse::find()->where(['in', 'id', $partWhIds])->all();
-//      echo "<pre>"; print_r($list->createCommand()->rawSql);echo "</pre>";
-//      die;
     $data = [];
     foreach($list as $item) {
       $data[] = ['id' => $item->id, 'text' => $item->name];
     }
     return $data;
+  }
+
+  /**
+   * Anvar Sanakulov
+   * 2024-02-05 19:57:33
+   * @sanakulov_dev
+   * Norma rasxod
+   */
+  public function actionSpecification()
+  {
+    $items1 = [];
+    $items2 = [];
+    if($post = Yii::$app->request->post()){
+      $model = $this->findModel($post['id']);
+      if($model){
+        $productSpecification = ProductSpecification::find()->where(['part_id' => $model->part_id])->andWhere(['status' => 1])->one();
+        if($productSpecification){
+          $items1  = \app\models\Dashboard::normaRasxoda($model->part_id, null, $productSpecification->amount);
+          $items2  = \app\models\Dashboard::normaRasxoda($model->part_id, null, $model->target_qty);
+        }
+      }
+    }
+    return $this->renderAjax('specification', 
+        compact('items1', 'items2')
+    );
   }
 
 }

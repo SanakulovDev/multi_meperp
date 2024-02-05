@@ -47,6 +47,7 @@ class ProductionMonthlyPlan extends ActiveRecord {
         'targetAttribute' => ['part_id', 'production_date', 'warehouse_id', 'shift']
       ],
       [['production_date', 'comment'], 'safe'],
+      [['remark'], 'string'],
       [['part_id'], 'exist', 'skipOnError' => true, 'targetClass' => Part::className(), 'targetAttribute' => ['part_id' => 'id']],
       [['warehouse_id'], 'exist', 'skipOnError' => true, 'targetClass' => Warehouse::className(), 'targetAttribute' => ['warehouse_id' => 'id']],
     ];
@@ -65,6 +66,7 @@ class ProductionMonthlyPlan extends ActiveRecord {
       'target_qty' => Yii::t('app', 'Target qty'),
       'comment' => Yii::t('app', 'Comment'),
       'line' => Yii::t('app', 'Line'),
+      'remark' => Yii::t('app', 'Remark'),
     ];
   }
 

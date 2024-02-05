@@ -14,7 +14,7 @@ class ProductionMonthlyPlanSearch extends ProductionMonthlyPlan{
 	public function rules(){
 		return [
 			[['id', 'part_id', 'warehouse_id', 'shift', 'target_qty', 'line', 'type'], 'integer'],
-			[['production_date','comment'], 'safe'],
+			[['production_date','comment', 'remark'], 'safe'],
 		];
 	}
 
@@ -37,6 +37,7 @@ class ProductionMonthlyPlanSearch extends ProductionMonthlyPlan{
 		$dataProvider = new ActiveDataProvider(
 			[
 				'query' => $query,
+        'pagination' => false,
 				'sort' => ['defaultOrder'=>'production_date desc']
 			]
 		);
@@ -70,6 +71,7 @@ class ProductionMonthlyPlanSearch extends ProductionMonthlyPlan{
 		$dataProvider = new ActiveDataProvider(
 			[
 				'query' => $query,
+        'sort' => ['defaultOrder'=>'production_date desc']
 			]
 		);
 		$this->load($params);
@@ -89,7 +91,7 @@ class ProductionMonthlyPlanSearch extends ProductionMonthlyPlan{
 				'target_qty'                   => $this->target_qty,
 				'line'                         => $this->line,
 			])->orderBy(['production_date' => SORT_DESC])->all();
-
+      $query->andFilterWhere(['like', 'production_monthly_plan.remark', $this->remark]);
     $query->andFilterWhere(['like', 'production_plan_comment.comment', $this->comment]);
 		return $dataProvider;
 	}

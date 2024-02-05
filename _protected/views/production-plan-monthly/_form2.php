@@ -84,6 +84,7 @@ jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
             'line',
             'part_id', 
             'warehouse_id',
+            'remark'
         ],
     ]); ?>
 <div class="panel panel-default">
@@ -102,13 +103,13 @@ jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
                     ?>
                         <div class="row" style="display: flex;align-items: center;justify-content: center;">
                         
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-group has-float-label">
                                 <?=$form->field($model, "[{$index}]part_id")->dropDownList($items, $params)?>
                                 <span><?=Yii::t('app', 'Part No')?></span>
                             </label>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-group has-float-label">
                                 <?=$form->field($model, "[{$index}]warehouse_id")->dropDownList([],
                                     ['prompt' => '. . .', 'class' => 'form-control select2 plan-warehouse_id']
@@ -116,13 +117,18 @@ jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
                                 <span><?=Yii::t('app', 'Location')?></span>
                             </label>
                         </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label class="form-group has-float-label">
                                     <?=$form->field($model, "[{$index}]target_qty")->textInput()?>
                                     <span><?=Yii::t('app', 'Target qty')?></span>
                                 </label>
                             </div>
-                            
+                            <div class="col-md-3">
+                                <label class="form-group has-float-label">
+                                    <?=$form->field($model, "[{$index}]remark")->textInput()?>
+                                    <span><?=Yii::t('app', 'Remark')?></span>
+                                </label>
+                            </div>
                             <div class="col-md-1">
                                 <button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-minus"></i></button>
                             </div>
@@ -135,7 +141,7 @@ jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
 <?php ActiveForm::end(); ?>
 
 <?
-$urlOrder = Url::to(['production-plan/wh-list-by-part'], true);
+$urlOrder = Url::to(['production-plan-monthly/wh-list-by-part'], true);
 ob_start();?>
 
 $(function(){

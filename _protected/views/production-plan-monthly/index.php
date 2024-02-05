@@ -22,7 +22,10 @@ $canUpload = Yii::$app->user->can('production-plan-upload');
 ?>
 	<div class="production-plan-index">
 		<div class="row" data-intro="<?=Yii::t('intro', 'Active_form')?>">
-			<div class="col-md-12">
+    <div class="col-md-8">
+      <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+    </div>
+			<div class="col-md-4">
 				<div class="form-group pull-right">
           <?php if($canCreate): ?>
             <?=Html::a(Yii::t('app', 'btn-create'),
@@ -50,9 +53,23 @@ $canUpload = Yii::$app->user->can('production-plan-upload');
 				</div>
 			</div>
 		</div>
+    <?php
+    Modal::begin([
+        'header' => '<h2>'.Yii::t('app', 'BOM').'</h2>',
+        'id' =>'specification-part',
+        'class'=>'modal modal-lg'
+    ]);
+
+
+    Modal::end();
+    ?>
 
     <?php Pjax::begin(['id' => 'pjaxGrid']); ?>
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+    
+      <h4 class="pull-left text-center" data-step="3" data-intro="<?=Yii::t('intro', 'stock-total')?>">
+        <?=Yii::t('app', 'Total')?>: <b> <?=number_format($total, 2, '.', ' ')?> </b>
+      </h4>
+
 
     <?=GridView::widget(
       [
@@ -112,22 +129,8 @@ $canUpload = Yii::$app->user->can('production-plan-upload');
                     'title' => Yii::t('app', 'Delete')
                   ]);
               },
-              'comment' => function($url, $model) use ($canComment) {
-                if(!$canComment)
-                  return false;
-                $url = Url::toRoute(['/production-plan/comment', 'id' => $model->id]);
-                return Html::a(
-                  '<span  class="glyphicon glyphicon-comment"></span>',
-                  false,
-                  [
-                    'class' => 'modalButtonUpdate',
-                    'value' => $url,
-                    'title' => Yii::t('app', 'Comment')
-                  ]
-                );
-              },
             ],
-            'visible' => $canUpdate || $canDelete || $canComment
+            'visible' => $canUpdate || $canDelete
           ],
           'shift',
           [
@@ -153,6 +156,11 @@ $canUpload = Yii::$app->user->can('production-plan-upload');
           [
             'attribute' => 'Марка',
             'value' => 'part.part_name',
+            'format' =>'raw',
+            'value' => function($model){
+              $id = $model->id;
+              return '<span class="monthly-part" data-monthly-id="'.$id.'">'.$model->part->part_name.'</span>';
+            }
             // 'filter' => $parts,
             // 'filterInputOptions' => [
             //   'class' => 'select2',
@@ -162,13 +170,6 @@ $canUpload = Yii::$app->user->can('production-plan-upload');
           ],
           'target_qty',
           [
-            'attribute' => 'comment',
-            'value' => 'planComment.comment',
-            'headerOptions' => [
-              'style' => 'color:#3c8dbc',
-            ],
-          ],
-          [
             'attribute' => 'line',
             'value' => function($model) {
               return $model->line ? (Yii::t('app', 'Line').'-'.$model->line) : '';
@@ -177,7 +178,8 @@ $canUpload = Yii::$app->user->can('production-plan-upload');
               'style' => 'color:#3c8dbc',
             ],
             'filter' => ProductionOrder::getLines(),
-          ]
+          ],
+          'remark'
         ],
       ]
     );?>
@@ -186,20 +188,36 @@ $canUpload = Yii::$app->user->can('production-plan-upload');
 
 	</div>
 
-<? //
-//$script1 = <<< JS
-//$(document).ready(function(){
-//	$('.btn').on('click', function(){
-//		setTimeout(()=> {
-//			$.pjax.reload({container: ".main-footer", async:false});
-//		},1000)
-//	});
-//
-//	$('.pagination').on('click', function(){
-//		setTimeout(()=> {
-//			$.pjax.reload({container: ".content-header", async:false});
-//		})
-//	});
-//})
-//JS;
-//$this->registerJs($script1);
+ <?php ob_start();?>
+ $(function(){
+  $('.monthly-part').css('cursor','pointer');
+  $('.monthly-part').css('font-weight','bold');
+  $('.monthly-part').on('click', function(){
+    let id = $(this).data('monthly-id');
+    let url = 'specification';
+    let data = {
+      id: id
+    };
+    ajaxRequest(url, data, 'POST', function(data){
+      $('#specification-part').modal('show');
+      console.log(data);
+      $('#specification-part').find('.modal-body').html(data);
+    
+    })
+  })
+
+  function ajaxRequest(url, data, method = 'POST', callback) {
+    $.ajax({
+      url: url,
+      data: data,
+      type: method,
+      success: function(data){
+        callback(data);
+      },
+      error: function(){
+        alert('Something is wrong!');
+      }
+    })
+  }
+ })
+ <?php $this->registerJs(ob_get_clean());?>

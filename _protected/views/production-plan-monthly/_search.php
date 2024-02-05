@@ -36,7 +36,7 @@ use yii\widgets\ActiveForm;
 				<span><?=Yii::t('app', 'Target qty')?></span>
 			</label>
 		</div>
-		<div class="col-md-2">
+		<div class="col-md-3">
       <?
       $cond = (!Yii::$app->user->can('admin')) ? ['and', ['in', 'id', Yii::$app->user->identity->warehouseIds], ['warehouse_type' => [0, 1]]] : ['warehouse_type' => [0, 1]];
       $params = ['prompt' => '. . .', 'class' => 'form-control select2'];
@@ -47,14 +47,12 @@ use yii\widgets\ActiveForm;
 				<span><?=Yii::t('app', 'Location')?></span>
 			</label>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col-lg-12">
-			<div class="pull-right">
-        <?=Html::resetButton(Yii::t('app', 'btn-cancel'), ['class' => 'btn btn-default btn-sm'])?>
-        <?=Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary btn-sm'])?>
-			</div>
-		</div>
-	</div>
+    <div class="col-md-2">
+      <div class="pull-right">
+          <?=Html::resetButton(Yii::t('app', 'btn-cancel'), ['class' => 'btn btn-default btn-sm'])?>
+          <?=Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary btn-sm'])?>
+        </div>
+      </div>
+    </div>
   <?php ActiveForm::end(); ?>
 </div>

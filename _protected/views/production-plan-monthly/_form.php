@@ -24,7 +24,7 @@ $form = ActiveForm::begin([
 $lines = ProductionOrder::getLines();
 ?>
 <div class="row">
-	<div class="col-lg-4">
+	<div class="col-lg-3">
     <?
     $cond_pt = (!Yii::$app->user->can('admin')) ? ['and', ['in', 'warehouse_id', Yii::$app->user->identity->warehouseIds]] : '';
     $parts = Part::find()->with(['warehouse' => function($q) {
@@ -42,7 +42,7 @@ $lines = ProductionOrder::getLines();
 			<span><?=Yii::t('app', 'Part No')?></span>
 		</label>
 	</div>
-	<div class="col-lg-4">
+	<div class="col-lg-3">
     <? $cond_wh = (!Yii::$app->user->can('admin')) ? ['warehouse.id' => Yii::$app->user->identity->warehouseIds] : ''; ?>
 		<label class="form-group has-float-label">
       <?=$form->field($model, 'warehouse_id')
@@ -56,12 +56,18 @@ $lines = ProductionOrder::getLines();
 		</label>
 	</div>
 	
-	<div class="col-lg-4">
+	<div class="col-lg-3">
 		<label class="form-group has-float-label">
       <?=$form->field($model, 'target_qty')->textInput()?>
 			<span><?=Yii::t('app', 'Target qty')?></span>
 		</label>
 	</div>
+  <div class="col-md-3">
+      <label class="form-group has-float-label">
+          <?=$form->field($model, "remark")->textInput()?>
+          <span><?=Yii::t('app', 'Remark')?></span>
+      </label>
+  </div>
   
 </div>
 
@@ -69,7 +75,7 @@ $lines = ProductionOrder::getLines();
 
 <?
 $urlOrder = Url::to(['production-plan/wh-list-by-part'], true);
-$script1 = <<< JS
+$script1 = ob_start();?>
 $(document).ready(function() {	
 	var part_id = $('#productionplan-part_id').children("option:selected"). val();
 	if(part_id>0){
@@ -118,6 +124,6 @@ $(document).ready(function() {
 	});
 	
 });
-JS;
-$this->registerJs($script1);
+<?php
+$this->registerJs(ob_get_clean());
 ?>
