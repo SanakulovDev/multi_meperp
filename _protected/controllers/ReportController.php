@@ -3957,13 +3957,16 @@ class ReportController extends AppController {
   }
 
   //monthly requirement short
-  public function actionMonthlyRequirementShort($filter=null)
+  public function actionMonthlyRequirementShort($filter=null, $part_id=null)
   {
-    $data = $this->_reportService->getMonthlyRequirementShorts($filter);
-    // vd($filter);
+    $data = $this->_reportService->getMonthlyRequirementShorts($part_id);
+    $partList = \yii\helpers\ArrayHelper::map(\app\models\Part::find()->all(), 'id', 'partinfo');
+    // vd($partList);
     return $this->render("requirement-monthly-short", [
       "data_daily" => $data,
-      'filter'   => $filter
+      'filter'   => $filter,
+      'partList' => $partList,
+      'part_id'  => $part_id
     ]);      
   }
   /**

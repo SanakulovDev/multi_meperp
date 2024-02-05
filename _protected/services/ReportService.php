@@ -2794,7 +2794,7 @@ class ReportService
       return $generalPartList;
     }
     //monthly requirement shorts
-    public function getMonthlyRequirementShorts()
+    public function getMonthlyRequirementShorts($part_id = null)
     {
         $fromCurrentWeek = date("Y-m-d", strtotime('monday this week'));
         $toCurrentWeek = date("Y-m-d", strtotime('sunday this week'));
@@ -2816,7 +2816,18 @@ class ReportService
 
         
         //sklad si
+      if($part_id){
+        $query2 = "SELECT p.id as part_id, p.part_no, p.part_color, p.part_name, cs.name csourse, s.qty as stock FROM product_specification_item  psi
+            INNER JOIN part p on p.id = psi.part_id
+            INNER JOIN contract_source cs on p.contract_source_id = cs.id
+            INNER JOIN stock s on s.part_id = psi.part_id
+            WHERE p.id=:part_id
+            GROUP BY psi.part_id
+        ";
 
+        $generalPartList = Yii::$app->db->createCommand($query2, [':part_id' => $part_id])->queryAll();
+      }
+      else{
         $query2 = "SELECT p.id as part_id, p.part_no, p.part_color, p.part_name, cs.name csourse, s.qty as stock FROM product_specification_item  psi
             INNER JOIN part p on p.id = psi.part_id
             INNER JOIN contract_source cs on p.contract_source_id = cs.id
@@ -2825,7 +2836,7 @@ class ReportService
         ";
 
         $generalPartList = Yii::$app->db->createCommand($query2)->queryAll();
-
+      }
         foreach($generalPartList as $key => $part){
             $currentWeek = [];
             $nextWeek = [];
@@ -2862,10 +2873,10 @@ class ReportService
             $generalPartList[$key]['currentMonthBalance'] = $generalPartList[$key]['stock'] - $generalPartList[$key]['current_month'];
             $generalPartList[$key]['averageUsage']        = Part::findOne($row['part_id'])->averageUsage?:0;
         }
-
-
-      $columns = array_column($generalPartList, 'currentMonthBalance');
-      array_multisort($columns, SORT_ASC, $generalPartList);
+        
+        $columns = array_column($generalPartList, 'currentMonthBalance');
+        array_multisort($columns, SORT_ASC, $generalPartList);
+        // vd($generalPartList);
       return $generalPartList;
     }
 

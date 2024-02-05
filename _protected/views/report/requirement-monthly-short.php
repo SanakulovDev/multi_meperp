@@ -3,6 +3,7 @@
     use app\models\Part;
     use app\models\Stock;
     use yii\helpers\Html;
+    use yii\helpers\Url;
 
     $this->title = Yii::t('app', 'Monthly Requirement Short');
 	  $this->params['breadcrumbs'][] = $this->title;
@@ -10,14 +11,25 @@
 ?>
 <div class="req-index">
     <div class="panel">
-        <div class="panel-heading">
-              <div class="pull-left">
-                <a href="<?= \yii\helpers\Url::to(['report/monthly-requirement-short', 'filter' => 1])?>" class="btn btn-success">Фильтр</a>
-                <a href="<?= \yii\helpers\Url::to(['report/monthly-requirement-short'])?>" class="btn btn-danger">Очистить фильтра</a>
+        <div class="row">
+              <div class="col-md-8 row" style="display: flex; flex-direction: row; justify-content:start; align-items:center;">
+                <div class="col-md-6">
+                  <?= Html::dropdownList('part_id', $part_id, $partList, [
+                  'class' => 'select2 form-control requirement-part',
+                  'prompt' =>'-----',
+                  // 'style'=>'display: inline-block; width: 300px!important;'
+                  ])?>
+                </div>
+                <div class="col-md-2">
+                  <a href="<?= \yii\helpers\Url::to(['report/monthly-requirement-short', 'filter' => 1])?>" class="btn btn-success">Фильтр</a>
+                </div>
+                <div class="col-md-2">
+                  <a href="<?= \yii\helpers\Url::to(['report/monthly-requirement-short'])?>" class="btn btn-danger">Очистить фильтра</a>
+                </div>
               </div>
-            <p class="pull-right" style="margin: 0px">
-              <?=Html::a(Yii::t('app', 'btn-download'), ['#'], ['class' => 'btn btn-info btn-sm', 'id' => 'btnDownload'])?>
-            </p>
+            <div class="col-md-4" style="display: flex; justify-content: end;">
+                <?=Html::a(Yii::t('app', 'btn-download'), ['#'], ['class' => 'btn btn-info btn-sm', 'id' => 'btnDownload'])?>
+            </div>
             <div style="clear: both;"></div>
         </div>
 
@@ -65,15 +77,9 @@
                   <td class="text-center" title="<?=$row['remark']?>"><?=$row['part_color']?></td>
                   <td style="max-width: 150px;" class="td-nowrap"><?=mb_strtoupper($row['part_name'])?></td>
                   <td class="text-center"><?=$row['csourse']?></td>
-                  <!-- <td style="text-align: center" class="text-right"><?php //echo $row['averageUsage']?></td> -->
                   <td style="text-align: center"><?php echo number_format($row['stock'], 0, ',', ' ')?></td>
-              
-                  <!-- <td style="text-align: center"><?php //echo number_format($row['current_week']*1, 0, ',', ' ') ;  ?></td> -->
-                  <!-- <td class="balance" data-cash="<?php //echo $row['currentWeekBalance']?>" style="text-align: center"><?php //echo number_format($row['currentWeekBalance'], 0, ',', ' ') ;  ?></td> -->
-                  <!-- <td style="text-align: center"><?php //echo number_format($row['next_week']*1, 0, ',', ' ') ;  ?></td> -->
-                  <!-- <td   class="balance" data-cash="<?php //echo $row['nextWeekBalance']?>" style="text-align: center"><?php //echo number_format($row['nextWeekBalance'], 0, ',', ' ') ;  ?></td> -->
                   <td style="text-align: center">
-                    <?= Html::a(number_format($row['current_month'], 0, ',', ' '), ['additional-monthly-requirement-short', 'part_id'=>$row['part_id'], 'qty' => $row['current_month']], ['target'=>'_blank']) ?>
+                    <?php   echo Html::a(number_format($row['current_month'], 0, ',', ' '), ['additional-monthly-requirement-short', 'part_id'=>$row['part_id'], 'qty' => $row['current_month']], ['target'=>'_blank']) ?>
                   </td>
                   <td class="balance" data-cash="<?=$row['currentMonthBalance']?>" style="text-align: center"><?php echo number_format($row['currentMonthBalance'], 0, ',', ' ') ?></td>
               </tr>
@@ -137,6 +143,14 @@
 
 
     $(document).ready(function(){
+      $('.requirement-part').on('change', function(e){
+          e.preventDefault();
+          let id = $(this).val();
+          console.log(id);
+          window.location.href = '/report/monthly-requirement-short?part_id='+id;
+          
+      })
+
       $('.balance').each(function(){
         let cash = $(this).data('cash');
         if(cash < 0){
