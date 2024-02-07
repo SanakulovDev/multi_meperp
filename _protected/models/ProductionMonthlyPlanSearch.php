@@ -71,6 +71,7 @@ class ProductionMonthlyPlanSearch extends ProductionMonthlyPlan{
 		$dataProvider = new ActiveDataProvider(
 			[
 				'query' => $query,
+        'pagination' => false,
         'sort' => ['defaultOrder'=>'production_date desc']
 			]
 		);
