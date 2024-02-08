@@ -510,7 +510,7 @@ class ProductionOrderController extends AppController
     if ($model->is_label == ProductionOrder::LABEL_ACTUAL) {
       // Komponent ostatkasiga qo'shish, part ostatkasidan kamaytirish
       $resultCons["success"] = true;
-      $resultCons = Stock::deconsumption($model, 0);
+      $resultCons = Stock::deconsumption($model, 0, false);
       if(!empty($model->stock_info_wrapper_id)){
         $data['wrapper_id'] = $model->stock_info_wrapper_id;
         $data['p_order_id'] = $model->id;

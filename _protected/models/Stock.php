@@ -86,17 +86,16 @@ class Stock extends ActiveRecord {
     return $this->hasOne(Warehouse::className(), ['id' => 'warehouse_id']);
   }
 
-  public static function receipt($wh_id, $data, $stock_info=false) {
+  public static function receipt($wh_id, $data, $stock_info = false) {
     $errorlist = [];
     $transaction = Yii::$app->db->beginTransaction();
     foreach($data as $key => $item) {
-      // if($stock_info){
+      if($stock_info){
+        $stock_item = Stock::find()->where(['warehouse_id' => $item['wh_id'], 'part_id' => $item['part_id']])->one();
+      }else{
         $stock_item = Stock::find()->where(['warehouse_id' => $wh_id, 'part_id' => $item['part_id']])->one();
-      // }else{
-      //   $stock_item = Stock::find()->where(['warehouse_id' => $wh_id, 'part_id' => $item['part_id']])->one();
-      // }
+      }
       if($stock_item) {
-        // vd($item);
         $stock_item->qty = $stock_item->qty + $item['qty'];
         if(!$stock_item->save()) {
           $errorlist[] = 'Stock change problem! Part : '.$stock_item->part->partinfo;
@@ -223,7 +222,7 @@ class Stock extends ActiveRecord {
   // Bu funksiya berilgan part ni BOM ga asosan
   // componentlarini liniya qoldig'idan kamaytiradi
   // i/ch gan mahsulot (part_id) qolfig'ini esa oshiradi
-  public static function consumption($production_order, $line2out = null) {
+  public static function consumption($production_order, $line2out = null, $stock_info = true) {
     $part_id = $production_order->part_id;
     $qty = $production_order->quantity;
     $errorlist = [];
@@ -238,38 +237,42 @@ class Stock extends ActiveRecord {
     //$transaction = Yii::$app->db->beginTransaction();
     if(count($errorlist) == 0) {
       // Partning BOM dagi componentlarini ULOC laridan kamaytirish
-      foreach($production_order->part->components as $component) {
-        $key++;
-        $stock_item = Stock::find()->where(['warehouse_id' => $component->warehouse_id, 'part_id' => $component->sub_part_id])->one();
-        $qty_to_issue =
-          (!empty(Yii::$app->params['cutted_coil_part_type_id']) and $production_order->part->part_type_id == Yii::$app->params['cutted_coil_part_type_id'])
-            ? $qty
-            : $qty*$component->usage_qty;
-        if($stock_item) {
-          $stock_qty = ($stock_item) ? $stock_item->qty : 0;
-          $stock_item->qty = $stock_qty - $qty_to_issue;
-        } else {
-          $stock_item = new Stock();
-          $stock_item->warehouse_id = $component->warehouse_id;
-          $stock_item->part_id = $component->sub_part_id;
-          $stock_item->qty = $qty_to_issue*(-1);
-        }
-        if(!$stock_item->save()) {
-          $errorlist[] = 'Error in consumption process. Component part: '.$component->subPart->part_no;
-        } elseif($line2out != 1) {
-          $productionOrderSub = new ProductionOrderSub();
-          $productionOrderSub->production_order_id = $production_order->id;
-          $productionOrderSub->sub_part_id = $component->sub_part_id;
-          $productionOrderSub->qty = $qty_to_issue;
-          $productionOrderSub->warehouse_id = $component->warehouse_id;
-          if(!$productionOrderSub->save()) {
-            echo "<pre>Error111: ";
-            print_r($productionOrderSub->errors);
-            echo "</pre>";
-            $errorlist[] = 'Error in inserting to sub table. Component part: '.$component->subPart->part_no;
+      // vd(count($production_order->part->components));
+      if($stock_info){
+        foreach($production_order->part->components as $component) {
+          $key++;
+          $stock_item = Stock::find()->where(['warehouse_id' => $component->warehouse_id, 'part_id' => $component->sub_part_id])->one();
+          $qty_to_issue =
+            (!empty(Yii::$app->params['cutted_coil_part_type_id']) and $production_order->part->part_type_id == Yii::$app->params['cutted_coil_part_type_id'])
+              ? $qty
+              : $qty*$component->usage_qty;
+          if($stock_item) {
+            $stock_qty = ($stock_item) ? $stock_item->qty : 0;
+            $stock_item->qty = $stock_qty - $qty_to_issue;
+          } else {
+            $stock_item = new Stock();
+            $stock_item->warehouse_id = $component->warehouse_id;
+            $stock_item->part_id = $component->sub_part_id;
+            $stock_item->qty = $qty_to_issue*(-1);
+          }
+          if(!$stock_item->save()) {
+            $errorlist[] = 'Error in consumption process. Component part: '.$component->subPart->part_no;
+          } elseif($line2out != 1) {
+            $productionOrderSub = new ProductionOrderSub();
+            $productionOrderSub->production_order_id = $production_order->id;
+            $productionOrderSub->sub_part_id = $component->sub_part_id;
+            $productionOrderSub->qty = $qty_to_issue;
+            $productionOrderSub->warehouse_id = $component->warehouse_id;
+            if(!$productionOrderSub->save()) {
+              echo "<pre>Error111: ";
+              print_r($productionOrderSub->errors);
+              echo "</pre>";
+              $errorlist[] = 'Error in inserting to sub table. Component part: '.$component->subPart->part_no;
+            }
           }
         }
       }
+      
       if($line2out != 1) {
         // Part ni o'zini ishlab chiqarlgan liniya ostatkasiga qo'shib qo'yish.
         $stock_part = Stock::find()->where(['warehouse_id' => $warehouse_id, 'part_id' => $part_id])->one();
@@ -295,7 +298,7 @@ class Stock extends ActiveRecord {
 
   // Bu funksiya consumption() funksiyasini teskarisi bo'lib,
   // consumption() da qilingan ishlarni ortga qaytaradi
-  public static function deconsumption($production_order, $line2out = null) {
+  public static function deconsumption($production_order, $line2out = null, $stock_info = true) {
     $part_id = $production_order->part_id;
     $qty = $production_order->quantity;
     $errorlist = [];
@@ -307,22 +310,25 @@ class Stock extends ActiveRecord {
     $key = 0;
     if(count($errorlist) == 0) {
       // Partning BOM dagi componentlarini ULOC lariga qo`shadi
-      foreach($production_order->consumptionDetails as $component) {
-        $key++;
-        $stock_item = Stock::find()->where(['warehouse_id' => $component->warehouse_id, 'part_id' => $component->sub_part_id])->one();
-        if($stock_item) {
-          $stock_qty = ($stock_item) ? $stock_item->qty : 0;
-          $stock_item->qty = $stock_qty + $component->qty;
-        } else {
-          $stock_item = new Stock();
-          $stock_item->warehouse_id = $component->warehouse_id;
-          $stock_item->part_id = $component->sub_part_id;
-          $stock_item->qty = $component->qty;
-        }
-        if(!$stock_item->save()) {
-          $errorlist[] = 'Error in consumption process. Component part: '.$component->subPart->part_no;
+      if($stock_info){
+        foreach($production_order->consumptionDetails as $component) {
+          $key++;
+          $stock_item = Stock::find()->where(['warehouse_id' => $component->warehouse_id, 'part_id' => $component->sub_part_id])->one();
+          if($stock_item) {
+            $stock_qty = ($stock_item) ? $stock_item->qty : 0;
+            $stock_item->qty = $stock_qty + $component->qty;
+          } else {
+            $stock_item = new Stock();
+            $stock_item->warehouse_id = $component->warehouse_id;
+            $stock_item->part_id = $component->sub_part_id;
+            $stock_item->qty = $component->qty;
+          }
+          if(!$stock_item->save()) {
+            $errorlist[] = 'Error in consumption process. Component part: '.$component->subPart->part_no;
+          }
         }
       }
+      
       if($line2out != 1) {
         // Part ni o'zini ishlab chiqarlgan liniya ostatkasidan ayrib qo`yadi.
         $stock_part = Stock::find()->where(['warehouse_id' => $warehouse_id, 'part_id' => $part_id])->one();
