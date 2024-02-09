@@ -324,7 +324,7 @@ class ProductionOrder extends ActiveRecord {
       if($modelPo->current_event == ProductionOrder::EVENT_PRODUCED) {
         $resultCons['success'] = true;
         // if(empty($modelPo->stock_info_wrapper_id)){
-          $resultCons = Stock::consumption($modelPo, null, false);
+          $resultCons = Stock::consumption($modelPo, 2, false);
         // }
         // else{
         //   $resultCons = Stock::issue($modelPo);
