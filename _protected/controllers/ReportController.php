@@ -3962,7 +3962,7 @@ class ReportController extends AppController {
     $data = $this->_reportService->getMonthlyRequirementShorts($part_id);
     $partList = \yii\helpers\ArrayHelper::map(\app\models\Part::find()->all(), 'id', 'partinfo');
     // $array = array_column($data, 'current_month');
-    
+    // vd($data);
     usort($data, function($a, $b) {
       return $b['current_month'] - $a['current_month'];
     });

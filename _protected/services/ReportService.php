@@ -2837,6 +2837,11 @@ class ReportService
 
         $generalPartList = Yii::$app->db->createCommand($query2)->queryAll();
       }
+        $invoice_detail_query = "SELECT ci.arrived_at as arrived_at, id.qty as quantity from invoice_detail as id 
+          INNER JOIN container_invoice ci on ci.id=id.cont_inv_id
+          where ci.arrived_at > CURDATE() and id.part_id=:part_id
+          order by ci.arrived_at
+        ";
         foreach($generalPartList as $key => $part){
             $currentWeek = [];
             $nextWeek = [];
@@ -2872,6 +2877,17 @@ class ReportService
             $generalPartList[$key]['nextWeekBalance']     = $generalPartList[$key]['currentWeekBalance'] - $generalPartList[$key]['next_week'];
             $generalPartList[$key]['currentMonthBalance'] = $generalPartList[$key]['stock'] - $generalPartList[$key]['current_month'];
             $generalPartList[$key]['averageUsage']        = Part::findOne($row['part_id'])->averageUsage?:0;
+            $generalPartList[$key]['vputis'] = [];
+            $vputis = Yii::$app->db->createCommand($invoice_detail_query, [':part_id'=>$part['part_id']])->queryAll();
+            $arr = [];
+            if($vputis){
+
+              foreach($vputis as $puti){
+                $arr[]=$puti;
+              }
+            }
+            $generalPartList[$key]['vputis'] = $arr;
+            
         }
         
         $columns = array_column($generalPartList, 'currentMonthBalance');

@@ -49,12 +49,9 @@
                       <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Part color')?></th>
                       <th style="width: 100px;" class="text-center"><?=mb_strtoupper(Yii::t('app', 'Part name'))?></th>
                       <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Type')?></th>
-                      <!-- <th style="width: 100px;" class="text-center"><?php //echo Yii::t('app', 'Average usage')?></th> -->
+                      <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Next Arrival')?></th>
+                      <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Date')?></th>
                       <th style="width: 100px;" class="text-center">Количество остатка</th>
-                      <!-- <th style="width: 100px;" class="text-center">1 нед</th>
-                      <th style="width: 100px;" class="text-center">Баланс</th>
-                      <th style="width: 100px;" class="text-center">след нед</th>
-                      <th style="width: 100px;" class="text-center">Баланс</th> -->
                       <th style="width: 100px;" class="text-center">1месяц</th>
                       <th class="balance" style="width: 100px;" class="text-center">Баланс</th>
                   </tr>
@@ -77,6 +74,25 @@
                   <td class="text-center" title="<?=$row['remark']?>"><?=$row['part_color']?></td>
                   <td style="max-width: 150px;" class="td-nowrap"><?=mb_strtoupper($row['part_name'])?></td>
                   <td class="text-center"><?=$row['csourse']?></td>
+                  <td style="text-align: center">
+                    <?php if(!empty($row['vputis'])):?>
+                      <?php foreach($row['vputis'] as $item):?>
+                        <?php echo number_format($item['quantity'], 0, ',', ' ').'</br>';?>    
+                      <?php endforeach;?>
+                    <?php else:?>
+                      0
+                    <?php endif;?>
+                  </td>
+
+                  <td style="text-align: center">
+                    <?php if(!empty($row['vputis'])):?>
+                      <?php foreach($row['vputis'] as $item):?>
+                        <?php echo $item['arrived_at'].'</br>';?>    
+                      <?php endforeach;?>
+                    <?php else:?>
+                      ----
+                    <?php endif;?>
+                  </td>
                   <td style="text-align: center"><?php echo number_format($row['stock'], 0, ',', ' ')?></td>
                   <td style="text-align: center" class="current-month" data-part-id="<?= $row['part_id']?>" data-qty="<?=$row['current_month']?>">
                       <?= number_format($row['current_month'], 0, ',', ' ')?>
