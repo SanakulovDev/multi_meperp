@@ -78,8 +78,9 @@
                   <td style="max-width: 150px;" class="td-nowrap"><?=mb_strtoupper($row['part_name'])?></td>
                   <td class="text-center"><?=$row['csourse']?></td>
                   <td style="text-align: center"><?php echo number_format($row['stock'], 0, ',', ' ')?></td>
-                  <td style="text-align: center">
-                    <?php   echo Html::a(number_format($row['current_month'], 0, ',', ' '), ['additional-monthly-requirement-short', 'part_id'=>$row['part_id'], 'qty' => $row['current_month']], ['target'=>'_blank']) ?>
+                  <td style="text-align: center" class="current-month" data-part-id="<?= $row['part_id']?>" data-qty="<?=$row['current_month']?>">
+                      <?= number_format($row['current_month'], 0, ',', ' ')?>
+                    <?php   //echo Html::a(number_format($row['current_month'], 0, ',', ' '), ['additional-monthly-requirement-short', 'part_id'=>$row['part_id'], 'qty' => $row['current_month']], ['target'=>'_blank']) ?>
                   </td>
                   <td class="balance" data-cash="<?=$row['currentMonthBalance']?>" style="text-align: center"><?php echo number_format($row['currentMonthBalance'], 0, ',', ' ') ?></td>
               </tr>
@@ -159,6 +160,11 @@
           $(this).css('font-weight', 'bold');
         }
       })
+
+      $('.current-month').on('click', function(){
+        console.log($(this).data('qty'));
+        window.location.href= 'additional-monthly-requirement-short?part_id='+$(this).data('part-id')+'&qty='+$(this).data('qty');
+      })
     })
 
 	
@@ -168,7 +174,7 @@
 <?php $this->registerJsFile('/themes/excel/jszip.js', ['position' => \yii\web\View::POS_HEAD]); ?>
 <?php $this->registerJsFile('/themes/excel/myscript.js', ['position' => \yii\web\View::POS_HEAD]); ?>
 <?php $this->registerJsFile('/themes/excel/FileSaver.js', ['position' => \yii\web\View::POS_HEAD]); ?>
-<style>
+<?php ob_start();?>
 :root {
   --color-bg: #458;
   --color-switch-thumb: #ccc;
@@ -223,4 +229,8 @@
   left: 100%;
   transform: translateX(-100%);
 }
-</style>
+.current-month{
+  cursor:pointer;
+  color: #234;
+}
+<?php $this->registerCss(ob_get_clean());?>

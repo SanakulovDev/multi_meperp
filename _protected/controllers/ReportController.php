@@ -3961,7 +3961,12 @@ class ReportController extends AppController {
   {
     $data = $this->_reportService->getMonthlyRequirementShorts($part_id);
     $partList = \yii\helpers\ArrayHelper::map(\app\models\Part::find()->all(), 'id', 'partinfo');
-    // vd($partList);
+    // $array = array_column($data, 'current_month');
+    
+    usort($data, function($a, $b) {
+      return $b['current_month'] - $a['current_month'];
+    });
+    // vd($data);
     return $this->render("requirement-monthly-short", [
       "data_daily" => $data,
       'filter'   => $filter,

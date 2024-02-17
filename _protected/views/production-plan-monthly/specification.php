@@ -35,7 +35,7 @@ use yii\helpers\Html;
         <tbody>
           <?php foreach($items2 as $key => $item): ?>
             <tr>
-              <td><?=$item['part_no']?></td>
+              <td><?=$item['part_name']?></td>
               <td><?= round($item['quantity'], 2)?></td>
             </tr>
           <?php endforeach;?>
