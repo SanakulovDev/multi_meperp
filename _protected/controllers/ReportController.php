@@ -3964,7 +3964,7 @@ class ReportController extends AppController {
     // $array = array_column($data, 'current_month');
     // vd($data);
     usort($data, function($a, $b) {
-      return $b['current_month'] - $a['current_month'];
+      return $a['currentMonthBalance'] - $b['currentMonthBalance'];
     });
     // vd($data);
     return $this->render("requirement-monthly-short", [
@@ -3973,6 +3973,33 @@ class ReportController extends AppController {
       'partList' => $partList,
       'part_id'  => $part_id
     ]);      
+  }
+  /**
+   * Sanakulov Anvar
+   * 2024-02-23
+   * @sanakulov_Dev
+   * Vputini kiritish uchun modal
+   */
+  public function actionMonthlyVputi($part_id=null)
+  {
+    if(empty($part_id)){
+      return false;
+    }
+    $model = Part::findOne($part_id);
+    $model->scenario = 'v-puti';
+    if(Yii::$app->request->isPost && $model->load(Yii::$app->request->post())){
+
+      if($model->save()){
+        return $this->redirect(Yii::$app->request->referrer);
+      }
+      return $this->redirect(Yii::$app->request->referrer);
+    }
+    if(Yii::$app->request->isAjax){
+      return $this->renderAjax('monthly-short-form', [
+        'model' => $model
+      ]);
+    }
+    
   }
   /**
    * Sanakulov Anvar

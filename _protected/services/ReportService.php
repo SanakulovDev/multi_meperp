@@ -2817,7 +2817,7 @@ class ReportService
         
         //sklad si
       if($part_id){
-        $query2 = "SELECT p.id as part_id, p.part_no, p.part_color, p.part_name, cs.name csourse, s.qty as stock FROM product_specification_item  psi
+        $query2 = "SELECT p.id as part_id, p.part_no, p.part_color, p.part_name, p.arrived_qty, p.arrived_at, cs.name csourse, s.qty as stock FROM product_specification_item  psi
             INNER JOIN part p on p.id = psi.part_id
             INNER JOIN contract_source cs on p.contract_source_id = cs.id
             INNER JOIN stock s on s.part_id = psi.part_id
@@ -2828,7 +2828,7 @@ class ReportService
         $generalPartList = Yii::$app->db->createCommand($query2, [':part_id' => $part_id])->queryAll();
       }
       else{
-        $query2 = "SELECT p.id as part_id, p.part_no, p.part_color, p.part_name, cs.name csourse, s.qty as stock FROM product_specification_item  psi
+        $query2 = "SELECT p.id as part_id, p.part_no, p.part_color, p.part_name, p.arrived_qty, p.arrived_at,  cs.name csourse, s.qty as stock FROM product_specification_item  psi
             INNER JOIN part p on p.id = psi.part_id
             INNER JOIN contract_source cs on p.contract_source_id = cs.id
             INNER JOIN stock s on s.part_id = psi.part_id

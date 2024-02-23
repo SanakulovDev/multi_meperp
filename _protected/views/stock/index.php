@@ -110,7 +110,7 @@ $partModel = new Part();
           },
           'contentOptions' => function($model, $key, $index, $column) {
             $add_style = '';
-            if($model->qty < 0) {
+            if($model->qty <= 500 && in_array($partModel->stateList, [0,3])) {
               $add_style = 'color: #b13036;background-color:#FFC8CE;font-weight:bold;';
             }
 

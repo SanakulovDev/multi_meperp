@@ -1,9 +1,10 @@
 <?php
-	use app\components\Helpers;
+	  use app\components\Helpers;
     use app\models\Part;
     use app\models\Stock;
     use yii\helpers\Html;
     use yii\helpers\Url;
+    use yii\bootstrap\Modal;
 
     $this->title = Yii::t('app', 'Monthly Requirement Short');
 	  $this->params['breadcrumbs'][] = $this->title;
@@ -54,6 +55,7 @@
                       <th style="width: 100px;" class="text-center">Количество остатка</th>
                       <th style="width: 100px;" class="text-center">1месяц</th>
                       <th class="balance" style="width: 100px;" class="text-center">Баланс</th>
+                      <th style="width: 80px;" class="edit text-center"><?= Yii::t('app', 'Edit')?></th>
                   </tr>
         </thead>
         
@@ -62,7 +64,7 @@
             <?php foreach($data_daily as $row):?>
               <?php 
                 if($filter == 1){
-                  if($row['current_month'] == 0){
+                  if($row['currentMonthBalance'] == 0){
                     continue;
                   }
                 }
@@ -75,23 +77,11 @@
                   <td style="max-width: 150px;" class="td-nowrap"><?=mb_strtoupper($row['part_name'])?></td>
                   <td class="text-center"><?=$row['csourse']?></td>
                   <td style="text-align: center">
-                    <?php if(!empty($row['vputis'])):?>
-                      <?php foreach($row['vputis'] as $item):?>
-                        <?php echo number_format($item['quantity'], 0, ',', ' ').'</br>';?>    
-                      <?php endforeach;?>
-                    <?php else:?>
-                      0
-                    <?php endif;?>
+                        <?php echo number_format($row['arrived_qty'], 0, ',', ' ')?>    
                   </td>
 
                   <td style="text-align: center">
-                    <?php if(!empty($row['vputis'])):?>
-                      <?php foreach($row['vputis'] as $item):?>
-                        <?php echo $item['arrived_at'].'</br>';?>    
-                      <?php endforeach;?>
-                    <?php else:?>
-                      ----
-                    <?php endif;?>
+                      <?php echo $row['arrived_at']?>    
                   </td>
                   <td style="text-align: center"><?php echo number_format($row['stock'], 0, ',', ' ')?></td>
                   <td style="text-align: center" class="current-month" data-part-id="<?= $row['part_id']?>" data-qty="<?=$row['current_month']?>">
@@ -99,6 +89,9 @@
                     <?php   //echo Html::a(number_format($row['current_month'], 0, ',', ' '), ['additional-monthly-requirement-short', 'part_id'=>$row['part_id'], 'qty' => $row['current_month']], ['target'=>'_blank']) ?>
                   </td>
                   <td class="balance" data-cash="<?=$row['currentMonthBalance']?>" style="text-align: center"><?php echo number_format($row['currentMonthBalance'], 0, ',', ' ') ?></td>
+                  <td class="text-center">
+                    <?= Html::a('<i class="glyphicon glyphicon-pencil"></i>', ['#'], ['class'=>'btn pencil-edit', 'data-id'=>$row['part_id']])?>
+                  </td>
               </tr>
             <?php endforeach; ?>
         </tbody>
@@ -107,6 +100,7 @@
       </table>
     </div>
 </div>
+
 <?
 
 	ob_start();?>
@@ -124,6 +118,9 @@
 			var headers = [];
 
 			for (var i = 0; i < cells; i++) {
+        if(i == 10){
+          continue;
+        }
 				headers.push(table.rows[0].cells[i].innerHTML);
 			}
 
@@ -140,6 +137,9 @@
 						
 			for (var i=1; i < limit; i++){                                    // Generate 50 rows
 				for(var j = 0; j < cells; j++){
+          if(j == 10){
+            continue;
+          }
 					if(table.rows[i].cells[j] !== undefined)
 					excel.set(0,j,i,table.rows[i].cells[j].innerHTML);                    // This column is a TEXT
 				}
@@ -180,6 +180,23 @@
       $('.current-month').on('click', function(){
         console.log($(this).data('qty'));
         window.location.href= 'additional-monthly-requirement-short?part_id='+$(this).data('part-id')+'&qty='+$(this).data('qty');
+      })
+
+      $('.pencil-edit').on('click', function(e){
+        e.preventDefault();
+        let id = $(this).data('id');
+        let url = '/report/monthly-vputi?part_id='+id;
+        $.ajax({
+          url: url,
+          type:'POST',
+          data:{},
+          success:function(data){
+            $('#modal').modal('show').find('#modalContent').html(data);
+          },
+          error: function(){
+            alert('Xatolik sodir bo`ldi');
+          }
+        })
       })
     })
 

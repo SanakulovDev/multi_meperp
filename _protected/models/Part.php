@@ -92,6 +92,7 @@ class Part extends ActiveRecord
     const STATE_FINISHED = 2;
     const STATE_CASTLE = 3;
 
+    const SCENARIO_VPUTI = 'v-puti';
     /**
      * List of names for each status.
      *
@@ -184,7 +185,9 @@ class Part extends ActiveRecord
       ],
       [['state', 'part_type_id', 'contract_source_id', 'warehouse_id', 'status', 'created_by', 'created_at', 'updated_by', 'updated_at', 'commented_by', 'actual_contract_detail_id'], 'integer'],
       [['comment'], 'string'],
-      [['commented_at', 'part_color'], 'safe'],
+      [['arrived_qty'], 'number'],
+      [['commented_at', 'part_color', 'arrived_at'], 'safe'],
+      [['arrived_qty', 'arrived_at'], 'required', 'on'=>self::SCENARIO_VPUTI],
       [['part_no'], 'string', 'max' => 50],
       [['part_name', 'part_color', 'pack_size', 'remark'], 'string', 'max' => 255],
       [
@@ -233,6 +236,8 @@ class Part extends ActiveRecord
             'commented_by' => Yii::t('app', 'Commented by'),
             'commented_at' => Yii::t('app', 'Commented at'),
             'actual_contract_detail_id' => Yii::t('app', 'Contract detail'),
+            'arrived_qty' => Yii::t('app', 'Next Arrival'),
+            'arrived_at' => Yii::t('app', 'Date')
         ];
     }
 
