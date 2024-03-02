@@ -1098,7 +1098,7 @@ return [
   'btn-pdf-siro' => '<i class="glyphicon glyphicon-print"></i>&nbsp;&nbsp;Скаяать СИРО',
   'btn-pdf-zames' => '<i class="glyphicon glyphicon-print"></i>&nbsp;&nbsp;Скаяать Замес',
   'Stock Info' => 'Производственный склад',
-  'Mix quantity' => 'Микс Кол-во',
+  'Mix quantity' => 'Погрешность',
   'Trash quantity' => 'Мусор Кол-во',
   'Default' => 'По умолчанию',
   'Current status' => 'Текущее состояние' 

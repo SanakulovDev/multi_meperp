@@ -16,7 +16,7 @@ class StockInfoWrapperSearch extends StockInfoWrapper {
   public function rules()
   {
       return [
-          [['warehouse_id', 'type_id', 'give_user_id', 'document_id', 'part_id', 'qty', 'status'], 'integer'],
+          [['warehouse_id', 'type_id', 'give_user_id', 'document_id', 'part_id', 'qty', 'status', 'shift'], 'integer'],
           [['code', 'comment', 'date'], 'string', 'max' => 255],
       ];
   }
@@ -59,6 +59,7 @@ class StockInfoWrapperSearch extends StockInfoWrapper {
                              'part_id' => $this->part_id,
                              'qty' => $this->qty,
                              'status' => $this->status,
+                             'shift' => $this->shift,
                            ])
                            ->orderBy(['id' => SORT_DESC])
                            ->all();

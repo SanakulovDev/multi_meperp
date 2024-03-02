@@ -36,8 +36,8 @@ class StockInfo extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['part_id', 'warehouse_id', 'give_user_id', 'type_id','stock_wrapper_id'], 'integer'],
-            [['qty'], 'number'],
+            [['part_id', 'warehouse_id', 'give_user_id', 'type_id','stock_info_wrapper_id'], 'integer'],
+            [['qty','old_qty'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
         ];
     }
@@ -52,6 +52,7 @@ class StockInfo extends \yii\db\ActiveRecord
             'part_id' => Yii::t('app', 'Part ID'),
             'warehouse_id' => Yii::t('app', 'Warehouse ID'),
             'qty' => Yii::t('app', 'Qty'),
+            'old_qty' => Yii::t('app', 'Qty'),
             'give_user_id' => Yii::t('app', 'Give User ID'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -64,6 +65,15 @@ class StockInfo extends \yii\db\ActiveRecord
   public function getPart() {
     return $this->hasOne(Part::className(), ['id' => 'part_id']);
   }
+  public function beforeSave($insert) {
+    if (parent::beforeSave($insert)) {
+        if ($this->isNewRecord) {
+            $this->old_qty = $this->qty;
+        }
+        return true;
+    }
+    return false;
+}
 
   /**
    * @return ActiveQuery

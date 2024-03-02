@@ -273,12 +273,19 @@ class ProductionOrder extends ActiveRecord {
     $modelPo->is_label = $modelPo->quantity > 0 ? ProductionOrder::LABEL_ACTUAL : ProductionOrder::LABEL_INDIVIDUAL;
     $spec = ProductSpecification::find()->where(['part_id' => $modelPo->part_id, 'status' => ProductSpecification::STATUS_ACTIVE])->one();
     $modelPo->product_specification_id = $spec ? $spec->id : null;
+    // $modelPo->quantity += $modelPo->mix_quantity;
     if($modelPo->save()) {
       // vd($modelPo); 
+      
       if($stock_info && $modelPo->stock_info_wrapper_id){
+        $data['part_id']    = $modelPo->part_id;
         $data['wrapper_id'] = $modelPo->stock_info_wrapper_id;
         $data['p_order_id'] = $modelPo->id;
         $stock_issue = StockInfoWrapper::issue($data, $modelPo->quantity);
+        if($modelPo->mix_quantity > 0){
+          $issue_mix = StockInfoWrapper::issueMixQuantity($data, $modelPo->mix_quantity);
+          // vd($issue_mix);
+        }
         if(!$stock_issue['success']){
           $err = 1;
           $message = '';
@@ -325,6 +332,7 @@ class ProductionOrder extends ActiveRecord {
         $resultCons['success'] = true;
         // if(empty($modelPo->stock_info_wrapper_id)){
           $resultCons = Stock::consumption($modelPo, 2, false);
+          // vd($resultCons);
         // }
         // else{
         //   $resultCons = Stock::issue($modelPo);
@@ -336,7 +344,7 @@ class ProductionOrder extends ActiveRecord {
           $err_sms = Yii::t('app', $message.'<br>'.$errors);
         }
       }
-
+      
       if(!$mixStock['success']){
           $err = 1;
           $message = 'Mix Sklad not created. Something is wrong.';

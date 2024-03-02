@@ -3,8 +3,10 @@
 namespace app\models;
 
 use Yii;
-use yii\helpers\ArrayHelper;
+use app\models\Stock;
+use app\models\Dashboard;
 use app\models\StockInfoSub;
+use yii\helpers\ArrayHelper;
 use app\models\ProductionOrder;
 
 /**
@@ -19,6 +21,7 @@ use app\models\ProductionOrder;
  * @property int|null $document_id
  * @property string|null $created_at
  * @property string|null $updated_at
+ * @property integer $shift (Smenalar)
  *
  * @property Document $document
  * @property StockInfo[] $stockInfos
@@ -60,8 +63,8 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['warehouse_id', 'line', 'qty', 'part_id'], 'required'],
-            [['warehouse_id', 'type_id', 'give_user_id', 'document_id', 'line', 'part_id', 'status'], 'integer'],
+            [['warehouse_id', 'line', 'qty', 'part_id', 'shift'], 'required'],
+            [['warehouse_id', 'type_id', 'give_user_id', 'document_id', 'line', 'part_id', 'status', 'shift'], 'integer'],
             [['created_at', 'updated_at', 'date'], 'safe'],
             [['qty'], 'number'],
             [['code', 'comment'], 'string', 'max' => 255],
@@ -90,6 +93,7 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
             'line' => Yii::t('app', 'Line'),
             'date'  => Yii::t('app', 'Date'),
             'status'  => Yii::t('app', 'Status'),
+            'shift'   => Yii::t('app', 'Shift')
         ];
     }
 
@@ -148,12 +152,20 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
       return ArrayHelper::map(self::find()->where(['status' => 1])->all(), 'id', 'code');
     }
   
-    public  function countPOrder($id)
+    public  function countPOrder1($id)
     {
-      $query = "SELECT count(distinct(p_order_id)) as count from stock_info_sub where stock_info_wrapper_id=$id and status=1";
+      $query = "SELECT count(distinct(p_order_id)) as count from stock_info_sub where stock_info_wrapper_id=$id and status in(1)";
       $result = Yii::$app->db->createCommand($query)->queryScalar();
       return $result;
     } 
+    
+    public  function countPOrder2($id)
+    {
+      $query = "SELECT count(distinct(p_order_id)) as count from stock_info_sub where stock_info_wrapper_id=$id and status in(2)";
+      $result = Yii::$app->db->createCommand($query)->queryScalar();
+      return $result;
+    } 
+
 
     /**
      * Anvar Sanakulov
@@ -240,7 +252,7 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
             foreach($model->stockInfos as $info){
               if($info->subs){
                 foreach($info->subs as $sub){
-                  if($sub->p_order_id == $data['p_order_id']){
+                  if($sub->p_order_id == $data['p_order_id'] and $sub->status == 1){
                     $info->qty += $sub->qty;
                     $sub->delete();
                   }
@@ -262,6 +274,7 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
         if(!empty($errorList)){
           $transaction->rollBack();
           return [
+            'success' => false,
             'status' => false,
             'errorList' => $errorList
           ];
@@ -269,9 +282,100 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
         else{
           $transaction->commit();
           return  [
+            'success' => true,
             'status' => true
           ];
         }
       }
     }
+
+    /**
+     * Anvar Sanakulov
+     * 2024-03-01
+     * @sanakuov_Dev
+     * Mix quantity uchun alohida isse funksiya
+     */
+
+     public static function issueMixQuantity($data, $quantity)
+     {
+      if($data){
+        $data2 = [];
+        $part_models = Dashboard::normaRasxoda($data['part_id'],null, $quantity);
+        $stockInfoWrapper = self::findOne($data['wrapper_id']) ;
+        // vd($stockInfoWrapper->stockInfos);
+        if(!empty($part_models)){
+          foreach($part_models as $key => $item){                  
+              unset($tmpArr);
+              $tmpArr['part_id'] = $item['part_id'];
+              $tmpArr['qty'] = $item['quantity'];
+              $tmpArr['stock_info_wrapper_id'] = $data['wrapper_id'];
+              $tmpArr['wh_id'] = $item['warehouse_id'];
+              $data2[] = $tmpArr;
+            
+          }
+          // vd($data2);
+          if(!empty($data2)){
+            $stockResult = Stock::issue(1, $data2);
+            if($stockResult['success']){
+              foreach($stockInfoWrapper->stockInfos as $key => $item){
+                
+                // array_search(array_column($part_models, 'part_id'),  );
+                $exist = [];
+                foreach($part_models as $part){
+                  if($part['part_id'] == $item->part_id){
+                    $exist =  $part;
+                    break;
+                  }
+                }
+                // vd($exist);
+                $stock_info_sub =  new StockInfoSub();
+                $stock_info_sub->qty = number_format($exist['quantity'], 2);
+                $stock_info_sub->percent = 0;
+                $stock_info_sub->status  = 2;
+                $stock_info_sub->stock_info_id = $item->id;
+                $stock_info_sub->stock_info_wrapper_id = $data['wrapper_id'];
+                $stock_info_sub->p_order_id = $data['p_order_id'];
+                $stock_info_sub->give_user_id = Yii::$app->user->id;
+                if(!$stock_info_sub->save(false)){
+                  $errorList[]='Stock Info Sub Save Errors: '. $stock_info_sub->errors();
+                }
+              }
+            }
+            
+          }
+        }
+      }
+     }
+
+     // receiptMixQuantity
+     public static  function receiptMixQuantity($data, $quantity)
+     {
+      if($data){
+        $data2 = [];
+        $stockInfoWrapper = self::findOne($data['wrapper_id']) ;
+        foreach($stockInfoWrapper->stockInfos as $key => $item){
+          $exist = [];
+          $data2 = [];
+          // vd($item->subs);
+          foreach(  $item->subs as $sub){
+            if($sub->p_order_id == $data['p_order_id'] and $sub->status == 2){
+              unset($tmpArr);
+              $tmpArr['part_id'] = $item->part_id;
+              $tmpArr['qty'] = $sub->qty;
+              $tmpArr['stock_info_wrapper_id'] = $data['wrapper_id'];
+              $tmpArr['wh_id'] = $item->warehouse_id;
+              $data2[] = $tmpArr;
+              $sub->delete();
+            }
+          }
+          // vd($data2);
+          if(!empty($data2)){
+            $stockResult = Stock::receipt(1, $data2);
+          }
+          unset($data2);
+          
+        }
+        
+      }
+     }  
 }

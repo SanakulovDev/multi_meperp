@@ -506,7 +506,7 @@ class ProductionOrderController extends AppController
       }
     }
     $errorlist = [];
-    // $transaction = Yii::$app->db->beginTransaction();
+    $transaction = Yii::$app->db->beginTransaction();
     if ($model->is_label == ProductionOrder::LABEL_ACTUAL) {
       // Komponent ostatkasiga qo'shish, part ostatkasidan kamaytirish
       $resultCons["success"] = true;
@@ -515,6 +515,8 @@ class ProductionOrderController extends AppController
         $data['wrapper_id'] = $model->stock_info_wrapper_id;
         $data['p_order_id'] = $model->id;
         $resultCons = StockInfoWrapper::receipt($data, $model->quantity);
+        $resultMix = StockInfoWrapper::receiptMixQuantity($data, $model->mix_quantity);
+        
       }
       $data = [];
       $tmpArr = [];
@@ -556,6 +558,7 @@ class ProductionOrderController extends AppController
 
     /**  ProductionMonitor edit begin */
     $needDt = date("Y-m-d H:i", $model->created_at);
+    // vd($needDt);
     $prodDt = date("Y-m-d", $model->created_at);
     $productionMonitor = ProductionMonitor::find()
                                           ->where([
@@ -569,33 +572,34 @@ class ProductionOrderController extends AppController
 //    echo "<pre>"; print_r(Helpers::getShift($needDt)["shift"]);echo "</pre>";
 //    echo "<pre>"; print_r($productionMonitor);echo "</pre>";
 //    die;
-
-    if ($productionMonitor) {
-      $result = PartProductionMonitor::setProduced(
-        $productionMonitor->id,
-        $model->part_id,
-        $model->quantity,
-        Yii::$app->user->identity->id,
-        "delete"
-      );
-      $deleteError = false;
-      if (!$result) {
-        $deleteError = true;
-      }
-    /**  ProductionMonitor edit end*/
-
-    if ($model->delete() and $resultCons["success"] == 1 && $model->is_label === ProductionOrder::LABEL_ACTUAL){
+// vd($productionMonitor);
+if ($productionMonitor) {
+  $result = PartProductionMonitor::setProduced(
+    $productionMonitor->id,
+    $model->part_id,
+    $model->quantity,
+    Yii::$app->user->identity->id,
+    "delete"
+  );
+  $deleteError = false;
+  if (!$result) {
+    $deleteError = true;
+  }
+  /**  ProductionMonitor edit end*/
+  
+  // vd($resultCons["success"]);
+  if ($model->delete() and $resultCons["success"] == 1 && $model->is_label === ProductionOrder::LABEL_ACTUAL){
         if ($deleteError == true) {
-          // $transaction->rollBack();
-          Yii::$app->session->setFlash("error", Yii::t("app", "Production order not removed. Something is wrong."));
+          $transaction->rollBack();
+          Yii::$app->session->setFlash("error", Yii::t("app", "Production order not removed. Something is wrong.1"));
         } else {
-          // $transaction->commit();
+          $transaction->commit();
           Yii::$app->session->setFlash("success", Yii::t("app", "Production order successfully removed."));
         }
       }
     } else {
-      // $transaction->rollBack();
-      Yii::$app->session->setFlash("error", Yii::t("app", "Production order not removed. Something is wrong."));
+      $transaction->rollBack();
+      Yii::$app->session->setFlash("error", Yii::t("app", "Production order not removed. Something is wrong.2"));
     }
     return $this->redirect([
       "index",

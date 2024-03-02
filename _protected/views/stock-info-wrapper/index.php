@@ -9,6 +9,10 @@ use yii\widgets\Pjax;
 
 $this->title = Yii::t('app', 'Stock Info');
 $this->params['breadcrumbs'][] = $this->title;
+$shifts = [
+  1 => 'Cмена - 1',
+  2 => 'Cмена - 2'
+];
 ?>
 <div class="stock-info-wrapper-index">
 
@@ -56,6 +60,13 @@ $this->params['breadcrumbs'][] = $this->title;
               'headerOptions' => ['style' => 'max-width: 200px;text-align: left;vertical-align:middle;'],
               'value' => function($model){
                 return $model->warehouse?$model->warehouse->name:'---';
+              }
+            ],
+            [
+              'attribute' => 'shift',
+              'filter' => $shifts,
+              'value' => function($model) use ($shifts){
+                return $shifts[$model->shift];
               }
             ],
             'date',

@@ -14,6 +14,10 @@ use yii\widgets\ActiveForm;
 /** @var TYPE_NAME $parts_withptnm */
 /** @var TYPE_NAME $prev_shift */
 $lines = ProductionOrder::getLines();
+$shifts = [
+  1 => 'Cмена - 1',
+  2 => 'Cмена - 2'
+];
 ?>
 
 <div class="production-order-form" xmlns="">
@@ -33,7 +37,14 @@ $lines = ProductionOrder::getLines();
               <?=$form->field($model, 'warehouse_id')->dropDownList($flocs, ['class' => 'form-control select2', 'id'=>'select_floc', 'options' => $options, 'prompt' => Yii::t('app', '...'), 'data-url' => Url::toRoute(['part/get-parts-by-model-and-side'])])?>
             </div>
         </div>
-        <div class="col-lg-3 col-md-5">
+        
+        <div class="col-lg-2 col-md-2">
+            <div class="form-group">
+              <?=$form->field($model, 'shift')->dropDownList($shifts, ['class' => 'form-control', 'options' => $options, 'prompt' => Yii::t('app', '...')])?>
+            </div>
+        </div>
+
+        <div class="col-lg-2 col-md-5">
           <?=$form->field($model, 'part_id')->dropDownList($parts_withptnm, ['class' => 'form-control select2', 'options' => $options, 'prompt' => Yii::t('app', '...'), 'data-url' => Url::toRoute(['part/get-partname'])])?>
         </div>
     <!-- </div>

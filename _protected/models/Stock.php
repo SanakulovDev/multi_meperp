@@ -90,7 +90,7 @@ class Stock extends ActiveRecord {
     $errorlist = [];
     $transaction = Yii::$app->db->beginTransaction();
     foreach($data as $key => $item) {
-      if($stock_info){
+      if($stock_info || (isset($item['wh_id']) && $item['wh_id'] > 0)){
         $stock_item = Stock::find()->where(['warehouse_id' => $item['wh_id'], 'part_id' => $item['part_id']])->one();
       }else{
         $stock_item = Stock::find()->where(['warehouse_id' => $wh_id, 'part_id' => $item['part_id']])->one();
@@ -132,7 +132,7 @@ class Stock extends ActiveRecord {
     $key = 0;
     foreach($data as $item) {
       $key++;
-      if($stock_info){
+      if($stock_info || (isset($item['wh_id']) && $item['wh_id'] > 0)){
         $stock_item = Stock::find()->where(['warehouse_id' => $item['wh_id'], 'part_id' => $item['part_id']])->one();
       }
       else{
@@ -224,7 +224,8 @@ class Stock extends ActiveRecord {
   // i/ch gan mahsulot (part_id) qolfig'ini esa oshiradi
   public static function consumption($production_order, $line2out = null, $stock_info = true) {
     $part_id = $production_order->part_id;
-    $qty = $production_order->quantity;
+    $qty = $production_order->quantity + $production_order->mix_quantity;
+    $mix_quantity = $production_order->mix_quantity;
     $errorlist = [];
     if(empty($production_order->part->warehouse_id)) {
       $errorlist[] = 'FLOC not set to ready part. Ready part: '.$production_order->part->part_no;
@@ -300,7 +301,8 @@ class Stock extends ActiveRecord {
   // consumption() da qilingan ishlarni ortga qaytaradi
   public static function deconsumption($production_order, $line2out = null, $stock_info = true) {
     $part_id = $production_order->part_id;
-    $qty = $production_order->quantity;
+    $qty = $production_order->quantity + $production_order->mix_quantity;
+    $mix_quantity = $production_order->mix_quantity;
     $errorlist = [];
     if(empty($production_order->part->warehouse_id)) {
       $partNo = Part::findOne($part_id);
@@ -310,7 +312,7 @@ class Stock extends ActiveRecord {
     $key = 0;
     if(count($errorlist) == 0) {
       // Partning BOM dagi componentlarini ULOC lariga qo`shadi
-      if($stock_info){
+      if($stock_info || $mix_quantity > 0){
         foreach($production_order->consumptionDetails as $component) {
           $key++;
           $stock_item = Stock::find()->where(['warehouse_id' => $component->warehouse_id, 'part_id' => $component->sub_part_id])->one();

@@ -23,30 +23,50 @@ $this->params['breadcrumbs'][] = $model->part?$model->part->partinfo:$this->titl
               <th class="text-center"><?= Yii::t('app', 'Part')?></th>
               <th class="text-center"><?= Yii::t('app', 'Quantity')?></th>
               <?php if($model->stockInfos):?>
-                <?php $count = $model->countPOrder($model->id);?>
-                <?php if($count > 0):?>
-                  <?php for($i= 0; $i <$count; $i++):?>
+                <?php 
+                $count1 = $model->countPOrder1($model->id); 
+                $count2 = $model->countPOrder2($model->id); 
+                ?>
+                <?php if($count1 > 0):?>
+                  <?php for($i= 0; $i <$count1; $i++):?>
                       <th colspan="2" class="text-center"><?= Yii::t('app', 'Fakt')?>-<?= $i+1?></th>
                   <?php endfor;?>
                 <?php endif;?>
+                <?php if($count2 > 0):?>
+                  <?php for($i= 0; $i <$count1; $i++):?>
+                      <th class="text-center"><?= Yii::t('app', 'Mix quantity')?>-<?= $i+1?></th>
+                  <?php endfor;?>
+                <?php endif;?>
+
+
               <?php endif;?>
+              <th class="text-center"><?= Yii::t('app', 'Quantity')?></th>
+
             </tr>
           </thead>
           <tbody>
+            <!--  -->
           <?php foreach($model->stockInfos as $key => $item):?>
               <tr>
                 <td class="text-center"><?= $key+1?></td>
                 <td><?= $item->part?$item->part->partinfo:' --- '?></td>
                 <td class="text-center"><?= $item->qty?></td>
-                <?php //vd($item->subs[0]->qty);?>
                 <?php if($item->subs):?>
                   <?php foreach($item->subs as $i => $sub):?>
-                    <?php if($sub->status == 1):?>
+                    <?php if(in_array($sub->status, [1])):?>
                       <td class="text-center"><?= $sub->qty?></td>
                       <td class="text-center"><?= $sub->percent?>%</td>
                     <?php endif;?>
                   <?php endforeach;?>
+                  
+                  <?php foreach($item->subs as $i => $sub):?>
+                    <?php if(in_array($sub->status, [2])):?>
+                      <td class="text-center"><?= $sub->qty?></td>
+                    <?php endif;?>
+                  <?php endforeach;?>
+
                 <?php endif;?>
+                <td class="text-center"><?= $item->old_qty?></td>
 
               </tr>
               <?php endforeach;?>
