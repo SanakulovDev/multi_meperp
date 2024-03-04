@@ -26,7 +26,7 @@ class ProductionOrderSearch extends ProductionOrder {
 
   public function rules() {
     return [
-      [['id', 'part_id', 'current_seq', 'is_printed', 'is_label', 'quantity', 'created_by', 'line', 'updated_by', 'created_at', 'updated_at'], 'integer'],
+      [['id', 'part_id', 'current_seq', 'is_printed', 'is_label', 'quantity', 'mix_quantity', 'trash_quantity', 'created_by', 'line', 'updated_by', 'created_at', 'updated_at'], 'integer'],
       [['is_bulk', 'current_event', 'serial_number', 'filter_from', 'filter_to', 'ids'], 'safe'],
     ];
   }
@@ -72,6 +72,7 @@ class ProductionOrderSearch extends ProductionOrder {
       'part.is_bulk' => $this->is_bulk,
       'is_label' => $this->is_label,
       'quantity' => $this->quantity,
+      'mix_quantity' => $this->mix_quantity,
       'production_order.created_by' => $this->created_by,
       'production_order.created_at' => $this->created_at,
       'line' => $this->line,
