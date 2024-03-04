@@ -63,10 +63,10 @@ $lines = ProductionOrder::getLines();
         </div>
         
         <div class="col-lg-2 col-md-2 mix_quantity hidden">
-          <?=$form->field($model, 'mix_quantity')->textInput()?>
+          <?=$form->field($model, 'mix_quantity')->textInput(['value'=>0])?>
         </div>
         <div class="col-lg-2 col-md-2 trash_quantity hidden">
-          <?=$form->field($model, 'trash_quantity')->textInput()?>
+          <?=$form->field($model, 'trash_quantity')->textInput(['value'=>0])?>
         </div>
 
         <div class="col-lg-2 col-md-2">
