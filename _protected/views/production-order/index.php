@@ -199,6 +199,24 @@ $stateList = array_merge(ProductionOrder::stateList(), [ProductionOrder::LABEL_A
           }
         ],
         [
+          'attribute' => 'mix_quantity',
+          'headerOptions' => ['style' => 'width: 100px;vertical-align:middle;text-align: right;'],
+          'contentOptions' => ['style' => 'width: 100px;vertical-align:middle;text-align: right;'],
+          'content' => function($model) {
+            return app\components\Helpers::formatRemoveDecimal($model->mix_quantity, 6);
+          }
+        ],
+        
+        [
+          'attribute' => 'trash_quantity',
+          'headerOptions' => ['style' => 'width: 100px;vertical-align:middle;text-align: right;'],
+          'contentOptions' => ['style' => 'width: 100px;vertical-align:middle;text-align: right;'],
+          'content' => function($model) {
+            return app\components\Helpers::formatRemoveDecimal($model->trash_quantity, 6);
+          }
+        ],
+
+        [
           'attribute' => 'current_seq',
           'headerOptions' => ['style' => 'width: 100px;vertical-align:middle;text-align: center;'],
           'contentOptions' => ['style' => 'width: 100px;vertical-align:middle;text-align: center;'],
