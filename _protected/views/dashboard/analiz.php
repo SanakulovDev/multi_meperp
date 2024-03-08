@@ -108,8 +108,8 @@ body{
 
 
 <!-- modal -->
-<div class="modal" tabindex="-1" role="dialog" style="z-index:1111111111111111111111;">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal fade " tabindex="-1" role="dialog" style="z-index:1111111111111111111111;">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" style="display: inline-block;float: left;"><?= Yii::t('app', 'Production count')?></h5>
@@ -181,17 +181,21 @@ $(function(){
         let href = $(this).data('href');
         let line = $(this).data('line');
         let shift = $(this).data('shift');  
+        let wrapper_code    = $(this).data('wrapper-code');  
+        let wrapper_id      = $(this).data('wrapper-id');  
         
         let param = {
             part_id: part_id,
             line: line,
-            shift: shift
+            shift: shift,
+            wrapper_code: wrapper_code,
+            wrapper_id: wrapper_id,
         };
         let url = '<?= Url::to(['dashboard/analiz-form-modal'])?>';
-       $.get(url, param, function(data){
+        $.get(url, param, function(data){
             $('.modal-body').html(data);
             $('.modal').modal('show');
-       })
+        })
     })
 
     $('body').on('click', '.modalFormSubmit1', function(e){

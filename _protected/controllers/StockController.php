@@ -278,7 +278,7 @@ class StockController extends AppController
 	protected function getUserWarehouses()
 	{
 		if (in_array(Yii::$app->user->identity->rolename, ['admin', 'superadmin', 'report', 'observer'])) {
-			return yii\helpers\ArrayHelper::map(Warehouse::find()->all(), 'id', 'name');
+			return yii\helpers\ArrayHelper::map(Warehouse::find()->where(['not in', 'id', [12]])->all(), 'id', 'name');
 		} else {
 			return Yii::$app->user->identity->warehouseNames;
 		}

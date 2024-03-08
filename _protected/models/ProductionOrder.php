@@ -298,12 +298,12 @@ class ProductionOrder extends ActiveRecord {
       $data = [];
       $tmpArr = [];
       $mixStock['success'] = true;
-      if($modelPo->mix_quantity > 0){
-        $tmpArr['part_id'] = $modelPo->part_id;
-        $tmpArr['qty'] = $modelPo->mix_quantity;
-        $data[]=$tmpArr;
-        $mixStock = Stock::receipt(12, $data);
-      }
+      // if($modelPo->mix_quantity > 0){
+      //   $tmpArr['part_id'] = $modelPo->part_id;
+      //   $tmpArr['qty'] = $modelPo->mix_quantity;
+      //   $data[]=$tmpArr;
+      //   // $mixStock = Stock::receipt(12, $data);
+      // }
       // vd($data);
       unset($tmpArr);
       unset($data);

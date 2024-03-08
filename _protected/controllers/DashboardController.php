@@ -160,7 +160,7 @@ class DashboardController extends Controller
         }
     }
 
-    public function actionAnalizFormModal($part_id=null,$line=null, $shift=null)
+    public function actionAnalizFormModal($part_id=null,$line=null, $shift=null, $wrapper_id=null, $wrapper_code=null)
     {
         if(Yii::$app->request->isAjax){
             if(Yii::$app->request->post()){
@@ -168,6 +168,7 @@ class DashboardController extends Controller
                 $post = Yii::$app->request->post();
                 // $post = (object) $post;
                 if($model->load($post)){
+                    // vd($model);
                   $post['ProductionOrder']['quantity_of_copy']    = 1;
                   $post['produced']                               = 1;
                   $post['model']                                  = 1;
@@ -199,7 +200,7 @@ class DashboardController extends Controller
                         $shift_crt_at = strtotime(date("Ymd") . $shift_2_m1);
                       }
 
-                        $crtResult = ProductionOrder::createProdOrders($post, $shift_crt_at);
+                        $crtResult = ProductionOrder::createProdOrders($post, $shift_crt_at, true);
                         $data['status'] = 1;
                         $data['message'] = 'Success';
                         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -207,7 +208,7 @@ class DashboardController extends Controller
                 }
             }
 
-            return Dashboard::getAnalizFormModal($part_id, $line, $shift);
+            return Dashboard::getAnalizFormModal($part_id, $line, $shift, $wrapper_id, $wrapper_code);
         }
     }
     // 16-06-2023 Sanakulov Anvar  bu qismda Plan Prodaj qismi bo'ladi

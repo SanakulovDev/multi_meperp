@@ -107,7 +107,7 @@
 	
     function exportExcel(tableId){
 			var excel = $JExcel.new("Calibri light 10");            
-			excel.set( {sheet:0,value:"Sheet 1" } );
+			excel.set( {sheet:0,value:"<?=$this->title?> 1" } );
 			
 			var table = document.getElementById(tableId);
 			var limit = table.rows.length;
@@ -127,8 +127,17 @@
 
 		
 			var formatHeader=excel.addStyle({
-				border: "none,none,none,thin #333333",font: "Calibri 12 #000 B"}
-			);                                                         
+				border: "none,none,none,thin #333333",
+        font: "Calibri 12 #000 BOLD",
+        fill: "#D9E1F2",
+        align: "center"
+      });
+      var formatBody = excel.addStyle({
+        border: "thin,thin, thin,thin #333333",
+        font: "Calibri 12 #000", // Normal font for body
+        align: "center", // Text alignment (center),
+        fill: "#E7E6E6",
+      });                                                         
 
 			for (var i=0;i< headers.length;i++){              // Loop headers
 				excel.set(0,i,0,headers[i],formatHeader);    // Set CELL header text & header format
@@ -141,7 +150,7 @@
             continue;
           }
 					if(table.rows[i].cells[j] !== undefined)
-					excel.set(0,j,i,table.rows[i].cells[j].innerHTML);                    // This column is a TEXT
+					excel.set(0,j,i,table.rows[i].cells[j].innerHTML, formatBody);                    // This column is a TEXT
 				}
 			}
 

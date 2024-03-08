@@ -172,34 +172,52 @@ class Dashboard extends \yii\db\ActiveRecord
             $date = date('Y-m-d');
         }
         $shift = self::getShift();
+        // $query = "
+        
+        // SELECT part_id, line, shift from production_plan where production_date='".$date."' and line is not null and shift='".$shift."' group by part_id, line 
+        
+        // union 
+
+        // SELECT part_id, line,
+        // CASE 
+        //   WHEN  FROM_UNIXTIME(created_at, \"%H:%i\")  between '08:00' and '19:59' THEN 1
+        // ELSE 2
+        // end as shift
+        
+        // from production_order where DATE(FROM_UNIXTIME(created_at))='".$date."' and line is not null  group by part_id, line, shift
+        // ";
+
         $query = "
         
-        SELECT part_id, line, shift from production_plan where production_date='".$date."' and line is not null and shift='".$shift."' group by part_id, line 
+        SELECT id as stock_info_wrapper_id, code  as stock_info_wrapper_code, part_id, line, shift from stock_info_wrapper where date='".$date."' and line is not null and shift='".$shift."' group by part_id, line, stock_info_wrapper_id
         
         union 
 
-        SELECT part_id, line,
+        SELECT stock_info_wrapper_id, siw.code as stock_info_wrapper_code, production_order.part_id, production_order.line,
         CASE 
-          WHEN  FROM_UNIXTIME(created_at, \"%H:%i\")  between '08:00' and '19:59' THEN 1
+          WHEN  FROM_UNIXTIME(production_order.created_at, \"%H:%i\")  between '08:00' and '19:59' THEN 1
         ELSE 2
         end as shift
         
-        from production_order where DATE(FROM_UNIXTIME(created_at))='".$date."' and line is not null  group by part_id, line, shift
+        from production_order 
+        INNER JOIN stock_info_wrapper siw on siw.id=stock_info_wrapper_id
+        where DATE(FROM_UNIXTIME(production_order.created_at))='".$date."' and production_order.line is not null and production_order.stock_info_wrapper_id is not null  group by production_order.part_id, production_order.line, shift, production_order.stock_info_wrapper_id
         ";
         $response = Yii::$app->db->createCommand($query)->queryAll();
         return $response;
         
     }
-    public static function todayProductionPlan($part_id, $line, $shift, $date)
+    public static function todayProductionPlan($part_id, $line, $shift, $date, $stock_info_wrapper_id)
     {
         $shift = self::getShift();
-        $query = "SELECT sum(target_qty) as qty from production_plan where part_id='".$part_id."' and line='".$line."' and shift='".$shift."' and production_date='".$date."' and target_qty > 0 and target_qty is not null";
+        // $query = "SELECT sum(target_qty) as qty from production_plan where part_id='".$part_id."' and line='".$line."' and shift='".$shift."' and production_date='".$date."' and target_qty > 0 and target_qty is not null";
+        $query = "SELECT sum(qty) as qty from stock_info_wrapper where part_id='".$part_id."' and line='".$line."' and shift='".$shift."' and date='".$date."' and qty > 0 and qty is not null and id='".$stock_info_wrapper_id."'";
         $response = Yii::$app->db->createCommand($query)->queryOne();
         return $response['qty']?:0;
     }
-    public static function todayProductionFakt($part_id, $line, $shift, $date)
+    public static function todayProductionFakt($part_id, $line, $shift, $date, $stock_info_wrapper_id)
     {
-        $query = "SELECT sum(quantity) as qty from production_order where part_id='".$part_id."' and line='".$line."' and DATE(FROM_UNIXTIME(created_at))='".$date."' and quantity > 0 and quantity is not null";
+        $query = "SELECT sum(quantity) as qty from production_order where part_id='".$part_id."' and line='".$line."' and DATE(FROM_UNIXTIME(created_at))='".$date."' and quantity > 0 and quantity is not null and stock_info_wrapper_id='".$stock_info_wrapper_id."'";
         $response = Yii::$app->db->createCommand($query)->queryOne();
         return $response['qty']?:0;
     }
@@ -211,7 +229,6 @@ class Dashboard extends \yii\db\ActiveRecord
         $data['nowTime'] = $nowTime;
         $data['data'] = [];
         $shift = self::getShift();
-
         foreach($partList as $part){
             if(!empty($line) && $line != $part['line']){
                 continue;
@@ -220,15 +237,17 @@ class Dashboard extends \yii\db\ActiveRecord
                 continue;
             }
             $data['data'][] = [
+                'stock_info_wrapper_id' => $part['stock_info_wrapper_id'],
+                'stock_info_wrapper_code' => $part['stock_info_wrapper_code'],
                 'part_id'       => $part['part_id'],
                 'part_name'     => substr(Part::getPartName($part['part_id']), 0, 25),
                 'line'          => $part['line'].'-'.Yii::t('app', 'Line'),
                 'lineNumber'    => $part['line'],
                 'shift'         => $part['shift'].'-'.Yii::t('app', 'Shift'),
                 'shiftNumber'   => $part['shift'],
-                'plan'          => self::todayProductionPlan($part['part_id'], $part['line'], $part['shift'], $date)*1,
-                'fakt'          => self::todayProductionFakt($part['part_id'], $part['line'], $part['shift'], $date)*1,
-                'balance'       => self::todayProductionPlan($part['part_id'], $part['line'], $part['shift'], $date) - self::todayProductionFakt($part['part_id'], $part['line'], $part['shift'], $date),
+                'plan'          => self::todayProductionPlan($part['part_id'], $part['line'], $part['shift'], $date, $part['stock_info_wrapper_id'])*1,
+                'fakt'          => self::todayProductionFakt($part['part_id'], $part['line'], $part['shift'], $date, $part['stock_info_wrapper_id'])*1,
+                'balance'       => self::todayProductionPlan($part['part_id'], $part['line'], $part['shift'], $date, $part['stock_info_wrapper_id']) - self::todayProductionFakt($part['part_id'], $part['line'], $part['shift'], $date, $part['stock_info_wrapper_id']),
             ];
         }
         return $data;
@@ -260,19 +279,20 @@ class Dashboard extends \yii\db\ActiveRecord
               $count = count($data['data']);
               if($count > 1){
                 foreach($data['data'] as $model){
-                  if(($model['fakt'] >= $model['plan']) || $model['plan'] == 0){
-                    $sumData[] = $model;
-                  }
-                  else{
+                  // if(($model['fakt'] >= $model['plan']) ){
+                  //   $sumData[] = $model;
+                  // }
+                  // else{
                     $sumData2[] = $model;
-                  }
+                  // }
                 }
                 if(!empty($sumData2)){
                   $resultData = $sumData2;
                 }
                 elseif(!empty($sumData)){
-                  $resultData[] = $sumData[0];
+                  $resultData[] = $sumData;
                 }
+                // return $resultData;
               }
               else{
                 $resultData = $data['data'];
@@ -289,12 +309,12 @@ class Dashboard extends \yii\db\ActiveRecord
                 foreach($data['data'] as $model){
                   if($model['lineNumber'] == $key){
                     $count++;
-                    if(($model['fakt'] >= $model['plan']) || $model['plan'] == 0){
-                      $sumData[] = $model;
-                    }
-                    else{
+                    // if(($model['fakt'] >= $model['plan']) || $model['plan'] == 0){
+                    //   $sumData[] = $model;
+                    // }
+                    // else{
                       $sumData2[] = $model;
-                    }
+                    // }
                   }
                   
                 }
@@ -321,14 +341,21 @@ class Dashboard extends \yii\db\ActiveRecord
             $html .= '<div class="col-md-3 text-left">';
             $html .= '<span class="color-primary">'.$model['part_name'].'</span>';
             $html .= '</div>';
-            $html .= '<div class="col-md-6 ">';
+
+            $html .= '<div class="col-md-3 text-left">';
+            $html .= '<span class="color-primary">'.$model['stock_info_wrapper_code'].'</span>';
+            $html .= '</div>';
+
+            $html .= '<div class="col-md-4">';
             $html .= '<div class="row">';
             $html .= '<div class="col-md-6 text-right">';
             $html .= '<span class="color-primary">'.$model['line'].'</span>';
             $html .= '</div>';
             $html .= '<div class="col-md-6 text-right" style="display: flex; justify-content: space-around;align-items: center;">';
             $html .= '<span class="color-primary">'.$model['shift'].'</span>';
-            $html .= '<span class="color-success form-modal" data-line="'.$model['lineNumber'].'" data-shift="'.$model['shiftNumber'].'"   data-href="/dashboard/analiz-form-modal" style="cursor: pointer;" data-partid='.$model['part_id'].'><i class="fa  fa-plus"></i></span>';
+            if($model['plan'] > 0){
+              $html .= '<span class="color-success form-modal" data-line="'.$model['lineNumber'].'" data-shift="'.$model['shiftNumber'].'"   data-href="/dashboard/analiz-form-modal" style="cursor: pointer;" data-wrapper-code='.$model['stock_info_wrapper_code'].' data-wrapper-id='.$model['stock_info_wrapper_id'].' data-partid='.$model['part_id'].'><i class="fa  fa-plus"></i></span>';
+            }
             $html .= '</div>';
             $html .= '</div>';
             $html .= '</div>';
@@ -561,12 +588,13 @@ class Dashboard extends \yii\db\ActiveRecord
 
     // Analiz form modal  21-06-2023
 
-    public static function getAnalizFormModal($part_id, $line, $shift)
+    public static function getAnalizFormModal($part_id, $line, $shift, $wrapper_id=null, $wrapper_code=null)
     {
         $data = '';
         $data = '<form action="/dashboard/analiz-form-modal" method="post" id="analiz-form">';
         $data .= '<div class="row" style="display: flex; align-items:center; justify-content:space-between;">';
-        $data .= '<div class="col-md-4">';
+
+        $data .= '<div class="col-md-3">';
         $data .= '<label class="form-group has-float-label">';
         $data .= '<div class="form-group field-productionplanshort-part_id required ">';
         $data .= '<label class="control-label" for="part_id">'.Yii::t('app', 'Part name').'</label>';
@@ -576,15 +604,43 @@ class Dashboard extends \yii\db\ActiveRecord
         $data .= '</div>';
         $data .= '</label>';
         $data .= '</div>';
-        $data .= '<div class="col-md-4">';
+
+        $data .= '<div class="col-md-3">';
+        $data .= '<label class="form-group has-float-label">';
+        $data .= '<div class="form-group field-productionplanshort-wrapper_id required ">';
+        $data .= '<label class="control-label" for="stock_info_wrapper_id">'.Yii::t('app', 'Stock Info').'</label>';
+        $data .= '<select name="ProductionOrder[stock_info_wrapper_id]" id="stock_info_wrapper_id" class="form-control">';
+        $data .= '<option selected value="'.$wrapper_id.'">'.$wrapper_code.'</option>';
+        $data .= '</select>';
+        $data .= '</div>';
+        $data .= '</label>';
+        $data .= '</div>';
+
+
+        $data .= '<div class="col-md-3">';
         $data .= '<div class="form-group required">';
         $data .= '<label class="control-label" for="quantity">'.Yii::t('app', 'Target qty').'</label>';
         $data .= '<input type="number" name="ProductionOrder[quantity]" id="quantity" class="form-control" required value="1000">';
         $data .= '</div>';
-        $data .= '</div>';  
+        $data .= '</div>'; 
+         
+        $data .= '<div class="col-md-3">';
+        $data .= '<div class="form-group required">';
+        $data .= '<label class="control-label" for="quantity">'.Yii::t('app', 'Mix quantity').'</label>';
+        $data .= '<input type="number" name="ProductionOrder[mix_quantity]" id="mix_quantity" class="form-control" required value="0">';
+        $data .= '</div>';
+        $data .= '</div>'; 
+        $data .= '<div class="col-md-3">';
+        $data .= '<div class="form-group required">';
+        $data .= '<label class="control-label" for="quantity">'.Yii::t('app', 'Trash quantity').'</label>';
+        $data .= '<input type="number" name="ProductionOrder[trassh_quantity]" id="trash_quantity" class="form-control" required value="0">';
+        $data .= '</div>';
+        $data .= '</div>'; 
+
         $data .= '</div>';
         $data .= '<input name="ProductionOrder[line]" type="hidden" value="'.$line.'">';
         $data .= '<input name="ProductionOrder[shift]" type="hidden" value="'.$shift.'">';
+        $data .= '<input name="ProductionOrder[stock_info_wrapper_id]" type="hidden" value="'.$wrapper_id.'">';
         $data .= '</form>';
 
         return $data;

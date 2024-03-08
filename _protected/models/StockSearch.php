@@ -37,7 +37,7 @@ class StockSearch extends Stock {
    * @return ActiveDataProvider
    */
   public function search($params, $mode = '') {
-    $query = Stock::find();
+    $query = Stock::find()->andWhere(['not in', 'stock.warehouse_id', [12]]);
     // add conditions that should always apply here
     $dataProvider = new ActiveDataProvider([
                                              'query' => $query,
