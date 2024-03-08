@@ -259,6 +259,7 @@ class ProductionOrder extends ActiveRecord {
   public static function createProdOrders($post_params, $shift_crt_at, $stock_info = false) {
     $err = 0;
     $err_sms = '';
+    $transaction = Yii::$app->db->beginTransaction();
     $modelPo = new ProductionOrder();
     $modelPo->load($post_params);
     $modelPo->current_event = (isset($post_params['produced'])) ? ProductionOrder::EVENT_PRODUCED : ProductionOrder::EVENT_INITIAL;
@@ -287,6 +288,7 @@ class ProductionOrder extends ActiveRecord {
           // vd($issue_mix);
         }
         if(!$stock_issue['success']){
+          $transaction->rollBack();
           $err = 1;
           $message = '';
           // vd($stock_issue);
@@ -361,6 +363,7 @@ class ProductionOrder extends ActiveRecord {
 
       $new_ids[] = $modelPo->id;
     } else {
+      $transaction->rollBack();
       $err = 1;
       $message = 'Production order not created.';
       $errors = '';
@@ -372,8 +375,10 @@ class ProductionOrder extends ActiveRecord {
       $err_sms = Yii::t('app', $message.'<br>'.$errors);
     }
     if($err == 0) {
+      $transaction->commit();
       return ['success' => true];
     } else {
+      $transaction->rollBack();
       return ['success' => false, 'errorlist' => $err_sms];
     }
   }

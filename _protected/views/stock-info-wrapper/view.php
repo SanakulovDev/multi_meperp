@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $model->part?$model->part->partinfo:$this->titl
                   <?php endfor;?>
                 <?php endif;?>
                 <?php if($count2 > 0):?>
-                  <?php for($i= 0; $i <$count1; $i++):?>
+                  <?php for($i= 0; $i <$count2; $i++):?>
                       <th class="text-center"><?= Yii::t('app', 'Mix quantity')?>-<?= $i+1?></th>
                   <?php endfor;?>
                 <?php endif;?>
