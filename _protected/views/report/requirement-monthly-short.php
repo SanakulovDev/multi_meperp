@@ -42,8 +42,7 @@
     position: relative;">
 
       <table class="table table-req" id="fix_table_d">
-        <thead style="    position: sticky;
-    top: 0;">
+        <thead style="    position: sticky;top: 0;">
                   <tr class="tr_head" style="background-color: #c7c0c0;">
                       <th style="width: 30px;" class="text-center">№</th>
                       <th style="width: 100px;" class="text-center"><?=Yii::t('app', 'Part')?></th>

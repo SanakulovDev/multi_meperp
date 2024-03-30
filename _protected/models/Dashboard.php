@@ -211,13 +211,13 @@ class Dashboard extends \yii\db\ActiveRecord
     {
         $shift = self::getShift();
         // $query = "SELECT sum(target_qty) as qty from production_plan where part_id='".$part_id."' and line='".$line."' and shift='".$shift."' and production_date='".$date."' and target_qty > 0 and target_qty is not null";
-        $query = "SELECT sum(qty) as qty from stock_info_wrapper where part_id='".$part_id."' and line='".$line."' and shift='".$shift."' and date='".$date."' and qty > 0 and qty is not null and id='".$stock_info_wrapper_id."'";
+        $query = "SELECT sum(old_qty) as qty from stock_info where   stock_info_wrapper_id='".$stock_info_wrapper_id."'";
         $response = Yii::$app->db->createCommand($query)->queryOne();
         return $response['qty']?:0;
     }
     public static function todayProductionFakt($part_id, $line, $shift, $date, $stock_info_wrapper_id)
     {
-        $query = "SELECT sum(quantity) as qty from production_order where part_id='".$part_id."' and line='".$line."' and DATE(FROM_UNIXTIME(created_at))='".$date."' and quantity > 0 and quantity is not null and stock_info_wrapper_id='".$stock_info_wrapper_id."'";
+        $query = "SELECT sum(quantity+mix_quantity) as qty from production_order where part_id='".$part_id."' and line='".$line."' and DATE(FROM_UNIXTIME(created_at))='".$date."' and quantity > 0 and quantity is not null and stock_info_wrapper_id='".$stock_info_wrapper_id."'";
         $response = Yii::$app->db->createCommand($query)->queryOne();
         return $response['qty']?:0;
     }
@@ -638,6 +638,7 @@ class Dashboard extends \yii\db\ActiveRecord
         $data .= '</div>'; 
 
         $data .= '</div>';
+        $data .= '<div class="error-alert"></div>';
         $data .= '<input name="ProductionOrder[line]" type="hidden" value="'.$line.'">';
         $data .= '<input name="ProductionOrder[shift]" type="hidden" value="'.$shift.'">';
         $data .= '<input name="ProductionOrder[stock_info_wrapper_id]" type="hidden" value="'.$wrapper_id.'">';

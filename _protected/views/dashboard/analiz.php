@@ -209,6 +209,12 @@ $(function(){
                 $('.modal').modal('hide');
                 $('.refresh').trigger('click');
             }
+            else{
+              $('.modal').find('.error-alert').html(data.message);
+              //$('.modal').modal('hide');
+              //$('.refresh').trigger('click');
+              //alert('Xatolik sodir boldi');
+            }
         })
     })
 

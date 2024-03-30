@@ -2,13 +2,14 @@
 
 namespace app\controllers;
 use Yii;
+use yii\web\Response;
+use yii\web\Controller;
 use app\models\Dashboard;
 use app\models\ProductionOrder;
+use app\models\StockInfoWrapper;
+use app\controllers\AppController;
 use app\models\ProductSpecification;
 use app\models\ReportFaktProdajMonth;
-use yii\web\Response;
-use app\controllers\AppController;
-use yii\web\Controller;
 
 class DashboardController extends Controller
 {
@@ -169,6 +170,17 @@ class DashboardController extends Controller
                 // $post = (object) $post;
                 if($model->load($post)){
                     // vd($model);
+                  $stock_info =StockInfoWrapper::findOne($model->stock_info_wrapper_id);
+                  if($stock_info){
+                    $mix_quantity = $model->mix_quantity?:0;
+                    $quantity = $model->quantity?:0;
+                    if($quantity + $mix_quantity > $stock_info->qty){
+                      $data['status'] = 0;
+                      $data['message'] = "<p style='color: red;'><b>Xato kiritildi. Plan yetmaydi</b></p>";
+                      Yii::$app->response->format = Response::FORMAT_JSON;
+                      return $data;
+                    }
+                  }
                   $post['ProductionOrder']['quantity_of_copy']    = 1;
                   $post['produced']                               = 1;
                   $post['model']                                  = 1;
