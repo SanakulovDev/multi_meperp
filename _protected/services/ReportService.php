@@ -2816,7 +2816,11 @@ class ReportService
         sum(si.qty) as summa
         FROM `stock_info` si
         left JOIN stock_info_sub sis on sis.stock_info_id=si.id
-        where sis.id is null and si.qty  > 0 and si.part_id=:part_id";
+        inner join stock_info_wrapper siw on siw.id=si.stock_info_wrapper_id
+        where sis.id is null 
+        and si.qty  > 0 
+        and date between  :date1 and :date2
+        and si.part_id=:part_id";
 
         
         //sklad si
@@ -2873,7 +2877,7 @@ class ReportService
             if(!empty($currentMonth)){
               $currentMonth = array_sum(array_column($currentMonth, 'qty'));
             }
-            $stock_info_count = Yii::$app->db->createCommand($stock_info_query, [':part_id'=> $part['part_id']])->queryScalar();
+            $stock_info_count = Yii::$app->db->createCommand($stock_info_query, [':part_id'=> $part['part_id'], ':date1' => $fromCurrentMonth, ':date2' => $toCurrentMonth ])->queryScalar();
             $generalPartList[$key]['current_month'] = $currentMonth?(round($currentMonth)):0;
             $part['stock'] = round(($part['stock']+$stock_info_count)*1);
             $generalPartList[$key]['stock'] = round($part['stock']*1);
