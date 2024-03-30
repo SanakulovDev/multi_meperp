@@ -353,7 +353,7 @@ class Dashboard extends \yii\db\ActiveRecord
             $html .= '</div>';
             $html .= '<div class="col-md-6 text-right" style="display: flex; justify-content: space-around;align-items: center;">';
             $html .= '<span class="color-primary">'.$model['shift'].'</span>';
-            if($model['plan'] > 0){
+            if($model['plan'] > $model['fakt']){
               $html .= '<span class="color-success form-modal" data-line="'.$model['lineNumber'].'" data-shift="'.$model['shiftNumber'].'"   data-href="/dashboard/analiz-form-modal" style="cursor: pointer;" data-wrapper-code='.$model['stock_info_wrapper_code'].' data-wrapper-id='.$model['stock_info_wrapper_id'].' data-partid='.$model['part_id'].'><i class="fa  fa-plus"></i></span>';
             }
             $html .= '</div>';
