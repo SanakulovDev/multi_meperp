@@ -51,3 +51,5 @@ public/barcode
 
 /access.log
 /error.log
+Dockerfile
+docker-compose.yml

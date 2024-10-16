@@ -3974,6 +3974,8 @@ class ReportController extends AppController {
       'part_id'  => $part_id
     ]);      
   }
+
+
   /**
    * Sanakulov Anvar
    * 2024-02-23
@@ -4126,6 +4128,15 @@ class ReportController extends AppController {
     ]);
     $file->send(Helpers::downloadFileName("daily-requirement"));
   }
+
+  /**
+   * Anvar Sanakulov
+   * 2024-0-16
+   * @sanakulov_dev
+   * Weekly
+   */
+
+   
 
   // calculator
   public function actionCalculate()

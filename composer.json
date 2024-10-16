@@ -38,7 +38,9 @@
 		"malsa/yii2-maintenance-mode": "*",
 		"bizley/migration": "^4.1",
 		"ellera/yii2-backup": "^2.0",
-		"wbraganca/yii2-dynamicform": "*"
+		"wbraganca/yii2-dynamicform": "*",
+		"symfony/dom-crawler": "4.4.*"
+
 	},
 	"require-dev": {
 		"codeception/codeception": "*",
@@ -56,7 +58,10 @@
 				"bower-asset-library": "_protected/vendor/bower"
 			}
 		},
-		"process-timeout": 1800
+		"process-timeout": 1800,
+		"allow-plugins": {
+			"yiisoft/yii2-composer": true
+		}
 	},
 	"scripts": {
 		"post-create-project-cmd": [

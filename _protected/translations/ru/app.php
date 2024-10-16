@@ -1101,6 +1101,11 @@ return [
   'Mix quantity' => 'Погрешность',
   'Trash quantity' => 'Мусор Кол-во',
   'Default' => 'По умолчанию',
-  'Current status' => 'Текущее состояние' 
+  'Current status' => 'Текущее состояние' ,
+  "Production plans Weekly" => "Производственные планы еженедельно",
+  "Production plans Daily" => "Производственные планы Ежедневно",
+  'Monthly Planning'  => 'Ежемесячный план',
+  'Weekly Planning'  => 'Еженедельное план',
+  'Daily Planning'  => 'Ежедневное план',
 ];
 

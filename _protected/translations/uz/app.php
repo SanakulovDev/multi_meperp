@@ -878,5 +878,10 @@ return [
   'Production plans monthly' => 'Ishlab chiqarish rejasini oylik',
   'Monthly Requirement Short' => 'Xavfsizlik',
   'btn-delete-all' => '<i class="glyphicon glyphicon-trash"></i> Barchasini o\'chirish',  
+  "Production plans Weekly" =>  "Haftalik ishlab chiqarish rejalari",
+  "Production plans Daily" =>  "Kunlik ishlab chiqarish rejalari",
+  'Monthly Planning'  => 'Oylik reja',
+  'Weekly Planning'  => 'Haftalik Reja',
+  'Daily Planning'  => 'Kunlik Reja',
 ];
 ?>

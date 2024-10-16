@@ -2926,4 +2926,127 @@ class ReportService
         $models = Yii::$app->db->createCommand($query, [':date1' => $fromCurrentMonth, ':date2' => $toCurrentMonth, ':partId' => $partId])->queryAll();
         return $models;
     }
+
+    /**
+     * Anvar Sanakulov
+     * 2024-10-16
+     * @sanakulov_dev
+     * Weekly Plannning
+     */
+    //monthly requirement shorts
+    public function getWeeklyRequirementShorts($part_id = null)
+    {
+        $fromCurrentWeek = date("Y-m-d", strtotime('monday this week'));
+        $toCurrentWeek = date("Y-m-d", strtotime('sunday this week'));
+        
+        $fromNextWeek = date("Y-m-d", strtotime('monday next week'));
+        $toNextWeek = date("Y-m-d", strtotime('sunday next week'));
+
+        $fromCurrentMonth = date("Y-m").'-01';
+        $toCurrentMonth = date("Y-m-t");
+        $query = "SELECT sum(pp.target_qty * psi.usage_qty / ps.amount) as qty  FROM production_weekly_plan pp 
+            INNER JOIN product_specification ps on ps.part_id = pp.part_id
+            INNER JOIN product_specification_item psi on psi.product_specification_id = ps.id
+            where pp.production_date between :date1 and :date2
+            and psi.part_id = :part_id and ps.status = 1
+            group by pp.part_id
+        ";
+
+        $stock_info_query = "SELECT 
+        sum(si.qty) as summa
+        FROM `stock_info` si
+        left JOIN stock_info_sub sis on sis.stock_info_id=si.id
+        inner join stock_info_wrapper siw on siw.id=si.stock_info_wrapper_id
+        where sis.id is null 
+        and si.qty  > 0 
+        and date between  :date1 and :date2
+        and si.part_id=:part_id";
+
+        
+        //sklad si
+      if($part_id){
+        $query2 = "SELECT p.id as part_id, p.part_no, p.part_color, p.part_name, p.arrived_qty, p.arrived_at, cs.name csourse, s.qty as stock FROM product_specification_item  psi
+            INNER JOIN part p on p.id = psi.part_id
+            INNER JOIN contract_source cs on p.contract_source_id = cs.id
+            INNER JOIN stock s on s.part_id = psi.part_id
+            WHERE p.id=:part_id
+            GROUP BY psi.part_id
+        ";
+
+        $generalPartList = Yii::$app->db->createCommand($query2, [':part_id' => $part_id])->queryAll();
+        // vd($fromNextWeek);
+      }
+      else{
+        $query2 = "SELECT p.id as part_id, p.part_no, p.part_color, p.part_name, p.arrived_qty, p.arrived_at,  cs.name csourse, s.qty as stock FROM product_specification_item  psi
+            INNER JOIN part p on p.id = psi.part_id
+            INNER JOIN contract_source cs on p.contract_source_id = cs.id
+            INNER JOIN stock s on s.part_id = psi.part_id
+            GROUP BY psi.part_id
+        ";
+
+        $generalPartList = Yii::$app->db->createCommand($query2)->queryAll();
+      }
+        $invoice_detail_query = "SELECT ci.arrived_at as arrived_at, id.qty as quantity from invoice_detail as id 
+          INNER JOIN container_invoice ci on ci.id=id.cont_inv_id
+          where ci.arrived_at > CURDATE() and id.part_id=:part_id
+          order by ci.arrived_at
+        ";
+        foreach($generalPartList as $key => $part){
+            $currentWeek = [];
+            $nextWeek = [];
+            $currentMonth = [];
+            $currentWeek = Yii::$app->db->createCommand($query, [':date1' => $fromCurrentWeek, ':date2' => $toCurrentWeek, ':part_id' => $part['part_id']])->queryAll();
+            if(!empty($currentWeek)){
+              $currentWeek = array_sum(array_column($currentWeek, 'qty'));
+            }
+            // return $currentWeek;
+            $generalPartList[$key]['current_week'] = $currentWeek?(round($currentWeek)):0;
+
+
+            $stock_info_count = Yii::$app->db->createCommand($stock_info_query, [':part_id'=> $part['part_id'], ':date1' => $fromCurrentMonth, ':date2' => $toCurrentMonth ])->queryScalar();
+            $part['stock'] = round(($part['stock']+$stock_info_count)*1);
+            $generalPartList[$key]['stock'] = round($part['stock']*1);
+
+            $generalPartList[$key]['currentWeekBalance']  = $generalPartList[$key]['stock'] - $generalPartList[$key]['current_week'];
+            $generalPartList[$key]['averageUsage']        = Part::findOne($part['part_id'])->averageUsage?:0;
+            $generalPartList[$key]['vputis'] = [];
+            $vputis = Yii::$app->db->createCommand($invoice_detail_query, [':part_id'=>$part['part_id']])->queryAll();
+            $arr = [];
+            if($vputis){
+
+              foreach($vputis as $puti){
+                $arr[]=$puti;
+              }
+            }
+            $generalPartList[$key]['vputis'] = $arr;
+            
+        }
+        
+        $columns = array_column($generalPartList, 'currentWeekBalance');
+        array_multisort($columns, SORT_ASC, $generalPartList);
+        // vd($generalPartList);
+      return $generalPartList;
+    }
+
+    /**
+     * Sanakulov Anvar
+     * 2023-11-06
+     * @sanakulov_Dev
+     * AdditionalMonthlyRequirementShort Item
+     */
+    public function getAdditionalWeeklyRequirementShort($partId, $qty)
+    {
+        $query = 'SELECT p.part_name, p.part_no, p.part_color, p.remark  , (pmp.target_qty*psi.usage_qty)/ps.amount  as amount, pmp.target_qty as qty FROM `product_specification_item`  psi
+          inner JOIN product_specification ps on psi.product_specification_id=ps.id
+          inner JOIN production_weekly_plan pmp on ps.part_id=pmp.part_id
+          inner join part p on pmp.part_id = p.id
+          WHERE psi.part_id=:partId and ps.status=1
+          and pmp.production_date between :date1 and :date2
+        	';
+
+        $fromCurrentMonth = date("Y-m").'-01';
+        $toCurrentMonth = date("Y-m-t");
+        $models = Yii::$app->db->createCommand($query, [':date1' => $fromCurrentMonth, ':date2' => $toCurrentMonth, ':partId' => $partId])->queryAll();
+        return $models;
+    }
 }

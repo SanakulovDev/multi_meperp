@@ -376,6 +376,20 @@ use yii\widgets\Menu; ?>
         'template' => '<a href="{url}"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
       
+      $planning[] = [
+        //        'label' => Yii::t('app', 'JV'),
+        'label' => Yii::t('app', 'Weekly Planning'),
+        'url' => ['/production-weekly-plan/index'],
+        'template' => '<a href="{url}"><i class="fa fa-list"></i> <span>{label}</span></a>',
+      ];
+      $planning[] = [
+        //        'label' => Yii::t('app', 'JV'),
+        'label' => Yii::t('app', 'Daily Planning'),
+        'url' => ['/production-daily-plan/index'],
+        'template' => '<a href="{url}"><i class="fa fa-list"></i> <span>{label}</span></a>',
+      ];
+
+      
     }
     if (count($planning) > 0) {
       $m300_production[] = [
