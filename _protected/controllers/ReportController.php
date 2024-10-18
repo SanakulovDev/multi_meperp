@@ -4017,6 +4017,15 @@ class ReportController extends AppController {
     // vd($items);
     return $this->render('additional-monthly-requirement-short', compact('part','items', 'qty'));
   }
+  /**
+   * Sanakuov Anvar
+   * 2024-10-17
+   * @sanakulov_dev
+   * Weekly
+   */
+
+
+
   // excel import
   public function actionDownloadRequirementShort()
   {
@@ -4051,23 +4060,7 @@ class ReportController extends AppController {
     $arr = [[], []];
     $month = [];
 
-     foreach($period_daily as $col => $pdate){ 
-			 
-				if (count($arr[1]) == 0 and !$nextWeek)  {
-					if (date('w', strtotime($pdate)) == 0) {
-						$nextWeek = true;
-					}
-					array_push($arr[0], $col);
-				} else if ($nextWeek and count($arr[1]) <= 6) {
-					array_push($arr[1], $col);
-				}
-				if (!$indexMonth) {
-					$indexMonth = date("m", strtotime($pdate));
-					array_push($month, $col);
-				} else if ($indexMonth == date("m", strtotime($pdate))) {
-					array_push($month, $col);
-				}
-      }
+    
     foreach($data_daily as $key => $detailWide) {
       unset($tmpArray);
       $tmpArray['id'] = $key+1;
@@ -4135,8 +4128,63 @@ class ReportController extends AppController {
    * @sanakulov_dev
    * Weekly
    */
-
+  public function actionWeeklyRequirementShort($filter=null, $part_id=null)
+    {
+      $data = $this->_reportService->getWeeklyRequirementShorts($part_id);
+      $partList = \yii\helpers\ArrayHelper::map(\app\models\Part::find()->all(), 'id', 'partinfo');
+      // $array = array_column($data, 'current_month');
+      usort($data, function($a, $b) {
+        return $a['currentWeekBalance'] - $b['currentWeekBalance'];
+      });
+      // vd($data);
+      return $this->render("requirement-weekly-short", [
+        "data_daily" => $data,
+        'filter'   => $filter,
+        'partList' => $partList,
+        'part_id'  => $part_id
+      ]);      
+    }
    
+  public function actionAdditionalWeeklyRequirementShort($part_id, $qty=0)
+  {
+    $part = Part::findOne($part_id);
+
+    $items = $this->_reportService->getAdditionalWeeklyRequirementShort($part_id, $qty);
+    // vd($items);
+    return $this->render('additional-monthly-requirement-short', compact('part','items', 'qty'));
+  }
+
+ /**
+   * Anvar Sanakulov
+   * 2024-0-16
+   * @sanakulov_dev
+   * Daily
+   */
+  public function actionDailyRequirementShort($filter=null, $part_id=null)
+  {
+    $data = $this->_reportService->getDailyRequirementShorts($part_id);
+    $partList = \yii\helpers\ArrayHelper::map(\app\models\Part::find()->all(), 'id', 'partinfo');
+    // $array = array_column($data, 'current_month');
+    usort($data, function($a, $b) {
+      return $a['currentDailyBalance'] - $b['currentDailyBalance'];
+    });
+    // vd($data);
+    return $this->render("requirement-daily-short", [
+      "data_daily" => $data,
+      'filter'   => $filter,
+      'partList' => $partList,
+      'part_id'  => $part_id
+    ]);      
+  }
+ 
+  public function actionAdditionalDailyRequirementShort($part_id, $qty=0)
+  {
+    $part = Part::findOne($part_id);
+
+    $items = $this->_reportService->getAdditionalDailyRequirementShort($part_id, $qty);
+    // vd($items);
+    return $this->render('additional-monthly-requirement-short', compact('part','items', 'qty'));
+  }
 
   // calculator
   public function actionCalculate()
