@@ -29,6 +29,10 @@ $canUpload = Yii::$app->user->can('production-plan-upload');
     </div>
 			<div class="col-md-4">
 				<div class="form-group pull-right">
+          <?= Html::a('Обеспеченность', ['/report/weekly-requirement-short'],
+          [
+            'class'=>'btn btn-primary btn-sm mr-lg-5'
+          ])?>
           <?php if($canCreate): ?>
             <?=Html::a(Yii::t('app', 'btn-create'),
               ['create'], [
