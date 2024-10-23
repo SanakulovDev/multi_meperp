@@ -78,9 +78,8 @@
                       <?php echo $row['arrived_at']?>    
                   </td>
                   <td style="text-align: center"><?php echo number_format($row['stock'], 0, ',', ' ')?></td>
-                  <td style="text-align: center" class="current-month" data-part-id="<?= $row['part_id']?>" data-qty="<?=$row['current_week']?>">
+                  <td style="text-align: center" class="current-week" data-part-id="<?= $row['part_id']?>" data-qty="<?=$row['current_week']?>">
                       <?= number_format($row['current_week'], 0, ',', ' ')?>
-                    <?php   //echo Html::a(number_format($row['current_month'], 0, ',', ' '), ['additional-monthly-requirement-short', 'part_id'=>$row['part_id'], 'qty' => $row['current_month']], ['target'=>'_blank']) ?>
                   </td>
                   <td class="balance" data-cash="<?=$row['currentWeekBalance']?>" style="text-align: center"><?php echo number_format($row['currentWeekBalance'], 0, ',', ' ') ?></td>
                   <td class="text-center">
@@ -180,7 +179,7 @@
         }
       })
 
-      $('.current-month').on('click', function(){
+      $('.current-week').on('click', function(){
         console.log($(this).data('qty'));
         window.location.href= 'additional-weekly-requirement-short?part_id='+$(this).data('part-id')+'&qty='+$(this).data('qty');
       })
@@ -265,7 +264,7 @@
   left: 100%;
   transform: translateX(-100%);
 }
-.current-month{
+.current-week{
   cursor:pointer;
   color: #234;
 }

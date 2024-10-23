@@ -3001,7 +3001,7 @@ class ReportService
             $part['stock'] = round(($part['stock']+$stock_info_count)*1);
             $generalPartList[$key]['stock'] = round($part['stock']*1);
 
-            $generalPartList[$key]['currentWeekBalance']  = $generalPartList[$key]['stock'] - $generalPartList[$key]['current_week'];
+            $generalPartList[$key]['currentWeekBalance']  = $generalPartList[$key]['stock'] - $generalPartList[$key]['current_week']    +   $part['arrived_qty'];
             $generalPartList[$key]['averageUsage']        = Part::findOne($part['part_id'])->averageUsage?:0;
             $generalPartList[$key]['vputis'] = [];
             $vputis = Yii::$app->db->createCommand($invoice_detail_query, [':part_id'=>$part['part_id']])->queryAll();
@@ -3111,7 +3111,7 @@ class ReportService
             $part['stock'] = round(($part['stock']+$stock_info_count)*1);
             $generalPartList[$key]['stock'] = round($part['stock']*1);
 
-            $generalPartList[$key]['currentDailyBalance']  = $generalPartList[$key]['stock'] - $generalPartList[$key]['current_day'];
+            $generalPartList[$key]['currentDailyBalance']  = $generalPartList[$key]['stock'] - $generalPartList[$key]['current_day']    +   $part['arrived_qty'];
             $generalPartList[$key]['averageUsage']        = Part::findOne($part['part_id'])->averageUsage?:0;
             $generalPartList[$key]['vputis'] = [];
             $vputis = Yii::$app->db->createCommand($invoice_detail_query, [':part_id'=>$part['part_id']])->queryAll();
