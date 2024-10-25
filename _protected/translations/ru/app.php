@@ -1107,5 +1107,6 @@ return [
   'Monthly Planning'  => 'Ежемесячный план',
   'Weekly Planning'  => 'Еженедельное план',
   'Daily Planning'  => 'Ежедневное план',
+  'Unfamiliar Otchots' => 'Блокнот'
 ];
 

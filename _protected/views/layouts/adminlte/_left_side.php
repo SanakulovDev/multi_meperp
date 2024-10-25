@@ -1118,6 +1118,16 @@ use yii\widgets\Menu; ?>
       'items' => $m_new,
     ];
 
+    
+    $menuItems[] = [
+      'label' => 'Блокнот',
+      'url' => '/unfamiliar-otchot/',
+      'template' => '<a href="{url}"><i class="fa fa-sticky-note"></i> <span>{label}</span> <span class="pull-right-container"></span> </a>',
+      // 'options' => ['class' => 'treeview'],
+      // 'items' => $m_new,
+    ];
+
+
 
 
 
