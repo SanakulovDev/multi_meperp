@@ -46,6 +46,14 @@ class UnfamiliarOtchotSearch extends UnfamiliarOtchot
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => 100
+            ],
+            'sort'  => [
+                'defaultOrder' => [
+                    'id'    => SORT_DESC
+                ]
+            ]
         ]);
 
         $this->load($params);

@@ -155,6 +155,10 @@ class UnfamiliarOtchotController extends Controller
         });
     }
 
+    public function actionExportExcel()
+    {
+        
+    }
  
 
 
