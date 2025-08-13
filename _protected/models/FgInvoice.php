@@ -38,6 +38,8 @@ use yii\db\ActiveRecord;
  * @property User               $updatedBy
  * @property FgInvoiceDetail[]  $fgInvoiceDetails
  * @property FgInvoiceWaybill[] $fgInvoiceWaybills
+ * @property int                $warehouse_confirmed_by
+ * @property int                $warehouse_confirmed_at
  */
 class FgInvoice extends ActiveRecord {
 
@@ -54,7 +56,7 @@ class FgInvoice extends ActiveRecord {
   public function rules() {
     return [
       [['factory_id', 'contract', 'invoice_no', 'invoice_date', 'customer_id', 'created_at', 'created_by'], 'required'],
-      [['factory_id', 'customer_id', 'vat', 'excise', 'confirmed_at', 'confirmed_by', 'created_at', 'created_by', 'updated_at', 'updated_by'],
+      [['factory_id', 'customer_id', 'vat', 'excise', 'confirmed_at', 'confirmed_by', 'created_at', 'created_by', 'updated_at', 'updated_by', 'warehouse_confirmed_by', 'warehouse_confirmed_at'],
         'integer',
         'message' => Yii::t('app', 'Must be an integer...')
       ],
@@ -101,6 +103,8 @@ class FgInvoice extends ActiveRecord {
       'confirmed_by' => Yii::t('app', 'Confirmed by'),
       'updated_at' => Yii::t('app', 'Updated at'),
       'updated_by' => Yii::t('app', 'Updated by'),
+      'warehouse_confirmed_by' => Yii::t('app', 'Warehouse confirmed by'),
+      'warehouse_confirmed_at' => Yii::t('app', 'Warehouse confirmed at'),
     ];
   }
 
@@ -151,6 +155,10 @@ class FgInvoice extends ActiveRecord {
 
   public function getUpdatedBy() {
     return $this->hasOne(User::className(), ['id' => 'updated_by']);
+  }
+
+  public function getWarehouseConfirmedBy() {
+    return $this->hasOne(User::className(), ['id' => 'warehouse_confirmed_by']);
   }
 
   public function getUpdatedAtFormatted() {

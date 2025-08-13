@@ -763,5 +763,17 @@ return[
   'btn-delete-all' => '<i class="glyphicon glyphicon-trash"></i>&nbsp;&nbsp;Delete all',
   'btn-pdf-siro' => '<i class="glyphicon glyphicon-print"></i>&nbsp;&nbsp;Print SIRO',
   'btn-pdf-zames' => '<i class="glyphicon glyphicon-print"></i>&nbsp;&nbsp;Print ZAMES',
+  'Warehouse Status' => 'Warehouse Status',
+  'Warehouse Confirm' => 'Warehouse Confirm',
+  'Warehouse Cancel' => 'Warehouse Cancel',
+  'Cancel Confirm' => 'Cancel Confirm',
+  'Cannot reject warehouse confirmation after final confirmation.' => 'Cannot reject warehouse confirmation after final confirmation.',
+  'Cannot confirm before warehouse confirmation.' => 'Cannot confirm before warehouse confirmation.',
+  'Warehouse confirmed successfully.' => 'Warehouse confirmed successfully.',
+  'Warehouse rejected successfully.' => 'Warehouse rejected successfully.',
+  'Warehouse confirmation error:' => 'Warehouse confirmation error:',
+  'Warehouse rejection error:' => 'Warehouse rejection error:',
+  'Warehouse confirmed by' => 'Warehouse confirmed by',
+  'Warehouse confirmed at' => 'Warehouse confirmed at',
 ];
 
