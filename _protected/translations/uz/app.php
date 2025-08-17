@@ -883,5 +883,25 @@ return [
   'Monthly Planning'  => 'Oylik reja',
   'Weekly Planning'  => 'Haftalik Reja',
   'Daily Planning'  => 'Kunlik Reja',
+  'Warehouse confirmed by' => 'Ombor tomonidan tasdiqlangan',
+  'Warehouse confirmed at' => 'Ombor tomonidan tasdiqlangan sanasi',
+  'Warehouse Status' => 'Ombor holati',
+  'Warehouse Confirm' => 'Omborni tasdiqlash',
+  'Warehouse Cancel' => 'Omborni bekor qilish',
+  'Cancel Confirm' => 'Tasdiqni bekor qilish',
+  'Cannot reject warehouse confirmation after final confirmation.' => 'Yakuniy tasdiqdan keyin ombor tasdiqini bekor qilib bo\'lmaydi.',
+  'Cannot confirm before warehouse confirmation.' => 'Ombor tasdiqidan oldin tasdiqlash mumkin emas.',
+  'Warehouse confirmed successfully.' => 'Ombor muvaffaqiyatli tasdiqlandi.',
+  'Warehouse rejected successfully.' => 'Ombor muvaffaqiyatli rad etildi.',
+  'Warehouse confirmation error:' => 'Ombor tasdiqlash xatosi:',
+  'Warehouse rejection error:' => 'Ombor rad etish xatosi:',
 ];
+h xator rad etis => 'Ombtion error:'ec rej 'Warehousei:',
+ h xatossdiqlas 'Ombor tarror:' =>nfirmation euse co
+  'Warehoi.', etildiyatli radvaffaq'Ombor mufully.' => uccesscted srejehouse .',
+  'Warediqlandii tasuvaffaqiyatl'Ombor mully.' => ccessffirmed suuse conWarehos.',
+  'h mumkin ematasdiqlasoldin  tasdiqidan 'Omborn.' => irmatioconfwarehouse rm before not confi
+  'Canaydi.',lib bo\'lm bekor qidiqiniin ombor taskey tasdiqdan 'Yakuniy=> .' firmationer final contion aftnfirma cot warehouse rejecCannotsh',
+  'qilikor sdiqni berm' => 'TaConfil ce  'Cansh',
+r qilini bekoOmbor => 'use Cancel'ho  'Warelasi tasdiq=> 'Ombornonfirm' 'Warehouse Catimbor hol=> 'Os' house Statuare'W
 ?>

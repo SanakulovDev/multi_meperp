@@ -131,7 +131,8 @@ class FgInvoiceController extends AppController {
   public function queryCustomerFactory($customer_id, $year)
   {
       $customer = Customer::findOne($customer_id);
-      if($customer){
+      $firstFgInvoice = null;
+      if($customer && $firstFgInvoice){
         $details = [];
         $all_amount_with_vat = 0;
         $all_amount = 0;
@@ -232,6 +233,13 @@ class FgInvoiceController extends AppController {
 
   public function actionConfirm($id) {
     $model = $this->findModel($id);
+    
+    // Faqat warehouse tasdiqlagandan keyin confirm qilish mumkin
+    if(is_null($model->warehouse_confirmed_by)) {
+      Yii::$app->session->setFlash('warning', Yii::t('app', 'Cannot confirm before warehouse confirmation.'));
+      return $this->redirect(['index']);
+    }
+    
     $transaction = Yii::$app->db->beginTransaction();
     $model->confirmed_by = Yii::$app->user->id;
     $model->confirmed_at = time();
@@ -267,6 +275,57 @@ class FgInvoiceController extends AppController {
     } else {
       $transaction->commit();
       Yii::$app->session->setFlash('success', Yii::t('app', 'Rejected successfully.'));
+    }
+    return $this->redirect(['index']);
+  }
+
+  public function actionWarehouseConfirm($id) {
+    // Superadmin yoki warehouse permission tekshiruvi
+    if (!Yii::$app->user->can('superadmin') && !Yii::$app->user->can('fg-invoice-warehouse-confirm')) {
+      throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You are not allowed to perform this action.'));
+    }
+    
+    $model = $this->findModel($id);
+    $transaction = Yii::$app->db->beginTransaction();
+    $model->warehouse_confirmed_by = Yii::$app->user->id;
+    $model->warehouse_confirmed_at = time();
+    if(!$model->save()) {
+      $errorlist['Error'] = $model->errors;
+      $transaction->rollback();
+      Yii::$app->session->setFlash('warning', Yii::t('app', 'Warehouse confirmation error:').$model->errors);
+      return $this->redirect(['index']);
+    } else {
+      $transaction->commit();
+      Yii::$app->session->setFlash('success', Yii::t('app', 'Warehouse confirmed successfully.'));
+    }
+    return $this->redirect(['index']);
+  }
+
+  public function actionWarehouseReject($id) {
+    // Superadmin yoki warehouse permission tekshiruvi
+    if (!Yii::$app->user->can('superadmin') && !Yii::$app->user->can('fg-invoice-warehouse-reject')) {
+      throw new \yii\web\ForbiddenHttpException(Yii::t('yii', 'You are not allowed to perform this action.'));
+    }
+    
+    $model = $this->findModel($id);
+    
+    // Agar confirm qilingan bo'lsa, warehouse reject qilish mumkin emas
+    if(!is_null($model->confirmed_by)) {
+      Yii::$app->session->setFlash('warning', Yii::t('app', 'Cannot reject warehouse confirmation after final confirmation.'));
+      return $this->redirect(['index']);
+    }
+    
+    $transaction = Yii::$app->db->beginTransaction();
+    $model->warehouse_confirmed_by = null;
+    $model->warehouse_confirmed_at = time();
+    if(!$model->save()) {
+      $errorlist['Error'] = $model->errors;
+      $transaction->rollback();
+      Yii::$app->session->setFlash('warning', Yii::t('app', 'Warehouse rejection error:'));
+      return $this->redirect(['index']);
+    } else {
+      $transaction->commit();
+      Yii::$app->session->setFlash('success', Yii::t('app', 'Warehouse rejected successfully.'));
     }
     return $this->redirect(['index']);
   }

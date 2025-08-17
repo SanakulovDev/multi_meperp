@@ -1,4 +1,5 @@
 <?php
+
 namespace app\controllers;
 
 use app\models\Document;
@@ -13,7 +14,8 @@ use yii\web\ForbiddenHttpException;
  * AppController extends Controller and implements the behaviors() method
  * where you can specify the access control ( AC filter + RBAC ) for your controllers and their actions.
  */
-class AppController extends Controller {
+class AppController extends Controller
+{
 
   /**
    * Returns a list of behaviors that this component should behave as.
@@ -21,9 +23,10 @@ class AppController extends Controller {
    *
    * @return array
    */
-  public function behaviors() {
+  public function behaviors()
+  {
     return [
-       'verbs' => [
+      'verbs' => [
         'class' => VerbFilter::className(),
         'actions' => [
           'delete' => ['post'],
@@ -35,7 +38,8 @@ class AppController extends Controller {
     ]; // return
   } // behaviors
 
-  public function beforeAction($action) {
+  public function beforeAction($action)
+  {
     if (!in_array($action->id, [
       'validate',
       'validate-comment',
@@ -56,18 +60,24 @@ class AppController extends Controller {
       'get-parts-by-mark-and-color',
       'list-by-fg-invoice',
       'list-by-waybill'
-    ])
-    ) {
+    ])) {
       if (!in_array($action->controller->id, ['report'])) {
-        if (!Yii::$app->user->can($action->controller->id.'-'.$action->id))
-          throw new ForbiddenHttpException(Yii::t('yii', 'You are not allowed to perform this action.'));
+        // Warehouse actionlari uchun superadmin tekshiruvi
+        if (in_array($action->id, ['warehouse-confirm', 'warehouse-reject'])) {
+          if (!Yii::$app->user->can('superadmin') && !Yii::$app->user->can($action->controller->id . '-' . $action->id))
+            throw new ForbiddenHttpException(Yii::t('yii', 'You are not allowed to perform this action.'));
+        } else {
+          if (!Yii::$app->user->can($action->controller->id . '-' . $action->id))
+            throw new ForbiddenHttpException(Yii::t('yii', 'You are not allowed to perform this action.'));
+        }
       }
     }
 
     return parent::beforeAction($action);
   }
 
-  public function writeToDocHistory($id, $action) {
+  public function writeToDocHistory($id, $action)
+  {
     if (in_array($action, ['update-act', 'update-local', 'update-local-issue']))
       $action = 'update';
     if (in_array($action, ['delete-act', 'delete-local', 'delete-local-issue', 'delete-shop-consumption']))
@@ -116,5 +126,4 @@ class AppController extends Controller {
 
     return !$error;
   }
-
 } // AppController

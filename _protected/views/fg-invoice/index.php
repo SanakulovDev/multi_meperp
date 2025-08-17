@@ -20,6 +20,10 @@ $canDelete = Yii::$app->user->can('fg-invoice-delete');
 $canView = Yii::$app->user->can('fg-invoice-view');
 $canConfirm = Yii::$app->user->can('fg-invoice-confirm');
 $canReject = Yii::$app->user->can('fg-invoice-reject');
+
+// Warehouse permissions - barcha superadminlarga ochiq
+$canWarehouseConfirm = Yii::$app->user->can('superadmin') || Yii::$app->user->can('fg-invoice-warehouse-confirm');
+$canWarehouseReject = Yii::$app->user->can('superadmin') || Yii::$app->user->can('fg-invoice-warehouse-reject');
 $canPrint = Yii::$app->user->can('fg-invoice-print');
 // vd($_GET['FgInvoiceSearch']);
 ?>
@@ -95,20 +99,131 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
       ],
       [
         'class' => 'yii\grid\ActionColumn',
+        'header' => '<i class="fa fa-warehouse" style="color: #e67e22;"></i>',
+        'headerOptions' => ['style' => 'min-width:80px;text-align:center;vertical-align:middle;color:#e67e22;'],
+        'contentOptions' => ['style' => 'min-width:80px;text-align:center;vertical-align:middle;'],
+        'template' => '{warehouse_confirm}',
+        'buttons' => [
+          'warehouse_confirm' => function($url, $model) use ($canWarehouseConfirm, $canWarehouseReject) {
+            if(!$canWarehouseConfirm or !$canWarehouseReject) return false;
+            
+            // Agar confirm qilingan bo'lsa, warehouse reject qilish mumkin emas
+            if(!is_null($model->confirmed_by)) return false;
+            
+            if(!is_null($model->warehouse_confirmed_by)) {
+              $icon = 'fa fa-times-circle';
+              $icon_style = 'text-danger';
+              $btn_class = 'btn btn-xs btn-outline-danger';
+              $title = Yii::t('app', 'Warehouse Cancel');
+              $url = Url::toRoute(['fg-invoice/warehouse-reject', 'id' => $model->id]);
+            } else {
+              $icon = 'fa fa-check-circle';
+              $icon_style = 'text-info';
+              $btn_class = 'btn btn-xs btn-outline-info';
+              $title = Yii::t('app', 'Warehouse Confirm');
+              $url = Url::toRoute(['fg-invoice/warehouse-confirm', 'id' => $model->id]);
+            }
+            return Html::a('<i class="'.$icon.' '.$icon_style.'"></i>', $url, [
+                'class' => $btn_class,
+                'title' => $title,
+                'style' => 'margin: 2px; padding: 4px 8px;',
+                'data' => [
+                  'confirm' => Yii::t('app', 'Are you sure?'),
+                  'method' => 'post',
+                ],
+              ]);
+          },
+          'confirm' => function($url, $model) use ($canConfirm, $canReject) {
+            if(!$canConfirm or !$canReject) return false;
+            
+            // Faqat warehouse tasdiqlagandan keyin confirm qilish mumkin
+            if(is_null($model->warehouse_confirmed_by)) return false;
+            
+            if(!is_null($model->confirmed_by)) {
+              $icon = 'remove';
+              $icon_style = 'text-warning';
+              $title = Yii::t('app', 'Cancel Confirm');
+              $url = Url::toRoute(['fg-invoice/reject', 'id' => $model->id]);
+            } else {
+              $icon = 'ok';
+              $icon_style = 'text-success';
+              $title = Yii::t('app', 'Confirm');
+              $url = Url::toRoute(['fg-invoice/confirm', 'id' => $model->id]);
+            }
+            return Html::a('<span class="'.$icon_style.' glyphicon glyphicon-'.$icon.'" aria-hidden="true"></span>', $url, [
+                'class' => $icon_style,
+                'title' => $title,
+                'data' => [
+                  'confirm' => Yii::t('app', 'Are you sure?'),
+                  'method' => 'post',
+                ],
+              ]).'&nbsp;';
+          },
+          'print' => function($url, $model) use ($canPrint) {
+            if(!$canPrint) return false;
+            $icon_style = 'text-primary';
+            $title = Yii::t('app', 'Print');
+            $url = Url::toRoute(['fg-invoice/print', 'id' => $model->id]);
+            return Html::a('<span class="fa fa-print" aria-hidden="true"></span>', $url, [
+                'title' => Yii::t('app', 'Print'),
+                'class' => $icon_style
+              ]).'&nbsp;';
+          },
+          'delete' => function($url, $model) use ($canDelete) {
+            if(!$canDelete) return false;
+            if(!is_null($model->confirmed_by)) return false;
+            $icon_style = 'text-danger';
+            $title = Yii::t('app', 'Delete');
+            $url = Url::toRoute(['fg-invoice/delete', 'id' => $model->id]);
+            return Html::a('<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>', $url, [
+                'title' => Yii::t('app', 'Delete'),
+                'data' => [
+                  'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                  'method' => 'post',
+                ],
+                'class' => $icon_style
+              ]).'&nbsp;';
+          },
+          'update' => function($url, $model) use ($canUpdate) {
+            if(!$canUpdate) return false;
+            if(!is_null($model->confirmed_by)) return false;
+            $icon_style = 'text-warning';
+            $title = Yii::t('app', 'Update');
+            $url = Url::toRoute(['fg-invoice/update', 'id' => $model->id]);
+            return Html::a('<span class="fa fa-pencil" aria-hidden="true"></span>', $url, [
+                'title' => Yii::t('app', 'Update'),
+                'class' => $icon_style
+              ]).'&nbsp;';
+          },
+          'view' => function($url, $model) use ($canView) {
+            if(!$canView) return false;
+            $url = Url::toRoute(['fg-invoice/view', 'id' => $model->id]);
+            return Html::a('<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>', $url, [
+                'title' => Yii::t('app', 'View')
+              ]).'&nbsp;';
+          },
+        ],
+        'visible' => $canWarehouseConfirm || $canWarehouseReject
+      ],
+      
+      [
+        'class' => 'yii\grid\ActionColumn',
         'header' => '<i class="fa fa-fw fa-gears"></i>',
-        'headerOptions' => ['style' => 'min-width:50px;text-align:center;vertical-align:middle;color:#3c8dbc;'],
-        'contentOptions' => ['style' => 'min-width:50px;text-align:center;vertical-align:middle;'],
+        'headerOptions' => ['style' => 'min-width:120px;text-align:center;vertical-align:middle;color:#3c8dbc;'],
+        'contentOptions' => ['style' => 'min-width:120px;text-align:center;vertical-align:middle;'],
         'template' => '{confirm}{print}{view}{delete}{update}',
         'buttons' => [
           'confirm' => function($url, $model) use ($canConfirm, $canReject) {
             if(!$canConfirm or !$canReject) return false;
+            
+            // Faqat warehouse tasdiqlagandan keyin confirm qilish mumkin
+            if(is_null($model->warehouse_confirmed_by)) return false;
+            
             if(!is_null($model->confirmed_by)) {
-//							if (Yii::$app->user->identity->roleName == 'admin') {
               $icon = 'remove';
               $icon_style = 'text-warning';
-              $title = Yii::t('app', 'Cancel');
+              $title = Yii::t('app', 'Cancel Confirm');
               $url = Url::toRoute(['fg-invoice/reject', 'id' => $model->id]);
-//							} else return false;
             } else {
               $icon = 'ok';
               $icon_style = 'text-success';
