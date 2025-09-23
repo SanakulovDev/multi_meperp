@@ -775,5 +775,27 @@ return[
   'Warehouse rejection error:' => 'Warehouse rejection error:',
   'Warehouse confirmed by' => 'Warehouse confirmed by',
   'Warehouse confirmed at' => 'Warehouse confirmed at',
+
+  'Material Requirements Report' => 'Material Requirements Report',
+  'Weekly Requirements' => 'Weekly Requirements',
+  'Monthly Requirements' => 'Monthly Requirements', 
+  'Yearly Requirements' => 'Yearly Requirements',
+  'Detailed Requirements' => 'Detailed Requirements',
+  'Start Date' => 'Start Date',
+  'Part No' => 'Part No',
+  'Part Name' => 'Part Name',
+  'Unit' => 'Unit',
+  'Total' => 'Total',
+  'Total Required' => 'Total Required',
+  'Details' => 'Details',
+  'Used in specifications' => 'Used in specifications',
+  'Weekly Breakdown' => 'Weekly Breakdown',
+  'Monthly Breakdown' => 'Monthly Breakdown',
+  'Yearly Breakdown' => 'Yearly Breakdown',
+  'Week Period' => 'Week Period',
+  'Month Period' => 'Month Period',
+  'Year Period' => 'Year Period',
+  'Download' => 'Download',
+  
 ];
 

@@ -895,13 +895,26 @@ return [
   'Warehouse rejected successfully.' => 'Ombor muvaffaqiyatli rad etildi.',
   'Warehouse confirmation error:' => 'Ombor tasdiqlash xatosi:',
   'Warehouse rejection error:' => 'Ombor rad etish xatosi:',
-];
-h xator rad etis => 'Ombtion error:'ec rej 'Warehousei:',
- h xatossdiqlas 'Ombor tarror:' =>nfirmation euse co
-  'Warehoi.', etildiyatli radvaffaq'Ombor mufully.' => uccesscted srejehouse .',
-  'Warediqlandii tasuvaffaqiyatl'Ombor mully.' => ccessffirmed suuse conWarehos.',
-  'h mumkin ematasdiqlasoldin  tasdiqidan 'Omborn.' => irmatioconfwarehouse rm before not confi
-  'Canaydi.',lib bo\'lm bekor qidiqiniin ombor taskey tasdiqdan 'Yakuniy=> .' firmationer final contion aftnfirma cot warehouse rejecCannotsh',
-  'qilikor sdiqni berm' => 'TaConfil ce  'Cansh',
-r qilini bekoOmbor => 'use Cancel'ho  'Warelasi tasdiq=> 'Ombornonfirm' 'Warehouse Catimbor hol=> 'Os' house Statuare'W
+  // Uzbek translations for Material Requirements Report
+  'Material Requirements Report' => 'Material ehtiyojlari hisoboti',
+  'Weekly Requirements' => 'Haftalik ehtiyojlar',
+  'Monthly Requirements' => 'Oylik ehtiyojlar',
+  'Yearly Requirements' => 'Yillik ehtiyojlar',
+  'Detailed Requirements' => 'Batafsil ehtiyojlar',
+  'Start Date' => 'Boshlash sanasi',
+  'Part No' => 'Qism raqami',
+  'Part Name' => 'Qism nomi',
+  'Unit' => 'O\'lchov birligi',
+  'Total' => 'Jami',
+  'Total Required' => 'Umumiy ehtiyoj',
+  'Details' => 'Tafsilotlar',
+  'Used in specifications' => 'Spetsifikatsiyalarda ishlatiladi',
+  'Weekly Breakdown' => 'Haftalik taqsimot',
+  'Monthly Breakdown' => 'Oylik taqsimot',
+  'Yearly Breakdown' => 'Yillik taqsimot',
+  'Week Period' => 'Haftalik davr',
+  'Month Period' => 'Oylik davr',
+  'Year Period' => 'Yillik davr',
+  'Download' => 'Yuklab olish',
+]
 ?>

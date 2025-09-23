@@ -28,8 +28,8 @@ use app\models\StockInfoWrapper;
  * @property Part                     $part
  * @property User                     $updatedBy
  * @property ProductionOrderDefect[]  $productionOrderDefects
- * @property ProductionOrderHistory[] $productionOrderHistories
  * @property string                   $serial_number [varchar(50)]
+ * @property ProductSpecification     $productSpecification
  */
 class ProductionOrder extends ActiveRecord {
 
@@ -180,8 +180,8 @@ class ProductionOrder extends ActiveRecord {
   /**
    * @return ActiveQuery
    */
-  public function getProductionOrderHistories() {
-    return $this->hasMany(ProductionOrderHistory::className(), ['production_order_id' => 'id']);
+  public function getProductSpecification() {
+    return $this->hasOne(ProductSpecification::className(), ['id' => 'product_specification_id']);
   }
 
   public static function getCurrentSeq($part_id) {
@@ -350,14 +350,14 @@ class ProductionOrder extends ActiveRecord {
       if(!$mixStock['success']){
           $err = 1;
           $message = 'Mix Sklad not created. Something is wrong.';
-          $errors = implode('<br>', $mixStock['errorlist']);
+          $errors = isset($mixStock['errorlist']) ? implode('<br>', $mixStock['errorlist']) : '';
           $err_sms = Yii::t('app', $message.'<br>'.$errors);
       }
       
       if(!$trashStock['success']){
           $err = 1;
           $message = 'Trash Sklad not created. Something is wrong.';
-          $errors = implode('<br>', $trashStock['errorlist']);
+          $errors = isset($trashStock['errorlist']) ? implode('<br>', $trashStock['errorlist']) : '';
           $err_sms = Yii::t('app', $message.'<br>'.$errors);
       }
 

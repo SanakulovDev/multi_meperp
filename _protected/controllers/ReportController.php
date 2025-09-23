@@ -4377,5 +4377,9 @@ class ReportController extends AppController {
         'dateList' => $dateList,
       ]);
     }
+  public function actionFactRequirement($start_date=null, $filter=null)
+  {
+    return $this ->redirect(['fact-requirement/index', 'start_date' => $start_date, 'filter' => $filter]);
+  }
 
 }
