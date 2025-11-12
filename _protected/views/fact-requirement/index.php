@@ -8,7 +8,7 @@ use yii\helpers\Url;
 /* @var $materialRequirements array */
 /* @var $periods array */
 
-$this->title = Yii::t('app', 'Мавод талаблари ҳисоботи');
+$this->title = Yii::t('app', 'Fact Requirement');
 $this->params['breadcrumbs'][] = $this->title;
 
 $loading = '<img src="/themes/adminlte/img/loading.gif">';
@@ -19,10 +19,7 @@ $calc_at = date('Y-m-d H:i:s');
 <div class="req-index">
     <div class="panel">
         <div class="panel-heading">
-            <img style="height:28px;" src="/img/mep1.jpg" title="<?php echo Yii::$app->params['comp_name'] ?>" class="pull-left"/>
             <h3 class="pull-left" style="margin: 5px 0px -5px 10px;">
-                <?=Yii::t('app', 'Мавод талаблари ҳисоботи')?>
-                <span id="calc_at" style="font-size: 14px;color: #a29393;"><?=$loading?></span>
             </h3>
             <div class="pull-right" style="margin: 0px">
                 <form method="get" style="display: inline-block; margin-right: 10px;">
@@ -89,7 +86,7 @@ $calc_at = date('Y-m-d H:i:s');
                 <!-- Weekly Requirements Tab -->
                 <div class="tab-pane active" id="tab_weekly" >
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
+                        <table id="table_weekly" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th><?= Yii::t('app', 'Детал рақами') ?></th>
@@ -106,7 +103,20 @@ $calc_at = date('Y-m-d H:i:s');
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($materialRequirements as $req): ?>
+                                <?php foreach ($materialRequirements as $req): 
+                                    // Filter: skip if all weekly values are 0 when filter is active
+                                    if (isset($filter) && $filter) {
+                                        $hasNonZero = false;
+                                        foreach ($weeks as $week) {
+                                            $qty = isset($req['weekly'][$week]) ? $req['weekly'][$week]['quantity'] : 0;
+                                            if ($qty > 0) {
+                                                $hasNonZero = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!$hasNonZero) continue;
+                                    }
+                                ?>
                                     <tr>
                                         <td><?= Html::encode($req['part_no']) ?></td>
                                         <td><?= Html::encode($req['part_name']) ?></td>
@@ -125,7 +135,7 @@ $calc_at = date('Y-m-d H:i:s');
                 <!-- Monthly Requirements Tab -->
                 <div class="tab-pane" id="tab_monthly" >
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
+                        <table id="table_monthly" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th><?= Yii::t('app', 'Детал рақами') ?></th>
@@ -142,7 +152,21 @@ $calc_at = date('Y-m-d H:i:s');
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($materialRequirements as $req): ?>
+                                <?php foreach ($materialRequirements as $req): 
+                                    // Filter: skip if all monthly values are 0 when filter is active
+                                    if (isset($filter) && $filter) {
+                                        $hasNonZero = false;
+                                        foreach ($months as $month) {
+                                            $qty = isset($req['monthly'][$month]) ? $req['monthly'][$month]['quantity'] : 0;
+                                            if ($qty > 0) {
+                                                $hasNonZero = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!$hasNonZero) continue;
+
+                                    }
+                                ?>
                                     <tr>
                                         <td><?= Html::encode($req['part_no']) ?></td>
                                         <td><?= Html::encode($req['part_name']) ?></td>
@@ -161,7 +185,7 @@ $calc_at = date('Y-m-d H:i:s');
                 <!-- Yearly Requirements Tab -->
                 <div class="tab-pane" id="tab_yearly" >
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
+                        <table id="table_yearly" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th><?= Yii::t('app', 'Детал рақами') ?></th>
@@ -178,7 +202,20 @@ $calc_at = date('Y-m-d H:i:s');
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($materialRequirements as $req): ?>
+                                <?php foreach ($materialRequirements as $req): 
+                                    // Filter: skip if all yearly values are 0 when filter is active
+                                    if (isset($filter) && $filter) {
+                                        $hasNonZero = false;
+                                        foreach ($years as $year) {
+                                            $qty = isset($req['yearly'][$year]) ? $req['yearly'][$year]['quantity'] : 0;
+                                            if ($qty > 0) {
+                                                $hasNonZero = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!$hasNonZero) continue;
+                                    }
+                                ?>
                                     <tr>
                                         <td><?= Html::encode($req['part_no']) ?></td>
                                         <td><?= Html::encode($req['part_name']) ?></td>
@@ -258,23 +295,89 @@ $calc_at = date('Y-m-d H:i:s');
 </div>
 
 <?php
-$script = <<< JS
-$('#calc_at').html('($calc_at)');
+// Register xlsx library
+$this->registerJsFile('@themes/js/xlsx.full.min.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
 
-$('#btnExcelDownload').on('click', function(e){
-    e.preventDefault();
-    var activeId = $('.nav-tabs li.active a').attr('href');
-    var period = 'weekly';
-    if (activeId === '#tab_monthly') period = 'monthly';
-    if (activeId === '#tab_yearly') period = 'yearly';
-    var url = "<?= Url::to(['fact-requirement/download-excel']) ?>";
-    var params = {
-        start_date: "<?= $startDate ?>",
-        filter: <?= isset($filter) && $filter ? 1 : 0 ?>,
-        period: period
-    };
-    var q = $.param(params);
-    window.location.href = url + (url.indexOf('?') === -1 ? '?' : '&') + q;
+$filterValue = (isset($filter) && $filter) ? 1 : 0;
+$startDateJs = json_encode($startDate);
+$loadingText = json_encode($loading . ' Юкланмоқда...');
+$script = <<< JS
+$(document).ready(function() {
+    $('#btnExcelDownload').on('click', function(e){
+        e.preventDefault();
+        
+        // Check if XLSX library is loaded
+        if (typeof XLSX === 'undefined') {
+            alert('Excel kutubxonasi юкланмади. Илтимос, саҳифани қайта юкланг.');
+            return false;
+        }
+        
+        // Get active tab
+        var activeTab = $('.nav-tabs li.active a').attr('href');
+        var period = 'weekly'; // default
+        var tableId = 'table_weekly';
+        
+        // Determine period based on active tab
+        if (activeTab === '#tab_monthly') {
+            period = 'monthly';
+            tableId = 'table_monthly';
+        } else if (activeTab === '#tab_yearly') {
+            period = 'yearly';
+            tableId = 'table_yearly';
+        } else if (activeTab === '#tab_detail') {
+            // For detail tab, default to weekly or show message
+            if (!confirm('Батафсил талаблар учун Excel юклаб олиш учун ҳафталик талаблар танланди. Давом этишни истайсизми?')) {
+                return false;
+            }
+            period = 'weekly';
+            tableId = 'table_weekly';
+        } else {
+            period = 'weekly';
+            tableId = 'table_weekly';
+        }
+        
+        // Show loading indicator
+        var btn = $(this);
+        var originalText = btn.html();
+        btn.prop('disabled', true).html({$loadingText});
+        
+        try {
+            // Get the table element
+            var table = document.getElementById(tableId);
+            
+            if (!table) {
+                alert('Жадвал топилмади. Илтимос, саҳифани қайта юкланг.');
+                btn.prop('disabled', false).html(originalText);
+                return false;
+            }
+            
+            // Create workbook from table
+            var wb = XLSX.utils.table_to_book(table, {
+                sheet: period,
+                raw: false
+            });
+            
+            // Generate filename
+            var fileName = 'material-requirements-' + period + '-' + {$startDateJs};
+            if ({$filterValue}) {
+                fileName += '-filtered';
+            }
+            fileName += '.xlsx';
+            
+            // Download the file
+            XLSX.writeFile(wb, fileName);
+            
+            // Restore button after a short delay
+            setTimeout(function() {
+                btn.prop('disabled', false).html(originalText);
+            }, 1000);
+            
+        } catch (error) {
+            console.error('Excel export xatosi:', error);
+            alert('Excel файлни юклаб олишда хатолик юз берди: ' + error.message);
+            btn.prop('disabled', false).html(originalText);
+        }
+    });
 });
 JS;
 $this->registerJs($script);

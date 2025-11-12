@@ -133,13 +133,6 @@ class FactRequirementController extends Controller
                     continue;
                 }
 
-                // Apply filter: skip materials with zero average usage when filter=1
-                if ($filter != null) {
-                    $part = Part::findOne($item->part_id);
-                    if ($part && $part->averageUsage == 0) {
-                        continue;
-                    }
-                }
 
                 $materialId = $item->part_id;
                 $materialName = $item->part->part_no . ' - ' . $item->part->part_name;
@@ -406,6 +399,12 @@ class FactRequirementController extends Controller
      */
     public function actionDownloadExcelCodemix()
     {
+        // Check if ZipArchive is available
+        if (!class_exists('ZipArchive')) {
+            Yii::$app->session->setFlash('error', 'ZipArchive class not found. PHP zip extension is not installed. Please use CSV download instead.');
+            return $this->redirect(['index']);
+        }
+
         // Check if codemix ExcelFile is available
         if (!class_exists('codemix\excelexport\ExcelFile')) {
             Yii::$app->session->setFlash('error', 'ExcelFile extension is not installed. Please use CSV download instead.');
@@ -542,6 +541,12 @@ class FactRequirementController extends Controller
      */
     public function actionDownloadExcel()
     {
+        // Check if ZipArchive is available
+        if (!class_exists('ZipArchive')) {
+            Yii::$app->session->setFlash('error', 'ZipArchive класси топилмади. PHP zip extension ўрнатилмаган. Илтимос, админ билан боғланинг.');
+            // return $this->redirect(['index']);
+        }
+
         // Check if codemix ExcelFile is available
         if (!class_exists('codemix\excelexport\ExcelFile')) {
             Yii::$app->session->setFlash('error', 'ExcelFile кенгайтмаси ўрнатилмаган. Илтимос, админ билан боғланинг.');
@@ -584,63 +589,78 @@ class FactRequirementController extends Controller
             $tmpArray['part_name'] = $requirement['part_name'];
             $tmpArray['unit'] = $requirement['unit'];
 
+            $hasNonZero = false;
             if ($period === 'weekly' && !empty($periods['weekly'])) {
                 foreach ($periods['weekly'] as $week) {
                     $weekKey = "'" . $week . "'";
-                    $tmpArray[$weekKey] = isset($requirement['weekly'][$week])
+                    $qty = isset($requirement['weekly'][$week])
                         ? round($requirement['weekly'][$week]['quantity'], 6)
                         : 0;
+                    $tmpArray[$weekKey] = $qty;
+                    if ($qty > 0) {
+                        $hasNonZero = true;
+                    }
                 }
             } elseif ($period === 'monthly' && !empty($periods['monthly'])) {
                 foreach ($periods['monthly'] as $month) {
                     $monthKey = "'" . $month . "'";
-                    $tmpArray[$monthKey] = isset($requirement['monthly'][$month])
+                    $qty = isset($requirement['monthly'][$month])
                         ? round($requirement['monthly'][$month]['quantity'], 6)
                         : 0;
+                    $tmpArray[$monthKey] = $qty;
+                    if ($qty > 0) {
+                        $hasNonZero = true;
+                    }
                 }
             } elseif ($period === 'yearly' && !empty($periods['yearly'])) {
                 foreach ($periods['yearly'] as $year) {
                     $yearKey = "'" . $year . "'";
-                    $tmpArray[$yearKey] = isset($requirement['yearly'][$year])
+                    $qty = isset($requirement['yearly'][$year])
                         ? round($requirement['yearly'][$year]['quantity'], 6)
                         : 0;
+                    $tmpArray[$yearKey] = $qty;
+                    if ($qty > 0) {
+                        $hasNonZero = true;
+                    }
                 }
+            }
+
+            // Filter: skip if all period values are 0 when filter is active
+            if ($filter && !$hasNonZero) {
+                continue;
             }
 
             $tmpArray['total_required'] = round($requirement['total_required'], 6);
             $arrFile[] = $tmpArray;
         }
 
-        // Create header titles
-        $header_titles = [
-            0 => Yii::t('app', 'Детал рақами'),
-            1 => Yii::t('app', 'Детал номи'),
-            2 => Yii::t('app', 'Ҳисоб бирлиги'),
-            3 => Yii::t('app', 'Жами талаб'),
+        // Create header titles - order must match data array order
+        $titles = [
+            'part_no' => Yii::t('app', 'Детал рақами'),
+            'part_name' => Yii::t('app', 'Детал номи'),
+            'unit' => Yii::t('app', 'Ҳисоб бирлиги'),
         ];
 
-        // Create detail titles for selected period
-        $detail_titles = [];
-        $i = 3;
+        // Add period column titles (must come before total_required to match data order)
         if ($period === 'weekly' && !empty($periods['weekly'])) {
             foreach ($periods['weekly'] as $week) {
-                $detail_titles[$i + 1] = Yii::t('app', 'Ҳафта') . ': ' . $week;
-                $i++;
+                $weekKey = "'" . $week . "'";
+                $titles[$weekKey] = Yii::t('app', 'Ҳафта') . ': ' . $week;
             }
         } elseif ($period === 'monthly' && !empty($periods['monthly'])) {
             foreach ($periods['monthly'] as $month) {
-                $detail_titles[$i + 1] = Yii::t('app', 'Ой') . ': ' . $month;
-                $i++;
+                $monthKey = "'" . $month . "'";
+                $titles[$monthKey] = Yii::t('app', 'Ой') . ': ' . $month;
             }
         } elseif ($period === 'yearly' && !empty($periods['yearly'])) {
             foreach ($periods['yearly'] as $year) {
-                $detail_titles[$i + 1] = Yii::t('app', 'Йил') . ': ' . $year;
-                $i++;
+                $yearKey = "'" . $year . "'";
+                $titles[$yearKey] = Yii::t('app', 'Йил') . ': ' . $year;
             }
         }
 
-        // Merge all titles
-        $titles = array_merge($header_titles, $detail_titles);
+        // Add total_required at the end (matches data array order)
+        $titles['total_required'] = Yii::t('app', 'Жами талаб');
 
         // Create filename
         $fileName = 'material-requirements-' . $period . '-' . $startDate;
