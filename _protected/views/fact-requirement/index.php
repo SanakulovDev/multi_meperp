@@ -8,7 +8,7 @@ use yii\helpers\Url;
 /* @var $materialRequirements array */
 /* @var $periods array */
 
-$this->title = Yii::t('app', 'Material Requirements Report');
+$this->title = Yii::t('app', 'Мавод талаблари ҳисоботи');
 $this->params['breadcrumbs'][] = $this->title;
 
 $loading = '<img src="/themes/adminlte/img/loading.gif">';
@@ -21,45 +21,33 @@ $calc_at = date('Y-m-d H:i:s');
         <div class="panel-heading">
             <img style="height:28px;" src="/img/mep1.jpg" title="<?php echo Yii::$app->params['comp_name'] ?>" class="pull-left"/>
             <h3 class="pull-left" style="margin: 5px 0px -5px 10px;">
-                <?=Yii::t('app', 'Material Requirements Report')?>
+                <?=Yii::t('app', 'Мавод талаблари ҳисоботи')?>
                 <span id="calc_at" style="font-size: 14px;color: #a29393;"><?=$loading?></span>
             </h3>
             <div class="pull-right" style="margin: 0px">
                 <form method="get" style="display: inline-block; margin-right: 10px;">
-                    <label style="margin-right: 5px;"><?= Yii::t('app', 'Start Date') ?>:</label>
+                    <label style="margin-right: 5px;"><?= Yii::t('app', 'Бошланиш санаси') ?>:</label>
                     <input type="date" name="start_date" value="<?= $startDate ?>" onchange="this.form.submit()" class="form-control" style="display: inline-block; width: auto;">
                 </form>
                 
-                <!-- Download dropdown -->
-                <div class="btn-group" style="display: inline-block; margin-right: 10px;">
-                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <?= Yii::t('app', 'Download') ?> <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><?=Html::a(Yii::t('app', 'Download CSV'), ['download', 'start_date' => $startDate, 'filter' => isset($filter) ? $filter : null])?></li>
-                        
-                        <?php if (class_exists('codemix\excelexport\ExcelFile')): ?>
-                            <li><?=Html::a(Yii::t('app', 'Download Excel (All Periods)'), ['download-excel-codemix', 'start_date' => $startDate, 'filter' => isset($filter) ? $filter : null])?></li>
-                            <li><?=Html::a(Yii::t('app', 'Download Weekly Excel'), ['download-weekly-requirement', 'start_date' => $startDate, 'filter' => isset($filter) ? $filter : null])?></li>
-                        <?php endif; ?>
-                        
-                        <?php if (class_exists('\PhpOffice\PhpSpreadsheet\Spreadsheet')): ?>
-                            <li><?=Html::a(Yii::t('app', 'Download Excel (PhpSpreadsheet)'), ['download-excel', 'start_date' => $startDate, 'filter' => isset($filter) ? $filter : null])?></li>
-                        <?php endif; ?>
-                    </ul>
-                </div>
+                <!-- Single Excel download button -->
+                <?php if (class_exists('codemix\excelexport\ExcelFile')): ?>
+                    <a id="btnExcelDownload" href="#" class="btn btn-info btn-sm" style="display: inline-block; margin-right: 10px;">
+                        <?= Yii::t('app', 'Excel юклаб олиш') ?>
+                    </a>
+                <?php endif; ?>
             </div>
             <div style="clear: both;"></div>
         </div>
         <div class="">
             <a href="<?= \yii\helpers\Url::to(['fact-requirement/index', 'filter' => 1, 'start_date' => $startDate])?>" class="btn btn-success">
-                <?= Yii::t('app', 'Filter') ?> (<?= Yii::t('app', 'Hide zero usage') ?>)
+                <?= Yii::t('app', 'Филтр') ?> (<?= Yii::t('app', '0 қийматлиларни яшириш') ?>)
             </a>
             <a href="<?= \yii\helpers\Url::to(['fact-requirement/index', 'start_date' => $startDate])?>" class="btn btn-danger">
-                <?= Yii::t('app', 'Clear Filter') ?>
+                <?= Yii::t('app', 'Филтрни тозалаш') ?>
             </a>
             <?php if (isset($filter) && $filter): ?>
-                <span class="label label-info"><?= Yii::t('app', 'Filter active: showing only materials with usage > 0') ?></span>
+                <span class="label label-info"><?= Yii::t('app', 'Филтр фаол: фақат нол эмас қийматлар') ?></span>
             <?php endif; ?>
         </div>
     </div>
@@ -70,28 +58,28 @@ $calc_at = date('Y-m-d H:i:s');
                 <li class="active">
                     <a href="#tab_weekly" data-toggle="tab" aria-expanded="true">
                         <h4 style="margin: 5px 0px -5px 0px; background-color: #f5f5f5;">
-                            <b><?= Yii::t('app', 'Weekly Requirements') ?></b>
+                            <b><?= Yii::t('app', 'Ҳафталик талаблар') ?></b>
                         </h4>
                     </a>
                 </li>
                 <li>
                     <a href="#tab_monthly" data-toggle="tab" aria-expanded="false">
                         <h4 style="margin: 5px 0px -5px 0px; background-color: #f5f5f5;">
-                            <b><?= Yii::t('app', 'Monthly Requirements') ?></b>
+                            <b><?= Yii::t('app', 'Ойлик талаблар') ?></b>
                         </h4>
                     </a>
                 </li>
                 <li>
                     <a href="#tab_yearly" data-toggle="tab" aria-expanded="false">
                         <h4 style="margin: 5px 0px -5px 0px; background-color: #f5f5f5;">
-                            <b><?= Yii::t('app', 'Yearly Requirements') ?></b>
+                            <b><?= Yii::t('app', 'Йиллик талаблар') ?></b>
                         </h4>
                     </a>
                 </li>
                 <li>
                     <a href="#tab_detail" data-toggle="tab" aria-expanded="false">
                         <h4 style="margin: 5px 0px -5px 0px; background-color: #f5f5f5;">
-                            <b><?= Yii::t('app', 'Detailed Requirements') ?></b>
+                            <b><?= Yii::t('app', 'Батафсил талаблар') ?></b>
                         </h4>
                     </a>
                 </li>
@@ -104,9 +92,9 @@ $calc_at = date('Y-m-d H:i:s');
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th><?= Yii::t('app', 'Part No') ?></th>
-                                    <th><?= Yii::t('app', 'Part Name') ?></th>
-                                    <th><?= Yii::t('app', 'Unit') ?></th>
+                                    <th><?= Yii::t('app', 'Детал рақами') ?></th>
+                                    <th><?= Yii::t('app', 'Детал номи') ?></th>
+                                    <th><?= Yii::t('app', 'Ҳисоб бирлиги') ?></th>
                                     <?php 
                                     // Get unique weeks
                                     $weeks = isset($periods['weekly']) ? $periods['weekly'] : [];
@@ -114,7 +102,7 @@ $calc_at = date('Y-m-d H:i:s');
                                     foreach ($weeks as $week): ?>
                                         <th style="min-width: 120px; font-size: 11px;"><?= $week ?></th>
                                     <?php endforeach; ?>
-                                    <th><?= Yii::t('app', 'Total') ?></th>
+                                    <th><?= Yii::t('app', 'Жами') ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -140,9 +128,9 @@ $calc_at = date('Y-m-d H:i:s');
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th><?= Yii::t('app', 'Part No') ?></th>
-                                    <th><?= Yii::t('app', 'Part Name') ?></th>
-                                    <th><?= Yii::t('app', 'Unit') ?></th>
+                                    <th><?= Yii::t('app', 'Детал рақами') ?></th>
+                                    <th><?= Yii::t('app', 'Детал номи') ?></th>
+                                    <th><?= Yii::t('app', 'Ҳисоб бирлиги') ?></th>
                                     <?php 
                                     // Get unique months
                                     $months = isset($periods['monthly']) ? $periods['monthly'] : [];
@@ -150,7 +138,7 @@ $calc_at = date('Y-m-d H:i:s');
                                     foreach ($months as $month): ?>
                                         <th style="min-width: 120px; font-size: 11px;"><?= $month ?></th>
                                     <?php endforeach; ?>
-                                    <th><?= Yii::t('app', 'Total') ?></th>
+                                    <th><?= Yii::t('app', 'Жами') ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -176,9 +164,9 @@ $calc_at = date('Y-m-d H:i:s');
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th><?= Yii::t('app', 'Part No') ?></th>
-                                    <th><?= Yii::t('app', 'Part Name') ?></th>
-                                    <th><?= Yii::t('app', 'Unit') ?></th>
+                                    <th><?= Yii::t('app', 'Детал рақами') ?></th>
+                                    <th><?= Yii::t('app', 'Детал номи') ?></th>
+                                    <th><?= Yii::t('app', 'Ҳисоб бирлиги') ?></th>
                                     <?php 
                                     // Get unique years
                                     $years = isset($periods['yearly']) ? $periods['yearly'] : [];
@@ -186,7 +174,7 @@ $calc_at = date('Y-m-d H:i:s');
                                     foreach ($years as $year): ?>
                                         <th style="min-width: 120px; font-size: 11px;"><?= $year ?></th>
                                     <?php endforeach; ?>
-                                    <th><?= Yii::t('app', 'Total') ?></th>
+                                    <th><?= Yii::t('app', 'Жами') ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -212,11 +200,11 @@ $calc_at = date('Y-m-d H:i:s');
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th><?= Yii::t('app', 'Part No') ?></th>
-                                    <th><?= Yii::t('app', 'Part Name') ?></th>
-                                    <th><?= Yii::t('app', 'Unit') ?></th>
-                                    <th><?= Yii::t('app', 'Total Required') ?></th>
-                                    <th><?= Yii::t('app', 'Details') ?></th>
+                                    <th><?= Yii::t('app', 'Детал рақами') ?></th>
+                                    <th><?= Yii::t('app', 'Детал номи') ?></th>
+                                    <th><?= Yii::t('app', 'Ҳисоб бирлиги') ?></th>
+                                    <th><?= Yii::t('app', 'Жами талаб') ?></th>
+                                    <th><?= Yii::t('app', 'Батафсил') ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -228,7 +216,7 @@ $calc_at = date('Y-m-d H:i:s');
                                         <td><strong><?= number_format($req['total_required'], 2) ?></strong></td>
                                         <td>
                                             <?php if (!empty($req['specifications'])): ?>
-                                                <strong><?= Yii::t('app', 'Used in specifications') ?>:</strong><br>
+                                                <strong><?= Yii::t('app', 'Қўлланилган спецификациялар') ?>:</strong><br>
                                                 <?php foreach ($req['specifications'] as $specKey => $specData): ?>
                                                     <small><?= Html::encode($specKey) ?>: <?= number_format($specData['total_usage'], 2) ?> <?= Html::encode($req['unit']) ?></small><br>
                                                 <?php endforeach; ?>
@@ -236,7 +224,7 @@ $calc_at = date('Y-m-d H:i:s');
                                             <?php endif; ?>
                                             
                                             <?php if (!empty($req['weekly'])): ?>
-                                                <strong><?= Yii::t('app', 'Weekly') ?>:</strong>
+                                                <strong><?= Yii::t('app', 'Ҳафталик') ?>:</strong>
                                                 <?php foreach ($req['weekly'] as $week => $data): ?>
                                                     <small><?= $week ?>: <?= number_format($data['quantity'], 2) ?></small>; 
                                                 <?php endforeach; ?>
@@ -244,7 +232,7 @@ $calc_at = date('Y-m-d H:i:s');
                                             <?php endif; ?>
                                             
                                             <?php if (!empty($req['monthly'])): ?>
-                                                <strong><?= Yii::t('app', 'Monthly') ?>:</strong>
+                                                <strong><?= Yii::t('app', 'Ойлик') ?>:</strong>
                                                 <?php foreach ($req['monthly'] as $month => $data): ?>
                                                     <small><?= $month ?>: <?= number_format($data['quantity'], 2) ?></small>; 
                                                 <?php endforeach; ?>
@@ -252,7 +240,7 @@ $calc_at = date('Y-m-d H:i:s');
                                             <?php endif; ?>
                                             
                                             <?php if (!empty($req['yearly'])): ?>
-                                                <strong><?= Yii::t('app', 'Yearly') ?>:</strong>
+                                                <strong><?= Yii::t('app', 'Йиллик') ?>:</strong>
                                                 <?php foreach ($req['yearly'] as $year => $data): ?>
                                                     <small><?= $year ?>: <?= number_format($data['quantity'], 2) ?></small>; 
                                                 <?php endforeach; ?>
@@ -273,8 +261,21 @@ $calc_at = date('Y-m-d H:i:s');
 $script = <<< JS
 $('#calc_at').html('($calc_at)');
 
-
-
+$('#btnExcelDownload').on('click', function(e){
+    e.preventDefault();
+    var activeId = $('.nav-tabs li.active a').attr('href');
+    var period = 'weekly';
+    if (activeId === '#tab_monthly') period = 'monthly';
+    if (activeId === '#tab_yearly') period = 'yearly';
+    var url = "<?= Url::to(['fact-requirement/download-excel']) ?>";
+    var params = {
+        start_date: "<?= $startDate ?>",
+        filter: <?= isset($filter) && $filter ? 1 : 0 ?>,
+        period: period
+    };
+    var q = $.param(params);
+    window.location.href = url + (url.indexOf('?') === -1 ? '?' : '&') + q;
+});
 JS;
 $this->registerJs($script);
 ?>

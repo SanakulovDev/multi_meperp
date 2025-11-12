@@ -538,13 +538,13 @@ class FactRequirementController extends Controller
     }
 
     /**
-     * Download weekly requirements specifically (similar to your example)
+     * Download Excel for active tab period only
      */
-    public function actionDownloadWeeklyRequirement()
+    public function actionDownloadExcel()
     {
         // Check if codemix ExcelFile is available
         if (!class_exists('codemix\excelexport\ExcelFile')) {
-            Yii::$app->session->setFlash('error', 'ExcelFile extension is not installed. Please use CSV download instead.');
+            Yii::$app->session->setFlash('error', 'ExcelFile кенгайтмаси ўрнатилмаган. Илтимос, админ билан боғланинг.');
             return $this->redirect(['index']);
         }
 
@@ -556,6 +556,12 @@ class FactRequirementController extends Controller
         
         // Get filter parameter
         $filter = Yii::$app->request->get('filter');
+
+        // Get period parameter: weekly | monthly | yearly
+        $period = Yii::$app->request->get('period', 'weekly');
+        if (!in_array($period, ['weekly', 'monthly', 'yearly'], true)) {
+            $period = 'weekly';
+        }
 
         // Get production orders with their specifications
         $productionOrders = ProductionOrder::find()
@@ -570,58 +576,89 @@ class FactRequirementController extends Controller
         $materialRequirements = $result['materials'];
         $periods = $result['periods'];
 
+        // Prepare data for Excel only for selected period
         $arrFile = [];
-        
         foreach ($materialRequirements as $requirement) {
             unset($tmpArray);
             $tmpArray['part_no'] = $requirement['part_no'];
             $tmpArray['part_name'] = $requirement['part_name'];
             $tmpArray['unit'] = $requirement['unit'];
-            
-            // Get part details for additional info
-            $part = Part::findOne($requirement['material_id']);
-            $tmpArray['avg_usage'] = $part ? round($part->averageUsage, 2) : 0;
 
-            // Add only weekly data for this specific export
-            foreach ($periods['weekly'] as $week) {
-                $weekKey = "'" . $week . "'";
-                $tmpArray[$weekKey] = isset($requirement['weekly'][$week]) 
-                    ? round($requirement['weekly'][$week]['quantity'], 2) 
-                    : 0;
+            if ($period === 'weekly' && !empty($periods['weekly'])) {
+                foreach ($periods['weekly'] as $week) {
+                    $weekKey = "'" . $week . "'";
+                    $tmpArray[$weekKey] = isset($requirement['weekly'][$week])
+                        ? round($requirement['weekly'][$week]['quantity'], 6)
+                        : 0;
+                }
+            } elseif ($period === 'monthly' && !empty($periods['monthly'])) {
+                foreach ($periods['monthly'] as $month) {
+                    $monthKey = "'" . $month . "'";
+                    $tmpArray[$monthKey] = isset($requirement['monthly'][$month])
+                        ? round($requirement['monthly'][$month]['quantity'], 6)
+                        : 0;
+                }
+            } elseif ($period === 'yearly' && !empty($periods['yearly'])) {
+                foreach ($periods['yearly'] as $year) {
+                    $yearKey = "'" . $year . "'";
+                    $tmpArray[$yearKey] = isset($requirement['yearly'][$year])
+                        ? round($requirement['yearly'][$year]['quantity'], 6)
+                        : 0;
+                }
             }
 
-            $tmpArray['total_required'] = round($requirement['total_required'], 2);
+            $tmpArray['total_required'] = round($requirement['total_required'], 6);
             $arrFile[] = $tmpArray;
         }
 
+        // Create header titles
         $header_titles = [
-            0 => Yii::t('app', 'Part No'),
-            1 => Yii::t('app', 'Part Name'),
-            2 => Yii::t('app', 'Unit'),
-            3 => Yii::t('app', 'Average Usage'),
+            0 => Yii::t('app', 'Детал рақами'),
+            1 => Yii::t('app', 'Детал номи'),
+            2 => Yii::t('app', 'Ҳисоб бирлиги'),
+            3 => Yii::t('app', 'Жами талаб'),
         ];
 
+        // Create detail titles for selected period
         $detail_titles = [];
         $i = 3;
-        foreach ($periods['weekly'] as $week) {
-            $detail_titles[$i + 1] = $week;
-            $i++;
+        if ($period === 'weekly' && !empty($periods['weekly'])) {
+            foreach ($periods['weekly'] as $week) {
+                $detail_titles[$i + 1] = Yii::t('app', 'Ҳафта') . ': ' . $week;
+                $i++;
+            }
+        } elseif ($period === 'monthly' && !empty($periods['monthly'])) {
+            foreach ($periods['monthly'] as $month) {
+                $detail_titles[$i + 1] = Yii::t('app', 'Ой') . ': ' . $month;
+                $i++;
+            }
+        } elseif ($period === 'yearly' && !empty($periods['yearly'])) {
+            foreach ($periods['yearly'] as $year) {
+                $detail_titles[$i + 1] = Yii::t('app', 'Йил') . ': ' . $year;
+                $i++;
+            }
         }
-        
-        $detail_titles[$i + 1] = Yii::t('app', 'Total Required');
 
+        // Merge all titles
         $titles = array_merge($header_titles, $detail_titles);
 
+        // Create filename
+        $fileName = 'material-requirements-' . $period . '-' . $startDate;
+        if ($filter) {
+            $fileName .= '-filtered';
+        }
+
+        // Create Excel file
         $file = Yii::createObject([
             'class' => 'codemix\excelexport\ExcelFile',
             'sheets' => [
-                'weekly-requirements' => [
+                'material-requirements' => [
                     'data' => $arrFile,
                     'titles' => $titles,
                 ],
             ],
         ]);
 
-        $file->send(\app\components\Helpers::downloadFileName('weekly-requirement-' . $startDate));
+        $file->send(\app\components\Helpers::downloadFileName($fileName));
     }
 }
