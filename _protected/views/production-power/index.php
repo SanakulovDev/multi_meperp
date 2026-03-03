@@ -1,0 +1,118 @@
+<?php
+
+use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\grid\GridView;
+use yii\widgets\Pjax;
+/* @var $this yii\web\View */
+/* @var $searchModel app\models\ProductionPowerSearch */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+
+$this->title = Yii::t('app', 'Power');
+$this->params['breadcrumbs'][] = $this->title;
+?>
+<div class="production-power-index">
+
+<h1 style="display: inline-block; margin:0; padding: 0;"><?php // Html::encode($this->title) ?></h1>
+    <div class="pull-right">
+
+        <p style="margin:0; padding: 0;">
+            <?= Html::a(Yii::t('app', 'btn-create'), ['create'], [
+                'class' => 'btn btn-success btn-sm form-modal mr-lg-5',
+                'data-intro' => Yii::t('intro', 'add-new-record')
+              ]) ?>
+        </p>
+    </div>
+
+    <?php Pjax::begin(['id' => 'pjaxGrid']); ?>
+
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{update}{delete} ',
+                'header' => '<i class="fa fa-fw fa-gears"></i>',
+                'headerOptions' => ['style' => 'min-width:50px;text-align:center;vertical-align:middle;color:#3c8dbc;'],
+                'contentOptions' => ['style' => 'min-width:50px;text-align:center;vertical-align:middle;'],
+                'buttons' => [
+                    'update' => function($url, $model)  {
+                        
+                        $url = Url::toRoute(['production-power/update', 'id' => $model->id]);
+                        return Html::a(
+                            '<span  class="glyphicon glyphicon-pencil"></span>',
+                            false,
+                            [
+                                'class' => 'modalButtonUpdate',
+                                'value' => $url,
+                                'title' => Yii::t('app', 'Update')
+                            ]
+                        );
+                    },
+                ],
+            ],
+            [
+                'attribute'=> 'part_id',
+                'value' => function($model) {
+                    return $model->part->part_no.' '.$model->part->part_name;
+                },
+                'filter' => $parts,
+                'filterInputOptions' => [
+                    'class' => 'form-control select2',
+                    'prompt' => '---',
+                    'data-intro' => Yii::t('intro', 'production-power-part_id')
+                ],
+            ],
+            'test_pr',
+            [
+                'attribute'=> 'target_date',
+                'value' => function ($model, $index, $widget) {
+                    return $model->target_date;
+                },
+                
+            ],
+            [
+                'attribute'=> 'time',
+                'value' => function($model) use($selectTimes) {
+                    return $selectTimes[$model->time];
+                },
+                'filter' =>$selectTimes,
+                'filterInputOptions' => [
+                    'class' => 'form-control select2',
+                    'prompt' => '---',
+                    'data-intro' => Yii::t('intro', 'production-release-time')
+                ],  
+            ],
+            [
+                'attribute'=> 'line',
+                'value' => function($model) use($lines) {
+                    return $lines[$model->line];
+                },
+                'filter' =>$lines,
+                'filterInputOptions' => [
+                    'class' => 'form-control select2',
+                    'prompt' => '---',
+                    'data-intro' => Yii::t('intro', 'production-release-line')
+                ],    
+            ],
+            [
+                'attribute' =>'unitId',
+                'value' => function($model) use($units) {
+                    return $model->unit->description;
+                },
+                'filter' => $units,
+
+            ],
+            'plan_power',
+            'max_power',
+            'special',
+
+            
+        ],
+    ]); ?>
+
+    <?php Pjax::end(); ?>
+
+</div>

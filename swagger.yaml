@@ -1,0 +1,976 @@
+openapi: 3.0.0
+info:
+  title: 'Oyna API'
+  description: "API documentations to fetch records from OYNA ERP"
+  contact:
+    email: sheralim@gmail.com
+  version: '3.0'
+servers:
+  -
+    url: 'https://oyna.uzdy.uz/api'
+    description: 'Live server'
+  -
+    url: 'https://test-oyna.uzdy.uz/api'
+    description: 'Development server'
+paths:
+  /warehouse:
+    get:
+      tags:
+        - Lists
+      description: 'Fetch all warehouses'
+      operationId: 'Warehouses'
+      parameters:
+        -
+          $ref: '#/components/parameters/modelId'
+        -
+          name: code
+          in: query
+          description: 'To fetch warehouse by name'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                schema: Warehouse
+                allOf:
+                  - { properties: { data: { description: 'Retrieved warehouses based on query', type: array, items: { $ref: '#/components/schemas/Warehouse' } } }, type: object }
+                  - { $ref: '#/components/schemas/CollectionMeta' }
+  /document-type:
+    get:
+      tags:
+        - Lists
+      description: 'Fetch all document types'
+      operationId: 'Document types'
+      parameters:
+        -
+          $ref: '#/components/parameters/modelId'
+        -
+          name: code
+          in: query
+          description: 'To fetch document type by code'
+          schema:
+            type: string
+        -
+          name: description
+          in: query
+          description: 'To fetch document type by description'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                schema: DocumentType
+                allOf:
+                  - { properties: { data: { description: 'Retrieved document types based on query', type: array, items: { $ref: '#/components/schemas/DocumentType' } } }, type: object }
+                  - { $ref: '#/components/schemas/CollectionMeta' }
+  /supplier:
+    get:
+      tags:
+        - Lists
+      description: 'Fetch all suppliers'
+      operationId: 'Suppliers'
+      parameters:
+        -
+          $ref: '#/components/parameters/modelId'
+        -
+          name: name
+          in: query
+          description: 'To fetch supplier by name'
+          schema:
+            type: string
+        -
+          name: duns
+          in: query
+          description: 'To fetch supplier by duns'
+          schema:
+            type: string
+        -
+          name: alias
+          in: query
+          description: 'To fetch supplier by alias'
+          schema:
+            type: string    
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                schema: Supplier
+                allOf:
+                  - { properties: { data: { description: 'Retrieved supplier based on query', type: array, items: { $ref: '#/components/schemas/Supplier' } } }, type: object }
+                  - { $ref: '#/components/schemas/CollectionMeta' }
+  /part:
+    get:
+      tags:
+        - Part
+      description: 'Fetch all parts'
+      operationId: 'Parts'
+      parameters:
+        -
+          $ref: '#/components/parameters/modelId'
+        -
+          name: part_no
+          in: query
+          description: 'To fetch parts by part number'
+          schema:
+            type: string
+        -
+          name: part_color
+          in: query
+          description: 'To fetch parts by color'
+          schema:
+            type: string
+        -
+          name: part_name
+          in: query
+          description: 'To fetch parts by part name'
+          schema:
+            type: string
+        -
+          name: pack_size
+          in: query
+          description: 'To fetch parts by pack size'
+          schema:
+            type: string
+        -
+          name: state
+          in: query
+          description: "To fetch part by state."
+          schema:
+            type: integer
+            enum:
+             - "0-Сырье"
+             - '1-Полуфабрикат'
+             - '2-Продукт'
+            example: 0 
+        -
+          name: unit
+          in: query
+          description: 'To fetch part by unit value'
+          schema:
+            type: string
+            example: 'EA'
+        -
+          name: part_type
+          in: query
+          description: 'To fetch part by type'
+          schema:
+            type: string
+            example: 'FABRIC'
+        -    
+          name: product_model
+          in: query
+          description: 'To fetch part by model'
+          schema:
+            type: string
+            example: 'B150'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { properties: { data: { description: 'Retrieved parts based on query', type: array, items: { $ref: '#/components/schemas/Part' } } }, type: object }
+                  - { $ref: '#/components/schemas/CollectionMeta' }
+  /bom:
+    get:
+      tags:
+        - BOM
+      description: 'Fetch all BOM records'
+      operationId: 'BOM'
+      parameters:
+        -
+          $ref: '#/components/parameters/modelId'
+        -
+          name: part_id
+          in: query
+          description: 'To fetch bom by parent part id'
+          schema:
+            type: integer
+        -
+          name: sub_part_id
+          in: query
+          description: 'To fetch bom by child part id'
+          schema:
+            type: integer
+        -
+          name: usage_qty
+          in: query
+          description: 'To fetch bom by usage quantity'
+          schema:
+            type: number
+            format: float
+        -
+          name: warehouse_id
+          in: query
+          description: 'To fetch bom by ulock id'
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { properties: { data: { description: 'Retrieved BOM records based on query', type: array, items: { $ref: '#/components/schemas/PartPart' } } }, type: object }
+                  - { $ref: '#/components/schemas/CollectionMeta' }                 
+  /document:
+    get:
+      tags:
+        - Document
+      description: 'Fetch all documents'
+      operationId: Documents
+      parameters:
+        -
+          $ref: '#/components/parameters/modelId'
+        -
+          name: docnum
+          in: query
+          description: 'To fetch document by type'
+          schema:
+            type: string
+        -
+          name: document_type_id
+          in: query
+          description: "To fetch by document-type id"
+          schema:
+            type: integer
+        -
+          name: from_warehouse_id
+          in: query
+          description: "The id of issuing warehouse"
+          schema:
+            type: integer
+        -
+          name: to_warehouse_id
+          in: query
+          description: "The id of receiving warehouse"
+          schema:
+            type: integer    
+        -
+          name: supplier_id
+          in: query
+          description: "To fetch by supplier id"
+          schema:
+            type: integer    
+        -
+          $ref: '#/components/parameters/pageParam'
+        -
+          $ref: '#/components/parameters/pageSizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                schema: Document
+                allOf:
+                  - { properties: { data: { description: 'Retrieved Documents based on query', type: array, items: { $ref: '#/components/schemas/Document' } } }, type: object }
+                  - { $ref: '#/components/schemas/CollectionMeta' }
+  /fg-invoice:
+    get:
+      tags:
+        - Document
+      description: 'Fetch all FG invoices'
+      operationId: FGInvoice
+      parameters:
+        -
+          $ref: '#/components/parameters/modelId'
+        -
+          name: invoice_no
+          in: query
+          description: 'To fetch invoice by number'
+          schema:
+            type: string
+        -
+          name: invoice_date
+          in: query
+          description: "To fetch by invoice date"
+          schema:
+            type: string
+        -
+          name: factory_id
+          in: query
+          description: "Fetch by factory id"
+          schema:
+            type: integer
+        -
+          name: customer_id
+          in: query
+          description: "To fetch by customer id"
+          schema:
+            type: integer    
+        -
+          name: created_by
+          in: query
+          description: "To fetch by creator id"
+          schema:
+            type: integer    
+        -
+          $ref: '#/components/parameters/pageParam'
+        -
+          $ref: '#/components/parameters/pageSizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                schema: FgInvoice
+                allOf:
+                  - { properties: { data: { description: 'Retrieved invoices based on query', type: array, items: { $ref: '#/components/schemas/FgInvoice' } } }, type: object }
+                  - { $ref: '#/components/schemas/CollectionMeta' }                
+components:
+  schemas:
+    Warehouse:
+      title: Warehouses
+      properties:
+        id:
+          description: 'Wharehouse ID'
+          type: integer
+          example: '36'
+        name:
+          description: 'Warehouse name'
+          type: string
+          example: 'DY.OUT_"AndijonPlast"'
+      type: object    
+    Part:
+      title: Parts
+      properties:
+        id:
+          description: 'Part ID'
+          type: integer
+          example: '242'
+        part_no:
+          description: 'Part number'
+          type: string
+          example: '70024000'
+        part_name:
+          description: 'Part name'
+          type: string
+          example: 'CARPET F/FLR PNL (LHD) MT/AT'
+        pack_size:
+          description: 'Part standard package size'
+          type: integer
+          example: '15'
+        state:
+          description: 'The state of part'
+          type: string
+          enum:
+           - 'Сырье `0`'
+           - 'Полуфабрикат `1`'
+           - 'Продукт `2`'
+        unit:
+          description: 'Measurement of part'
+          type: string
+          example: 'EA'
+        partType:
+          description: 'The part type name'
+          type: string
+          example: 'FABRIC'
+        productModel:
+          description: 'The product model name'
+          type: string
+          example: 'GSVEM'
+      type: object
+    PartPart:
+      title: BOM
+      properties:
+        id:
+          description: 'BOM record ID'
+          type: integer
+          example: '10280'
+        part: { $ref: '#/components/schemas/Part' }
+        subPart: { $ref: '#/components/schemas/Part' }
+        usage_qty:
+          description: "Usage quantity"
+          type: decimal
+          example: part
+        warehouse: { $ref: '#/components/schemas/Warehouse' }
+      type: object
+    DocumentType:
+      title: 'The type of Document'
+      required:
+        - code
+        - name
+      properties:
+        id:
+          description: 'Type ID'
+          type: integer
+          example: '29'
+        code:
+          description: 'The type code'
+          type: string
+          max: 3
+          example: 'NAK'
+        name:
+          description: 'The type name'
+          type: string
+          max: 50
+          example: 'Накладной'
+      type: object
+    DocumentItem:
+      title: 'Document item'
+      properties:
+        id:
+          description: 'Item ID'
+          type: integer
+          example: '4'
+        part: { $ref: '#/components/schemas/Part' }
+        qty:
+          description: "Quantity of the part"
+          type: number
+          format: float
+          example: '180.00000'
+      type: object    
+    User:
+      title: Users
+      properties:
+        id:
+          description: 'User ID'
+          type: integer
+          example: '258'
+        username:
+          description: 'User Name'
+          type: string
+          max: 100
+          example: 'nodirbek.yusupov'
+        tano:
+          description: 'Tabel number'
+          type: string
+          max: 10
+          example: '2222'
+      type: object
+    Factory:
+      title: Factories
+      properties:
+        id:
+          description: 'User ID'
+          type: integer
+          example: '258'
+        name:
+          description: 'Factory Name'
+          type: string
+          max: 150
+          example: "ПИИ OOO \"O'zMinda\""
+        head:
+          description: 'Head of factory'
+          type: string
+          max: 255
+          example: 'Гош А.'  
+        alias:
+          description: 'Alias of factory'
+          type: string
+          max: 10
+          example: 'UzMinda'
+        address:
+          description: 'The address of factory'
+          type: string
+          max: 255
+          example: 'Навоийская область, Карманинский район, СЭЗ \"Навои\" С-3' 
+        tin:
+          description: 'Taxpayer Identification Number'
+          type: string
+          max: 30
+          example: '301541133'
+        vat:
+          description: 'Reg.code(VAT)'
+          type: string
+          max: 30
+          example: '312110005001'   
+        duns:
+          description: 'DUNS number of supplier'
+          type: string
+          max: 30
+          example: '301541133'
+        fg_warehouse_id:
+          description: 'Warehouse ID'
+          type: integer
+          example: 6
+      type: object  
+    Supplier:
+      title: Supplier
+      properties:
+        id:
+          description: 'Supplier ID'
+          type: integer
+          example: '2'
+        name:
+          description: 'Supplier Name'
+          type: string
+          max: 100
+          example: 'OOO \"AVTOSANOAT PLAST\"'
+        duns:
+          description: 'DUNS number of supplier'
+          type: string
+          max: 30
+          example: '301554544'
+        alias:
+          description: 'Alias of supplier'
+          type: string
+          max: 50
+          example: 'OOO \"AVTOSANOAT PLAST\"'  
+      type: object
+    Customer:
+      title: Customer
+      properties:
+        id:
+          description: 'Customer ID'
+          type: integer
+          example: '10'
+        name:
+          description: 'Customer Name'
+          type: string
+          max: 100
+          example: 'СП ООО \"UzEraeAlternator\"'
+        duns:
+          description: 'DUNS number of customer'
+          type: string
+          max: 30
+          example: '301665310'
+        tin:
+          description: 'Taxpayer Identification Number'
+          type: string
+          max: 30
+          example: '301665310'
+        vat:
+          description: 'Reg.code(VAT)'
+          type: string
+          max: 30
+          example: '301665310'    
+        alias:
+          description: 'Alias of customer'
+          type: string
+          max: 50
+          example: 'UzEraeAlternator'
+        address:
+          description: 'The address of customer'
+          type: string
+          max: 255
+          example: 'Карманнинский р-н СИЭЗ Навои'
+        postal:
+          description: 'The postal code of customer'
+          type: string
+          max: 30
+          example: '210605'      
+      type: object    
+    Document:
+      title: Documents
+      properties:
+        id:
+          description: 'Document ID'
+          type: integer
+          example: '4'
+        docnum:
+          description: 'The Unique number of document'
+          type: string
+          example: 'NAK-2020-1'
+        docdate:
+          description: 'The date of document'
+          type: string
+          format: date
+          example: '2020-02-03'
+        document_type: { $ref: '#/components/schemas/DocumentType' }
+        from_warehouse: { $ref: '#/components/schemas/Warehouse' }
+        to_warehouse: { $ref: '#/components/schemas/Warehouse' }
+        supplier: { $ref: '#/components/schemas/Supplier' }
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/DocumentItem' }
+        series:
+          description: 'Searies of document'
+          type: string
+          max: 255
+          example: 'abc'
+        status:
+          description: 'The status of document'
+          type: string
+          enum:
+           - 'Issue `0`'
+           - 'Receipt `1`'
+        comment:
+          description: 'Here is comment'
+          type: string
+          max: 1000
+          example: 'This is comment attribute'
+        serial_number:
+          description: 'Here is comment'
+          type: string
+          max: 50
+          example: '95132414:200203:1:56'
+      type: object
+    FgInvoiceItem:
+      title: 'FG invoice item'
+      properties:
+        id:
+          description: 'Item ID'
+          type: integer
+          example: 951
+        part_no:
+          description: 'Part number'
+          type: string
+          max: 50
+          example: '42648025'
+        part_name:
+          description: 'Part name'
+          type: string
+          max: 100
+          example: 'CLUSTER ASM-INST AT NON-ERA LACETTI (J-200) №42648025'
+        qty:
+          description: 'Quantity'
+          type: number
+          format: double
+          example: 1608.75
+        price:
+          description: 'The price'
+          type: number
+          format: double
+          example: 343637.39
+        unit:
+          description: 'The unit'
+          type: string
+          example: 'EA'
+      type: object  
+    FgInvoice:
+      title: 'Finished good shipping invoice'
+      properties:
+        id:
+          description: 'Invoice ID'
+          type: integer
+          example: '4'
+        invoice_no:
+          description: 'The Unique number of the invoice for year'
+          type: string
+          example: '3375'
+        invoice_date:
+          description: 'The date of invoice'
+          type: string
+          format: date
+          example: '2020-02-10'
+        contract:
+          description: 'The contract number of invoice'
+          type: string
+          example: '№ 134-41100/2016'  
+        contract_date:
+          description: 'The date of contract'
+          type: string
+          format: date
+          example: '2016-12-31'
+        rec_person_fullname:
+          description: 'The recieving person fullname'
+          type: string
+          example: 'Mamatkarimov Sherali'
+        rec_person_regno:
+          description: 'The recieving person registration number'
+          type: string
+          example: '123'
+        driver:
+          description: 'The driver fullname'
+          type: string
+          example: 'Хасанов Х'
+        truck:
+          description: 'The truck model and id number'
+          type: string
+          example: 'DAF 40 D 817 SA'
+        manager:
+          description: 'The wharehouse manager fullname'
+          type: string
+          example: 'Абдукаримов М'  
+        account:
+          description: 'The factory account fullname'
+          type: string
+          example: 'Atabayev Otabek'
+        sender:
+          description: 'The sender person fullname'
+          type: string
+          example: 'Элчиeв Н'
+        vat:
+          description: 'VAT percentage value'
+          type: string
+          example: '15'  
+        excise:
+          description: 'The excise percentage value'
+          type: string
+          example: '1'  
+        factory: { $ref: '#/components/schemas/Factory' }
+        customer: { $ref: '#/components/schemas/Customer' }
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/FgInvoiceItem' }
+        createdBy: { $ref: '#/components/schemas/User' }
+        created_at:
+          description: 'The created datetime'
+          type: string
+          example: '22.04.2020 17:06'
+        updatedBy: { $ref: '#/components/schemas/User' }
+        updated_at:
+          description: 'The updated datetime'
+          type: string
+          example: '22.04.2020 17:06'
+      type: object    
+    CollectionMeta:
+      properties:
+        _links:
+          description: 'Available links based on query'
+          properties:
+            self:
+              description: 'To get current page url'
+              properties:
+                href:
+                  description: 'Current page url'
+                  type: url
+                  example: 'http://oyna.uzdy.uz/api...?page=7'
+              type: object
+            first:
+              description: 'To get first page url (not available on first page)'
+              properties:
+                href:
+                  description: 'First page url'
+                  type: url
+                  example: 'http://oyna.uzdy.uz/api...?page=1'
+              type: object
+            prev:
+              description: 'To get previous page url (not available on first page)'
+              properties:
+                href:
+                  description: 'Previous page url'
+                  type: url
+                  example: 'http://oyna.uzdy.uz/api...?page=6'
+              type: object
+            next:
+              description: 'To get next page url (not available on last page)'
+              properties:
+                href:
+                  description: 'Next page url'
+                  type: url
+                  example: 'http://oyna.uzdy.uz/api...?page=8'
+              type: object
+            last:
+              description: 'To get last page url (not available on last page)'
+              properties:
+                href:
+                  description: 'Last page url'
+                  type: url
+                  example: 'http://oyna.uzdy.uz/api...?page=11'
+              type: object
+          type: object
+        _meta:
+          description: 'Available metadata based on query'
+          properties:
+            totalCount:
+              description: 'Total count of the items'
+              type: integer
+              example: '207'
+            pageCount:
+              description: 'Total count of the pages'
+              type: integer
+              example: '11'
+            currentPage:
+              description: 'Current page number'
+              type: integer
+              example: '7'
+            perPage:
+              description: 'Items count for each page'
+              type: integer
+              example: '20'
+          type: object
+      type: object
+  responses:
+    UnprocessableEntity:
+      description: 'Unprocessable Entity'
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              properties:
+                field:
+                  description: 'Validation failed field name'
+                  type: string
+                message:
+                  description: 'Validation message'
+                  type: string
+              type: object
+    Unauthenticated:
+      description: Unauthenticated
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                example: Unauthenticated
+            type: object
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                example: Unauthorized
+            type: object
+    NoContent:
+      description: NoContent
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                example: NoContent
+            type: object
+    NotFound:
+      description: NotFound
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                example: NotFound
+            type: object
+    BadRequest:
+      description: 'Bad Request'
+      content:
+        application/json:
+          schema:
+            properties:
+              name:
+                example: 'Bad Request'
+              message:
+                example: invalid_request
+              code:
+                example: 0
+              status:
+                example: '400'
+              type:
+                example: yii\\web\\HttpException
+            type: object
+    InternalErrorAccount:
+      description: 'Internal Server Error'
+      content:
+        application/json:
+          schema:
+            properties:
+              name:
+                example: 'Internal Server Error'
+              code:
+                example: 0
+              status:
+                example: '500'
+              type:
+                example: yii\\web\\HttpException
+            type: object
+    NotFoundNull:
+      description: NotFound
+      content:
+        application/json:
+          schema: {  }
+  parameters:
+    modelId:
+      name: id
+      in: query
+      description: 'Model id'
+      schema:
+        type: integer
+    expandParamArticle:
+      name: expand
+      in: query
+      description: 'Example: `expand=tags`'
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+    expandParamCorporate:
+      name: expand
+      in: query
+      description: 'Example: `expand=type,industry,services`'
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+    expandParamMedia:
+      name: expand
+      in: query
+      description: 'Example: `expand=album`'
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+    pageSizeParam:
+      name: per-page
+      in: query
+      description: 'The number of items in each page'
+      required: false
+      schema:
+        type: integer
+        default: 20
+        maximum: 100
+        exclusiveMaximum: false
+        minimum: 1
+        exclusiveMinimum: false
+    pageParam:
+      name: page
+      in: query
+      description: 'Page number'
+      required: false
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+        exclusiveMinimum: false
+    expandParam:
+      name: expand
+      in: query
+      description: 'Example: `expand=images,tags`'
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+    expandParamReaction:
+      name: expand
+      in: query
+      description: 'Example: `expand=profile,reaction`'
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+  securitySchemes:
+    Oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: APP_URL/auth/community
+          tokenUrl: APP_URL/auth/token
+          scopes:
+            profile: 'Fetch profile'
+tags:
+  -
+    name: Part
+  -
+    name: BOM
+  -
+    name: Document
+ 

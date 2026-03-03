@@ -1,0 +1,111 @@
+.inv_detail{
+	border:none;
+	width:21cm;
+	font-size:11.0pt;
+	vertical-align:bottom;
+	white-space:nowrap;
+	border-collapse:collapse;
+	table-layout:fixed;
+	font-family:Arial, sans-serif;
+}
+
+.th_cyanHeader{
+	background-color:#ecf0f5;
+	color:#000;
+}
+.p_left3{ padding-left:3px; }
+.p_rigtht3{ padding-right:2px; }
+.tr_border_thin td{border:#2f2f2f solid thin;}
+.border_thin{border:#2f2f2f solid thin;}
+.font_bold{ font-weight:bold; }
+.font_underline{ text-decoration:underline; }
+.font_6{ font-size:6.0pt; }
+.font_7{ font-size:7.0pt; }
+.font_8{ font-size:8.0pt; }
+.font_9{ font-size:9.0pt; }
+.font_10{ font-size:10.0pt; }
+.font_13{ font-size:13.0pt; }
+.txt_wrap{
+	white-space:pre-wrap; /* css-3 */
+	white-space:-moz-pre-wrap; /* Mozilla, since 1999 */
+	white-space:-o-pre-wrap; /* Opera 7 */
+	word-wrap:break-word; /* Internet Explorer 5.5+ */
+}
+.txt_center{text-align:center;}
+.txt_right{text-align:right;}
+.txt_left{text-align:left;}
+.v_middle{vertical-align:middle;}
+.v_top{vertical-align:top;}
+.v_bottom{vertical-align:bottom;}
+.xl78345{
+	font-size:8.0pt;
+	text-align:left;
+	vertical-align:middle;
+	white-space:nowrap;
+}
+.poluchil_imzo{
+	font-size:8.0pt;
+	font-weight:bold;
+	text-align:center;
+	vertical-align:bottom;
+	border-top:none;
+	border-right:none;
+	border-bottom:thin solid #000;
+	border-left:none;
+	white-space:nowrap;
+}
+.imzo_izoh{
+	font-size:7.0pt;
+	text-align:center;
+	vertical-align:top;
+	border-top:thin solid #000;
+	border-right:none;
+	border-bottom:none;
+	border-left:none;
+	white-space:nowrap;
+}
+.adress_rekvizit{
+	padding:1px 1px 10px 1px;
+	font-size:10.0pt;
+	text-align:left;
+	vertical-align:top;
+	white-space:normal;
+}
+
+/*TTN print*/
+#ttn_table{
+	width:210mm;
+	color:#000000;
+}
+#ttn_table td{
+	border:thin solid #000000;
+	padding:1px 3px 1px 5px;
+	border-collapse:collapse;
+	table-layout:fixed;
+}
+.f_bold{ font-weight:bold;}
+.f_italic{ font-style:italic}
+.txt_center{text-align:center;}
+.txt_right{text-align:right;}
+.v_top{vertical-align:top;}
+.v_middle{vertical-align:middle;}
+.v_bottom{vertical-align:bottom;}
+/*TTN print*/
+
+.pbb{display:none;}
+@media print{
+	@page{
+		size: A4 portrait;
+	}
+	.page_break_before {page-break-after: always !important;}
+	.pbb{display:table-row;}
+	body{
+		margin:1mm 1mm 1mm 5mm !important;
+	}
+	#ttn_table{
+		-webkit-transform:scale(0.97,0.97);
+		-moz-transform:scale(0.97,0.97);
+		-o-transform:scale(0.97,0.97);
+		transform:scale(0.97,0.97);
+	}
+}

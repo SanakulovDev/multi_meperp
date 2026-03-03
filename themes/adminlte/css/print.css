@@ -1,0 +1,15 @@
+.table-document tr td,.table-document tr th{
+    padding: 2px 6px !important;
+    vertical-align: middle !important;
+    font-size: 10px !important;
+}
+
+.panel-body p, .panel-body div{
+    font-size: 10px !important;
+    margin-bottom: 5px !important;
+}
+
+.panel-body{
+   padding: 3px 5px;
+}
+

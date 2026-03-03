@@ -1,0 +1,7 @@
+0 8 * * TUE php /usr/local/www/oyna/_protected/yii currency-rate/update
+0 * * * * php /usr/local/www/oyna/_protected/yii bom
+5 * * * * php /usr/local/www/oyna/_protected/yii coverage/daily
+10 * * * * php /usr/local/www/oyna/_protected/yii coverage/weekly
+15 * * * * php /usr/local/www/oyna/_protected/yii coverage/local-daily
+20 * * * * php /usr/local/www/oyna/_protected/yii coverage/calc-all-stock
+25 * * * * php /usr/local/www/oyna/_protected/yii coverage/copying-data
