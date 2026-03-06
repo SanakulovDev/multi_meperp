@@ -9,7 +9,7 @@ use yii\widgets\Menu; ?>
     <div class="user-panel">
 
       <div class="pull-left image ">
-        <img src="<?=Yii::$app->homeUrl?>img/user.png" class="img-circle" alt="User Image">
+        <img src="<?=Yii::$app->homeUrl?>img/Logo.svg" class="img-circle1" style="width: 60px!important; background-color: #fff!important;" alt="User Image">
       </div>
       <div class="pull-left info">
         <p><?=Yii::$app->user->identity->fullname?></p>

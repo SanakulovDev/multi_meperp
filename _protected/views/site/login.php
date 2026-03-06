@@ -15,7 +15,7 @@
 
 		<div class="login-logo" style="margin-bottom: 10px;">
 			<a href="<?=Yii::$app->homeUrl?>">
-				<img src="<?=Yii::$app->homeUrl?>img/brand.svg" style="width:50%"/>
+				<img src="<?=Yii::$app->homeUrl?>img/Logo.svg" style="width:50%"/>
 			</a>
 			<h4 class="text-center" style="color: #444444;margin-top: 20px;">E R P</h4>
 		</div>

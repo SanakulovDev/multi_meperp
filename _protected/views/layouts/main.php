@@ -12,7 +12,7 @@
 	use yii\widgets\Breadcrumbs;
 
 	AppAsset::register($this);
-	$faviconUrl = Url::home().'favicon.ico';
+	$faviconUrl = Url::home().'/img/Logo.svg';
 	//		echo "<pre>1:"; print_r($faviconUrl);echo "</pre>";
 	//		die;
 	$this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => Url::to([$faviconUrl])]);

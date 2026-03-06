@@ -12,7 +12,7 @@ use yii\widgets\Breadcrumbs;
 
 AdminLteAsset::register($this);
 FlagIconCssAsset::register($this);
-$this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => Url::to('/favicon.ico')]);
+$this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => Url::to('/img/Logo.svg')]);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -21,7 +21,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => Url::t
 	<meta charset="<?=Yii::$app->charset?>">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <link rel="icon" href="<?=Yii::$app->homeUrl?>img/cropped-fav-32x32.png" sizes="32x32">
+  <link rel="icon" href="<?=Yii::$app->homeUrl?>img/Logo.svg" sizes="32x32">
   <?=Html::csrfMetaTags()?>
 	<title><?=Yii::$app->name?> - <?=Html::encode($this->title)?></title>
   <?php $this->head() ?>

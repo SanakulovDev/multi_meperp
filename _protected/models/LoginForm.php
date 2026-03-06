@@ -44,7 +44,6 @@ class LoginForm extends Model {
    * @param array  $params    The additional name-value pairs.
    */
   public function validatePassword($attribute, $params) {
-    return true;
     if ($this->hasErrors()) {
       return false;
     }
