@@ -233,6 +233,7 @@ class ProductSpecificationController extends AppController {
 			$items['partname'][] = '';
 			$items['parttype'][] = '';
 			$items['quantity'][] = '';
+			$items['quantity_meter'][] = '';
 			$items['warehouse'][] = '';
 			$items['spec'][] = '';
 			$i = 0;
@@ -242,6 +243,7 @@ class ProductSpecificationController extends AppController {
 				$items['partname'][] = $item->part->part_name;
 				$items['parttype'][] = $item->part->partType ? $item->part->partType->typename : null;
 				$items['quantity'][] = $item->usage_qty;
+				$items['quantity_meter'][] = $item->usage_qty_meter;
 				$items['warehouse'][] = $item->warehouse_id;
 				$items['spec'][] = $item->related_specification_id;
 			}
@@ -281,6 +283,7 @@ class ProductSpecificationController extends AppController {
 		$items['num'][] = '';
 		$items['detail'][] = '';
 		$items['quantity'][] = '';
+		$items['quantity_meter'][] = '';
 		$items['warehouse'][] = '';
 		$items['spec'][] = '';
 		$i = 0;
@@ -288,6 +291,7 @@ class ProductSpecificationController extends AppController {
 			$items['num'][] = ++$i;
 			$items['detail'][] = $item->part_id;
 			$items['quantity'][] = $item->usage_qty;
+			$items['quantity_meter'][] = $item->usage_qty_meter;
 			$items['warehouse'][] = $item->warehouse_id;
 			$items['spec'][] = $item->related_specification_id;
 		}

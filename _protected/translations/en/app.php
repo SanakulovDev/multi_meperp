@@ -796,6 +796,6 @@ return[
   'Month Period' => 'Month Period',
   'Year Period' => 'Year Period',
   'Download' => 'Download',
-  
+  'Coefficient' => 'Coefficient',
 ];
 

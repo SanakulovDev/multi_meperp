@@ -53,3 +53,5 @@ public/barcode
 /error.log
 Dockerfile
 docker-compose.yml
+Makefile
+.claude

@@ -20,6 +20,7 @@ use yii\helpers\ArrayHelper;
  * @property int|null $part_type_id
  * @property int|null $contract_source_id
  * @property string|null $pack_size
+ * @property float|null $coefficient
  * @property int|null $warehouse_id
  * @property string|null $remark
  * @property int $status
@@ -184,6 +185,7 @@ class Part extends ActiveRecord
                 }"
       ],
       [['state', 'part_type_id', 'contract_source_id', 'warehouse_id', 'status', 'created_by', 'created_at', 'updated_by', 'updated_at', 'commented_by', 'actual_contract_detail_id'], 'integer'],
+      [['coefficient'], 'number'],
       [['comment'], 'string'],
       [['arrived_qty'], 'number'],
       [['commented_at', 'part_color', 'arrived_at'], 'safe'],
@@ -226,6 +228,7 @@ class Part extends ActiveRecord
             'fg_warehouse_id' => Yii::t('app', 'FG storage'),
             'remark' => Yii::t('app', 'Remark'),
             'pack_size' => Yii::t('app', 'Pack size'),
+            'coefficient' => Yii::t('app', 'Coefficient'),
             'status' => Yii::t('app', 'Status'),
             'state' => Yii::t('app', 'State'),
             'created_by' => Yii::t('app', 'Created by'),
@@ -501,6 +504,17 @@ class Part extends ActiveRecord
     {
         return $this->hasMany(Req::class, ['part_id' => 'id'])
             ->where(['type' => CoverageController::TYPE_STOCK]);
+    }
+
+    /**
+     * kg ni metrga aylantiradi: metr = kg / (coefficient / 1000)
+     */
+    public function kgToMeter($kg)
+    {
+        if (!empty($this->coefficient) && $this->coefficient > 0) {
+            return $kg / ($this->coefficient / 1000);
+        }
+        return null;
     }
 
     // get part name

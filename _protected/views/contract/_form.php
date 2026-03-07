@@ -129,7 +129,7 @@
 
 	<div class="form-group">
 		<?=Html::a(Yii::t('app', 'btn-cancel'), ['index'], ['class' => 'btn btn-default btn-sm'])?>
-		<?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm', 'id' => 'contract-form', 'type'=> 'button'])?>
+		<?=Html::submitButton(Yii::t('app', 'btn-save'), ['class' => 'btn btn-success btn-sm', 'id' => 'contract-form'])?>
 	</div>
 	<?php ActiveForm::end(); ?>
 
@@ -139,8 +139,8 @@
 	$(document).ready(function() {
 		$('#contract-status').on('input', () => {
 			const value = $('#contract-status').val()
-			if (value && value > 5) {
-				$('#contract-status').val(5)
+			if (value && value < 0) {
+				$('#contract-status').val(0)
 			}
 		})
 	});

@@ -37,8 +37,13 @@ class StockController extends AppController
 	
 		$countQuery = clone $dataProvider->query;
 		$total = 0;
-		foreach ($countQuery->all() as $row) {
+		$totalMeter = 0;
+		foreach ($countQuery->with('part')->all() as $row) {
 			$total += $row->qty;
+			$meter = $row->part->kgToMeter($row->qty);
+			if ($meter !== null) {
+				$totalMeter += $meter;
+			}
 		}
 		$parts = ArrayHelper::map(Part::find()->all(), 'id', 'partinfo');
 		return $this->render('index', [
@@ -47,6 +52,7 @@ class StockController extends AppController
 			'parts' => $parts,
 			'user_warehouses' => $this->userWarehouses,
 			'total' => $total,
+			'totalMeter' => $totalMeter,
 		]);
 	}
 

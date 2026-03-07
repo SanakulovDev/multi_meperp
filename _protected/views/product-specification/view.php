@@ -29,8 +29,10 @@ function drawTree($data) {
         if($row['code']) $partName .= ' -> '.$row['code'].($row['description'] ? '('.$row['description'].')': '');
         echo "<li>";
         echo "<p style='float: left;margin-bottom: 0px'><span class='selected_part_state $color' title='$text'>$label</span></p>";
+        $qtyMeter = isset($row['usage_qty_meter']) && $row['usage_qty_meter'] ? round($row['usage_qty_meter'], 4) . ' m' : '';
+        $qtyDisplay = $qty . ' kg' . ($qtyMeter ? ' / ' . $qtyMeter : '');
         echo "<p style='float: left;margin-left: 10px;margin-bottom: 0px;min-width: 500px;'>";
-        echo "<span class='modal-title selected_part_info $color'>$info</span> | <span class='selected_part_uloc'>$uloc</span> | <span class='selected_part_uloc'>$qty</span> | <span class='selected_part_unit'>$unit</span><br>";
+        echo "<span class='modal-title selected_part_info $color'>$info</span> | <span class='selected_part_uloc'>$uloc</span> | <span class='selected_part_uloc'>$qtyDisplay</span> | <span class='selected_part_unit'>$unit</span><br>";
         echo "<span class='selected_part_name'>$partName - $partColor</span>";
         echo "</p><div style='clear: both'></div>";
 

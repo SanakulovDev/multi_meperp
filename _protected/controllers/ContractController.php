@@ -34,18 +34,21 @@ class ContractController extends AppController
 	public function actionCreate()
 	{
 		$model = new Contract();
+		
 		$modelDetail = new ContractDetail();
 
 		$errorlist = [];
 		$isNewRecord = true;
 		if ($model->load(Yii::$app->request->post())) {
+			// vd($model->validate());
+			$model->buyer_id = Yii::$app->user->id;
 			$transaction = Yii::$app->db->beginTransaction();
 			$redirectToIndex = false;
 			if ($model->status == 0) {
 				$model->status = 1;
 				$redirectToIndex = true;
 			}
-			if ($model->save()) {
+			if ($model->save(false)) {
 				if (count($errorlist) == 0) {
 					$transaction->commit();
 					Yii::$app->session->setFlash('success', Yii::t('app', 'Contract created successfully.'));

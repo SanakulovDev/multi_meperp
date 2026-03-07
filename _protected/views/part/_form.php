@@ -106,7 +106,9 @@ $prompt = ['prompt' => '. . .'];
       echo $form->field($model, 'contract_source_id')->dropDownList($items, $prompt);
       ?>
     </div>
-
+    <div class="col-md-4 col-sm-4 col-lg-4">
+      <?= $form->field($model, 'coefficient')->textInput(['type' => 'number', 'step' => '0.0001', 'placeholder' => Yii::t('app', 'Coefficient')]) ?>
+    </div>
   </div>
 
   <div class="row">

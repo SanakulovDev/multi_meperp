@@ -24,7 +24,9 @@ $partModel = new Part();
   </p>
   <?php Pjax::begin(); ?>
   <h4 class="pull-left" data-step="3" data-intro="<?=Yii::t('intro', 'stock-total')?>">
-    <?=Yii::t('app', 'Total')?>: <b> <?=number_format($total, 2, '.', ' ')?> </b>
+    <?=Yii::t('app', 'Total')?> (kg): <b> <?=number_format($total, 2, '.', ' ')?> </b>
+    &nbsp;|&nbsp;
+    <?=Yii::t('app', 'Total')?> (m): <b> <?=number_format($totalMeter, 4, '.', ' ')?> </b>
   </h4>
 
   <?=
@@ -103,6 +105,7 @@ $partModel = new Part();
         ],
         [
           'attribute' => 'qty',
+          'label' => Yii::t('app', 'Quantity') . ' (kg)',
           'headerOptions' => ['style' => 'width: 80px;text-align: right; vertical-align:middle;'],
           'filter' => ['1' => 'Все', '0' => 'без 0'],
           'content' => function($model) {
@@ -118,13 +121,15 @@ $partModel = new Part();
               'style' => 'width:80px; text-align: right;vertical-align:middle;'.$add_style
             ];
           },
-          //                        'contentOptions' => function($model, $key, $index, $column){
-          //                                $style = 'width: 150px;text-align: right; vertical-align:middle;';
-          //                                if($model->qty < 0) {
-          //                                    $arrOptions['style'] = $style . 'color:red;';
-          //                                }
-          //                                return $arrOptions;
-          //                            }
+        ],
+        [
+          'label' => Yii::t('app', 'Quantity') . ' (m)',
+          'headerOptions' => ['style' => 'width: 80px;text-align: right; vertical-align:middle;'],
+          'contentOptions' => ['style' => 'width:80px; text-align: right;vertical-align:middle;'],
+          'content' => function($model) {
+            $meter = $model->part->kgToMeter($model->qty);
+            return $meter !== null ? Helpers::numberFormatRemoveZero($meter, 4, '.', "", true, true) : '-';
+          },
         ],
         [
           'label' => Yii::t('app', 'Status'),

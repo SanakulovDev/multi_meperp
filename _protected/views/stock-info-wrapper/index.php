@@ -53,7 +53,19 @@ $shifts = [
                   return $model->part->partinfo;
               },
             ],
-            'qty',
+            [
+              'attribute' => 'qty',
+              'label' => Yii::t('app', 'Quantity') . ' (kg)',
+            ],
+            [
+              'label' => Yii::t('app', 'Quantity') . ' (m)',
+              'headerOptions' => ['style' => 'text-align: right;vertical-align:middle;'],
+              'contentOptions' => ['style' => 'text-align: right;vertical-align:middle;'],
+              'content' => function ($model) {
+                  $meter = $model->part->kgToMeter($model->qty);
+                  return $meter !== null ? number_format($meter, 4, '.', ' ') : '-';
+              },
+            ],
             [
               'attribute' =>'warehouse_id',
               'filter' => $warehouses,

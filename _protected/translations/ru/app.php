@@ -1159,4 +1159,5 @@ return [
   'Print' => 'Печать',
   'Summary' => 'Сводка',
   'Breakdown' => 'Разбивка',
+  'Coefficient' => 'Коэффициент',
 ];

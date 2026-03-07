@@ -916,5 +916,6 @@ return [
   'Month Period' => 'Oylik davr',
   'Year Period' => 'Yillik davr',
   'Download' => 'Yuklab olish',
+  'Coefficient' => 'Koeffitsient',
 ]
 ?>

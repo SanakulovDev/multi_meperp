@@ -146,27 +146,29 @@ class ProductSpecification extends \yii\db\ActiveRecord {
 				psi.id,
 				psi.part_id,
 				psi.usage_qty,
+				psi.usage_qty_meter,
 				psi.warehouse_id,
 				psi.product_specification_id,
 				ps.code,
 				ps.description,
 				ps.status as ps_status,
-				ps.amount as ps_amount,	
+				ps.amount as ps_amount,
 				IFNULL(psi.related_specification_id,0) as related_specification_id
 			FROM product_specification_item psi
-			LEFT JOIN product_specification ps ON psi.related_specification_id=ps.id 
+			LEFT JOIN product_specification ps ON psi.related_specification_id=ps.id
 			where psi.product_specification_id=:id
 			UNION ALL
 			SELECT
 				psi.id,
 				psi.part_id,
 				psi.usage_qty,
+				psi.usage_qty_meter,
 				psi.warehouse_id,
 				psi.product_specification_id,
 				ps.code,
 				ps.description,
 				ps.status as ps_status,
-				ps.amount as ps_amount,	
+				ps.amount as ps_amount,
 				IFNULL(psi.related_specification_id,0) as related_specification_id
 			FROM product_specification_item psi
 			INNER JOIN ancestors ON psi.product_specification_id=ancestors.related_specification_id
@@ -183,6 +185,7 @@ class ProductSpecification extends \yii\db\ActiveRecord {
 			u.unit_value,
 			w.name as warehouse,
 			ancestors.usage_qty,
+			ancestors.usage_qty_meter,
 			ancestors.code,
 			ancestors.description,
 			ancestors.ps_amount,
@@ -211,6 +214,7 @@ class ProductSpecification extends \yii\db\ActiveRecord {
         $model['state'] = $item['state'];
         $model['unit_value'] = $item['unit_value'];
         $model['usage_qty'] = $item['usage_qty'];
+        $model['usage_qty_meter'] = $item['usage_qty_meter'];
         $model['warehouse'] = $item['warehouse'];
         $model['code'] = $item['code'];
         $model['description'] = $item['description'];

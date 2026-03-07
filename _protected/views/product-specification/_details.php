@@ -6,13 +6,16 @@ use app\models\Warehouse;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
-$notFgParts = ArrayHelper::map(
-  Part::find()
+$notFgPartsQuery = Part::find()
     ->where(['state' => [Part::STATE_SEMI, Part::STATE_RAW, Part::STATE_CASTLE]])
-    ->all(),
-  'id',
-  'partinfo'
-);
+    ->all();
+$notFgParts = ArrayHelper::map($notFgPartsQuery, 'id', 'partinfo');
+$partCoefficients = [];
+foreach ($notFgPartsQuery as $p) {
+    if (!empty($p->coefficient) && $p->coefficient > 0) {
+        $partCoefficients[$p->id] = (float) $p->coefficient;
+    }
+}
 $warehouses = ArrayHelper::map(
   Warehouse::find()
     ->where(['status' => Warehouse::STATUS_ACTIVE])
@@ -65,7 +68,10 @@ $whDefault = count($warehouses) > 0 ? array_key_first($warehouses) : null;
           <th style="width: 300px"><?= Yii::t('app', 'Part number') ?></th>
           <th style="width: 300px"><?= Yii::t('app', 'Product specification') ?></th>
           <th style="width: 150px">
-            <?= Yii::t('app', 'Quantity') ?> <span id="total_detail_qty" class="badge">0</span>
+            <?= Yii::t('app', 'Quantity') ?> (kg) <span id="total_detail_qty" class="badge">0</span>
+          </th>
+          <th style="width: 150px">
+            <?= Yii::t('app', 'Quantity') ?> (m) <span id="total_detail_qty_m" class="badge">0</span>
           </th>
           <th><?= Yii::t('app', 'Shop or line') ?></th>
           <th style="width: 20px"><?= Yii::t('app', 'Action') ?></th>
@@ -93,6 +99,9 @@ $whDefault = count($warehouses) > 0 ? array_key_first($warehouses) : null;
           </td>
           <td>
             <?= Html::input('text', 'items[quantity][]', '', ['class' => 'form-control detail-qty']) ?>
+          </td>
+          <td>
+            <?= Html::input('text', 'items[quantity_meter][]', '', ['class' => 'form-control detail-qty-meter', 'readonly' => true]) ?>
           </td>
           <td><?= Html::dropDownList('items[warehouse][]', $whDefault, $warehouses, [
             'id' => 'partlist',
@@ -139,6 +148,12 @@ $whDefault = count($warehouses) > 0 ? array_key_first($warehouses) : null;
             ]) ?>
           </td>
           <td>
+            <?= Html::input('text', 'items[quantity_meter][]', $items['quantity_meter'][$key] ?? '', [
+              'class' => 'form-control detail-qty-meter',
+              'readonly' => true,
+            ]) ?>
+          </td>
+          <td>
             <?= Html::dropDownList('items[warehouse][]', $items['warehouse'][$key], $warehouses, [
               'class' => 'form-control detail_part',
               'prompt' => Yii::t('app', 'Select...'),
@@ -171,8 +186,41 @@ $whDefault = count($warehouses) > 0 ? array_key_first($warehouses) : null;
 $fetchSpecUrl = Url::to(['product-specification/fetch-by-part'], true);
 $prompt = Yii::t('app', 'Select...');
 
+$coeffJson = json_encode($partCoefficients);
 $script1 = <<<JS
-  
+  var partCoefficients = $coeffJson;
+
+  function calcMeter(row) {
+    var partId = row.find('.partSelect').val();
+    var qty = parseFloat(row.find('.detail-qty').val()) || 0;
+    var coeff = partCoefficients[partId];
+    if (coeff && coeff > 0) {
+      var meter = qty / (coeff / 1000);
+      row.find('.detail-qty-meter').val(meter.toFixed(4));
+    } else {
+      row.find('.detail-qty-meter').val('');
+    }
+  }
+
+  function calculateTotalQtyMeter() {
+    var sum = 0;
+    $('tr.tr_item input.detail-qty-meter').each(function(){
+      var v = parseFloat(this.value);
+      if (!isNaN(v)) sum += v;
+    });
+    $('#total_detail_qty_m').text(sum.toFixed(4));
+  }
+
+  $(document).on('input change', 'tr.tr_item .detail-qty', function(){
+    calcMeter($(this).closest('tr'));
+    calculateTotalQtyMeter();
+  });
+
+  $(document).on('change', 'tr.tr_item .partSelect', function(){
+    calcMeter($(this).closest('tr'));
+    calculateTotalQtyMeter();
+  });
+
   $("#detailTable").on("change", ".partSelect", function(e){
     var elemant = $(this);
     var part_id = $(this).val();
@@ -212,6 +260,7 @@ $script1 = <<<JS
   }
   
   calculateTotalQty();
+  calculateTotalQtyMeter();
   $(document).on('change', 'tr.tr_item input.detail-qty', function (){
     calculateTotalQty();
   })
