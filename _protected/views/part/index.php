@@ -162,6 +162,7 @@ $canDelete = Yii::$app->user->can('part-delete');
             return $model->stateText;
           }
         ],
+        'coefficient',
         [
           'attribute' => 'remark',
           'value' => 'remark',

@@ -37,7 +37,7 @@ class StockInfo extends \yii\db\ActiveRecord
     {
         return [
             [['part_id', 'warehouse_id', 'give_user_id', 'type_id','stock_info_wrapper_id'], 'integer'],
-            [['qty','old_qty'], 'number'],
+            [['qty','old_qty','qty_meter'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
         ];
     }
@@ -57,6 +57,7 @@ class StockInfo extends \yii\db\ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'type_id' => Yii::t('app', 'Type'),
+            'qty_meter' => Yii::t('app', 'Quantity') . ' (m)',
         ];
     }
     /**
@@ -69,6 +70,10 @@ class StockInfo extends \yii\db\ActiveRecord
     if (parent::beforeSave($insert)) {
         if ($this->isNewRecord) {
             $this->old_qty = $this->qty;
+        }
+        $part = Part::findOne($this->part_id);
+        if ($part) {
+            $this->qty_meter = $part->kgToMeter($this->qty);
         }
         return true;
     }

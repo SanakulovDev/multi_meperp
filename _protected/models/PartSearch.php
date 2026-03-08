@@ -15,7 +15,7 @@
 		public function rules(){
 			return [
 				[['id', 'status', 'state', 'part_type_id', 'warehouse_id', 'created_by', 'created_at', 'updated_by', 'updated_at', 'contract_source_id'], 'integer'],
-				[['part_no', 'part_name', 'part_color', 'remark', 'pack_size', 'unit_id'], 'safe'],
+				[['part_no', 'part_name', 'part_color', 'remark', 'pack_size', 'unit_id', 'coefficient'], 'safe'],
 			];
 		}
 
@@ -60,7 +60,8 @@
 						->andFilterWhere(['like', 'part.part_color', $this->part_color])
 						->andFilterWhere(['like', 'part.remark', $this->remark])
 						->andFilterWhere(['like', 'part.pack_size', $this->pack_size])
-						->andFilterWhere(['like', 'part_name', $this->part_name]);
+						->andFilterWhere(['like', 'part_name', $this->part_name])
+						->andFilterWhere(['like', 'part.coefficient', $this->coefficient]);
 			if($mode == 'excel'){
 				$file = Yii::createObject([
 																		 'class' => 'codemix\excelexport\ExcelFile',

@@ -58,12 +58,12 @@ $shifts = [
               'label' => Yii::t('app', 'Quantity') . ' (kg)',
             ],
             [
+              'attribute' => 'qty_meter',
               'label' => Yii::t('app', 'Quantity') . ' (m)',
               'headerOptions' => ['style' => 'text-align: right;vertical-align:middle;'],
               'contentOptions' => ['style' => 'text-align: right;vertical-align:middle;'],
               'content' => function ($model) {
-                  $meter = $model->part->kgToMeter($model->qty);
-                  return $meter !== null ? number_format($meter, 4, '.', ' ') : '-';
+                  return $model->qty_meter !== null ? number_format($model->qty_meter, 4, '.', ' ') : '-';
               },
             ],
             [

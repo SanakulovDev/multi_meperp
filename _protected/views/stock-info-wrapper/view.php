@@ -15,6 +15,21 @@ $this->params['breadcrumbs'][] = $model->part?$model->part->partinfo:$this->titl
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <div class="row">
+      <div class="col-md-6">
+        <table class="table table-bordered">
+          <tr>
+            <th><?= Yii::t('app', 'Quantity') ?> (kg)</th>
+            <td><?= $model->qty ?></td>
+          </tr>
+          <tr>
+            <th><?= Yii::t('app', 'Quantity') ?> (m)</th>
+            <td><?= $model->qty_meter !== null ? number_format($model->qty_meter, 4) : '-' ?></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
     <?php if($model->stockInfos):?>
         <table id="w0" class="table table-striped table-bordered detail-view">
           <thead>

@@ -66,7 +66,7 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
             [['warehouse_id', 'line', 'qty', 'part_id', 'shift'], 'required'],
             [['warehouse_id', 'type_id', 'give_user_id', 'document_id', 'line', 'part_id', 'status', 'shift'], 'integer'],
             [['created_at', 'updated_at', 'date'], 'safe'],
-            [['qty'], 'number'],
+            [['qty', 'qty_meter'], 'number'],
             [['code', 'comment'], 'string', 'max' => 255],
             [['document_id'], 'exist', 'skipOnError' => true, 'targetClass' => Document::className(), 'targetAttribute' => ['document_id' => 'id']],
             [['part_id'], 'exist', 'skipOnError' => true, 'targetClass' => Part::className(), 'targetAttribute' => ['part_id' => 'id']],
@@ -89,7 +89,8 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'part_id' => Yii::t('app', 'Product'),
-            'qty' => Yii::t('app', 'Quantity'),
+            'qty' => Yii::t('app', 'Quantity') . ' (kg)',
+            'qty_meter' => Yii::t('app', 'Quantity') . ' (m)',
             'line' => Yii::t('app', 'Line'),
             'date'  => Yii::t('app', 'Date'),
             'status'  => Yii::t('app', 'Status'),
@@ -138,6 +139,18 @@ class StockInfoWrapper extends \yii\db\ActiveRecord
     /**
      * Har bir stock_info uchun UNIQUE CODE beriladi
      */
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $part = Part::findOne($this->part_id);
+            if ($part) {
+                $this->qty_meter = $part->kgToMeter($this->qty);
+            }
+            return true;
+        }
+        return false;
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
       if($insert){

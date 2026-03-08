@@ -16,7 +16,7 @@ class StockInfoWrapperSearch extends StockInfoWrapper {
   public function rules()
   {
       return [
-          [['warehouse_id', 'type_id', 'give_user_id', 'document_id', 'part_id', 'qty', 'status', 'shift'], 'integer'],
+          [['warehouse_id', 'type_id', 'give_user_id', 'document_id', 'part_id', 'qty', 'status', 'shift', 'qty_meter'], 'integer'],
           [['code', 'comment', 'date'], 'string', 'max' => 255],
       ];
   }
@@ -52,6 +52,7 @@ class StockInfoWrapperSearch extends StockInfoWrapper {
     // $query->joinWith(['warehouse', 'part', 'user']);
     //    $query->joinWith('userWarehouse');
     // grid filtering conditions
+    $query->andFilterWhere(['like', 'qty_meter' => $this->qty_meter]);
     $query->andFilterWhere([
                              'code' => $this->code,
                              'warehouse_id' => $this->warehouse_id,

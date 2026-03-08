@@ -52,7 +52,10 @@ $shifts = [
     <div class="row"> -->
         <div class="col-lg-2 col-md-2">
           <? //=$form->field($model, 'quantity')->textInput(['maxlength' => 6, 'type' => 'number', 'min' => 1, 'max' => 999999])?>
-          <?=$form->field($model, 'qty')->textInput()?>
+          <?=$form->field($model, 'qty')->textInput(['id' => 'qty-input'])?>
+        </div>
+        <div class="col-lg-2 col-md-2">
+          <?=$form->field($model, 'qty_meter')->textInput(['id' => 'qty-meter-input', 'readonly' => true])?>
         </div>
         <div class="col-lg-2 col-md-2">
             <!-- line column drodownList activeform -->
@@ -94,26 +97,27 @@ $(document).ready(function() {
            
     });
     
+    var partCoefficients = {};
+    function calcMeter() {
+      var partId = $('#stockinfowrapper-part_id').val();
+      var qty = parseFloat($('#qty-input').val()) || 0;
+      var coeff = partCoefficients[partId];
+      if (coeff && coeff > 0 && qty > 0) {
+        var meter = qty / (coeff / 1000);
+        $('#qty-meter-input').val(meter.toFixed(4));
+      } else {
+        $('#qty-meter-input').val('');
+      }
+    }
+
+    $('#qty-input').on('input change', function() {
+      calcMeter();
+    });
+
     $('#stockinfowrapper-part_id').on('select2:select', function (e) {
-    $('#stockinfowrapper-qty').val($(e.params.data.element).data('pack-size'));    
-    var elemant = $(this);        
-        var part_id = $(this).val();
-        var url     = $(this).attr('data-url')        
-        /*
-        if(part_id != '')
-        {
-            $.ajax({
-                dataType: 'json',
-                type: 'GET',
-                url: url + '?id=' + part_id,
-                success: function (jsondata) {
-                  $('#blockquote').show()
-                  $('#partname').html(jsondata.partname)
-                },
-              })
-        }
-    */
-      
+    $('#stockinfowrapper-qty').val($(e.params.data.element).data('pack-size'));
+    $('#qty-input').val($(e.params.data.element).data('pack-size'));
+    calcMeter();
     });
 
 
@@ -127,6 +131,7 @@ $(document).ready(function() {
                 type: 'GET',
                 url: url + '?floc=' + floc + '&model_id=' + model_id,
                 success: function (data){
+                  partCoefficients = {};
                   $('#stockinfowrapper-part_id').each(function (i, obj){
                     var el = $(this)
                     el.html('')
@@ -139,6 +144,9 @@ $(document).ready(function() {
                         value: part.id,
                         text: part.info,
                       }))
+                      if (part.coefficient) {
+                        partCoefficients[part.id] = parseFloat(part.coefficient);
+                      }
                     })
                   })
                 },

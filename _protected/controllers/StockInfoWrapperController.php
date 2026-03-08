@@ -90,6 +90,7 @@ class StockInfoWrapperController extends Controller
           try{
             $model->give_user_id = Yii::$app->user->id;
             $model->date = date('Y-m-d');
+            // vd($part_models);
             if($model->save(false)){
               if(!empty($part_models)){
                 foreach($part_models as $key => $item){                  
@@ -121,6 +122,9 @@ class StockInfoWrapperController extends Controller
                   );
                 }
               }
+              $transaction->commit();
+              Yii::$app->session->setFlash('success', Yii::t('app', 'Stock Info created successfully.'));
+              return $this->redirect(['index']);
             }
 
           }catch(\Exception $e){
@@ -224,7 +228,9 @@ class StockInfoWrapperController extends Controller
           }
           
         }
-
+        $transaction->commit();
+        Yii::$app->session->setFlash('success', 'Deleted Successfully');
+        return $this->redirect(['index']);
         
     }
 
