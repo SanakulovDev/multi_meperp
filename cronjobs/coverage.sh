@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /var/www/meperp/_protected
+cd /var/www/mainMep/_protected
 
 php yii price/update
 php yii bom

@@ -82,7 +82,7 @@ if($url == '/report/index'){
 		<!-- mini logo for sidebar mini 50x50 pixels -->
 		<span class="logo-mini" title="<?= Yii::$app->params['comp_name'] ?>"><b><?= Yii::$app->params['comp_short_name'] ?></b></span>
 		<!-- logo for regular state and mobile devices -->
-		<span class="logo-lg" title="<?= Yii::$app->params['comp_name'] ?>"><b>MEP ERP</b></span>
+		<span class="logo-lg" title="<?= Yii::$app->params['comp_name'] ?>"><b>Neotherm ERP</b></span>
 	</a>
 	<nav class="navbar navbar-static-top">
 		<a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-MEP ERP (Supply Chain Management System) — a Yii2-based ERP system for managing supply chain workflows including product design, material management, production planning, reporting, and sales/distribution.
+Neotherm ERP (Supply Chain Management System) — a Yii2-based ERP system for managing supply chain workflows including product design, material management, production planning, reporting, and sales/distribution.
 
 - **Framework:** Yii2 Basic Template (PHP >= 7.1, runs on PHP 7.4)
 - **Database:** MariaDB 10.4

@@ -52,7 +52,7 @@ class StockInfoWrapperSearch extends StockInfoWrapper {
     // $query->joinWith(['warehouse', 'part', 'user']);
     //    $query->joinWith('userWarehouse');
     // grid filtering conditions
-    $query->andFilterWhere(['like', 'qty_meter' => $this->qty_meter]);
+    $query->andFilterWhere(['like', 'qty_meter', $this->qty_meter]);
     $query->andFilterWhere([
                              'code' => $this->code,
                              'warehouse_id' => $this->warehouse_id,

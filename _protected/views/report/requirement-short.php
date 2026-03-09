@@ -22,7 +22,7 @@
 <div class="req-index">
     <div class="panel">
         <div class="panel-heading">
-                <img style="height:28px;" src="/img/mep1.jpg" title="<?php echo Yii::$app->params['comp_name'] ?>" class="pull-left"/>
+                <img style="height:28px;" src="/img/neotherm.jpg" title="<?php echo Yii::$app->params['comp_name'] ?>" class="pull-left"/>
                 <h3 class="pull-left" style="margin: 5px 0px -5px 10px;">
                 <?=Yii::t('app', $this->title)?>
                 <span id="calc_at" style="font-size: 14px;color: #a29393;"><?=$loading?></span>

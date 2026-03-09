@@ -14,7 +14,7 @@ $baseUrl = Url::base(true);
 	<head>
 		<meta charset="<?= Yii::$app->charset ?>"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>MEP ERP Print Pechat</title>
+		<title>Neotherm ERP Print Pechat</title>
 		<link rel="icon" type="image/ico" href="/img/Logo.svg" />
 		<style type="text/css">
 			.swal2-container.swal2-center .swal2-title img {
