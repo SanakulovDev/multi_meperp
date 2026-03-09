@@ -60,11 +60,16 @@ jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
     <div class="col-lg-4">
         <?
         $cond_pt = (!Yii::$app->user->can('admin')) ? ['and', ['in', 'warehouse_id', Yii::$app->user->identity->warehouseIds]] : '';
-        $parts = Part::find()->with(['warehouse' => function($q) {
+        $parts = Part::find()->joinWith(['warehouse' => function($q) {
         $q->andWhere(['warehouse_type' => [Warehouse::TYPE_PHYSICAL, Warehouse::TYPE_SHOP]]);
         }
         ]);
-        $parts = $parts->where($cond_pt)->andWhere(['status' => Part::STATUS_ACTIVE])->all();
+        $parts = $parts->where($cond_pt)->andWhere(['part.status' => Part::STATUS_ACTIVE]);
+        //rawsql
+        // $sql = $parts->createCommand()->rawSql;
+        // vd($sql);
+        $parts = $parts->all();
+        // vd($cond_pt);
         $items = ArrayHelper::map($parts, 'id', 'part_no');
         $params = ['prompt' => '. . .', 'class' => 'form-control select2'];
         ?>

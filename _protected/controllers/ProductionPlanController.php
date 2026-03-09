@@ -139,16 +139,15 @@ class ProductionPlanController extends AppController {
     $models	= [new ProductionPlan];
     if(Yii::$app->getRequest()->isAjax) {
       if($modelMain->load(Yii::$app->request->post())) {
-		  $models = Model::createMultiple(ProductionPlan::classname());
-		  Model::loadMultiple($models, Yii::$app->request->post());
-		//   vd($models);
+        $models = Model::createMultiple(ProductionPlan::classname());
+        Model::loadMultiple($models, Yii::$app->request->post());
         $valid = $modelMain->validate();
         $valid = Model::validateMultiple($models) ;
 		    $valid = true;
         if($valid){
-          // $transaction = \Yii::$app->db->beginTransaction();
+          $transaction = \Yii::$app->db->beginTransaction();
 
-          // try{
+          try{
             $flag = true;
               	foreach ($models as $index => $model) {
                   	$model->part_id = $modelMain->part_id;
@@ -175,16 +174,16 @@ class ProductionPlanController extends AppController {
                   //TelegramService::productionPlan($tg);
               	}
             if ($flag) {
-                // $transaction->commit();
+                $transaction->commit();
                 Yii::$app->response->format = Response::FORMAT_JSON;
         		    return $data;
             }
-          // } catch (Exception $e) {
-          //   $transaction->rollBack();
-          //   $data['status'] = 0;
-          //   Yii::$app->response->format = Response::FORMAT_JSON;
-          //   return $data;
-          // }
+          } catch (Exception $e) {
+            $transaction->rollBack();
+            $data['status'] = 0;
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return $data;
+          }
         }
         
       } else {
@@ -794,7 +793,7 @@ class ProductionPlanController extends AppController {
           catch(Exception $e) {
             $transaction->rollback();
 //            $errMsg = "<i><u><strong>Upload excel file:</strong></u></i>".Helpers::arrayToStringRecursive($e->errorInfo);
-            $errMsg = "<i><u><strong>Upload excel file:</strong></u></i> ".$e->errorInfo[2];
+            $errMsg = "<i><u><strong>Upload excel file:</strong></u></i> ";
             Yii::$app->session->setFlash('error', $errMsg);
           }
         } else {

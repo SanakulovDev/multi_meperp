@@ -255,7 +255,7 @@ class StockInfoWrapperController extends Controller
 
     private function loadDictionaries()
     {
-      $queryPart = Part::find()->where("status = 1 and state <> 0");
+      $queryPart = Part::find()->where(['status' => 1, 'state' => Part::STATE_FINISHED]);
       if (Yii::$app->user->identity->rolename == "counter" || Yii::$app->user->identity->rolename == "mrpc") {
         $queryPart->andWhere(["warehouse_id" => Yii::$app->user->identity->warehouseIds]);
       }

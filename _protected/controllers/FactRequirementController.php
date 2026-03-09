@@ -575,7 +575,7 @@ class FactRequirementController extends Controller
             ->andWhere(['>=', 'created_at', $startTimestamp])
             ->orderBy(['created_at' => SORT_ASC])
             ->all();
-®
+
         // Calculate material requirements
         $result = $this->calculateMaterialRequirements($productionOrders, $startDate, $filter);
         $materialRequirements = $result['materials'];
