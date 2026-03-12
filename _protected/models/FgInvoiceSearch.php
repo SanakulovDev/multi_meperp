@@ -15,11 +15,12 @@
 		 */
 		public $contract_factory;
 		public $date;
+		public $mark_id;
 		public function rules(){
 			return [
 				[['id', 'factory_id', 'customer_id', 'vat', 'excise', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
 				[['invoice_no', 'invoice_date', 'contract', 'contract_date', 'rec_person_fullname', 'rec_person_regno', 'driver', 'truck', 'manager', 'account', 'sender', 'comment', 'confirmed_by'], 'safe'],
-				[['contract_factory', 'date'], 'safe']
+				[['contract_factory', 'date', 'mark_id'], 'safe']
 			];	
 		}
 
@@ -70,6 +71,14 @@
 						->andFilterWhere(['like', 'account', $this->account])
 //						->andFilterWhere(['like', 'sender', $this->sender])
 						->andFilterWhere(['like', 'comment', $this->comment]);
+			// marka (part_color) bo'yicha filter
+			if (!empty($this->mark_id)) {
+				$subQuery = FgInvoiceDetail::find()
+					->select('fg_invoice_detail.fg_invoice_id')
+					->leftJoin('part', 'part.part_no = fg_invoice_detail.part_no')
+					->where(['part.part_color' => $this->mark_id]);
+				$query->andWhere(['fg_invoice.id' => $subQuery]);
+			}
 			if(strlen($this->confirmed_by) > 0){
 				switch($this->confirmed_by){
 					case 0:

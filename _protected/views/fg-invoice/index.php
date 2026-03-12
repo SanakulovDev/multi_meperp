@@ -2,6 +2,7 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 use app\models\Customer;
+use app\models\PartMark;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\helpers\ArrayHelper;
@@ -344,9 +345,17 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
       ],
 
       [
-        'attribute' => '',
+        'attribute' => 'mark_id',
         'format' => 'html',
         'label' => 'Марка',
+        'headerOptions' => ['style' => 'min-width:200px;'],
+        'contentOptions' => ['style' => 'min-width:200px;'],
+        'filter' => Html::activeDropDownList(
+          $searchModel,
+          'mark_id',
+          ArrayHelper::map(PartMark::find()->orderBy('name')->all(), 'name', 'name'),
+          ['class' => 'form-control select2', 'prompt' => '...']
+        ),
         'value' => function($model){
           $html = '';
           if(isset($model->fgInvoiceDetails)){
@@ -354,7 +363,6 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
             foreach($items as $item){
               $html .= mb_substr($item->part_name." ".$item->part->part_color, 0, 30)."<br\>";
             }
-          
           }
           return $html;
         }
