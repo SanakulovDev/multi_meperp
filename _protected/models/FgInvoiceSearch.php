@@ -15,11 +15,12 @@
 		 */
 		public $contract_factory;
 		public $date;
+		public $part_name;
 		public function rules(){
 			return [
 				[['id', 'factory_id', 'customer_id', 'vat', 'excise', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
 				[['invoice_no', 'invoice_date', 'contract', 'contract_date', 'rec_person_fullname', 'rec_person_regno', 'driver', 'truck', 'manager', 'account', 'sender', 'comment', 'confirmed_by'], 'safe'],
-				[['contract_factory', 'date'], 'safe']
+				[['contract_factory', 'date', 'part_name'], 'safe']
 			];	
 		}
 
@@ -70,6 +71,15 @@
 						->andFilterWhere(['like', 'account', $this->account])
 //						->andFilterWhere(['like', 'sender', $this->sender])
 						->andFilterWhere(['like', 'comment', $this->comment]);
+			if (!empty($this->part_name)) {
+				$query->andWhere([
+					'exists',
+					FgInvoiceDetail::find()
+						->select(new Expression('1'))
+						->where('fg_invoice_detail.fg_invoice_id = fg_invoice.id')
+						->andWhere(['like', 'fg_invoice_detail.part_name', $this->part_name])
+				]);
+			}
 			if(strlen($this->confirmed_by) > 0){
 				switch($this->confirmed_by){
 					case 0:

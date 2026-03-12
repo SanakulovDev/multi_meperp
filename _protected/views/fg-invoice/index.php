@@ -2,9 +2,25 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 use app\models\Customer;
+use app\models\Part;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\helpers\ArrayHelper;
+
+// Unique marka (part_name) ro'yxatini olish
+$partNames = ArrayHelper::map(
+  Part::find()
+    ->select(['part_name'])
+    ->where(['state' => Part::STATE_FINISHED])
+    ->andWhere(['not', ['part_name' => null]])
+    ->andWhere(['!=', 'part_name', ''])
+    ->orderBy(['part_name' => SORT_ASC])
+    ->groupBy('part_name')
+    ->asArray()
+    ->all(),
+  'part_name',
+  'part_name'
+);
 
 /* @var $this yii\web\View */
 /* @var $model app\models\FgInvoice */
@@ -344,9 +360,17 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
       ],
 
       [
-        'attribute' => '',
+        'attribute' => 'part_name',
         'format' => 'html',
         'label' => 'Марка',
+        'headerOptions' => ['style' => 'min-width:250px;'],
+        'contentOptions' => ['style' => 'min-width:250px;'],
+        'filter' => Html::activeDropDownList(
+          $searchModel,
+          'part_name',
+          $partNames,
+          ['class' => 'form-control select2', 'prompt' => '...', 'style' => 'min-width:250px;']
+        ),
         'value' => function($model){
           $html = '';
           if(isset($model->fgInvoiceDetails)){
@@ -420,5 +444,17 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
 );?>
 
 <?php Pjax::end(); ?>
+
+<?php
+$this->registerJs("
+  function initSelect2() {
+    $('.select2').select2({ width: '100%' });
+  }
+  initSelect2();
+  $(document).on('pjax:end', function() {
+    initSelect2();
+  });
+");
+?>
 
 </div>
