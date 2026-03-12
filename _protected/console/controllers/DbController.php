@@ -78,6 +78,45 @@ class DbController extends Controller
     }
   }
 
+  public function actionCreateShipper()
+  {
+    $existing = User::find()->where(['username' => 'shipper'])->one();
+    if ($existing) {
+      $this->stdout("User 'shipper' already exists (id={$existing->id})\n", Console::FG_YELLOW);
+      $user = $existing;
+    } else {
+      $user = new User();
+      $user->username = 'shipper';
+      $user->fullname = 'Shipper';
+      $user->email = 'shipper@' . Yii::$app->params['account_suffix'];
+      $user->account_suffix = Yii::$app->params['account_suffix'];
+      $user->password = 'shipper1234';
+      $user->setPassword($user->password);
+      $user->generateAuthKey();
+      $user->status = User::STATUS_ACTIVE;
+      if ($user->save()) {
+        $this->stdout("User 'Shipper' created (id={$user->id})\n", Console::FG_GREEN);
+      } else {
+        print_r($user->getErrors());
+        return false;
+      }
+    }
+
+    $auth = Yii::$app->authManager;
+    $shipperRole = $auth->getRole('shipper');
+    if (!$shipperRole) {
+      $this->stdout("Role 'shipper' not found in auth_item table\n", Console::FG_RED);
+      return false;
+    }
+    $existing_assignment = $auth->getAssignment('shipper', $user->id);
+    if ($existing_assignment) {
+      $this->stdout("Role 'shipper' already assigned to user\n", Console::FG_YELLOW);
+    } else {
+      $auth->assign($shipperRole, $user->id);
+      $this->stdout("Role 'shipper' assigned to user 'Shipper'\n", Console::FG_GREEN);
+    }
+  }
+
   public function actionSeedAll()
   {
     self::seedCurrencies();
