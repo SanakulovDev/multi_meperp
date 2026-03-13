@@ -174,7 +174,7 @@ use yii\widgets\ActiveForm;
 </div>
 
 <?php
-$url = Url::to(['sales-contract/list-by-sales-supplier'], true);
+$url = Url::to(['sales-contract/list-by-sales-supplier']);
 $add_item = <<< JS
 $(document).ready(function() {
 	$('#fginvoice-contract').select();

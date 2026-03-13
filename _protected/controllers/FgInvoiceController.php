@@ -142,7 +142,7 @@ class FgInvoiceController extends AppController {
         $contracts = FgInVoice::find()->where(['customer_id'=>$customer_id])->orderBy(['id'=>SORT_ASC])->all();
         if($contracts){
           foreach($contracts as $key => $contract){
-            $result = $this->queryFactorys($contract->contract);
+            $result = $this->queryFactorys($contract->contract, date('Y'));
             foreach($result as $items){
               foreach($items as $detail){
                 $unit = $detail['unit_value'];
