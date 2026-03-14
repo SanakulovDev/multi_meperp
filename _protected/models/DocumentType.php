@@ -86,6 +86,9 @@
 		public static function generateDocnum($id){
 
 			$docType = self::findOne($id);
+			if($docType === null){
+				throw new \yii\web\NotFoundHttpException("DocumentType #{$id} topilmadi.");
+			}
 			if($docType->yyyy == date('Y')){
 				$seq = $docType->sequence + 1;
 				$docType->sequence = $seq;

@@ -103,7 +103,7 @@ $lines = ProductionOrder::getLines();
 <?php ActiveForm::end(); ?>
 
 <?
-$urlOrder = Url::to(['production-plan/wh-list-by-part'], true);
+$urlOrder = Url::to(['production-plan/wh-list-by-part']);
 $script1 = <<< JS
 $(document).ready(function() {	
 	var part_id = $('#productionplan-part_id').children("option:selected"). val();

@@ -51,8 +51,8 @@ use yii\widgets\ActiveForm;
 </div>
 
 <?
-$urlOrder = Url::to(['invoice-detail/order-list-by-contract'], true);
-$urlPart = Url::to(['invoice-detail/part-list-by-order'], true);
+$urlOrder = Url::to(['invoice-detail/order-list-by-contract']);
+$urlPart = Url::to(['invoice-detail/part-list-by-order']);
 $script1 = <<< JS
 $(document).ready(function() {
 	var contract_id = $('#invoicedetail-contract_id').children("option:selected"). val();

@@ -142,7 +142,7 @@ jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
 <?php   ActiveForm::end(); ?>
 
 <?php 
-$urlOrder = Url::to(['production-plan-monthly/wh-list-by-part'], true);
+$urlOrder = Url::to(['production-plan-monthly/wh-list-by-part']);
 ob_start();?>
 
 $(function(){

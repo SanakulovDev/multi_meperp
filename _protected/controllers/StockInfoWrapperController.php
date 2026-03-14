@@ -105,6 +105,19 @@ class StockInfoWrapperController extends Controller
                 $stockResult = Stock::issue(1, $data, true);
                 // vd($stockResult);
                 if ($stockResult['success']) {
+                  // Gotoviy mahsulotni o'z omboriga qo'shish
+                  $finishedStock = Stock::find()
+                    ->where(['part_id' => $model->part_id, 'warehouse_id' => $model->warehouse_id])
+                    ->one();
+                  if ($finishedStock) {
+                    $finishedStock->qty = $finishedStock->qty + $model->qty;
+                  } else {
+                    $finishedStock = new Stock();
+                    $finishedStock->part_id = $model->part_id;
+                    $finishedStock->warehouse_id = $model->warehouse_id;
+                    $finishedStock->qty = $model->qty;
+                  }
+                  $finishedStock->save(false);
                   $transaction->commit();
                   // $this->writeToDocHistory($model->id, $this->action->id);
                   Yii::$app->session->setFlash('success', Yii::t('app', 'Stock Info created successfully.'));

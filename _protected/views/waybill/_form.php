@@ -84,7 +84,7 @@ use yii\widgets\ActiveForm;
 </div>
 
 <?php
-$url = Url::to(['waybill/factory-info'], true);
+$url = Url::to(['waybill/factory-info']);
 $add_item = <<< JS
 
 	$(document).ready(function() {	 

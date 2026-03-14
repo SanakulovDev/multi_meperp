@@ -470,7 +470,7 @@ class ContainerInvoiceController extends AppController {
   public function actionCreateDocument($id) {
     $errorlist = [];
     $stockReceiptResult['success'] = true;
-    $document_type_id = 1; // Invoice
+    $document_type_id = 2; // Invoice
     $model = $this->findModel($id);
     if(empty($model->regime)) {
       Yii::$app->session->setFlash('error', Yii::t('app', 'You are not allowed to do this action. Because, customs regime is not set.'));

@@ -159,7 +159,7 @@ jQuery(".dynamicform_wrapper").on("afterDelete", function(e) {
 <?php ActiveForm::end(); ?>
 
 <?
-$urlOrder = Url::to(['production-plan/wh-list-by-part'], true);
+$urlOrder = Url::to(['production-plan/wh-list-by-part']);
 $script1 = <<< JS
 $(document).ready(function() {	
 	var part_id = $('#productionplanshort-part_id').children("option:selected"). val();
