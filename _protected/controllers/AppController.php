@@ -59,7 +59,8 @@ class AppController extends Controller
       'out-containers-list-by-out-invoice',
       'get-parts-by-mark-and-color',
       'list-by-fg-invoice',
-      'list-by-waybill'
+      'list-by-waybill',
+      'list-waybills-by-contract'
     ])) {
       if (!in_array($action->controller->id, ['report'])) {
         // Warehouse actionlari uchun superadmin tekshiruvi

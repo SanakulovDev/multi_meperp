@@ -4382,4 +4382,19 @@ class ReportController extends AppController {
     return $this ->redirect(['fact-requirement/index', 'start_date' => $start_date, 'filter' => $filter]);
   }
 
+  public function actionSalesDebtStatus()
+  {
+    $customerId = (int) Yii::$app->request->get('customer_id', 0);
+    $data = $this->_reportService->salesDebtStatus($customerId ?: null);
+    $customers = ArrayHelper::map(
+      Customer::find()->orderBy('name')->all(),
+      'id', 'name'
+    );
+    return $this->render('sales/sales-debt-status', [
+      'data'       => $data,
+      'customers'  => $customers,
+      'customerId' => $customerId,
+    ]);
+  }
+
 }

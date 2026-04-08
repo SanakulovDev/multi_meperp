@@ -916,5 +916,14 @@ return [
   'Month Period' => 'Oylik davr',
   'Year Period' => 'Yillik davr',
   'Download' => 'Yuklab olish',
+  'Debt status by customers' => 'Mijozlar bo\'yicha qarz holati',
+  'Receipts' => 'Postupleniya',
+  'Balance (debt)' => 'Saldo (qarz)',
+  'Unpaid invoices' => 'To\'lanmagan fakturalar',
+  'First unpaid date' => 'Birinchi to\'lanmagan sana',
+  'FG Invoice Payments' => 'Oplata',
+  'Waybill (TTN)' => 'TTN raqami',
+  'Filter' => 'Filter',
+  'Reset' => 'Tozalash',
 ]
 ?>

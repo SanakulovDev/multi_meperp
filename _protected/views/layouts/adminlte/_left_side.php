@@ -694,6 +694,13 @@ use yii\widgets\Menu; ?>
         'template' => '<a href="{url}"><i class="fa fa-list"></i> <span>{label}</span></a>',
       ];
     }
+    if (Yii::$app->user->can('fg-invoice-payment-index')) {
+      $m500_sales[] = [
+        'label' => Yii::t('app', 'FG Invoice Payments'),
+        'url' => ['/fg-invoice-payment/index'],
+        'template' => '<a href="{url}"><i class="fa fa-money"></i> <span>{label}</span></a>',
+      ];
+    }
     if (Yii::$app->user->can('part-index')) {
       // $m400_plm[] = [
       //   'label' => Yii::t('app', 'Calculate products'),

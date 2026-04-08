@@ -2197,36 +2197,98 @@ class ReportService
 
     
 
+    /**
+     * Debt status report: per-customer shipment vs payment from fg_invoice_payment.
+     * Returns rows sorted by saldo DESC, each row:
+     *   customer_id, customer_name, total_inv, total_pay, saldo,
+     *   unpaid_invoices (comma-separated), first_unpaid_date
+     *
+     * @param int|null $customerId  optional filter — 0 or null means all customers
+     */
+    public function salesDebtStatus(?int $customerId = null): array
+    {
+        $customerFilter = $customerId ? 'AND fi.customer_id = :cid' : '';
+        $params = $customerId ? [':cid' => $customerId] : [];
+
+        $sql = "
+            SELECT
+                c.id   customer_id,
+                c.name customer_name,
+                SUM(fid.price * fid.qty)                             total_inv,
+                COALESCE(p.total_pay, 0)                             total_pay,
+                SUM(fid.price * fid.qty) - COALESCE(p.total_pay, 0) saldo,
+                fu.unpaid_invoices,
+                fu.first_unpaid_date
+            FROM fg_invoice fi
+            JOIN fg_invoice_detail fid ON fid.fg_invoice_id = fi.id
+            JOIN customer c            ON c.id = fi.customer_id
+            LEFT JOIN (
+                SELECT sc.customer_id, SUM(fip.amount) total_pay
+                FROM fg_invoice_payment fip
+                JOIN sales_contract sc ON sc.id = fip.sales_contract_id
+                GROUP BY sc.customer_id
+            ) p ON p.customer_id = fi.customer_id
+            LEFT JOIN (
+                SELECT
+                    ri.customer_id,
+                    GROUP_CONCAT(ri.invoice_no ORDER BY ri.invoice_date, ri.id SEPARATOR ', ') unpaid_invoices,
+                    MIN(ri.invoice_date) first_unpaid_date
+                FROM (
+                    SELECT fi2.customer_id, fi2.id, fi2.invoice_no, fi2.invoice_date,
+                           SUM(SUM(fid2.price * fid2.qty)) OVER (
+                               PARTITION BY fi2.customer_id
+                               ORDER BY fi2.invoice_date, fi2.id
+                           ) cum_inv
+                    FROM fg_invoice fi2
+                    JOIN fg_invoice_detail fid2 ON fid2.fg_invoice_id = fi2.id
+                    GROUP BY fi2.id, fi2.customer_id, fi2.invoice_no, fi2.invoice_date
+                ) ri
+                LEFT JOIN (
+                    SELECT sc2.customer_id, SUM(fip2.amount) total_pay
+                    FROM fg_invoice_payment fip2
+                    JOIN sales_contract sc2 ON sc2.id = fip2.sales_contract_id
+                    GROUP BY sc2.customer_id
+                ) p2 ON p2.customer_id = ri.customer_id
+                WHERE ri.cum_inv > COALESCE(p2.total_pay, 0)
+                GROUP BY ri.customer_id
+            ) fu ON fu.customer_id = fi.customer_id
+            WHERE 1=1 $customerFilter
+            GROUP BY c.id, c.name, p.total_pay, fu.unpaid_invoices, fu.first_unpaid_date
+            HAVING saldo > 0
+            ORDER BY saldo DESC
+        ";
+        return Yii::$app->db->createCommand($sql, $params)->queryAll();
+    }
+
     public function salesPaymentStatus()
     {
         $query = "
-        select 
+        select
             customer, max(inv_date) inv_date, sum(inv_amt) inv_amt, max(pay_date) pay_date, sum(pay_amt) pay_amt
-        from 
+        from
         (
-            select 
-                concat(c.name , '|', rc.customer_id) customer, '' inv_date, 0 inv_amt, min(rc.date) pay_date, sum(fir.amount) pay_amt
-            from 
-                recept_control rc, fg_invoice_receipt fir, customer c
-            where 
-                rc.id = fir.recept_control_id  and	
-                c.id = rc.customer_id 
-            group by 
-                concat(c.name , '|', rc.customer_id)
-            union	
-            select 
-                concat(c.name , '|', fi.customer_id) customer, min(fi.invoice_date) inv_date, sum(fid.price*fid.qty) inv_amt, '' payd_date, 0 pay_amt 
-            from 
-                fg_invoice fi, fg_invoice_detail fid, customer c 
-            where 
-                fi.id = fid.fg_invoice_id and	
-                c.id = fi.customer_id 
-            group by 
+            select
+                concat(c.name , '|', sc.customer_id) customer, '' inv_date, 0 inv_amt, min(fip.date) pay_date, sum(fip.amount) pay_amt
+            from
+                fg_invoice_payment fip
+                join sales_contract sc on sc.id = fip.sales_contract_id
+                join customer c on c.id = sc.customer_id
+            group by
+                concat(c.name , '|', sc.customer_id)
+            union
+            select
+                concat(c.name , '|', fi.customer_id) customer, min(fi.invoice_date) inv_date, sum(fid.price*fid.qty) inv_amt, '' pay_date, 0 pay_amt
+            from
+                fg_invoice fi, fg_invoice_detail fid, customer c
+            where
+                fi.id = fid.fg_invoice_id and
+                c.id = fi.customer_id
+            group by
                 concat(c.name ,'|',fi.customer_id)
         ) a
         group by customer
         ";
-        $data = Yii::$app->db->createCommand($query,[])->queryAll();
+        $data = Yii::$app->db->createCommand($query, [])->queryAll();
 
         return compact('data');
     }
@@ -2255,17 +2317,15 @@ class ReportService
         $debit = Yii::$app->db->createCommand($query,[':customer_id' => $customer_id])->queryAll();
 
         $query = "
-        select 
-            no,fir.amount  pay_amt, rc.date  pay_date, sc.contract_no , rc.amount, (rc.amount - fir.amount) amt_diff
-        from 
-            recept_control rc, fg_invoice_receipt fir, customer c, sales_contract sc 
-        where 
-            rc.id = fir.recept_control_id  and	
-            c.id = rc.customer_id and
-            sc.id = rc.sales_contract_id and
-            rc.customer_id  = :customer_id
+        select
+            fip.no, fip.amount pay_amt, fip.date pay_date, sc.contract_no, fip.amount amount, 0 amt_diff
+        from
+            fg_invoice_payment fip
+            join sales_contract sc on sc.id = fip.sales_contract_id
+        where
+            sc.customer_id = :customer_id
         ";
-        $credit = Yii::$app->db->createCommand($query,[':customer_id' => $customer_id])->queryAll();
+        $credit = Yii::$app->db->createCommand($query, [':customer_id' => $customer_id])->queryAll();
         $customerName = Customer::findOne($customer_id)->name;
         return compact('debit','credit','customerName');
     }

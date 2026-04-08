@@ -796,6 +796,17 @@ return[
   'Month Period' => 'Month Period',
   'Year Period' => 'Year Period',
   'Download' => 'Download',
-  
+  'Debt status by customers' => 'Debt status by customers',
+  'Shipped amount' => 'Shipped amount',
+  'Receipts' => 'Receipts',
+  'Balance (debt)' => 'Balance (debt)',
+  'Unpaid invoices' => 'Unpaid invoices',
+  'First unpaid date' => 'First unpaid date',
+  'FG Invoice Payments' => 'Payments',
+  'Waybill (TTN)' => 'TTN number',
+  'Receipt number' => 'Receipt number',
+  'Sales contract' => 'Sales contract',
+  'Filter' => 'Filter',
+  'Reset' => 'Reset',
 ];
 
