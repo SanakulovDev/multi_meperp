@@ -4385,7 +4385,11 @@ class ReportController extends AppController {
   public function actionSalesDebtStatus()
   {
     $customerId = (int) Yii::$app->request->get('customer_id', 0);
-    $data = $this->_reportService->salesDebtStatus($customerId ?: null);
+    $type       = Yii::$app->request->get('type');
+    if (!in_array($type, ['debt', 'credit', 'zero'], true)) {
+      $type = null;
+    }
+    $data = $this->_reportService->salesDebtStatus($customerId ?: null, $type);
     $customers = ArrayHelper::map(
       Customer::find()->orderBy('name')->all(),
       'id', 'name'
@@ -4394,6 +4398,7 @@ class ReportController extends AppController {
       'data'       => $data,
       'customers'  => $customers,
       'customerId' => $customerId,
+      'type'       => $type,
     ]);
   }
 

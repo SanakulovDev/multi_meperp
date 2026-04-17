@@ -131,7 +131,11 @@ class FgInvoicePaymentController extends AppController
 
     private function formData(FgInvoicePayment $model): array
     {
-        $contracts = ArrayHelper::map(SalesContract::find()->all(), 'id', 'contract_no');
+        $contracts = ArrayHelper::map(
+            SalesContract::find()->with('customer')->orderBy('contract_no')->all(),
+            'id',
+            'contractInfo'
+        );
         return compact('model', 'contracts');
     }
 }

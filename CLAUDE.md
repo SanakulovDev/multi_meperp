@@ -69,7 +69,17 @@ cd _protected/tests
 php ../vendor/bin/codecept run             # all suites
 php ../vendor/bin/codecept run unit        # unit tests only
 php ../vendor/bin/codecept run functional  # functional tests only
+php ../vendor/bin/codecept run acceptance  # acceptance tests only
+
+# Run a single file
+php ../vendor/bin/codecept run unit codeception/unit/models/FgInvoicePaymentServiceTest.php
+php ../vendor/bin/codecept run functional codeception/functional/LoginCest.php
+
+# Rebuild actor classes after new helpers/pages
+php ../vendor/bin/codecept build
 ```
+
+Functional/acceptance bootstrap expects a running test entrypoint at `http://localhost:8080/index-test.php`. Adjust `_protected/tests/codeception.yml` / `acceptance.suite.yml` if your local setup differs.
 
 ### Dependency management
 ```bash
@@ -103,9 +113,11 @@ cronjobs/            # Cron scripts
 
 ### Key architectural patterns
 
-**Controllers**: All web controllers extend `AppController` (not Yii's base `Controller`). `AppController::beforeAction()` enforces RBAC permission checks using the pattern `{controller-id}-{action-id}` for every action. Actions in the bypass list skip RBAC.
+**Controllers**: All web controllers extend `AppController` (not Yii's base `Controller`). `AppController::beforeAction()` enforces RBAC permission checks using the pattern `{controller-id}-{action-id}` for every action. Actions in the bypass list skip RBAC. When adding a new action, check whether RBAC `auth_item` rows or the bypass list need updating.
 
-**Models**: Follow Yii2 ActiveRecord. Search models (e.g., `ContractSearch`) are separate classes extending base models — they handle `GridView` filtering and pagination via `search()` returning `ActiveDataProvider`.
+**API controllers**: Extend `app\modules\api\controllers\BaseController`. That base wires up CORS, JSON content negotiation, bearer-token auth, verb filtering, and disables CSRF. Keep API controllers thin — delegate filtering/serialization to `_protected/modules/api/search/*`.
+
+**Models**: Follow Yii2 ActiveRecord. Search models (e.g., `ContractSearch`) are separate classes beside the base model — they handle `GridView` filtering and pagination via `search()` returning `ActiveDataProvider`. Some search models accept a second mode argument: `search($params, 'excel')` returns an Excel export instead of a data provider (see `FgInvoicePaymentSearch` and similar). Keep filtering logic in the search model, not in controllers.
 
 **RBAC**: DB-backed (`yii\rbac\DbManager`). Permissions follow the `{controller-id}-{action-id}` naming convention. `AuthorRule` is a custom rule in `_protected/rbac/rules/`.
 
@@ -158,4 +170,33 @@ Language is resolved in this order:
 3. App default (`en`)
 
 ### Translation files
-All translation files live in `_protected/translations/{lang}/` as plain PHP arrays:
+All translation files live in `_protected/translations/{lang}/app.php` as plain PHP arrays returning `['key' => 'value']`. When adding a new `Yii::t('app', '…')` key, add it to **all three** files (`en/app.php`, `ru/app.php`, `uz/app.php`) — a missing key falls through to the raw string, which looks broken in non-English UIs.
+
+## Codebase conventions
+
+### CRUD-in-modal pattern
+Most create/update flows in the web UI are AJAX modals, not full page loads. The typical controller + view pair looks like this:
+
+- `actionIndex` renders a `GridView` with row-level buttons that carry `class="form-modal"` / `class="modalButtonUpdate"` / `class="modalButtonDelete"`. The shared modal JS in the AdminLTE theme reads `value` / `data-href` attributes and issues AJAX requests.
+- `actionCreate` / `actionUpdate`:
+  - On GET (AJAX): return `$this->renderAjax('_form', $this->formData($model))`.
+  - On POST (AJAX): validate + save via a service and return JSON `{status: 1}` on success or `{status: 0, errors: $model->getErrors()}` on failure.
+  - On non-AJAX: redirect to `['index']` (no standalone form page).
+- `actionValidate` handles ActiveForm's `enableAjaxValidation`: loads the POSTed model and returns `ActiveForm::validate($model)` as JSON. Rebind the `validationUrl` to include `id` when updating.
+- `actionDelete` returns JSON `{status: 1|0}` — there's no confirmation view.
+- The `_form.php` partial begins with `ActiveForm::begin(['options' => ['class' => 'modalForm', 'data-pjax' => true]])` so the shared JS can intercept submit.
+
+If a controller deviates from this (e.g., a reporting screen with its own layout), follow the existing file in that directory instead of forcing the modal pattern.
+
+### Service layer
+Services under `_protected/services/` own complex orchestration and heavy SQL, keeping controllers thin. Conventions:
+
+- Services are plain classes, instantiated with `new FooService()` inside the controller (there's no DI container wiring for them). Controllers often expose a private `getService(): FooService` helper.
+- `ReportService` is the home for report queries. Raw SQL via `Yii::$app->db->createCommand($sql, $params)->queryAll()` is expected here; ActiveRecord is reserved for simpler list screens.
+- Some report queries rely on MySQL **window functions** (`SUM(...) OVER (PARTITION BY ... ORDER BY ...)`) — the app assumes MySQL 8.0+ / MariaDB 10.2+.
+- Save logic (`$service->save($model)`) centralizes validation + `$model->save(false)`, and is where business rules (e.g., linking rows, updating related tables) belong. Controllers call the service and translate its boolean return into the JSON response.
+
+### Number & date formatting
+- `app\components\Helpers::numberFormatRemoveZero($value, $decimals = 2)` is the default money/quantity formatter for views (it drops trailing zeros).
+- For thousand-separator input fields, the established JS pattern is `.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')` (space separator). See `_protected/views/recept-control/_form.php` and `_protected/views/fg-invoice-payment/_form.php` for reference implementations that also normalize the value before AJAX validation / submit.
+- Dates stored as `YYYY-MM-DD` strings are formatted for display with `date('d.m.Y', strtotime($value))`. Timestamps (`created_at`, `updated_at`) use `d.m.Y H:i` — most models expose a `getCreatedAtFormatted()` getter for this.

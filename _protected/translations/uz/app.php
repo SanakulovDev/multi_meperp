@@ -921,9 +921,17 @@ return [
   'Balance (debt)' => 'Saldo (qarz)',
   'Unpaid invoices' => 'To\'lanmagan fakturalar',
   'First unpaid date' => 'Birinchi to\'lanmagan sana',
+  'Days passed' => 'Necha kun o`tdi',
+  'days' => 'kun',
   'FG Invoice Payments' => 'Oplata',
   'Waybill (TTN)' => 'TTN raqami',
   'Filter' => 'Filter',
   'Reset' => 'Tozalash',
+  'Only debt' => 'Qarzdorlar',
+  'Only credit' => 'Ortiqcha to\'langanlar',
+  'Zero saldo' => 'Saldosi nol',
+  'Show all' => 'Hammasini ko\'rsatish',
+  'Show more' => 'Ko\'proq',
+  'Show less' => 'Yashirish',
 ]
 ?>

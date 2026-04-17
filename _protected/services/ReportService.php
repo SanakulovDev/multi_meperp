@@ -2198,64 +2198,105 @@ class ReportService
     
 
     /**
-     * Debt status report: per-customer shipment vs payment from fg_invoice_payment.
-     * Returns rows sorted by saldo DESC, each row:
-     *   customer_id, customer_name, total_inv, total_pay, saldo,
-     *   unpaid_invoices (comma-separated), first_unpaid_date
+     * Debt status report — per-customer shipment vs payment.
      *
-     * @param int|null $customerId  optional filter — 0 or null means all customers
+     * Unpaid detection is performed at **waybill (TTN) level** — a waybill is
+     * considered paid when SUM(fg_invoice_payment.amount for that waybill_id)
+     * >= SUM(invoice details on that waybill). Invoices listed are the ones
+     * attached to unpaid waybills.
+     *
+     * Customer-level totals (total_inv, total_pay, saldo) are computed across
+     * ALL invoices/payments, so the saldo matches the accounting truth even if
+     * the user over-pays a single TTN — that excess is NOT auto-applied to
+     * other unpaid TTNs under this variant. Teach users this: pay the correct
+     * TTN for the saldo to match the unpaid-invoices list.
+     *
+     * Returned columns:
+     *   customer_id, customer_name, total_inv, total_pay, saldo,
+     *   unpaid_invoices (comma-separated invoice_no from unpaid TTNs),
+     *   first_unpaid_date, overdue_days
+     *
+     * @param int|null    $customerId  0/null means all customers
+     * @param string|null $type        'debt' (saldo>0.01), 'credit' (saldo<-0.01),
+     *                                 'zero' (|saldo|<=0.01), null = no filter
      */
-    public function salesDebtStatus(?int $customerId = null): array
+    public function salesDebtStatus(?int $customerId = null, ?string $type = null): array
     {
-        $customerFilter = $customerId ? 'AND fi.customer_id = :cid' : '';
+        $customerFilter = $customerId ? 'WHERE c.id = :cid' : '';
         $params = $customerId ? [':cid' => $customerId] : [];
+
+        switch ($type) {
+            case 'debt':   $having = 'HAVING saldo > 0.01'; break;
+            case 'credit': $having = 'HAVING saldo < -0.01'; break;
+            case 'zero':   $having = 'HAVING ABS(saldo) <= 0.01'; break;
+            default:       $having = '';
+        }
 
         $sql = "
             SELECT
                 c.id   customer_id,
                 c.name customer_name,
-                SUM(fid.price * fid.qty)                             total_inv,
-                COALESCE(p.total_pay, 0)                             total_pay,
-                SUM(fid.price * fid.qty) - COALESCE(p.total_pay, 0) saldo,
-                fu.unpaid_invoices,
-                fu.first_unpaid_date
-            FROM fg_invoice fi
-            JOIN fg_invoice_detail fid ON fid.fg_invoice_id = fi.id
-            JOIN customer c            ON c.id = fi.customer_id
+                COALESCE(inv.total_inv, 0)                               total_inv,
+                COALESCE(pay.total_pay, 0)                               total_pay,
+                COALESCE(inv.total_inv, 0) - COALESCE(pay.total_pay, 0)  saldo,
+                unp.unpaid_invoices,
+                unp.first_unpaid_date,
+                unp.overdue_days
+            FROM customer c
+
+            -- Customer-level shipment total (invoice-level truth, independent of waybills).
+            JOIN (
+                SELECT fi.customer_id, SUM(fid.price * fid.qty) total_inv
+                FROM fg_invoice fi
+                JOIN fg_invoice_detail fid ON fid.fg_invoice_id = fi.id
+                GROUP BY fi.customer_id
+            ) inv ON inv.customer_id = c.id
+
+            -- Customer-level payment total.
             LEFT JOIN (
                 SELECT sc.customer_id, SUM(fip.amount) total_pay
                 FROM fg_invoice_payment fip
                 JOIN sales_contract sc ON sc.id = fip.sales_contract_id
                 GROUP BY sc.customer_id
-            ) p ON p.customer_id = fi.customer_id
+            ) pay ON pay.customer_id = c.id
+
+            -- Unpaid waybills → their invoices. Waybill is 'unpaid' when TTN
+            -- invoice sum is not yet covered by payments booked against that TTN.
             LEFT JOIN (
                 SELECT
-                    ri.customer_id,
-                    GROUP_CONCAT(ri.invoice_no ORDER BY ri.invoice_date, ri.id SEPARATOR ', ') unpaid_invoices,
-                    MIN(ri.invoice_date) first_unpaid_date
+                    wi.customer_id,
+                    GROUP_CONCAT(wi.invoice_nos
+                                 ORDER BY wi.first_inv_date, wi.waybill_id
+                                 SEPARATOR ', ')                          unpaid_invoices,
+                    DATE(MIN(wi.first_inv_date))                          first_unpaid_date,
+                    DATEDIFF(CURDATE(), DATE(MIN(wi.first_inv_date)))     overdue_days
                 FROM (
-                    SELECT fi2.customer_id, fi2.id, fi2.invoice_no, fi2.invoice_date,
-                           SUM(SUM(fid2.price * fid2.qty)) OVER (
-                               PARTITION BY fi2.customer_id
-                               ORDER BY fi2.invoice_date, fi2.id
-                           ) cum_inv
-                    FROM fg_invoice fi2
+                    SELECT
+                        fi2.customer_id,
+                        fiw.waybill_id,
+                        SUM(fid2.price * fid2.qty)                                    inv_amt,
+                        MIN(fi2.invoice_date)                                         first_inv_date,
+                        GROUP_CONCAT(DISTINCT fi2.invoice_no
+                                     ORDER BY fi2.invoice_date
+                                     SEPARATOR ', ')                                  invoice_nos
+                    FROM fg_invoice_waybill fiw
+                    JOIN fg_invoice fi2        ON fi2.id = fiw.fg_invoice_id
                     JOIN fg_invoice_detail fid2 ON fid2.fg_invoice_id = fi2.id
-                    GROUP BY fi2.id, fi2.customer_id, fi2.invoice_no, fi2.invoice_date
-                ) ri
+                    GROUP BY fi2.customer_id, fiw.waybill_id
+                ) wi
                 LEFT JOIN (
-                    SELECT sc2.customer_id, SUM(fip2.amount) total_pay
-                    FROM fg_invoice_payment fip2
-                    JOIN sales_contract sc2 ON sc2.id = fip2.sales_contract_id
-                    GROUP BY sc2.customer_id
-                ) p2 ON p2.customer_id = ri.customer_id
-                WHERE ri.cum_inv > COALESCE(p2.total_pay, 0)
-                GROUP BY ri.customer_id
-            ) fu ON fu.customer_id = fi.customer_id
-            WHERE 1=1 $customerFilter
-            GROUP BY c.id, c.name, p.total_pay, fu.unpaid_invoices, fu.first_unpaid_date
-            HAVING saldo > 0
-            ORDER BY saldo DESC
+                    SELECT waybill_id, SUM(amount) pay_amt
+                    FROM fg_invoice_payment
+                    WHERE waybill_id IS NOT NULL
+                    GROUP BY waybill_id
+                ) wp ON wp.waybill_id = wi.waybill_id
+                WHERE wi.inv_amt > COALESCE(wp.pay_amt, 0) + 0.01
+                GROUP BY wi.customer_id
+            ) unp ON unp.customer_id = c.id
+
+            $customerFilter
+            $having
+            ORDER BY saldo DESC, c.name ASC
         ";
         return Yii::$app->db->createCommand($sql, $params)->queryAll();
     }
@@ -2529,7 +2570,12 @@ class ReportService
         $all_amount = 0;
         $all_qty = 0;
         $all_vat_amount = 0;
-        $vat = $firstFgInvoice->vat;
+        $firstFgInvoice = null;
+        if($firstFgInvoice){
+            $vat = $firstFgInvoice->vat;
+        }else{
+            die('Vat not found');
+        }
         $contracts = FgInVoice::find()->where(['customer_id'=>$customer_id])->orderBy(['id'=>SORT_ASC])->all();
         if($contracts){
           foreach($contracts as $key => $contract){

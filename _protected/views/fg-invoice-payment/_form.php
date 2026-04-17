@@ -4,7 +4,7 @@ use yii\widgets\ActiveForm;
 
 /* @var $this     yii\web\View */
 /* @var $model    app\models\FgInvoicePayment */
-/* @var $contracts array  id => contract_no */
+/* @var $contracts array  id => "contract_no (customer)" */
 
 $validationUrl = ['validate'];
 if (!$model->isNewRecord) {
@@ -35,10 +35,13 @@ $form = ActiveForm::begin([
 
 <div class="row">
     <div class="col-sm-6">
-        <div class="form-group field-fginvoicepayment-waybill_id">
-            <label class="control-label"><?= $model->getAttributeLabel('waybill_id') ?></label>
+        <div class="form-group field-fginvoicepayment-waybill_id required">
+            <label class="control-label" for="fginvoicepayment-waybill_id">
+                <?= $model->getAttributeLabel('waybill_id') ?>
+                <span class="text-danger" style="font-weight:bold;">*</span>
+            </label>
             <select id="fginvoicepayment-waybill_id" name="FgInvoicePayment[waybill_id]"
-                    class="select2 form-control" style="width:100%">
+                    class="select2 form-control" style="width:100%" required>
                 <option value=""></option>
             </select>
             <div class="help-block"></div>
@@ -66,7 +69,11 @@ $form = ActiveForm::begin([
         </div>
     </div>
     <div class="col-sm-6">
-        <?= $form->field($model, 'amount')->textInput(['type' => 'number', 'step' => 'any']) ?>
+        <?= $form->field($model, 'amount')->textInput([
+            'inputmode' => 'decimal',
+            'class'     => 'form-control text-right',
+            'autocomplete' => 'off',
+        ]) ?>
     </div>
 </div>
 
@@ -94,9 +101,47 @@ $ajaxUrl    = Url::to(['fg-invoice-payment/list-waybills-by-contract'], true);
 $isUpdate   = $model->isNewRecord ? 0 : 1;
 $contractId = (int) ($model->sales_contract_id ?? 0);
 $selectedId = (int) ($model->waybill_id ?? 0);
+$formId     = $model->formName();
 
 $script = <<<JS
 (function () {
+    var \$amount = $('#fginvoicepayment-amount');
+
+    function stripSeparators(value) {
+        return String(value == null ? '' : value).replace(/\s+/g, '');
+    }
+
+    function formatAmount(value) {
+        var raw = stripSeparators(value);
+        if (raw === '' || raw === '-') return raw;
+        var neg = raw.charAt(0) === '-';
+        if (neg) raw = raw.substring(1);
+        var parts = raw.split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        return (neg ? '-' : '') + parts.join('.');
+    }
+
+    function applyFormat(\$el) {
+        if (!\$el.length) return;
+        var formatted = formatAmount(\$el.val());
+        if (formatted !== \$el.val()) \$el.val(formatted);
+    }
+
+    // Format on user input (preserve caret at end — acceptable for small amounts).
+    \$amount.on('input', function () { applyFormat($(this)); });
+
+    // Initial formatting for existing values (update mode).
+    applyFormat(\$amount);
+
+    // Normalize value before Yii ajax-validation / submit, reformat if form stays open.
+    var \$form = $('#$formId');
+    \$form.on('beforeValidate beforeSubmit submit', function () {
+        \$amount.val(stripSeparators(\$amount.val()));
+    });
+    \$form.on('afterValidate', function () {
+        applyFormat(\$amount);
+    });
+
     function loadWaybills(contractId, selectedId) {
         if (!contractId) return;
         $.get('$ajaxUrl', { id: contractId }, function (data) {
@@ -107,6 +152,7 @@ $script = <<<JS
             }
             $.each(data.waybills, function () {
                 var opt = new Option(this.text, this.id, this.id == selectedId, this.id == selectedId);
+                \$(opt).attr('data-amount', this.amount);
                 \$sel.append(opt);
             });
             \$sel.trigger('change');
@@ -115,6 +161,16 @@ $script = <<<JS
 
     $('#fginvoicepayment-sales_contract_id').on('select2:select', function (e) {
         loadWaybills(e.params.data.id, 0);
+    });
+
+    // Auto-fill amount from waybill invoice sum when user picks a waybill.
+    // Only on manual user selection — preserves previously saved amount in update mode.
+    $('#fginvoicepayment-waybill_id').on('select2:select', function () {
+        var amt = $(this).find('option:selected').attr('data-amount');
+        if (amt !== undefined && amt !== '' && amt !== null) {
+            \$amount.val(amt);
+            applyFormat(\$amount);
+        }
     });
 
     if ($isUpdate === 1) {
