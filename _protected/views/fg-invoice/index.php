@@ -1,11 +1,8 @@
 <?php
 use yii\grid\GridView;
 use yii\helpers\Html;
-use app\models\Customer;
-use app\models\PartMark;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
-use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\FgInvoice */
@@ -314,7 +311,7 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
       [
         'attribute' => 'customer_id',
         'value' => 'customer.name',
-        'filter' => Html::activeDropDownList($searchModel, 'customer_id', ArrayHelper::map(Customer::find()->all(), 'id', 'name'), ['class' => 'form-control select2', 'prompt' => '...']),
+        'filter' => Html::activeDropDownList($searchModel, 'customer_id', $searchModel->getCustomerFilterOptions(), ['class' => 'form-control select2', 'prompt' => '...']),
         // 'filter' => $customers
       ],
 
@@ -353,7 +350,7 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
         'filter' => Html::activeDropDownList(
           $searchModel,
           'mark_id',
-          ArrayHelper::map(PartMark::find()->orderBy('name')->all(), 'name', 'name'),
+          $searchModel->getMarkFilterOptions(),
           ['class' => 'form-control select2', 'prompt' => '...']
         ),
         'value' => function($model){
@@ -361,7 +358,8 @@ $canPrint = Yii::$app->user->can('fg-invoice-print');
           if(isset($model->fgInvoiceDetails)){
             $items = $model->fgInvoiceDetails;
             foreach($items as $item){
-              $html .= mb_substr($item->part_name." ".$item->part->part_color, 0, 30)."<br\>";
+              $label = \app\models\FgInvoiceSearch::buildMarkLabel($item->part_name ?? '', $item->part->part_color ?? '');
+              $html .= Html::encode(\app\models\FgInvoiceSearch::buildMarkPreview($label))."<br\>";
             }
           }
           return $html;

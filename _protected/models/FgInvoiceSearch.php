@@ -2,6 +2,7 @@
 	namespace app\models;
 
 	use Yii;
+	use yii\helpers\ArrayHelper;
 	use yii\base\Model;
 	use yii\data\ActiveDataProvider;
 	use yii\db\Expression;
@@ -75,8 +76,8 @@
 			if (!empty($this->mark_id)) {
 				$subQuery = FgInvoiceDetail::find()
 					->select('fg_invoice_detail.fg_invoice_id')
-					->leftJoin('part', 'part.part_no = fg_invoice_detail.part_no')
-					->where(['part.part_color' => $this->mark_id]);
+					->leftJoin('part', 'part.part_no = fg_invoice_detail.part_no');
+				$this->applyMarkFilter($subQuery);
 				$query->andWhere(['fg_invoice.id' => $subQuery]);
 			}
 			if(strlen($this->confirmed_by) > 0){
@@ -158,6 +159,74 @@
 			}else{
 				return $dataProvider;
 			}
+		}
+
+		public function getCustomerFilterOptions(): array
+		{
+			$query = Customer::find()
+				->alias('customer')
+				->select(['customer.id', 'customer.name'])
+				->innerJoin('fg_invoice', 'fg_invoice.customer_id = customer.id')
+				->groupBy(['customer.id', 'customer.name'])
+				->orderBy(['customer.name' => SORT_ASC]);
+
+			if (!empty($this->mark_id)) {
+				$query
+					->innerJoin('fg_invoice_detail', 'fg_invoice_detail.fg_invoice_id = fg_invoice.id')
+					->innerJoin('part', 'part.part_no = fg_invoice_detail.part_no');
+				$this->applyMarkFilter($query);
+			}
+
+			return ArrayHelper::map($query->asArray()->all(), 'id', 'name');
+		}
+
+		public function getMarkFilterOptions(): array
+		{
+			$marks = FgInvoiceDetail::find()
+				->select([
+					'part_name' => 'fg_invoice_detail.part_name',
+					'part_color' => 'part.part_color',
+				])
+				->innerJoin('part', 'part.part_no = fg_invoice_detail.part_no')
+				->innerJoin('fg_invoice', 'fg_invoice.id = fg_invoice_detail.fg_invoice_id')
+				->where(['not', ['part.part_color' => null]])
+				->andWhere("TRIM(part.part_color) <> ''")
+				->groupBy(['fg_invoice_detail.part_name', 'part.part_color'])
+				->orderBy(['fg_invoice_detail.part_name' => SORT_ASC, 'part.part_color' => SORT_ASC])
+				->asArray()
+				->all();
+
+			$options = [];
+			foreach ($marks as $mark) {
+				$value = self::buildMarkLabel($mark['part_name'] ?? '', $mark['part_color'] ?? '');
+				if ($value === '') {
+					continue;
+				}
+				$options[$value] = self::buildMarkPreview($value);
+			}
+
+			return $options;
+		}
+
+		private function applyMarkFilter($query): void
+		{
+			$mark = trim((string)$this->mark_id);
+			$query->andWhere($this->getMarkExpression().' = :mark', [':mark' => $mark]);
+		}
+
+		private function getMarkExpression(): string
+		{
+			return "TRIM(CONCAT_WS(' ', NULLIF(TRIM(fg_invoice_detail.part_name), ''), NULLIF(TRIM(part.part_color), '')))";
+		}
+
+		public static function buildMarkLabel(string $partName, string $partColor): string
+		{
+			return trim(trim($partName) . ' ' . trim($partColor));
+		}
+
+		public static function buildMarkPreview(string $label): string
+		{
+			return mb_substr($label, 0, 30);
 		}
 
 
