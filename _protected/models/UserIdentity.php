@@ -151,7 +151,7 @@
 		}
 
 		public function getWarehouseNames(){
-			return ArrayHelper::map($this->warehouses, 'id', 'name');
+			return ArrayHelper::map(Warehouse::find()->all(), 'id', 'name');
 		}
 
 		public function getWarehouseTypes(){
