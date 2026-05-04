@@ -16,7 +16,7 @@ class FgInvoicePaymentSearch extends FgInvoicePayment
     public function rules()
     {
         return [
-            [['id', 'sales_contract_id', 'waybill_id', 'customer_id',
+                        [['id', 'sales_contract_id', 'currency_id', 'waybill_id', 'customer_id',
               'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['no', 'date'], 'safe'],
             [['amount'], 'number'],
@@ -47,6 +47,7 @@ class FgInvoicePaymentSearch extends FgInvoicePayment
         $query->andFilterWhere([
             'fg_invoice_payment.id'                => $this->id,
             'fg_invoice_payment.sales_contract_id' => $this->sales_contract_id,
+            'fg_invoice_payment.currency_id'       => $this->currency_id,
             'fg_invoice_payment.waybill_id'        => $this->waybill_id,
             'fg_invoice_payment.amount'            => $this->amount,
             'sales_contract.customer_id'           => $this->customer_id,

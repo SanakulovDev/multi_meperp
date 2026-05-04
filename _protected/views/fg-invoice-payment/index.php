@@ -9,6 +9,7 @@ use yii\widgets\Pjax;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $customers array  id => name */
 /* @var $contracts array  id => contract_no */
+/* @var $currencies array id => code */
 /* @var $waybills  array  id => waybill_no */
 
 $select2prompt = Yii::t('app', 'All');
@@ -86,6 +87,12 @@ $canXls    = Yii::$app->user->can('fg-invoice-payment-xls');
                 'label'     => Yii::t('app', 'Contract'),
                 'filter'    => Html::activeDropDownList($searchModel, 'sales_contract_id', $contracts, ['class' => 'form-control select2', 'prompt' => $select2prompt]),
                 'value'     => function ($model) { return $model->salesContract ? $model->salesContract->contract_no : ''; },
+            ],
+            [
+                'attribute' => 'currency_id',
+                'label'     => Yii::t('app', 'Currency'),
+                'filter'    => Html::activeDropDownList($searchModel, 'currency_id', $currencies, ['class' => 'form-control select2', 'prompt' => $select2prompt]),
+                'value'     => function ($model) { return $model->currency ? $model->currency->code : ''; },
             ],
             'no',
             'date',

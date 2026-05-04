@@ -13,6 +13,7 @@ use yii\db\ActiveQuery;
  * @property string $no
  * @property string $date
  * @property int    $sales_contract_id
+ * @property int    $currency_id
  * @property int    $waybill_id
  * @property float  $amount
  * @property int    $created_at
@@ -21,6 +22,7 @@ use yii\db\ActiveQuery;
  * @property int    $updated_by
  *
  * @property SalesContract $salesContract
+ * @property Currency      $currency
  * @property Waybill       $waybill
  * @property User          $createdBy
  * @property User          $updatedBy
@@ -40,17 +42,29 @@ class FgInvoicePayment extends \yii\db\ActiveRecord
         ];
     }
 
+    public function beforeValidate()
+    {
+        if ($this->amount !== null && $this->amount !== '') {
+            $this->amount = str_replace(' ', '', (string) $this->amount);
+        }
+        return parent::beforeValidate();
+    }
+
     public function rules()
     {
         return [
-            [['no', 'date', 'sales_contract_id', 'waybill_id', 'amount'], 'required'],
-            [['sales_contract_id', 'waybill_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['no', 'date', 'sales_contract_id', 'currency_id', 'amount'], 'required'],
+            [['waybill_id'], 'default', 'value' => null],
+            [['sales_contract_id', 'currency_id', 'waybill_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['amount'], 'number', 'min' => 0.0001],
             [['date'], 'safe'],
             [['no'], 'string', 'max' => 100],
             [['sales_contract_id'], 'exist', 'skipOnError' => true,
                 'targetClass' => SalesContract::className(),
                 'targetAttribute' => ['sales_contract_id' => 'id']],
+            [['currency_id'], 'exist', 'skipOnError' => true,
+                'targetClass' => Currency::className(),
+                'targetAttribute' => ['currency_id' => 'id']],
             [['waybill_id'], 'exist', 'skipOnError' => true,
                 'targetClass' => Waybill::className(),
                 'targetAttribute' => ['waybill_id' => 'id']],
@@ -64,6 +78,7 @@ class FgInvoicePayment extends \yii\db\ActiveRecord
             'no'                => Yii::t('app', 'Receipt number'),
             'date'              => Yii::t('app', 'Date'),
             'sales_contract_id' => Yii::t('app', 'Sales contract'),
+            'currency_id'       => Yii::t('app', 'Currency'),
             'waybill_id'        => Yii::t('app', 'Waybill (TTN)'),
             'amount'            => Yii::t('app', 'Amount'),
             'created_at'        => Yii::t('app', 'Created at'),
@@ -81,6 +96,11 @@ class FgInvoicePayment extends \yii\db\ActiveRecord
     public function getWaybill(): ActiveQuery
     {
         return $this->hasOne(Waybill::className(), ['id' => 'waybill_id']);
+    }
+
+    public function getCurrency(): ActiveQuery
+    {
+        return $this->hasOne(Currency::className(), ['id' => 'currency_id']);
     }
 
     public function getCreatedBy(): ActiveQuery

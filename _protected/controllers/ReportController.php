@@ -4386,10 +4386,14 @@ class ReportController extends AppController {
   {
     $customerId = (int) Yii::$app->request->get('customer_id', 0);
     $type       = Yii::$app->request->get('type');
+    $country    = Yii::$app->request->get('country');
     if (!in_array($type, ['debt', 'credit', 'zero'], true)) {
       $type = null;
     }
-    $data = $this->_reportService->salesDebtStatus($customerId ?: null, $type);
+    if (!in_array($country, ['local', 'import'], true)) {
+      $country = null;
+    }
+    $data = $this->_reportService->salesDebtStatus($customerId ?: null, $type, $country);
     $customers = ArrayHelper::map(
       Customer::find()->orderBy('name')->all(),
       'id', 'name'
@@ -4399,6 +4403,7 @@ class ReportController extends AppController {
       'customers'  => $customers,
       'customerId' => $customerId,
       'type'       => $type,
+      'country'    => $country,
     ]);
   }
 

@@ -8,6 +8,7 @@ use yii\helpers\Url;
 /* @var $customers array  id => name */
 /* @var $customerId int */
 /* @var $type string|null  'debt' | 'credit' | 'zero' | null */
+/* @var $country string|null  'local' | 'import' | null */
 
 $this->title = Yii::t('app', 'Debt status by customers');
 $this->params['breadcrumbs'][] = $this->title;
@@ -23,12 +24,27 @@ $typeFilters = [
     'zero'   => Yii::t('app', 'Zero saldo'),
 ];
 
-$buildUrl = function (?string $t) use ($customerId) {
+$buildUrl = function (?string $t) use ($customerId, $country) {
     $params = ['report/sales-debt-status'];
-    if ($t !== null)   { $params['type'] = $t; }
-    if ($customerId)   { $params['customer_id'] = $customerId; }
+    if ($t !== null)       { $params['type'] = $t; }
+    if ($customerId)       { $params['customer_id'] = $customerId; }
+    if ($country !== null) { $params['country'] = $country; }
     return Url::to($params);
 };
+
+$buildCountryUrl = function (?string $c) use ($customerId, $type) {
+    $params = ['report/sales-debt-status'];
+    if ($type !== null) { $params['type'] = $type; }
+    if ($customerId)    { $params['customer_id'] = $customerId; }
+    if ($c !== null)    { $params['country'] = $c; }
+    return Url::to($params);
+};
+
+$countryFilters = [
+    null     => Yii::t('app', 'All'),
+    'local'  => Yii::t('app', 'Local'),
+    'import' => Yii::t('app', 'Import'),
+];
 
 $invPreview = 3;
 ?>
@@ -124,17 +140,27 @@ $invPreview = 3;
             <?php if ($type !== null): ?>
                 <input type="hidden" name="type" value="<?= Html::encode($type) ?>">
             <?php endif; ?>
+            <?php if ($country !== null): ?>
+                <input type="hidden" name="country" value="<?= Html::encode($country) ?>">
+            <?php endif; ?>
             <?= Html::dropDownList('customer_id', $customerId, $customers, [
                 'class'  => 'form-control select2',
                 'prompt' => Yii::t('app', 'All') . ' — ' . Yii::t('app', 'Customer'),
                 'id'     => 'debt-customer-select',
                 'style'  => 'width:320px;',
             ]) ?>
-            <?php if ($customerId): $resetParams = ['report/sales-debt-status']; if ($type !== null) { $resetParams['type'] = $type; } ?>
+            <?php if ($customerId): $resetParams = ['report/sales-debt-status']; if ($type !== null) { $resetParams['type'] = $type; } if ($country !== null) { $resetParams['country'] = $country; } ?>
                 <?= Html::a('<i class="fa fa-times"></i>', $resetParams,
                     ['class' => 'btn btn-default btn-sm', 'title' => Yii::t('app', 'Reset')]) ?>
             <?php endif; ?>
         </form>
+
+        <div class="debt-pills">
+            <?php foreach ($countryFilters as $key => $label): ?>
+                <a href="<?= $buildCountryUrl($key) ?>"
+                   class="<?= $country === $key ? 'active' : '' ?>"><?= Html::encode($label) ?></a>
+            <?php endforeach; ?>
+        </div>
 
         <div class="debt-pills">
             <?php foreach ($typeFilters as $key => $label): ?>
@@ -160,6 +186,7 @@ $invPreview = 3;
                     <th style="width:140px;"><?= Yii::t('app', 'Balance (debt)') ?></th>
                     <th style="width:115px;"><?= Yii::t('app', 'First unpaid date') ?></th>
                     <th style="width:95px;"><?= Yii::t('app', 'Days passed') ?></th>
+                    <th style="width:115px;"><?= Yii::t('app', 'Last payment date') ?></th>
                     <th style="min-width:260px;"><?= Yii::t('app', 'Unpaid invoices') ?></th>
                 </tr>
             </thead>
@@ -203,6 +230,7 @@ $invPreview = 3;
                             </span>
                         <?php endif; ?>
                     </td>
+                    <td class="ctr"><?= !empty($row['last_payment_date']) ? date('d.m.Y', strtotime($row['last_payment_date'])) : '<span style="color:#aaa;">—</span>' ?></td>
                     <td class="inv-list">
                         <?php if ($total === 0): ?>
                             <span style="color:#aaa;">—</span>
@@ -227,6 +255,7 @@ $invPreview = 3;
                     <td class="num <?= abs($totalSaldo) < 0.01 ? 'saldo-zero' : ($totalSaldo > 0 ? 'saldo-pos' : 'saldo-neg') ?>">
                         <?= Helpers::numberFormatRemoveZero($totalSaldo) ?>
                     </td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>

@@ -58,15 +58,22 @@ class FgInvoicePaymentService
     }
 
     /**
-     * Returns the Customer linked to the given SalesContract.
+     * Returns SalesContract with customer + currency for form auto-fill data.
+     */
+    public function getContract(int $contractId): ?SalesContract
+    {
+        return SalesContract::find()
+            ->with(['customer', 'currency'])
+            ->where(['id' => $contractId])
+            ->one();
+    }
+
+    /**
+     * Backward-compatible helper kept for existing tests/callers.
      */
     public function getCustomerByContract(int $contractId): ?Customer
     {
-        $contract = SalesContract::find()
-            ->with('customer')
-            ->where(['id' => $contractId])
-            ->one();
-
+        $contract = $this->getContract($contractId);
         return $contract ? $contract->customer : null;
     }
 

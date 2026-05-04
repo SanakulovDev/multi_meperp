@@ -3,6 +3,7 @@ namespace app\controllers;
 
 use app\components\Helpers;
 use app\models\Customer;
+use app\models\Currency;
 use app\models\FgInvoicePayment;
 use app\models\FgInvoicePaymentSearch;
 use app\models\SalesContract;
@@ -31,9 +32,10 @@ class FgInvoicePaymentController extends AppController
 
         $customers = ArrayHelper::map(Customer::find()->orderBy('name')->all(), 'id', 'name');
         $contracts = ArrayHelper::map(SalesContract::find()->orderBy('contract_no')->all(), 'id', 'contract_no');
+        $currencies = ArrayHelper::map(Currency::find()->orderBy('code')->all(), 'id', 'code');
         $waybills  = ArrayHelper::map(Waybill::find()->orderBy('waybill_no')->all(), 'id', 'waybill_no');
 
-        return $this->render('index', compact('searchModel', 'dataProvider', 'customers', 'contracts', 'waybills'));
+        return $this->render('index', compact('searchModel', 'dataProvider', 'customers', 'contracts', 'currencies', 'waybills'));
     }
 
     public function actionValidate($id = null)
@@ -112,11 +114,15 @@ class FgInvoicePaymentController extends AppController
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $service  = $this->getService();
-        $customer = $service->getCustomerByContract((int) $id);
+        $contract = $service->getContract((int) $id);
         $waybills = $service->getWaybillsByContract((int) $id);
 
         return [
-            'customer' => $customer ? ['name' => $customer->name] : null,
+            'customer' => $contract && $contract->customer ? ['name' => $contract->customer->name] : null,
+            'currency' => $contract && $contract->currency ? [
+                'id' => (int) $contract->currency->id,
+                'code' => $contract->currency->code,
+            ] : null,
             'waybills' => $waybills,
         ];
     }
@@ -136,6 +142,8 @@ class FgInvoicePaymentController extends AppController
             'id',
             'contractInfo'
         );
-        return compact('model', 'contracts');
+        $currencies = ArrayHelper::map(Currency::find()->orderBy('code')->all(), 'id', 'code');
+
+        return compact('model', 'contracts', 'currencies');
     }
 }

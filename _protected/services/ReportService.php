@@ -2220,10 +2220,22 @@ class ReportService
      * @param string|null $type        'debt' (saldo>0.01), 'credit' (saldo<-0.01),
      *                                 'zero' (|saldo|<=0.01), null = no filter
      */
-    public function salesDebtStatus(?int $customerId = null, ?string $type = null): array
+    public function salesDebtStatus(?int $customerId = null, ?string $type = null, ?string $country = null): array
     {
-        $customerFilter = $customerId ? 'WHERE c.id = :cid' : '';
-        $params = $customerId ? [':cid' => $customerId] : [];
+        $conditions = [];
+        $params = [];
+
+        if ($customerId) {
+            $conditions[] = 'c.id = :cid';
+            $params[':cid'] = $customerId;
+        }
+        if ($country === 'local') {
+            $conditions[] = 'EXISTS (SELECT 1 FROM country_code cc WHERE cc.id = c.country_code_id AND cc.alpha_2 = \'UZ\')';
+        } elseif ($country === 'import') {
+            $conditions[] = '(c.country_code_id IS NULL OR NOT EXISTS (SELECT 1 FROM country_code cc WHERE cc.id = c.country_code_id AND cc.alpha_2 = \'UZ\'))';
+        }
+
+        $customerFilter = $conditions ? ('WHERE ' . implode(' AND ', $conditions)) : '';
 
         switch ($type) {
             case 'debt':   $having = 'HAVING saldo > 0.01'; break;
@@ -2239,6 +2251,7 @@ class ReportService
                 COALESCE(inv.total_inv, 0)                               total_inv,
                 COALESCE(pay.total_pay, 0)                               total_pay,
                 COALESCE(inv.total_inv, 0) - COALESCE(pay.total_pay, 0)  saldo,
+                pay.last_payment_date,
                 unp.unpaid_invoices,
                 unp.first_unpaid_date,
                 unp.overdue_days
@@ -2254,7 +2267,7 @@ class ReportService
 
             -- Customer-level payment total.
             LEFT JOIN (
-                SELECT sc.customer_id, SUM(fip.amount) total_pay
+                SELECT sc.customer_id, SUM(fip.amount) total_pay, MAX(fip.date) last_payment_date
                 FROM fg_invoice_payment fip
                 JOIN sales_contract sc ON sc.id = fip.sales_contract_id
                 GROUP BY sc.customer_id

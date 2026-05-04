@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 /* @var $this     yii\web\View */
 /* @var $model    app\models\FgInvoicePayment */
 /* @var $contracts array  id => "contract_no (customer)" */
+/* @var $currencies array id => code */
 
 $validationUrl = ['validate'];
 if (!$model->isNewRecord) {
@@ -35,13 +36,12 @@ $form = ActiveForm::begin([
 
 <div class="row">
     <div class="col-sm-6">
-        <div class="form-group field-fginvoicepayment-waybill_id required">
+        <div class="form-group field-fginvoicepayment-waybill_id">
             <label class="control-label" for="fginvoicepayment-waybill_id">
                 <?= $model->getAttributeLabel('waybill_id') ?>
-                <span class="text-danger" style="font-weight:bold;">*</span>
             </label>
             <select id="fginvoicepayment-waybill_id" name="FgInvoicePayment[waybill_id]"
-                    class="select2 form-control" style="width:100%" required>
+                    class="select2 form-control" style="width:100%">
                 <option value=""></option>
             </select>
             <div class="help-block"></div>
@@ -61,14 +61,21 @@ $form = ActiveForm::begin([
 </div>
 
 <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-4">
         <div class="form-group has-success">
             <label class="control-label"><?= Yii::t('app', 'Customer') ?></label>
             <input type="text" id="fginvoicepayment-customer-name"
                    class="form-control" readonly aria-invalid="false">
         </div>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-4">
+        <?= $form->field($model, 'currency_id')->dropDownList($currencies, [
+            'id' => 'fginvoicepayment-currency_id',
+            'class' => 'select2',
+            'prompt' => '',
+        ]) ?>
+    </div>
+    <div class="col-sm-4">
         <?= $form->field($model, 'amount')->textInput([
             'inputmode' => 'decimal',
             'class'     => 'form-control text-right',
@@ -133,22 +140,41 @@ $script = <<<JS
     // Initial formatting for existing values (update mode).
     applyFormat(\$amount);
 
-    // Normalize value before Yii ajax-validation / submit, reformat if form stays open.
+    // Strip spaces before Yii per-attribute AJAX validation fires on blur.
+    \$amount.on('blur', function () {
+        $(this).val(stripSeparators($(this).val()));
+    });
+
+    // Normalize value before whole-form validation / submit, reformat if form stays open.
     var \$form = $('#$formId');
-    \$form.on('beforeValidate beforeSubmit submit', function () {
+    \$form.on('beforeValidate beforeValidateAttribute beforeSubmit submit', function () {
         \$amount.val(stripSeparators(\$amount.val()));
     });
     \$form.on('afterValidate', function () {
         applyFormat(\$amount);
     });
+    \$form.on('afterValidateAttribute', function (e, attr) {
+        if (attr.id === 'fginvoicepayment-amount') {
+            applyFormat(\$amount);
+        }
+    });
 
-    function loadWaybills(contractId, selectedId) {
+    function loadWaybills(contractId, selectedId, applyCurrency) {
         if (!contractId) return;
         $.get('$ajaxUrl', { id: contractId }, function (data) {
             var \$sel = $('#fginvoicepayment-waybill_id');
             \$sel.find('option:not(:first)').remove();
             if (data.customer) {
                 $('#fginvoicepayment-customer-name').val(data.customer.name);
+            } else {
+                $('#fginvoicepayment-customer-name').val('');
+            }
+            if (applyCurrency === true) {
+                if (data.currency && data.currency.id) {
+                    $('#fginvoicepayment-currency_id').val(String(data.currency.id)).trigger('change');
+                } else {
+                    $('#fginvoicepayment-currency_id').val('').trigger('change');
+                }
             }
             $.each(data.waybills, function () {
                 var opt = new Option(this.text, this.id, this.id == selectedId, this.id == selectedId);
@@ -160,7 +186,7 @@ $script = <<<JS
     }
 
     $('#fginvoicepayment-sales_contract_id').on('select2:select', function (e) {
-        loadWaybills(e.params.data.id, 0);
+        loadWaybills(e.params.data.id, 0, true);
     });
 
     // Auto-fill amount from waybill invoice sum when user picks a waybill.
@@ -174,7 +200,7 @@ $script = <<<JS
     });
 
     if ($isUpdate === 1) {
-        loadWaybills($contractId, $selectedId);
+        loadWaybills($contractId, $selectedId, false);
     }
 })();
 JS;
