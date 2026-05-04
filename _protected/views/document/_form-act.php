@@ -12,14 +12,14 @@
 	<?php $form = ActiveForm::begin(); ?>
 	<div class="row">
 
-		<? if($isNewRecord ?? null){ ?>
+		<?php if($isNewRecord){ ?>
 			<div class="col-lg-3">
 				<?=$form->field($model, 'adj')->dropDownList([0 => Yii::t('app', 'Issue'), 1 => Yii::t('app', 'Receipt')])?>
 			</div>
 			<div class="col-lg-3">
 				<?=$form->field($model, 'adj_wh_id')->dropDownList($user_warehouses, ['prompt' => Yii::t('app', 'Select...'), 'class' => 'form-control select2'])?>
 			</div>
-		<? }else{ ?>
+		<?php }else{ ?>
 			<div class="col-lg-3">
 				<div class="form-group">
 					<label class="control-label"><?=Yii::t('app', 'Adjustment')?></label>
@@ -35,7 +35,7 @@
 				</div>
 				<?=$form->field($model, 'adj_wh_id')->hiddenInput(['value' => $model->adjWhId])->label(false);?>
 			</div>
-		<? } ?>
+		<?php } ?>
 
 
 		<div class="col-lg-3">

@@ -731,10 +731,7 @@ class DocumentController extends AppController
 					]);
 				}
 			} else {
-				echo "<pre>";
-				print_r($model->errors);
-				echo "</pre>";
-				die;
+				
 				return $this->render('create-local-issue', [
 					'model' => $model,
 					'items' => $_POST['items'],
@@ -1425,10 +1422,7 @@ class DocumentController extends AppController
 					]);
 				}
 			} else {
-				echo "<pre>";
-				print_r($model->errors);
-				echo "</pre>";
-				die;
+				
 				return $this->render('update-act', [
 					'model' => $model,
 					'items' => $items,
@@ -2208,10 +2202,6 @@ class DocumentController extends AppController
 				Yii::$app->session->setFlash('success', Yii::t('app', 'Document created successfully.'));
 				return $this->redirect(['create-shop-consumption']);
 			} else {
-				echo "<pre>";
-				print_r($production_order->errors);
-				echo "</pre>";
-				die;
 				$transaction->rollBack();
 				Yii::$app->session->setFlash('error', Yii::t('app', 'Document not created.'));
 				return $this->redirect(['create-shop-consumption']);

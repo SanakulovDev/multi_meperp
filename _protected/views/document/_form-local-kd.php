@@ -14,11 +14,11 @@
 	<div class="row">
 
 
-		<? if($isNewRecord ?? null){ ?>
+		<?php if($isNewRecord){ ?>
 			<div class="col-lg-4">
 				<?=$form->field($model, 'to_warehouse_id')->dropDownList($user_warehouses, ['prompt' => Yii::t('app', 'Select...'), 'class' => 'form-control select2'])?>
 			</div>
-		<? }else{ ?>
+		<?php }else{ ?>
 			<div class="col-lg-4">
 				<div class="form-group">
 					<label class="control-label"><?=Yii::t('app', 'Warehouse B')?></label>
@@ -26,11 +26,11 @@
 				</div>
 				<?=$form->field($model, 'to_warehouse_id')->hiddenInput()->label(false);?>
 			</div>
-		<? } ?>
+		<?php } ?>
 
 
 		<div class="col-lg-4">
-      <?
+      <?php
         $localContracts = app\models\Contract::find()->where(['contract_source_id' => array_merge(Yii::$app->params['local_contract_source_ids'],Yii::$app->params['consignment_contract_source_ids'])])->all();  
         $localSuppliers = [];
         

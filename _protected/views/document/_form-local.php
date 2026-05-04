@@ -12,7 +12,7 @@
 	<?php $form = ActiveForm::begin(); ?>
 	<div class="row">
 
-		<? if($isNewRecord ?? null){ ?>
+		<?php if($isNewRecord){ ?>
 			<div class="col-lg-4">
 				<div class="form-group">
 					<label class="control-label"><?=Yii::t('app', 'From supplier warehouse')?></label>
@@ -25,7 +25,7 @@
 				</div>
 
 			</div>
-		<? }else{ ?>
+		<?php }else{ ?>
 			<div class="col-lg-4">
 				<div class="form-group">
 					<label class="control-label"><?=Yii::t('app', 'From supplier warehouse')?></label>
@@ -33,15 +33,15 @@
 				</div>
 				<?=$form->field($model, 'from_warehouse_id')->hiddenInput()->label(false);?>
 			</div>
-		<? } ?>
+		<?php } ?>
 
 
 
-		<? if($isNewRecord ?? null){ ?>
+		<?php if($isNewRecord){ ?>
 			<div class="col-lg-4">
 				<?=$form->field($model, 'to_warehouse_id')->dropDownList($user_warehouses, ['prompt' => Yii::t('app', 'Select...'), 'class' => 'form-control select2'])?>
 			</div>
-		<? }else{ ?>
+		<?php }else{ ?>
 			<div class="col-lg-4">
 				<div class="form-group">
 					<label class="control-label"><?=Yii::t('app', 'Warehouse B')?></label>
@@ -49,7 +49,7 @@
 				</div>
 				<?=$form->field($model, 'to_warehouse_id')->hiddenInput()->label(false);?>
 			</div>
-		<? } ?>
+		<?php } ?>
 
 
 		<div class="col-lg-3">
