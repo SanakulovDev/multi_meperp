@@ -4385,6 +4385,7 @@ class ReportController extends AppController {
   public function actionSalesDebtStatus()
   {
     $customerId = (int) Yii::$app->request->get('customer_id', 0);
+    $currencyId = (int) Yii::$app->request->get('currency_id', 0);
     $type       = Yii::$app->request->get('type');
     $country    = Yii::$app->request->get('country');
     if (!in_array($type, ['debt', 'credit', 'zero'], true)) {
@@ -4393,15 +4394,15 @@ class ReportController extends AppController {
     if (!in_array($country, ['local', 'import'], true)) {
       $country = null;
     }
-    $data = $this->_reportService->salesDebtStatus($customerId ?: null, $type, $country);
-    $customers = ArrayHelper::map(
-      Customer::find()->orderBy('name')->all(),
-      'id', 'name'
-    );
+    $data = $this->_reportService->salesDebtStatus($customerId ?: null, $type, $country, $currencyId ?: null);
+    $customers  = ArrayHelper::map(Customer::find()->orderBy('name')->all(), 'id', 'name');
+    $currencies = ArrayHelper::map(\app\models\Currency::find()->orderBy('code')->all(), 'id', 'code');
     return $this->render('sales/sales-debt-status', [
       'data'       => $data,
       'customers'  => $customers,
+      'currencies' => $currencies,
       'customerId' => $customerId,
+      'currencyId' => $currencyId,
       'type'       => $type,
       'country'    => $country,
     ]);

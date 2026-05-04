@@ -7,6 +7,8 @@ use yii\helpers\Url;
 /* @var $data array */
 /* @var $customers array  id => name */
 /* @var $customerId int */
+/* @var $currencies array  id => code */
+/* @var $currencyId int */
 /* @var $type string|null  'debt' | 'credit' | 'zero' | null */
 /* @var $country string|null  'local' | 'import' | null */
 
@@ -24,19 +26,30 @@ $typeFilters = [
     'zero'   => Yii::t('app', 'Zero saldo'),
 ];
 
-$buildUrl = function (?string $t) use ($customerId, $country) {
+$buildUrl = function (?string $t) use ($customerId, $currencyId, $country) {
     $params = ['report/sales-debt-status'];
     if ($t !== null)       { $params['type'] = $t; }
     if ($customerId)       { $params['customer_id'] = $customerId; }
+    if ($currencyId)       { $params['currency_id'] = $currencyId; }
     if ($country !== null) { $params['country'] = $country; }
     return Url::to($params);
 };
 
-$buildCountryUrl = function (?string $c) use ($customerId, $type) {
+$buildCountryUrl = function (?string $c) use ($customerId, $currencyId, $type) {
     $params = ['report/sales-debt-status'];
     if ($type !== null) { $params['type'] = $type; }
     if ($customerId)    { $params['customer_id'] = $customerId; }
+    if ($currencyId)    { $params['currency_id'] = $currencyId; }
     if ($c !== null)    { $params['country'] = $c; }
+    return Url::to($params);
+};
+
+$buildCurrencyUrl = function (?int $cur) use ($customerId, $type, $country) {
+    $params = ['report/sales-debt-status'];
+    if ($type !== null) { $params['type'] = $type; }
+    if ($customerId)    { $params['customer_id'] = $customerId; }
+    if ($country !== null) { $params['country'] = $country; }
+    if ($cur)           { $params['currency_id'] = $cur; }
     return Url::to($params);
 };
 
@@ -143,13 +156,16 @@ $invPreview = 3;
             <?php if ($country !== null): ?>
                 <input type="hidden" name="country" value="<?= Html::encode($country) ?>">
             <?php endif; ?>
+            <?php if ($currencyId): ?>
+                <input type="hidden" name="currency_id" value="<?= (int) $currencyId ?>">
+            <?php endif; ?>
             <?= Html::dropDownList('customer_id', $customerId, $customers, [
                 'class'  => 'form-control select2',
                 'prompt' => Yii::t('app', 'All') . ' — ' . Yii::t('app', 'Customer'),
                 'id'     => 'debt-customer-select',
                 'style'  => 'width:320px;',
             ]) ?>
-            <?php if ($customerId): $resetParams = ['report/sales-debt-status']; if ($type !== null) { $resetParams['type'] = $type; } if ($country !== null) { $resetParams['country'] = $country; } ?>
+            <?php if ($customerId): $resetParams = ['report/sales-debt-status']; if ($type !== null) { $resetParams['type'] = $type; } if ($country !== null) { $resetParams['country'] = $country; } if ($currencyId) { $resetParams['currency_id'] = $currencyId; } ?>
                 <?= Html::a('<i class="fa fa-times"></i>', $resetParams,
                     ['class' => 'btn btn-default btn-sm', 'title' => Yii::t('app', 'Reset')]) ?>
             <?php endif; ?>
@@ -159,6 +175,15 @@ $invPreview = 3;
             <?php foreach ($countryFilters as $key => $label): ?>
                 <a href="<?= $buildCountryUrl($key) ?>"
                    class="<?= $country === $key ? 'active' : '' ?>"><?= Html::encode($label) ?></a>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="debt-pills">
+            <a href="<?= $buildCurrencyUrl(null) ?>"
+               class="<?= !$currencyId ? 'active' : '' ?>"><?= Yii::t('app', 'All') ?></a>
+            <?php foreach ($currencies as $curId => $curCode): ?>
+                <a href="<?= $buildCurrencyUrl((int) $curId) ?>"
+                   class="<?= $currencyId === (int) $curId ? 'active' : '' ?>"><?= Html::encode($curCode) ?></a>
             <?php endforeach; ?>
         </div>
 

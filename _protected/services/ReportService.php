@@ -2220,7 +2220,7 @@ class ReportService
      * @param string|null $type        'debt' (saldo>0.01), 'credit' (saldo<-0.01),
      *                                 'zero' (|saldo|<=0.01), null = no filter
      */
-    public function salesDebtStatus(?int $customerId = null, ?string $type = null, ?string $country = null): array
+    public function salesDebtStatus(?int $customerId = null, ?string $type = null, ?string $country = null, ?int $currencyId = null): array
     {
         $conditions = [];
         $params = [];
@@ -2233,6 +2233,10 @@ class ReportService
             $conditions[] = 'EXISTS (SELECT 1 FROM country_code cc WHERE cc.id = c.country_code_id AND cc.alpha_2 = \'UZ\')';
         } elseif ($country === 'import') {
             $conditions[] = '(c.country_code_id IS NULL OR NOT EXISTS (SELECT 1 FROM country_code cc WHERE cc.id = c.country_code_id AND cc.alpha_2 = \'UZ\'))';
+        }
+        if ($currencyId) {
+            $conditions[] = 'EXISTS (SELECT 1 FROM sales_contract sc_cur WHERE sc_cur.customer_id = c.id AND sc_cur.currency_id = :cur_id)';
+            $params[':cur_id'] = $currencyId;
         }
 
         $customerFilter = $conditions ? ('WHERE ' . implode(' AND ', $conditions)) : '';
