@@ -5,6 +5,7 @@ use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\Query;
 
 /**
  * This is the model class for table "fg_invoice_payment".
@@ -68,6 +69,7 @@ class FgInvoicePayment extends \yii\db\ActiveRecord
             [['waybill_id'], 'exist', 'skipOnError' => true,
                 'targetClass' => Waybill::className(),
                 'targetAttribute' => ['waybill_id' => 'id']],
+            [['waybill_id'], 'validateWaybillContract'],
         ];
     }
 
@@ -127,5 +129,31 @@ class FgInvoicePayment extends \yii\db\ActiveRecord
     public function getWaybillNo(): string
     {
         return $this->waybill ? $this->waybill->waybill_no : '';
+    }
+
+    public function validateWaybillContract($attribute): void
+    {
+        if (empty($this->waybill_id) || empty($this->sales_contract_id) || $this->hasErrors()) {
+            return;
+        }
+
+        $contract = $this->salesContract;
+        if ($contract === null) {
+            return;
+        }
+
+        $exists = (new Query())
+            ->from(['fiw' => 'fg_invoice_waybill'])
+            ->innerJoin(['fi' => 'fg_invoice'], 'fi.id = fiw.fg_invoice_id')
+            ->where([
+                'fiw.waybill_id' => $this->waybill_id,
+                'fi.contract' => $contract->contract_no,
+                'fi.customer_id' => $contract->customer_id,
+            ])
+            ->exists();
+
+        if (!$exists) {
+            $this->addError($attribute, Yii::t('app', 'Selected waybill does not belong to the chosen contract.'));
+        }
     }
 }

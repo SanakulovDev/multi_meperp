@@ -35,7 +35,10 @@ class FgInvoicePaymentSearch extends FgInvoicePayment
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort'  => ['defaultOrder' => ['date' => SORT_DESC]],
+            'sort'  => ['defaultOrder' => ['id' => SORT_DESC]],
+            'pagination' => [
+                'pageSize' => 50,
+            ],
         ]);
 
         $this->load($params);

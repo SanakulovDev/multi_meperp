@@ -2198,22 +2198,11 @@ class ReportService
     
 
     /**
-     * Debt status report — per-customer shipment vs payment.
-     *
-     * Unpaid detection is performed at **waybill (TTN) level** — a waybill is
-     * considered paid when SUM(fg_invoice_payment.amount for that waybill_id)
-     * >= SUM(invoice details on that waybill). Invoices listed are the ones
-     * attached to unpaid waybills.
-     *
-     * Customer-level totals (total_inv, total_pay, saldo) are computed across
-     * ALL invoices/payments, so the saldo matches the accounting truth even if
-     * the user over-pays a single TTN — that excess is NOT auto-applied to
-     * other unpaid TTNs under this variant. Teach users this: pay the correct
-     * TTN for the saldo to match the unpaid-invoices list.
+     * Debt status report — fully TTN-based per-customer shipment vs payment.
      *
      * Returned columns:
      *   customer_id, customer_name, total_inv, total_pay, saldo,
-     *   unpaid_invoices (comma-separated invoice_no from unpaid TTNs),
+     *   unpaid_waybills (comma-separated TTN numbers),
      *   first_unpaid_date, overdue_days
      *
      * @param int|null    $customerId  0/null means all customers
@@ -2256,50 +2245,65 @@ class ReportService
                 COALESCE(pay.total_pay, 0)                               total_pay,
                 COALESCE(inv.total_inv, 0) - COALESCE(pay.total_pay, 0)  saldo,
                 pay.last_payment_date,
-                unp.unpaid_invoices,
+                unp.unpaid_waybills,
                 unp.first_unpaid_date,
                 unp.overdue_days
             FROM customer c
 
-            -- Customer-level shipment total (invoice-level truth, independent of waybills).
+            -- Customer-level shipment total aggregated by TTN.
             JOIN (
-                SELECT fi.customer_id, SUM(fid.price * fid.qty) total_inv
-                FROM fg_invoice fi
-                JOIN fg_invoice_detail fid ON fid.fg_invoice_id = fi.id
-                GROUP BY fi.customer_id
+                SELECT wi.customer_id, SUM(wi.inv_amt) total_inv
+                FROM (
+                    SELECT
+                        fi.customer_id,
+                        fiw.waybill_id,
+                        SUM(fid.price * fid.qty) inv_amt
+                    FROM fg_invoice_waybill fiw
+                    JOIN fg_invoice fi ON fi.id = fiw.fg_invoice_id
+                    JOIN fg_invoice_detail fid ON fid.fg_invoice_id = fi.id
+                    GROUP BY fi.customer_id, fiw.waybill_id
+                ) wi
+                GROUP BY wi.customer_id
             ) inv ON inv.customer_id = c.id
 
-            -- Customer-level payment total.
+            -- Customer-level payment total aggregated from TTN payments.
             LEFT JOIN (
                 SELECT sc.customer_id, SUM(fip.amount) total_pay, MAX(fip.date) last_payment_date
                 FROM fg_invoice_payment fip
                 JOIN sales_contract sc ON sc.id = fip.sales_contract_id
+                WHERE fip.waybill_id IS NOT NULL
                 GROUP BY sc.customer_id
             ) pay ON pay.customer_id = c.id
 
-            -- Unpaid waybills → their invoices. Waybill is 'unpaid' when TTN
-            -- invoice sum is not yet covered by payments booked against that TTN.
+            -- Unpaid TTNs.
             LEFT JOIN (
                 SELECT
                     wi.customer_id,
-                    GROUP_CONCAT(wi.invoice_nos
-                                 ORDER BY wi.first_inv_date, wi.waybill_id
-                                 SEPARATOR ', ')                          unpaid_invoices,
-                    DATE(MIN(wi.first_inv_date))                          first_unpaid_date,
-                    DATEDIFF(CURDATE(), DATE(MIN(wi.first_inv_date)))     overdue_days
+                    GROUP_CONCAT(
+                        CONCAT(
+                            wi.waybill_no,
+                            CASE
+                                WHEN wi.waybill_date IS NOT NULL THEN CONCAT(' (', DATE_FORMAT(wi.waybill_date, '%d.%m.%Y'), ')')
+                                ELSE ''
+                            END
+                        )
+                        ORDER BY wi.waybill_date, wi.waybill_no
+                        SEPARATOR ', '
+                    )                                                     unpaid_waybills,
+                    DATE(MIN(wi.waybill_date))                             first_unpaid_date,
+                    DATEDIFF(CURDATE(), DATE(MIN(wi.waybill_date)))        overdue_days
                 FROM (
                     SELECT
-                        fi2.customer_id,
+                        fi.customer_id,
                         fiw.waybill_id,
-                        SUM(fid2.price * fid2.qty)                                    inv_amt,
-                        MIN(fi2.invoice_date)                                         first_inv_date,
-                        GROUP_CONCAT(DISTINCT fi2.invoice_no
-                                     ORDER BY fi2.invoice_date
-                                     SEPARATOR ', ')                                  invoice_nos
+                        w.waybill_no,
+                        w.waybill_date,
+                        SUM(fid.price * fid.qty) inv_amt
                     FROM fg_invoice_waybill fiw
-                    JOIN fg_invoice fi2        ON fi2.id = fiw.fg_invoice_id
-                    JOIN fg_invoice_detail fid2 ON fid2.fg_invoice_id = fi2.id
-                    GROUP BY fi2.customer_id, fiw.waybill_id
+                    JOIN fg_invoice fi ON fi.id = fiw.fg_invoice_id
+                    JOIN fg_invoice_detail fid ON fid.fg_invoice_id = fi.id
+                    JOIN waybill w ON w.id = fiw.waybill_id
+                    GROUP BY fi.customer_id, fiw.waybill_id, w.waybill_no, w.waybill_date
                 ) wi
                 LEFT JOIN (
                     SELECT waybill_id, SUM(amount) pay_amt

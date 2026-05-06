@@ -1,11 +1,12 @@
 <?php
 use yii\helpers\Url;
+use yii\helpers\Json;
 use yii\widgets\ActiveForm;
 
 /* @var $this     yii\web\View */
 /* @var $model    app\models\FgInvoicePayment */
-/* @var $contracts array  id => "contract_no (customer)" */
 /* @var $currencies array id => code */
+/* @var $waybillOptions array */
 
 $validationUrl = ['validate'];
 if (!$model->isNewRecord) {
@@ -23,11 +24,14 @@ $form = ActiveForm::begin([
 
 <div class="row">
     <div class="col-sm-6">
-        <?= $form->field($model, 'sales_contract_id')->dropDownList($contracts, [
-            'id'     => 'fginvoicepayment-sales_contract_id',
-            'class'  => 'select2',
+        <?= $form->field($model, 'waybill_id')->dropDownList([], [
+            'id' => 'fginvoicepayment-waybill_id',
+            'class' => 'select2',
             'prompt' => '',
         ]) ?>
+        <?= $form->field($model, 'sales_contract_id')->hiddenInput([
+            'id' => 'fginvoicepayment-sales_contract_id',
+        ])->label(false) ?>
     </div>
     <div class="col-sm-6">
         <?= $form->field($model, 'no')->textInput(['maxlength' => true]) ?>
@@ -35,18 +39,6 @@ $form = ActiveForm::begin([
 </div>
 
 <div class="row">
-    <div class="col-sm-6">
-        <div class="form-group field-fginvoicepayment-waybill_id">
-            <label class="control-label" for="fginvoicepayment-waybill_id">
-                <?= $model->getAttributeLabel('waybill_id') ?>
-            </label>
-            <select id="fginvoicepayment-waybill_id" name="FgInvoicePayment[waybill_id]"
-                    class="select2 form-control" style="width:100%">
-                <option value=""></option>
-            </select>
-            <div class="help-block"></div>
-        </div>
-    </div>
     <div class="col-sm-6">
         <?= $form->field($model, 'date')->widget(\kartik\datetime\DateTimePicker::class, [
             'options'       => ['placeholder' => 'YYYY-MM-DD'],
@@ -58,16 +50,16 @@ $form = ActiveForm::begin([
             ],
         ]) ?>
     </div>
-</div>
-
-<div class="row">
-    <div class="col-sm-4">
+    <div class="col-sm-6">
         <div class="form-group has-success">
             <label class="control-label"><?= Yii::t('app', 'Customer') ?></label>
             <input type="text" id="fginvoicepayment-customer-name"
                    class="form-control" readonly aria-invalid="false">
         </div>
     </div>
+</div>
+
+<div class="row">
     <div class="col-sm-4">
         <?= $form->field($model, 'currency_id')->dropDownList($currencies, [
             'id' => 'fginvoicepayment-currency_id',
@@ -104,15 +96,14 @@ $form = ActiveForm::begin([
 <?php ActiveForm::end(); ?>
 
 <?php
-$ajaxUrl    = Url::to(['fg-invoice-payment/list-waybills-by-contract'], true);
-$isUpdate   = $model->isNewRecord ? 0 : 1;
-$contractId = (int) ($model->sales_contract_id ?? 0);
 $selectedId = (int) ($model->waybill_id ?? 0);
 $formId     = $model->formName();
+$waybillOptionsJson = Json::htmlEncode($waybillOptions);
 
 $script = <<<JS
 (function () {
     var \$amount = $('#fginvoicepayment-amount');
+    var waybillOptions = $waybillOptionsJson;
 
     function stripSeparators(value) {
         return String(value == null ? '' : value).replace(/\s+/g, '');
@@ -159,48 +150,71 @@ $script = <<<JS
         }
     });
 
-    function loadWaybills(contractId, selectedId, applyCurrency) {
-        if (!contractId) return;
-        $.get('$ajaxUrl', { id: contractId }, function (data) {
-            var \$sel = $('#fginvoicepayment-waybill_id');
-            \$sel.find('option:not(:first)').remove();
-            if (data.customer) {
-                $('#fginvoicepayment-customer-name').val(data.customer.name);
-            } else {
-                $('#fginvoicepayment-customer-name').val('');
-            }
-            if (applyCurrency === true) {
-                if (data.currency && data.currency.id) {
-                    $('#fginvoicepayment-currency_id').val(String(data.currency.id)).trigger('change');
-                } else {
-                    $('#fginvoicepayment-currency_id').val('').trigger('change');
-                }
-            }
-            $.each(data.waybills, function () {
-                var opt = new Option(this.text, this.id, this.id == selectedId, this.id == selectedId);
-                \$(opt).attr('data-amount', this.amount);
-                \$sel.append(opt);
-            });
-            \$sel.trigger('change');
+    function renderWaybillOptions(selectedId) {
+        var \$sel = $('#fginvoicepayment-waybill_id');
+        \$sel.find('option:not(:first)').remove();
+
+        $.each(waybillOptions, function () {
+            var opt = new Option(this.text, this.id, this.id == selectedId, this.id == selectedId);
+            \$(opt)
+                .attr('data-amount', this.amount)
+                .attr('data-customer-name', this.customer_name || '')
+                .attr('data-contract-no', this.contract_no || '')
+                .attr('data-sales-contract-id', this.sales_contract_id || '')
+                .attr('data-currency-id', this.currency_id || '');
+            \$sel.append(opt);
         });
+
+        \$sel.trigger('change');
     }
 
-    $('#fginvoicepayment-sales_contract_id').on('select2:select', function (e) {
-        loadWaybills(e.params.data.id, 0, true);
+    function applyWaybillData(fillAmount) {
+        var \$selected = $('#fginvoicepayment-waybill_id').find('option:selected');
+        var contractId = \$selected.attr('data-sales-contract-id') || '';
+        var currencyId = \$selected.attr('data-currency-id') || '';
+
+        $('#fginvoicepayment-sales_contract_id').val(contractId);
+        $('#fginvoicepayment-customer-name').val(\$selected.attr('data-customer-name') || '');
+        $('#fginvoicepayment-currency_id').val(currencyId).trigger('change');
+
+        if (fillAmount === true) {
+            var amt = \$selected.attr('data-amount');
+            if (amt !== undefined && amt !== '' && amt !== null) {
+                \$amount.val(amt);
+                applyFormat(\$amount);
+            }
+        }
+
+        if (!contractId) {
+            $('#fginvoicepayment-customer-name').val('');
+            $('#fginvoicepayment-currency_id').val('').trigger('change');
+        }
+    }
+
+    $('#fginvoicepayment-waybill_id').on('select2:select', function () {
+        applyWaybillData(true);
     });
 
-    // Auto-fill amount from waybill invoice sum when user picks a waybill.
-    // Only on manual user selection — preserves previously saved amount in update mode.
-    $('#fginvoicepayment-waybill_id').on('select2:select', function () {
-        var amt = $(this).find('option:selected').attr('data-amount');
+    $('#fginvoicepayment-waybill_id').on('change', function () {
+        if (!$(this).val()) {
+            $('#fginvoicepayment-sales_contract_id').val('');
+            $('#fginvoicepayment-customer-name').val('');
+            $('#fginvoicepayment-currency_id').val('').trigger('change');
+        }
+    });
+
+    renderWaybillOptions($selectedId);
+
+    if ($selectedId > 0) {
+        applyWaybillData(false);
+    }
+
+    if (!$selectedId) {
+        var amt = \$amount.val();
         if (amt !== undefined && amt !== '' && amt !== null) {
             \$amount.val(amt);
             applyFormat(\$amount);
         }
-    });
-
-    if ($isUpdate === 1) {
-        loadWaybills($contractId, $selectedId, false);
     }
 })();
 JS;

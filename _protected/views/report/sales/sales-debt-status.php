@@ -14,13 +14,14 @@ use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Debt status by customers');
 $this->params['breadcrumbs'][] = $this->title;
+$canCreatePayment = Yii::$app->user->can('fg-invoice-payment-create');
 
 $totalInv   = array_sum(array_column($data, 'total_inv'));
 $totalPay   = array_sum(array_column($data, 'total_pay'));
 $totalSaldo = array_sum(array_column($data, 'saldo'));
 
 $typeFilters = [
-    null     => Yii::t('app', 'All'),
+    null     => 'Все',
     'debt'   => Yii::t('app', 'Only debt'),
     'credit' => Yii::t('app', 'Only credit'),
     'zero'   => Yii::t('app', 'Zero saldo'),
@@ -54,12 +55,12 @@ $buildCurrencyUrl = function (?int $cur) use ($customerId, $type, $country) {
 };
 
 $countryFilters = [
-    null     => Yii::t('app', 'All'),
+    null     => 'Все',
     'local'  => Yii::t('app', 'Local'),
     'import' => Yii::t('app', 'Import'),
 ];
 
-$invPreview = 3;
+$waybillPreview = 3;
 ?>
 <style>
 .debt-wrap { background:#fff; border:1px solid #e0e0e0; border-radius:4px; padding:10px; }
@@ -131,14 +132,14 @@ $invPreview = 3;
 .overdue-mid  { background:#fff3cd; color:#b7791f; }
 .overdue-high { background:#fdecea; color:#c0392b; }
 
-.inv-list { font-size:11.5px; color:#333; line-height:1.5; word-break:break-all; }
-.inv-list .inv-more { display:none; }
-.inv-list.expanded .inv-more { display:inline; }
-.inv-list .toggle-inv {
+.waybill-list { font-size:11.5px; color:#333; line-height:1.5; word-break:break-all; }
+.waybill-list .waybill-more { display:none; }
+.waybill-list.expanded .waybill-more { display:inline; }
+.waybill-list .toggle-waybills {
     cursor:pointer; color:#3c8dbc; font-weight:700; user-select:none;
     padding:0 4px; border-radius:3px;
 }
-.inv-list .toggle-inv:hover { background:#e8f4ff; }
+.waybill-list .toggle-waybills:hover { background:#e8f4ff; }
 
 </style>
 
@@ -174,7 +175,7 @@ $invPreview = 3;
         <div class="debt-pills">
             <?php foreach ($countryFilters as $key => $label): ?>
                 <a href="<?= $buildCountryUrl($key) ?>"
-                   class="<?= $country === $key ? 'active' : '' ?>"><?= Html::encode($label) ?></a>
+                   class="<?= ($country === null && $key === '') || $country === $key ? 'active' : '' ?>"><?= Html::encode($label) ?></a>
             <?php endforeach; ?>
         </div>
 
@@ -190,7 +191,7 @@ $invPreview = 3;
         <div class="debt-pills">
             <?php foreach ($typeFilters as $key => $label): ?>
                 <a href="<?= $buildUrl($key) ?>"
-                   class="<?= $type === $key ? 'active' : '' ?>"><?= Html::encode($label) ?></a>
+                   class="<?= ($type === null && $key === '') || $type === $key ? 'active' : '' ?>"><?= Html::encode($label) ?></a>
             <?php endforeach; ?>
         </div>
 
@@ -204,6 +205,7 @@ $invPreview = 3;
         <table class="debt-tbl" id="debt-tbl">
             <thead>
                 <tr>
+                    <th style="width:52px;"><i class="fa fa-fw fa-gears"></i></th>
                     <th style="width:40px;">№</th>
                     <th style="min-width:240px; text-align:left; padding-left:12px;"><?= Yii::t('app', 'Customer') ?></th>
                     <th style="width:140px;"><?= Yii::t('app', 'Shipped amount') ?></th>
@@ -212,12 +214,12 @@ $invPreview = 3;
                     <th style="width:115px;"><?= Yii::t('app', 'First unpaid date') ?></th>
                     <th style="width:95px;"><?= Yii::t('app', 'Days passed') ?></th>
                     <th style="width:115px;"><?= Yii::t('app', 'Last payment date') ?></th>
-                    <th style="min-width:260px;"><?= Yii::t('app', 'Unpaid invoices') ?></th>
+                    <th style="min-width:260px;"><?= Yii::t('app', 'Unpaid waybills') ?></th>
                 </tr>
             </thead>
             <tbody>
             <?php if (empty($data)): ?>
-                <tr><td colspan="8" class="ctr" style="padding:20px; color:#888;">
+                <tr><td colspan="10" class="ctr" style="padding:20px; color:#888;">
                     <?= Yii::t('app', 'No results found.') ?>
                 </td></tr>
             <?php else: foreach ($data as $i => $row):
@@ -235,13 +237,21 @@ $invPreview = 3;
                     ? date('d.m.Y', strtotime($row['first_unpaid_date']))
                     : '';
 
-                $invStr = trim((string) ($row['unpaid_invoices'] ?? ''));
-                $invArr = $invStr !== '' ? array_map('trim', explode(',', $invStr)) : [];
-                $total  = count($invArr);
-                $head   = array_slice($invArr, 0, $invPreview);
-                $tail   = array_slice($invArr, $invPreview);
+                $waybillStr = trim((string) ($row['unpaid_waybills'] ?? ''));
+                $waybillArr = $waybillStr !== '' ? array_map('trim', explode(',', $waybillStr)) : [];
+                $total      = count($waybillArr);
+                $head       = array_slice($waybillArr, 0, $waybillPreview);
+                $tail       = array_slice($waybillArr, $waybillPreview);
             ?>
                 <tr>
+                    <td class="ctr">
+                        <?php if ($canCreatePayment && $saldo > 0.01 && !empty($waybillArr)): ?>
+                            <?= Html::a('<span class="glyphicon glyphicon-usd"></span> ' . Yii::t('app', 'Pay all unpaid waybills'), ['/fg-invoice-payment/create-bulk-by-customer', 'customer_id' => $row['customer_id']], [
+                                'class' => 'btn btn-success btn-xs form-modal',
+                                'title' => Yii::t('app', 'Pay all unpaid waybills'),
+                            ]) ?>
+                        <?php endif; ?>
+                    </td>
                     <td class="ctr"><?= $i + 1 ?></td>
                     <td class="cust" style="padding-left:12px;"><?= Html::encode($row['customer_name']) ?></td>
                     <td class="num"><?= Helpers::numberFormatRemoveZero($row['total_inv']) ?></td>
@@ -256,14 +266,14 @@ $invPreview = 3;
                         <?php endif; ?>
                     </td>
                     <td class="ctr"><?= !empty($row['last_payment_date']) ? date('d.m.Y', strtotime($row['last_payment_date'])) : '<span style="color:#aaa;">—</span>' ?></td>
-                    <td class="inv-list">
+                    <td class="waybill-list">
                         <?php if ($total === 0): ?>
                             <span style="color:#aaa;">—</span>
                         <?php else: ?>
-                            <span class="inv-head"><?= Html::encode(implode(', ', $head)) ?></span>
+                            <span class="waybill-head"><?= Html::encode(implode(', ', $head)) ?></span>
                             <?php if (!empty($tail)): ?>
-                                <span class="inv-more">, <?= Html::encode(implode(', ', $tail)) ?></span>
-                                <span class="toggle-inv"
+                                <span class="waybill-more">, <?= Html::encode(implode(', ', $tail)) ?></span>
+                                <span class="toggle-waybills"
                                       data-total="<?= $total ?>"
                                       title="<?= Yii::t('app', 'Show all') ?> (<?= $total ?>)">…</span>
                             <?php endif; ?>
@@ -274,6 +284,7 @@ $invPreview = 3;
             </tbody>
             <tfoot>
                 <tr>
+                    <td></td>
                     <td colspan="2" style="padding-left:12px;"><?= Yii::t('app', 'Total') ?></td>
                     <td class="num"><?= Helpers::numberFormatRemoveZero($totalInv) ?></td>
                     <td class="num"><?= Helpers::numberFormatRemoveZero($totalPay) ?></td>
@@ -301,9 +312,9 @@ $('#debt-customer-select').on('change', function () {
     $('#debt-filter-form').trigger('submit');
 });
 
-// Expand / collapse unpaid-invoices list per row.
-$(document).on('click', '.toggle-inv', function () {
-    var \$cell = $(this).closest('.inv-list');
+// Expand / collapse unpaid-waybills list per row.
+$(document).on('click', '.toggle-waybills', function () {
+    var \$cell = $(this).closest('.waybill-list');
     \$cell.toggleClass('expanded');
     $(this).text(\$cell.hasClass('expanded') ? '×' : '…');
 });

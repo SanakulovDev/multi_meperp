@@ -83,10 +83,10 @@ $canXls    = Yii::$app->user->can('fg-invoice-payment-xls');
                 'value'     => function ($model) { return $model->salesContract && $model->salesContract->customer ? $model->salesContract->customer->name : ''; },
             ],
             [
-                'attribute' => 'sales_contract_id',
-                'label'     => Yii::t('app', 'Contract'),
-                'filter'    => Html::activeDropDownList($searchModel, 'sales_contract_id', $contracts, ['class' => 'form-control select2', 'prompt' => $select2prompt]),
-                'value'     => function ($model) { return $model->salesContract ? $model->salesContract->contract_no : ''; },
+                'attribute' => 'waybill_id',
+                'label'     => Yii::t('app', 'Waybill (TTN)'),
+                'filter'    => Html::activeDropDownList($searchModel, 'waybill_id', $waybills, ['class' => 'form-control select2', 'prompt' => $select2prompt]),
+                'value'     => function ($model) { return $model->waybillNo; },
             ],
             [
                 'attribute' => 'currency_id',
@@ -94,18 +94,23 @@ $canXls    = Yii::$app->user->can('fg-invoice-payment-xls');
                 'filter'    => Html::activeDropDownList($searchModel, 'currency_id', $currencies, ['class' => 'form-control select2', 'prompt' => $select2prompt]),
                 'value'     => function ($model) { return $model->currency ? $model->currency->code : ''; },
             ],
-            'no',
-            'date',
-            [
-                'attribute' => 'waybill_id',
-                'label'     => Yii::t('app', 'Waybill (TTN)'),
-                'filter'    => Html::activeDropDownList($searchModel, 'waybill_id', $waybills, ['class' => 'form-control select2', 'prompt' => $select2prompt]),
-                'value'     => function ($model) { return $model->waybillNo; },
-            ],
+            
             [
                 'attribute'      => 'amount',
                 'contentOptions' => ['style' => 'text-align:right;vertical-align:middle;'],
                 'value'          => function ($model) { return Helpers::numberFormatRemoveZero($model->amount); },
+            ],
+            'no',
+            'date',
+            [
+                'attribute' => 'created_by',
+                'label'     => Yii::t('app', 'Created by'),
+                'value'     => function ($model) { return $model->createdBy->fullname ?? ''; },
+            ],
+            [
+                'attribute' => 'created_at',
+                'label'     => Yii::t('app', 'Created at'),
+                'value'     => function ($model) { return $model->createdAtFormatted; },
             ],
         ],
     ]); ?>

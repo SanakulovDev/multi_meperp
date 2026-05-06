@@ -5,12 +5,14 @@ use app\components\Helpers;
 use app\models\Customer;
 use app\models\Currency;
 use app\models\FgInvoicePayment;
+use app\models\FgInvoicePaymentBulkForm;
 use app\models\FgInvoicePaymentSearch;
 use app\models\SalesContract;
 use app\models\Waybill;
 use app\services\FgInvoicePaymentService;
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
@@ -20,6 +22,19 @@ use yii\widgets\ActiveForm;
  */
 class FgInvoicePaymentController extends AppController
 {
+    public function beforeAction($action)
+    {
+        if ($action->id === 'create-bulk-by-customer') {
+            if (!Yii::$app->user->can('fg-invoice-payment-create')) {
+                throw new ForbiddenHttpException(Yii::t('yii', 'You are not allowed to perform this action.'));
+            }
+
+            return \yii\web\Controller::beforeAction($action);
+        }
+
+        return parent::beforeAction($action);
+    }
+
     private function getService(): FgInvoicePaymentService
     {
         return new FgInvoicePaymentService();
@@ -65,6 +80,38 @@ class FgInvoicePaymentController extends AppController
         }
 
         return $this->renderAjax('_form', $this->formData($model));
+    }
+
+    public function actionCreateBulkByCustomer($customer_id)
+    {
+        $form = new FgInvoicePaymentBulkForm([
+            'customer_id' => (int) $customer_id,
+            'date' => date('Y-m-d'),
+        ]);
+
+        if (!Yii::$app->request->isAjax) {
+            return $this->redirect(['/report/sales-debt-status', 'customer_id' => $customer_id]);
+        }
+
+        if ($form->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            if ($this->getService()->createBulkPayments($form)) {
+                return ['status' => 1];
+            }
+
+            return ['status' => 0, 'errors' => $form->getErrors()];
+        }
+
+        $customer = Customer::findOne((int) $customer_id);
+        $waybillRows = $this->getService()->getUnpaidWaybillsByCustomer((int) $customer_id);
+        $form->selected_keys = array_column($waybillRows, 'key');
+
+        return $this->renderAjax('_bulk_form', [
+            'model' => $form,
+            'customer' => $customer,
+            'waybillRows' => $waybillRows,
+        ]);
     }
 
     public function actionUpdate($id)
@@ -137,13 +184,9 @@ class FgInvoicePaymentController extends AppController
 
     private function formData(FgInvoicePayment $model): array
     {
-        $contracts = ArrayHelper::map(
-            SalesContract::find()->with('customer')->orderBy('contract_no')->all(),
-            'id',
-            'contractInfo'
-        );
         $currencies = ArrayHelper::map(Currency::find()->orderBy('code')->all(), 'id', 'code');
+        $waybillOptions = $this->getService()->getSelectableWaybills();
 
-        return compact('model', 'contracts', 'currencies');
+        return compact('model', 'currencies', 'waybillOptions');
     }
 }
