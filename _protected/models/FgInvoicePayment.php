@@ -54,7 +54,7 @@ class FgInvoicePayment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['no', 'date', 'sales_contract_id', 'currency_id', 'amount'], 'required'],
+            [['no', 'date', 'currency_id', 'amount'], 'required'],
             [['waybill_id'], 'default', 'value' => null],
             [['sales_contract_id', 'currency_id', 'waybill_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['amount'], 'number', 'min' => 0.0001],
