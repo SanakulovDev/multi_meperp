@@ -2214,7 +2214,7 @@ class ReportService
         $conditions = [];
         $params = [];
         $defaultVat = (float) (Yii::$app->params['vat'] ?? 0);
-        $invoiceAmountExpr = 'fid.price * fid.qty * (1 + COALESCE(fi.vat, ' . $defaultVat . ') / 100)';
+        $invoiceAmountExpr = '(fid.price * fid.qty) + ((fid.price * fid.qty) * COALESCE(fi.vat, ' . $defaultVat . ') / 100)';
         $currencySql = '';
 
         if ($customerId) {
