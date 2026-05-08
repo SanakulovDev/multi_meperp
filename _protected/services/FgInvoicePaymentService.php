@@ -10,62 +10,111 @@ use yii\db\Query;
 
 class FgInvoicePaymentService
 {
-    private function buildSelectionKey(int $salesContractId, int $waybillId): string
+    private function invoiceAmountExpression(string $invoiceAlias = 'fi', string $detailAlias = 'fid'): string
     {
-        return $salesContractId . ':' . $waybillId;
+        $defaultVat = (float) (Yii::$app->params['vat'] ?? 0);
+        return $detailAlias . '.price * ' . $detailAlias . '.qty * (1 + COALESCE(' . $invoiceAlias . '.vat, ' . $defaultVat . ') / 100)';
+    }
+
+    private function buildSelectionKey(int $salesContractId, int $fgInvoiceId): string
+    {
+        return $salesContractId . ':' . $fgInvoiceId;
+    }
+
+    public function getInvoiceFilterOptions(): array
+    {
+        $rows = (new Query())
+            ->select(['id', 'invoice_no'])
+            ->from('fg_invoice')
+            ->orderBy(['invoice_no' => SORT_ASC])
+            ->all();
+
+        $options = [];
+        foreach ($rows as $row) {
+            $options[(int) $row['id']] = $row['invoice_no'];
+        }
+
+        return $options;
     }
 
     /**
-     * Returns selectable TTN rows enriched with customer / contract / currency metadata.
+     * Returns selectable unpaid FG invoices enriched with customer / contract / currency metadata.
      *
      * @return array<int, array<string, mixed>>
      */
-    public function getSelectableWaybills(): array
+    public function getSelectableWaybills(?int $currentFgInvoiceId = null): array
     {
+        $amountExpr = $this->invoiceAmountExpression();
+        $invoiceAmountSql = 'COALESCE(SUM(' . $amountExpr . '), 0)';
+        $unpaidAmountSql = $invoiceAmountSql . ' - COALESCE(ip.pay_amt, 0)';
+        $having = $unpaidAmountSql . ' > 0.01';
+        $params = [];
+        if ($currentFgInvoiceId) {
+            $having = '(' . $having . ' OR fi.id = :current_fg_invoice_id)';
+            $params[':current_fg_invoice_id'] = $currentFgInvoiceId;
+        }
+
         $rows = (new Query())
             ->select([
-                'waybill_id' => 'w.id',
-                'w.waybill_no',
-                'w.waybill_date',
+                'fg_invoice_id' => 'fi.id',
+                'invoice_no' => 'fi.invoice_no',
+                'invoice_date' => 'fi.invoice_date',
                 'sales_contract_id' => 'sc.id',
                 'contract_no' => 'sc.contract_no',
                 'currency_id' => 'sc.currency_id',
                 'currency_code' => 'cu.code',
                 'customer_name' => 'c.name',
-                'amount' => 'COALESCE(SUM(fid.qty * fid.price), 0)',
+                'amount' => $invoiceAmountSql,
+                'paid_amount' => 'COALESCE(ip.pay_amt, 0)',
+                'unpaid_amount' => $unpaidAmountSql,
             ])
-            ->from(['fiw' => 'fg_invoice_waybill'])
-            ->innerJoin(['fi' => 'fg_invoice'], 'fi.id = fiw.fg_invoice_id')
-            ->innerJoin(['w' => 'waybill'], 'w.id = fiw.waybill_id')
+            ->from(['fi' => 'fg_invoice'])
+            ->innerJoin(['fid' => 'fg_invoice_detail'], 'fid.fg_invoice_id = fi.id')
             ->innerJoin(['sc' => 'sales_contract'], 'sc.contract_no = fi.contract AND sc.customer_id = fi.customer_id')
-            ->innerJoin(['c' => 'customer'], 'c.id = sc.customer_id')
+            ->innerJoin(['c' => 'customer'], 'c.id = fi.customer_id')
             ->leftJoin(['cu' => 'currency'], 'cu.id = sc.currency_id')
-            ->leftJoin(['fid' => 'fg_invoice_detail'], 'fid.fg_invoice_id = fi.id')
+            ->leftJoin([
+                'ip' => (new Query())
+                    ->select([
+                        'fg_invoice_id',
+                        'pay_amt' => 'SUM(amount)',
+                    ])
+                    ->from('fg_invoice_payment')
+                    ->where(['not', ['fg_invoice_id' => null]])
+                    ->groupBy(['fg_invoice_id']),
+            ], 'ip.fg_invoice_id = fi.id')
             ->groupBy([
-                'w.id',
-                'w.waybill_no',
-                'w.waybill_date',
+                'fi.id',
+                'fi.invoice_no',
+                'fi.invoice_date',
                 'sc.id',
                 'sc.contract_no',
                 'sc.currency_id',
                 'cu.code',
                 'c.name',
+                'ip.pay_amt',
             ])
+            ->having($having, $params)
             ->orderBy([
-                'w.waybill_date' => SORT_DESC,
-                'w.waybill_no' => SORT_DESC,
                 'c.name' => SORT_ASC,
+                'fi.invoice_date' => SORT_ASC,
+                'fi.invoice_no' => SORT_ASC,
             ])
             ->all();
 
         return array_map(function ($row) {
-            $date = !empty($row['waybill_date']) ? date('d.m.Y', strtotime($row['waybill_date'])) : '';
-            $text = trim($row['waybill_no'] . ($date !== '' ? ' (' . $date . ')' : '') . ' - ' . $row['customer_name']);
+            $date = !empty($row['invoice_date']) ? date('d.m.Y', strtotime($row['invoice_date'])) : '';
+            $text = trim($row['invoice_no'] . ($date !== '' ? ' (' . $date . ')' : '') . ' - ' . $row['customer_name']);
 
             return [
-                'id' => (int) $row['waybill_id'],
+                'id' => (int) $row['fg_invoice_id'],
                 'text' => $text,
+                'fg_invoice_id' => (int) $row['fg_invoice_id'],
+                'invoice_no' => $row['invoice_no'],
+                'invoice_date' => $row['invoice_date'],
                 'amount' => (float) $row['amount'],
+                'paid_amount' => (float) $row['paid_amount'],
+                'unpaid_amount' => (float) $row['unpaid_amount'],
                 'sales_contract_id' => (int) $row['sales_contract_id'],
                 'contract_no' => $row['contract_no'],
                 'currency_id' => (int) $row['currency_id'],
@@ -76,14 +125,7 @@ class FgInvoicePaymentService
     }
 
     /**
-     * Returns waybills linked to any FgInvoice of the given sales contract.
-     * Chain: SalesContract → FgInvoice (matched by contract_no + customer_id)
-     *        → FgInvoiceWaybill → Waybill
-     *
-     * Each row includes the aggregated invoice amount (SUM(qty*price)) for
-     * all FgInvoice rows attached to the waybill.
-     *
-     * @return array [['id' => int, 'text' => string, 'amount' => float], ...]
+     * Backward-compatible endpoint helper: returns unpaid FG invoices for a contract.
      */
     public function getWaybillsByContract(int $contractId): array
     {
@@ -92,41 +134,53 @@ class FgInvoicePaymentService
             return [];
         }
 
+        $amountExpr = $this->invoiceAmountExpression();
+        $invoiceAmountSql = 'COALESCE(SUM(' . $amountExpr . '), 0)';
+        $unpaidAmountSql = $invoiceAmountSql . ' - COALESCE(ip.pay_amt, 0)';
+
         $rows = (new Query())
             ->select([
-                'w.id',
-                'w.waybill_no',
-                'w.waybill_date',
-                'amount' => 'COALESCE(SUM(fid.qty * fid.price), 0)',
+                'id' => 'fi.id',
+                'invoice_no' => 'fi.invoice_no',
+                'invoice_date' => 'fi.invoice_date',
+                'amount' => $invoiceAmountSql,
+                'paid_amount' => 'COALESCE(ip.pay_amt, 0)',
+                'unpaid_amount' => $unpaidAmountSql,
             ])
-            ->from(['fiw' => 'fg_invoice_waybill'])
-            ->innerJoin(['fi' => 'fg_invoice'],
-                'fi.id = fiw.fg_invoice_id AND fi.contract = :contract AND fi.customer_id = :customer',
-                [
-                    ':contract' => $contract->contract_no,
-                    ':customer' => $contract->customer_id,
-                ]
-            )
-            ->innerJoin(['w' => 'waybill'], 'w.id = fiw.waybill_id')
-            ->leftJoin(['fid' => 'fg_invoice_detail'], 'fid.fg_invoice_id = fi.id')
-            ->groupBy(['w.id', 'w.waybill_no', 'w.waybill_date'])
-            ->orderBy(['w.waybill_date' => SORT_DESC, 'w.waybill_no' => SORT_DESC])
+            ->from(['fi' => 'fg_invoice'])
+            ->innerJoin(['fid' => 'fg_invoice_detail'], 'fid.fg_invoice_id = fi.id')
+            ->leftJoin([
+                'ip' => (new Query())
+                    ->select([
+                        'fg_invoice_id',
+                        'pay_amt' => 'SUM(amount)',
+                    ])
+                    ->from('fg_invoice_payment')
+                    ->where(['not', ['fg_invoice_id' => null]])
+                    ->groupBy(['fg_invoice_id']),
+            ], 'ip.fg_invoice_id = fi.id')
+            ->where([
+                'fi.contract' => $contract->contract_no,
+                'fi.customer_id' => $contract->customer_id,
+            ])
+            ->groupBy(['fi.id', 'fi.invoice_no', 'fi.invoice_date', 'ip.pay_amt'])
+            ->having($unpaidAmountSql . ' > 0.01')
+            ->orderBy(['fi.invoice_date' => SORT_ASC, 'fi.invoice_no' => SORT_ASC])
             ->all();
 
         return array_map(function ($row) {
-            $date = !empty($row['waybill_date']) ? date('d.m.Y', strtotime($row['waybill_date'])) : '';
-            $text = $row['waybill_no'] . ($date !== '' ? ' (' . $date . ')' : '');
+            $date = !empty($row['invoice_date']) ? date('d.m.Y', strtotime($row['invoice_date'])) : '';
             return [
-                'id'     => (int) $row['id'],
-                'text'   => $text,
+                'id' => (int) $row['id'],
+                'text' => $row['invoice_no'] . ($date !== '' ? ' (' . $date . ')' : ''),
+                'invoice_no' => $row['invoice_no'],
                 'amount' => (float) $row['amount'],
+                'paid_amount' => (float) $row['paid_amount'],
+                'unpaid_amount' => (float) $row['unpaid_amount'],
             ];
         }, $rows);
     }
 
-    /**
-     * Returns SalesContract with customer + currency for form auto-fill data.
-     */
     public function getContract(int $contractId): ?SalesContract
     {
         return SalesContract::find()
@@ -136,70 +190,70 @@ class FgInvoicePaymentService
     }
 
     /**
-     * Returns unpaid customer TTNs with exact unpaid amount for bulk settlement.
+     * Returns unpaid customer FG invoices with exact unpaid amount for bulk settlement.
      *
      * @return array<int, array<string, mixed>>
      */
     public function getUnpaidWaybillsByCustomer(int $customerId): array
     {
+        $amountExpr = $this->invoiceAmountExpression();
+
         $rows = (new Query())
             ->select([
                 'sales_contract_id' => 'sc.id',
                 'contract_no' => 'sc.contract_no',
                 'currency_id' => 'sc.currency_id',
                 'currency_code' => 'cu.code',
-                'waybill_id' => 'w.id',
-                'w.waybill_no',
-                'w.waybill_date',
-                'invoice_amount' => 'SUM(fid.price * fid.qty)',
-                'paid_amount' => 'COALESCE(wp.pay_amt, 0)',
-                'unpaid_amount' => 'SUM(fid.price * fid.qty) - COALESCE(wp.pay_amt, 0)',
+                'fg_invoice_id' => 'fi.id',
+                'invoice_no' => 'fi.invoice_no',
+                'invoice_date' => 'fi.invoice_date',
+                'invoice_amount' => 'SUM(' . $amountExpr . ')',
+                'paid_amount' => 'COALESCE(ip.pay_amt, 0)',
+                'unpaid_amount' => 'SUM(' . $amountExpr . ') - COALESCE(ip.pay_amt, 0)',
             ])
-            ->from(['fiw' => 'fg_invoice_waybill'])
-            ->innerJoin(['fi' => 'fg_invoice'], 'fi.id = fiw.fg_invoice_id')
-            ->innerJoin(['sc' => 'sales_contract'], 'sc.contract_no = fi.contract AND sc.customer_id = fi.customer_id')
-            ->innerJoin(['w' => 'waybill'], 'w.id = fiw.waybill_id')
-            ->leftJoin(['cu' => 'currency'], 'cu.id = sc.currency_id')
+            ->from(['fi' => 'fg_invoice'])
             ->innerJoin(['fid' => 'fg_invoice_detail'], 'fid.fg_invoice_id = fi.id')
+            ->innerJoin(['sc' => 'sales_contract'], 'sc.contract_no = fi.contract AND sc.customer_id = fi.customer_id')
+            ->leftJoin(['cu' => 'currency'], 'cu.id = sc.currency_id')
             ->leftJoin([
-                'wp' => (new Query())
+                'ip' => (new Query())
                     ->select([
-                        'waybill_id',
+                        'fg_invoice_id',
                         'pay_amt' => 'SUM(amount)',
                     ])
                     ->from('fg_invoice_payment')
-                    ->where(['not', ['waybill_id' => null]])
-                    ->groupBy(['waybill_id']),
-            ], 'wp.waybill_id = w.id')
+                    ->where(['not', ['fg_invoice_id' => null]])
+                    ->groupBy(['fg_invoice_id']),
+            ], 'ip.fg_invoice_id = fi.id')
             ->where(['fi.customer_id' => $customerId])
             ->groupBy([
                 'sc.id',
                 'sc.contract_no',
                 'sc.currency_id',
                 'cu.code',
-                'w.id',
-                'w.waybill_no',
-                'w.waybill_date',
-                'wp.pay_amt',
+                'fi.id',
+                'fi.invoice_no',
+                'fi.invoice_date',
+                'ip.pay_amt',
             ])
-            ->having('SUM(fid.price * fid.qty) - COALESCE(wp.pay_amt, 0) > 0.01')
+            ->having('SUM(' . $amountExpr . ') - COALESCE(ip.pay_amt, 0) > 0.01')
             ->orderBy([
-                'w.waybill_date' => SORT_ASC,
-                'w.waybill_no' => SORT_ASC,
+                'fi.invoice_date' => SORT_ASC,
+                'fi.invoice_no' => SORT_ASC,
                 'sc.contract_no' => SORT_ASC,
             ])
             ->all();
 
         return array_map(function ($row) {
             return [
-                'key' => $this->buildSelectionKey((int) $row['sales_contract_id'], (int) $row['waybill_id']),
+                'key' => $this->buildSelectionKey((int) $row['sales_contract_id'], (int) $row['fg_invoice_id']),
                 'sales_contract_id' => (int) $row['sales_contract_id'],
                 'contract_no' => $row['contract_no'],
                 'currency_id' => (int) $row['currency_id'],
                 'currency_code' => $row['currency_code'],
-                'waybill_id' => (int) $row['waybill_id'],
-                'waybill_no' => $row['waybill_no'],
-                'waybill_date' => $row['waybill_date'],
+                'fg_invoice_id' => (int) $row['fg_invoice_id'],
+                'invoice_no' => $row['invoice_no'],
+                'invoice_date' => $row['invoice_date'],
                 'invoice_amount' => (float) $row['invoice_amount'],
                 'paid_amount' => (float) $row['paid_amount'],
                 'unpaid_amount' => (float) $row['unpaid_amount'],
@@ -207,9 +261,6 @@ class FgInvoicePaymentService
         }, $rows);
     }
 
-    /**
-     * Backward-compatible helper kept for existing tests/callers.
-     */
     public function getCustomerByContract(int $contractId): ?Customer
     {
         $contract = $this->getContract($contractId);
@@ -236,7 +287,7 @@ class FgInvoicePaymentService
         }
 
         if (empty($selectedRows)) {
-            $form->addError('selected_keys', Yii::t('app', 'No unpaid waybills selected.'));
+            $form->addError('selected_keys', Yii::t('app', 'No unpaid invoices selected.'));
             return false;
         }
 
@@ -248,7 +299,7 @@ class FgInvoicePaymentService
                 $payment->date = $form->date;
                 $payment->sales_contract_id = $row['sales_contract_id'];
                 $payment->currency_id = $row['currency_id'];
-                $payment->waybill_id = $row['waybill_id'];
+                $payment->fg_invoice_id = $row['fg_invoice_id'];
                 $payment->amount = $row['unpaid_amount'];
 
                 if (!$payment->save()) {
@@ -266,10 +317,6 @@ class FgInvoicePaymentService
         }
     }
 
-    /**
-     * Validates and saves the payment model.
-     * Returns false if validation fails or DB write fails.
-     */
     public function save(FgInvoicePayment $model): bool
     {
         if (!$model->validate()) {

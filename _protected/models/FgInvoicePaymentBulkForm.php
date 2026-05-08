@@ -32,7 +32,7 @@ class FgInvoicePaymentBulkForm extends Model
             'customer_id' => Yii::t('app', 'Customer'),
             'no' => Yii::t('app', 'Receipt number'),
             'date' => Yii::t('app', 'Date'),
-            'selected_keys' => Yii::t('app', 'Waybill (TTN)'),
+            'selected_keys' => Yii::t('app', 'Invoice no'),
         ];
     }
 }

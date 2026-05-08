@@ -8,7 +8,6 @@ use app\models\FgInvoicePayment;
 use app\models\FgInvoicePaymentBulkForm;
 use app\models\FgInvoicePaymentSearch;
 use app\models\SalesContract;
-use app\models\Waybill;
 use app\services\FgInvoicePaymentService;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -48,7 +47,7 @@ class FgInvoicePaymentController extends AppController
         $customers = ArrayHelper::map(Customer::find()->orderBy('name')->all(), 'id', 'name');
         $contracts = ArrayHelper::map(SalesContract::find()->orderBy('contract_no')->all(), 'id', 'contract_no');
         $currencies = ArrayHelper::map(Currency::find()->orderBy('code')->all(), 'id', 'code');
-        $waybills  = ArrayHelper::map(Waybill::find()->orderBy('waybill_no')->all(), 'id', 'waybill_no');
+        $waybills  = $this->getService()->getInvoiceFilterOptions();
 
         return $this->render('index', compact('searchModel', 'dataProvider', 'customers', 'contracts', 'currencies', 'waybills'));
     }
@@ -78,7 +77,6 @@ class FgInvoicePaymentController extends AppController
             }
             return ['status' => 0, 'errors' => $model->getErrors()];
         }
-
         return $this->renderAjax('_form', $this->formData($model));
     }
 
@@ -185,8 +183,8 @@ class FgInvoicePaymentController extends AppController
     private function formData(FgInvoicePayment $model): array
     {
         $currencies = ArrayHelper::map(Currency::find()->orderBy('code')->all(), 'id', 'code');
-        $waybillOptions = $this->getService()->getSelectableWaybills();
-
+        $waybillOptions = $this->getService()->getSelectableWaybills($model->fg_invoice_id ? (int) $model->fg_invoice_id : null);
+        // vd($waybillOptions);
         return compact('model', 'currencies', 'waybillOptions');
     }
 }

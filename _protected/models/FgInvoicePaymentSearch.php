@@ -16,7 +16,7 @@ class FgInvoicePaymentSearch extends FgInvoicePayment
     public function rules()
     {
         return [
-                        [['id', 'sales_contract_id', 'currency_id', 'waybill_id', 'customer_id',
+                        [['id', 'sales_contract_id', 'currency_id', 'waybill_id', 'fg_invoice_id', 'customer_id',
               'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['no', 'date'], 'safe'],
             [['amount'], 'number'],
@@ -31,7 +31,7 @@ class FgInvoicePaymentSearch extends FgInvoicePayment
     public function search(array $params, string $mode = '')
     {
         $query = FgInvoicePayment::find()
-            ->joinWith(['salesContract.customer', 'waybill']);
+            ->joinWith(['salesContract.customer', 'fgInvoice']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -52,6 +52,7 @@ class FgInvoicePaymentSearch extends FgInvoicePayment
             'fg_invoice_payment.sales_contract_id' => $this->sales_contract_id,
             'fg_invoice_payment.currency_id'       => $this->currency_id,
             'fg_invoice_payment.waybill_id'        => $this->waybill_id,
+            'fg_invoice_payment.fg_invoice_id'     => $this->fg_invoice_id,
             'fg_invoice_payment.amount'            => $this->amount,
             'sales_contract.customer_id'           => $this->customer_id,
         ]);
@@ -76,7 +77,7 @@ class FgInvoicePaymentSearch extends FgInvoicePayment
                             'salesContract.contract_no',
                             'no',
                             'date',
-                            'waybill.waybill_no',
+                            'invoiceNo',
                             'amount',
                             'createdBy.fullname',
                             'createdAtFormatted',
@@ -86,7 +87,7 @@ class FgInvoicePaymentSearch extends FgInvoicePayment
                         'titles' => [
                             1  => Yii::t('app', 'Customer'),
                             2  => Yii::t('app', 'Contract'),
-                            5  => Yii::t('app', 'Waybill (TTN)'),
+                            5  => Yii::t('app', 'Invoice no'),
                             7  => Yii::t('app', 'Created by'),
                             8  => Yii::t('app', 'Created at'),
                             9  => Yii::t('app', 'Updated by'),

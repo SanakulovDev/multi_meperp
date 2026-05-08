@@ -130,22 +130,7 @@ YiiAsset::register($this);
             <td class="txt_center font_7 txt_wrap"><?=$unit?></td>
             <td class="txt_right p_rigtht3"><?=round($price, 2)?></td>
             <td class="txt_right p_rigtht3"><?=round($qty, 2)?></td>
-            <!--							<td class="txt_right p_rigtht3">--><? //=round($amount,2)
-            ?><!--</td>-->
-            <!--							--><? // if($vat_txt === 'Без НДС'){
-            ?>
-            <!--								<td colspan="2" class="txt_center">--><? //=$vat_txt;
-            ?><!--</td>-->
-            <!--								<td class="txt_center"></td>-->
-            <!--							--><? // }else{
-            ?>
-            <!--								<td class="txt_right p_rigtht3">--><? //=round($vat,2)
-            ?><!--</td>-->
-            <!--								<td class="txt_right p_rigtht3">--><? //=round($vat_amount,2)
-            ?><!--</td>-->
-            <!--								<td class="txt_right p_rigtht3">--><? //=round($amount_with_vat,2)
-            ?><!--</td>-->
-            <!--							--><? // }
+    
             ?>
           </tr>
         <? } ?>

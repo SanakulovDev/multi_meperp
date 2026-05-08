@@ -42,10 +42,10 @@ $form = ActiveForm::begin([
 </div>
 
 <div class="form-group field-fginvoicepaymentbulkform-selected_keys">
-    <label class="control-label"><?= Yii::t('app', 'Unpaid waybills') ?></label>
+    <label class="control-label"><?= Yii::t('app', 'Unpaid invoices') ?></label>
     <?php if (empty($waybillRows)): ?>
         <div class="alert alert-warning" style="margin-bottom:0;">
-            <?= Yii::t('app', 'No unpaid waybills found for this customer.') ?>
+            <?= Yii::t('app', 'No unpaid invoices found for this customer.') ?>
         </div>
     <?php else: ?>
         <div class="well well-sm" style="margin-bottom:10px;">
@@ -60,7 +60,7 @@ $form = ActiveForm::begin([
                     <th style="width:40px; text-align:center;">
                         <input type="checkbox" id="bulk-check-all" checked>
                     </th>
-                    <th><?= Yii::t('app', 'Waybill (TTN)') ?></th>
+                    <th><?= Yii::t('app', 'Invoice no') ?></th>
                     <th><?= Yii::t('app', 'Currency') ?></th>
                     <th style="text-align:right;"><?= Yii::t('app', 'Amount') ?></th>
                 </tr>
@@ -80,10 +80,10 @@ $form = ActiveForm::begin([
                                    checked>
                         </td>
                         <td>
-                            <strong><?= Html::encode($row['waybill_no']) ?></strong>
-                            <?php if (!empty($row['waybill_date'])): ?>
+                            <strong><?= Html::encode($row['invoice_no']) ?></strong>
+                            <?php if (!empty($row['invoice_date'])): ?>
                                 <div style="font-size:12px; color:#777;">
-                                    <?= date('d.m.Y', strtotime($row['waybill_date'])) ?>
+                                    <?= date('d.m.Y', strtotime($row['invoice_date'])) ?>
                                 </div>
                             <?php endif; ?>
                         </td>

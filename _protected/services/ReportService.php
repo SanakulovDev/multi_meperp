@@ -2213,6 +2213,9 @@ class ReportService
     {
         $conditions = [];
         $params = [];
+        $defaultVat = (float) (Yii::$app->params['vat'] ?? 0);
+        $invoiceAmountExpr = 'fid.price * fid.qty * (1 + COALESCE(fi.vat, ' . $defaultVat . ') / 100)';
+        $currencySql = '';
 
         if ($customerId) {
             $conditions[] = 'c.id = :cid';
@@ -2224,8 +2227,8 @@ class ReportService
             $conditions[] = '(c.country_code_id IS NULL OR NOT EXISTS (SELECT 1 FROM country_code cc WHERE cc.id = c.country_code_id AND cc.alpha_2 = \'UZ\'))';
         }
         if ($currencyId) {
-            $conditions[] = 'EXISTS (SELECT 1 FROM sales_contract sc_cur WHERE sc_cur.customer_id = c.id AND sc_cur.currency_id = :cur_id)';
             $params[':cur_id'] = $currencyId;
+            $currencySql = 'AND sc.currency_id = :cur_id';
         }
 
         $customerFilter = $conditions ? ('WHERE ' . implode(' AND ', $conditions)) : '';
@@ -2250,69 +2253,75 @@ class ReportService
                 unp.overdue_days
             FROM customer c
 
-            -- Customer-level shipment total aggregated by TTN.
+            -- Customer-level shipment total aggregated by FG invoice.
             JOIN (
-                SELECT wi.customer_id, SUM(wi.inv_amt) total_inv
+                SELECT inv.customer_id, SUM(inv.inv_amt) total_inv
                 FROM (
                     SELECT
                         fi.customer_id,
-                        fiw.waybill_id,
-                        SUM(fid.price * fid.qty) inv_amt
-                    FROM fg_invoice_waybill fiw
-                    JOIN fg_invoice fi ON fi.id = fiw.fg_invoice_id
+                        fi.id fg_invoice_id,
+                        SUM($invoiceAmountExpr) inv_amt
+                    FROM fg_invoice fi
                     JOIN fg_invoice_detail fid ON fid.fg_invoice_id = fi.id
-                    GROUP BY fi.customer_id, fiw.waybill_id
-                ) wi
-                GROUP BY wi.customer_id
+                    JOIN sales_contract sc ON sc.contract_no = fi.contract AND sc.customer_id = fi.customer_id
+                    WHERE 1 = 1
+                    $currencySql
+                    GROUP BY fi.customer_id, fi.id
+                ) inv
+                GROUP BY inv.customer_id
             ) inv ON inv.customer_id = c.id
 
-            -- Customer-level payment total aggregated from TTN payments.
+            -- Customer-level payment total aggregated from FG invoice payments.
             LEFT JOIN (
-                SELECT sc.customer_id, SUM(fip.amount) total_pay, MAX(fip.date) last_payment_date
+                SELECT fi.customer_id, SUM(fip.amount) total_pay, MAX(fip.date) last_payment_date
                 FROM fg_invoice_payment fip
-                JOIN sales_contract sc ON sc.id = fip.sales_contract_id
-                WHERE fip.waybill_id IS NOT NULL
-                GROUP BY sc.customer_id
+                JOIN fg_invoice fi ON fi.id = fip.fg_invoice_id
+                JOIN sales_contract sc ON sc.contract_no = fi.contract AND sc.customer_id = fi.customer_id
+                WHERE 1 = 1
+                $currencySql
+                GROUP BY fi.customer_id
             ) pay ON pay.customer_id = c.id
 
-            -- Unpaid TTNs.
+            -- Unpaid FG invoices.
             LEFT JOIN (
                 SELECT
-                    wi.customer_id,
+                    inv.customer_id,
                     GROUP_CONCAT(
                         CONCAT(
-                            wi.waybill_no,
+                            inv.invoice_no,
                             CASE
-                                WHEN wi.waybill_date IS NOT NULL THEN CONCAT(' (', DATE_FORMAT(wi.waybill_date, '%d.%m.%Y'), ')')
+                                WHEN inv.invoice_date IS NOT NULL THEN CONCAT(' (', DATE_FORMAT(inv.invoice_date, '%d.%m.%Y'), ')')
                                 ELSE ''
                             END
                         )
-                        ORDER BY wi.waybill_date, wi.waybill_no
+                        ORDER BY inv.invoice_date, inv.invoice_no
                         SEPARATOR ', '
                     )                                                     unpaid_waybills,
-                    DATE(MIN(wi.waybill_date))                             first_unpaid_date,
-                    DATEDIFF(CURDATE(), DATE(MIN(wi.waybill_date)))        overdue_days
+                    DATE(MIN(inv.invoice_date))                            first_unpaid_date,
+                    DATEDIFF(CURDATE(), DATE(MIN(inv.invoice_date)))       overdue_days
                 FROM (
                     SELECT
                         fi.customer_id,
-                        fiw.waybill_id,
-                        w.waybill_no,
-                        w.waybill_date,
-                        SUM(fid.price * fid.qty) inv_amt
-                    FROM fg_invoice_waybill fiw
-                    JOIN fg_invoice fi ON fi.id = fiw.fg_invoice_id
+                        sc.currency_id,
+                        fi.id fg_invoice_id,
+                        fi.invoice_no,
+                        fi.invoice_date,
+                        SUM($invoiceAmountExpr) inv_amt
+                    FROM fg_invoice fi
                     JOIN fg_invoice_detail fid ON fid.fg_invoice_id = fi.id
-                    JOIN waybill w ON w.id = fiw.waybill_id
-                    GROUP BY fi.customer_id, fiw.waybill_id, w.waybill_no, w.waybill_date
-                ) wi
+                    JOIN sales_contract sc ON sc.contract_no = fi.contract AND sc.customer_id = fi.customer_id
+                    WHERE 1 = 1
+                    $currencySql
+                    GROUP BY fi.customer_id, sc.currency_id, fi.id, fi.invoice_no, fi.invoice_date
+                ) inv
                 LEFT JOIN (
-                    SELECT waybill_id, SUM(amount) pay_amt
+                    SELECT fg_invoice_id, SUM(amount) pay_amt
                     FROM fg_invoice_payment
-                    WHERE waybill_id IS NOT NULL
-                    GROUP BY waybill_id
-                ) wp ON wp.waybill_id = wi.waybill_id
-                WHERE wi.inv_amt > COALESCE(wp.pay_amt, 0) + 0.01
-                GROUP BY wi.customer_id
+                    WHERE fg_invoice_id IS NOT NULL
+                    GROUP BY fg_invoice_id
+                ) ip ON ip.fg_invoice_id = inv.fg_invoice_id
+                WHERE inv.inv_amt > COALESCE(ip.pay_amt, 0) + 0.01
+                GROUP BY inv.customer_id
             ) unp ON unp.customer_id = c.id
 
             $customerFilter

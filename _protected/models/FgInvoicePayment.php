@@ -5,7 +5,6 @@ use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
-use yii\db\Query;
 
 /**
  * This is the model class for table "fg_invoice_payment".
@@ -16,6 +15,7 @@ use yii\db\Query;
  * @property int    $sales_contract_id
  * @property int    $currency_id
  * @property int    $waybill_id
+ * @property int    $fg_invoice_id
  * @property float  $amount
  * @property int    $created_at
  * @property int    $created_by
@@ -23,6 +23,7 @@ use yii\db\Query;
  * @property int    $updated_by
  *
  * @property SalesContract $salesContract
+ * @property FgInvoice     $fgInvoice
  * @property Currency      $currency
  * @property Waybill       $waybill
  * @property User          $createdBy
@@ -54,9 +55,9 @@ class FgInvoicePayment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['no', 'date', 'currency_id', 'amount'], 'required'],
-            [['waybill_id'], 'default', 'value' => null],
-            [['sales_contract_id', 'currency_id', 'waybill_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['no', 'date', 'currency_id', 'fg_invoice_id', 'amount'], 'required'],
+            [['waybill_id', 'fg_invoice_id'], 'default', 'value' => null],
+            [['sales_contract_id', 'currency_id', 'waybill_id', 'fg_invoice_id', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['amount'], 'number', 'min' => 0.0001],
             [['date'], 'safe'],
             [['no'], 'string', 'max' => 100],
@@ -69,7 +70,10 @@ class FgInvoicePayment extends \yii\db\ActiveRecord
             [['waybill_id'], 'exist', 'skipOnError' => true,
                 'targetClass' => Waybill::className(),
                 'targetAttribute' => ['waybill_id' => 'id']],
-            [['waybill_id'], 'validateWaybillContract'],
+            [['fg_invoice_id'], 'exist', 'skipOnError' => true,
+                'targetClass' => FgInvoice::className(),
+                'targetAttribute' => ['fg_invoice_id' => 'id']],
+            [['fg_invoice_id'], 'validateFgInvoiceContract'],
         ];
     }
 
@@ -82,6 +86,7 @@ class FgInvoicePayment extends \yii\db\ActiveRecord
             'sales_contract_id' => Yii::t('app', 'Sales contract'),
             'currency_id'       => Yii::t('app', 'Currency'),
             'waybill_id'        => Yii::t('app', 'Waybill (TTN)'),
+            'fg_invoice_id'     => Yii::t('app', 'Invoice no'),
             'amount'            => Yii::t('app', 'Amount'),
             'created_at'        => Yii::t('app', 'Created at'),
             'created_by'        => Yii::t('app', 'Created by'),
@@ -98,6 +103,11 @@ class FgInvoicePayment extends \yii\db\ActiveRecord
     public function getWaybill(): ActiveQuery
     {
         return $this->hasOne(Waybill::className(), ['id' => 'waybill_id']);
+    }
+
+    public function getFgInvoice(): ActiveQuery
+    {
+        return $this->hasOne(FgInvoice::className(), ['id' => 'fg_invoice_id']);
     }
 
     public function getCurrency(): ActiveQuery
@@ -131,9 +141,14 @@ class FgInvoicePayment extends \yii\db\ActiveRecord
         return $this->waybill ? $this->waybill->waybill_no : '';
     }
 
-    public function validateWaybillContract($attribute): void
+    public function getInvoiceNo(): string
     {
-        if (empty($this->waybill_id) || empty($this->sales_contract_id) || $this->hasErrors()) {
+        return $this->fgInvoice ? $this->fgInvoice->invoice_no : '';
+    }
+
+    public function validateFgInvoiceContract($attribute): void
+    {
+        if (empty($this->fg_invoice_id) || empty($this->sales_contract_id) || $this->hasErrors()) {
             return;
         }
 
@@ -142,18 +157,16 @@ class FgInvoicePayment extends \yii\db\ActiveRecord
             return;
         }
 
-        $exists = (new Query())
-            ->from(['fiw' => 'fg_invoice_waybill'])
-            ->innerJoin(['fi' => 'fg_invoice'], 'fi.id = fiw.fg_invoice_id')
+        $exists = FgInvoice::find()
             ->where([
-                'fiw.waybill_id' => $this->waybill_id,
-                'fi.contract' => $contract->contract_no,
-                'fi.customer_id' => $contract->customer_id,
+                'id' => $this->fg_invoice_id,
+                'contract' => $contract->contract_no,
+                'customer_id' => $contract->customer_id,
             ])
             ->exists();
 
         if (!$exists) {
-            $this->addError($attribute, Yii::t('app', 'Selected waybill does not belong to the chosen contract.'));
+            $this->addError($attribute, Yii::t('app', 'Selected invoice does not belong to the chosen contract.'));
         }
     }
 }

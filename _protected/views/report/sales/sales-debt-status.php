@@ -214,7 +214,7 @@ $waybillPreview = 3;
                     <th style="width:115px;"><?= Yii::t('app', 'First unpaid date') ?></th>
                     <th style="width:95px;"><?= Yii::t('app', 'Days passed') ?></th>
                     <th style="width:115px;"><?= Yii::t('app', 'Last payment date') ?></th>
-                    <th style="min-width:260px;"><?= Yii::t('app', 'Unpaid waybills') ?></th>
+                    <th style="min-width:260px;"><?= Yii::t('app', 'Unpaid invoices') ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -246,9 +246,9 @@ $waybillPreview = 3;
                 <tr>
                     <td class="ctr">
                         <?php if ($canCreatePayment && $saldo > 0.01 && !empty($waybillArr)): ?>
-                            <?= Html::a('<span class="glyphicon glyphicon-usd"></span> ' . Yii::t('app', 'Pay all unpaid waybills'), ['/fg-invoice-payment/create-bulk-by-customer', 'customer_id' => $row['customer_id']], [
+                            <?= Html::a('<span class="glyphicon glyphicon-usd"></span> ' . Yii::t('app', 'Pay all unpaid invoices'), ['/fg-invoice-payment/create-bulk-by-customer', 'customer_id' => $row['customer_id']], [
                                 'class' => 'btn btn-success btn-xs form-modal',
-                                'title' => Yii::t('app', 'Pay all unpaid waybills'),
+                                'title' => Yii::t('app', 'Pay all unpaid invoices'),
                             ]) ?>
                         <?php endif; ?>
                     </td>
