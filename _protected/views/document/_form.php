@@ -34,9 +34,7 @@
 			<? if(isset($isNewRecord)){ ?>
 				<? $cond = ['and', ['not in', 'id', Yii::$app->user->identity->warehouseIds], ['warehouse_type' => [0, 1]]]; ?>
 				<?=$form->field($model, 'to_warehouse_id')
-				        ->dropDownList(yii\helpers\ArrayHelper::map(app\models\Warehouse::find()
-				                                                                        ->where($cond)
-				                                                                        ->all(), 'id', 'name'), ['prompt' => Yii::t('app', 'Select...'), 'class' => 'form-control select2'])?>
+				        ->dropDownList($user_warehouses, ['prompt' => Yii::t('app', 'Select...'), 'class' => 'form-control select2'])?>
 			<? }else{ ?>
 
 				<div class="form-group">

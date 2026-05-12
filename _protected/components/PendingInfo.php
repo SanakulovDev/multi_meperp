@@ -18,7 +18,7 @@ use yii\base\Component;
       Yii::$app->view->params['past_eta_data_v'] = null;
       Yii::$app->view->params['past_eta_count_v'] = 0;
 
-      Yii::$app->view->params['past_payments'] = [];
+      Yii::$app->view->params['past_payments'] = [1];
 
       if(Yii::$app->user->can('document-pending-alert')){
 

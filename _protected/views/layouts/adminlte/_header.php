@@ -10,6 +10,7 @@ $url  = Yii::$app->request->url;
 $reportGroups = [];
 $reportGroupsT = [];
 $hiddenReports = [];
+Yii::$app->view->params['past_payments'] = Yii::$app->view->params['past_payments'] ?? [];
 
 if($url == '/report/index'){
   	$query = ReportGroup::find();

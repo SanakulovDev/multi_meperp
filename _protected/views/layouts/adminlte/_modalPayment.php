@@ -1,7 +1,8 @@
 <?php
   
   $past_payments = Yii::$app->view->params['past_payments'];
-  $past_payments_count = count(Yii::$app->view->params['past_payments']);
+  // $past_payments_count = count(Yii::$app->view->params['past_payments']);
+  $past_payments_count=0;
   
 ?>
 <?if(Yii::$app->user->can('past-payment-alert')){?>

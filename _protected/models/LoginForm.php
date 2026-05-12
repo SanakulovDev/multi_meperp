@@ -90,6 +90,7 @@ class LoginForm extends Model {
    * @return bool Whether the user is logged in successfully.
    */
   public function login() {
+    // return true;
     if (!$this->validate()) {
       return false;
     }
@@ -97,11 +98,14 @@ class LoginForm extends Model {
     if (!$user) {
       return false;
     }
+    // vd($user);
     // if there is user but his status is inactive, write that in status property so we know for later
     if ($user->status == User::STATUS_INACTIVE) {
       $this->status = $user->status;
       return false;
     }
+    // vd(Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0));
+    // return ;
     return Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
   }
 
