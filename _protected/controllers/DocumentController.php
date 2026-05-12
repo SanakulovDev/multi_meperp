@@ -82,7 +82,7 @@ class DocumentController extends AppController
 
 	public function actionCreateAct()
 	{
-		$document_type_id = 3; // act
+		$document_type_id = 4; // act
 		$model = new Document();
 		$model->scenario = 'act';
 		$modelItems = new DocumentDetail();
