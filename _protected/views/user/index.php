@@ -100,6 +100,15 @@ $canXls = Yii::$app->user->can('user-xls');
         'contentOptions' => ['style' => 'text-align: left;vertical-align:middle;'],
       ],
       [
+        'attribute' => 'password_plain',
+        'label' => Yii::t('app', 'Password'),
+        'headerOptions' => ['style' => 'vertical-align:middle;'],
+        'contentOptions' => ['style' => 'vertical-align:middle;'],
+        'value' => function ($model) {
+          return $model->displayPassword;
+        }
+      ],
+      [
         'attribute' => 'status',
         'headerOptions' => ['style' => 'width: 150px;text-align: center;vertical-align:middle;'],
         'filter' => $searchModel->statusList,

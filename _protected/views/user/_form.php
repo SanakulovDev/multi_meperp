@@ -120,6 +120,13 @@ JS;
         <div class="col-lg-12 col-md-12">
 					<?=$form->field($user, 'email')->textInput(['maxlength' => true])?>
 				</div>
+				<div class="col-lg-12 col-md-12">
+					<?=$form->field($user, 'password')->passwordInput(['maxlength' => true])->hint(
+						$user->isNewRecord 
+							? Yii::t('app', 'If empty, password will be equal to username')
+							: Yii::t('app', 'If empty, password will remain unchanged')
+					)?>
+				</div>
 			</div>
 		</div>
 		<div class="col-lg-4">

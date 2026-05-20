@@ -797,5 +797,8 @@ return[
   'Year Period' => 'Year Period',
   'Download' => 'Download',
   'Coefficient' => 'Coefficient',
+  'If empty, password will be equal to username' => 'If empty, password will be equal to username',
+  'If empty, password will remain unchanged' => 'If empty, password will remain unchanged',
 ];
+
 

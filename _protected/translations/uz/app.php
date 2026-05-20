@@ -170,6 +170,8 @@ return [
   'Role' => 'Roli',
   'Update User' => 'O`zgartirgan foydalanuvchi',
   'New pwd ( if you want to change it )' => 'Yangi parol ( O`zgartirmoqchi bo`lsangiz )',
+  'If empty, password will be equal to username' => 'Agar bo`sh qoldirilsa, parol foydalanuvchi nomi (username) bilan bir xil bo`ladi.',
+  'If empty, password will remain unchanged' => 'Bo`sh qoldirilsa, parol o`zgarishsiz qoladi.',
   // statuses
   'Draft' => 'Qoralama',
   'Published' => 'Chop etildi',

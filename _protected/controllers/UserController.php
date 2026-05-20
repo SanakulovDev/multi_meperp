@@ -55,7 +55,13 @@
 			if(!$user->load(Yii::$app->request->post())){
 				return $this->render('create', ['user' => $user]);
 			}
-			$user->setPassword($user->username);
+			if(!empty($user->password)){
+				$user->setPassword($user->password);
+				$user->password_plain = $user->password;
+			}else{
+				$user->setPassword($user->username);
+				$user->password_plain = $user->username;
+			}
 			$user->generateAuthKey();
 			if(!$user->save()){
 				return $this->render('create', ['user' => $user]);
@@ -133,6 +139,7 @@
 			// only if user entered new password we want to hash and save it
 			if($user->password){
 				$user->setPassword($user->password);
+				$user->password_plain = $user->password;
 			}
 			// if admin is activating user manually we want to remove account activation token
 			if($user->status == User::STATUS_ACTIVE && $user->account_activation_token != null){

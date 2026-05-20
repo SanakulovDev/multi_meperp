@@ -240,6 +240,8 @@ return [
   'Role' => 'Роль',
   'Update User' => 'Отредактировать пользователя',
   'New pwd ( if you want to change it )' => 'Новый пароль ( если хотите изменить )',
+  'If empty, password will be equal to username' => 'Если оставить пустым, пароль будет совпадать с именем пользователя (username).',
+  'If empty, password will remain unchanged' => 'Если оставить пустым, пароль останется без изменений.',
   //-- errors --//
   'The above error occurred while the Web server was processing your request.' => 'Ошибка возникла при обработке запроса Web сервером.',
   'Please contact us if you think this is a server error. Thank you.' => 'Пожалуйста свяжитесь с нами, если вы считаете, что это ошибка сервера. Спасибо.',

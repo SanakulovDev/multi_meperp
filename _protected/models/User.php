@@ -82,7 +82,7 @@
 				// use passwordStrengthRule() method to determine password strength
 				$this->passwordStrengthRule(),
 				['status', 'required'],
-				['act_access', 'safe'],
+				[['act_access', 'password_plain'], 'safe'],
 				['item_name', 'string', 'min' => 2, 'max' => 64]
 			];
 		}

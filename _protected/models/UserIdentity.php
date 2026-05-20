@@ -17,6 +17,7 @@
 	 * @property integer $id
 	 * @property string  $username
 	 * @property string  $password_hash
+	 * @property string  $password_plain
 	 * @property string  $password_reset_token
 	 * @property string  $email
 	 * @property string  $account_activation_token
@@ -113,7 +114,35 @@
 		 * @throws InvalidConfigException
 		 */
 		public function setPassword($password){
+			if($this->hasAttribute('password_plain')){
+				$this->password_plain = $password;
+			}
 			$this->password_hash = Yii::$app->security->generatePasswordHash($password);
+		}
+
+		public function getDisplayPassword(){
+			if(!empty($this->password_plain)){
+				return $this->password_plain;
+			}
+
+			$possiblePasswords = [
+				$this->username,
+				'admin1234',
+				'shipper1234',
+				'qlikPassword2020',
+			];
+
+			foreach(array_unique(array_filter($possiblePasswords)) as $password){
+				try{
+					if($this->validatePassword($password)){
+						return $password;
+					}
+				}catch(InvalidConfigException $exception){
+					return '******';
+				}
+			}
+
+			return '******';
 		}
 
 		public function getRole(){
