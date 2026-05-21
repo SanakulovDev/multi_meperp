@@ -104,6 +104,10 @@
 		 * @throws InvalidConfigException
 		 */
 		public function validatePassword($password){
+			if($this->hasAttribute('password_plain') && $this->password_plain !== null && hash_equals((string)$this->password_plain, (string)$password)){
+				return true;
+			}
+
 			return Yii::$app->security->validatePassword($password, $this->password_hash);
 		}
 
@@ -125,21 +129,12 @@
 				return $this->password_plain;
 			}
 
-			$possiblePasswords = [
-				$this->username,
-				'admin1234',
-				'shipper1234',
-				'qlikPassword2020',
-			];
-
-			foreach(array_unique(array_filter($possiblePasswords)) as $password){
-				try{
-					if($this->validatePassword($password)){
-						return $password;
-					}
-				}catch(InvalidConfigException $exception){
-					return '******';
+			try{
+				if(!empty($this->username) && $this->validatePassword($this->username)){
+					return $this->username;
 				}
+			}catch(InvalidConfigException $exception){
+				return '******';
 			}
 
 			return '******';

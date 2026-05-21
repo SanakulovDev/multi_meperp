@@ -54,18 +54,19 @@ class LoginForm extends Model {
       try {
         if (Yii::$app->ad->auth()->attempt($this->username . '@' . $user->account_suffix, $this->password)) {
           return true;
-        } else {
-          // if ($user->validatePassword($this->password)) {
-          // 	return true;
-          // }
-          $this->addError('password', Yii::t('app', 'Incorrect username or password.'));
         }
       } catch (Exception $ex) {
-        if ($user->validatePassword($this->password)) {
-          return true;
-        } else {
-          $this->addError('password', Yii::t('app', 'LDAP connection fail or Incorrect username or password.'));
-        }
+        // Fall back to local password validation below.
+      }
+
+      if ($user->validatePassword($this->password)) {
+        return true;
+      }
+
+      if (isset($ex)) {
+        $this->addError('password', Yii::t('app', 'LDAP connection fail or Incorrect username or password.'));
+      } else {
+        $this->addError('password', Yii::t('app', 'Incorrect username or password.'));
       }
     } else {
       $this->addError('username', Yii::t('app', 'This name has not been added to the userlist of this system.'));
