@@ -72,6 +72,14 @@
         return $this->hasOne(ReportGroup::className(), ['id' => 'report_group_id']);
     }
 
+		public function getTitleLocalized(){
+			return Yii::t('app', (string)$this->title);
+		}
+
+		public function getDescriptionLocalized(){
+			return Yii::t('app', (string)$this->description);
+		}
+
 
 	// sales-payment-info.php
 	/*

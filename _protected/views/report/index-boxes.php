@@ -29,8 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
             <span class="info-box-icon bg-<?=$style[1] ?? ''?>"><i class="<?=$style[0] ?? ''?>"></i></span>
 
             <div class="info-box-content" style="color:#000000">
-              <span class="info-box-number"><?=$report->title?></span>
-              <span class="info-box-text" title="<?=Yii::t('app', $report->description)?>" style="text-transform: none;"><?=Yii::t('app', $report->description)?></span>
+              <span class="info-box-number"><?=$report->titleLocalized?></span>
+              <span class="info-box-text" title="<?=$report->descriptionLocalized?>" style="text-transform: none;"><?=$report->descriptionLocalized?></span>
 
             </div>
             <!-- /.info-box-content -->

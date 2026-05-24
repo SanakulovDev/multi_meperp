@@ -2,6 +2,20 @@
 return [
   // Nizomiddin
   'All' => 'Barchasi',
+  'Debt status by customers' => 'Mijozlar bo\'yicha qarzdorlik holati',
+  'Only debt' => 'Faqat qarzdorlar',
+  'Only credit' => 'Faqat ortiqcha to\'lov',
+  'Zero saldo' => 'Nol balans',
+  'Local' => 'Mahalliy',
+  'Import' => 'Import',
+  'Receipts' => 'Tushumlar',
+  'Balance (debt)' => 'Balans (qarzdorlik)',
+  'First unpaid date' => 'Birinchi to\'lanmagan sana',
+  'Days passed' => 'O\'tgan kunlar',
+  'Last payment date' => 'Oxirgi to\'lov sanasi',
+  'Unpaid invoices' => 'To\'lanmagan hisob-fakturalar',
+  'Pay all unpaid waybills' => 'Barcha to\'lanmagan yuk xatlarini to\'lash',
+  'Show all' => 'Barchasini ko\'rsatish',
   'ID' => '№',
   '#' => '№',
   'Add' => 'Qo`shish',
@@ -919,5 +933,6 @@ return [
   'Year Period' => 'Yillik davr',
   'Download' => 'Yuklab olish',
   'Coefficient' => 'Koeffitsient',
+  'FG Invoice Payments' => 'TTN to\'lovlari',
 ]
 ?>

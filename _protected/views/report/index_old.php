@@ -53,16 +53,16 @@
 						'contentOptions' => ['style' => 'width: 300px;vertical-align:middle;'],
 						'content' => function($model){
 							if(count($model->userReports) > 0){
-								return Html::a($model->title, Url::toRoute(['report/'.$model->action]), ['target' => '_blank', 'data-pjax' => 0]);
+								return Html::a($model->titleLocalized, Url::toRoute(['report/'.$model->action]), ['target' => '_blank', 'data-pjax' => 0]);
 							}else{
-								return $model->title;
+								return $model->titleLocalized;
 							}
 						},
 					],
 					[
 						'attribute' => 'description',
 						'content' => function($model){
-              return Yii::t('app', $model->description);
+								return $model->descriptionLocalized;
             },
 					],
 				],

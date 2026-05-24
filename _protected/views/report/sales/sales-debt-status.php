@@ -21,7 +21,7 @@ $totalPay   = array_sum(array_column($data, 'total_pay'));
 $totalSaldo = array_sum(array_column($data, 'saldo'));
 
 $typeFilters = [
-    null     => 'Все',
+    null     => Yii::t('app', 'All'),
     'debt'   => Yii::t('app', 'Only debt'),
     'credit' => Yii::t('app', 'Only credit'),
     'zero'   => Yii::t('app', 'Zero saldo'),
@@ -55,7 +55,7 @@ $buildCurrencyUrl = function (?int $cur) use ($customerId, $type, $country) {
 };
 
 $countryFilters = [
-    null     => 'Все',
+    null     => Yii::t('app', 'All'),
     'local'  => Yii::t('app', 'Local'),
     'import' => Yii::t('app', 'Import'),
 ];

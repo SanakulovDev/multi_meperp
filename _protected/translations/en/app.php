@@ -1,6 +1,20 @@
 <?php
 return[
   'All' => 'All',
+  'Debt status by customers' => 'Debt status by customers',
+  'Only debt' => 'Only debt',
+  'Only credit' => 'Only credit',
+  'Zero saldo' => 'Zero balance',
+  'Local' => 'Local',
+  'Import' => 'Import',
+  'Receipts' => 'Receipts',
+  'Balance (debt)' => 'Balance (debt)',
+  'First unpaid date' => 'First unpaid date',
+  'Days passed' => 'Days passed',
+  'Last payment date' => 'Last payment date',
+  'Unpaid invoices' => 'Unpaid invoices',
+  'Pay all unpaid waybills' => 'Pay all unpaid waybills',
+  'Show all' => 'Show all',
   'copyright' => 'All rights reserved.',
   'ID' => 'No',
   '#' => 'No',
@@ -799,6 +813,7 @@ return[
   'Coefficient' => 'Coefficient',
   'If empty, password will be equal to username' => 'If empty, password will be equal to username',
   'If empty, password will remain unchanged' => 'If empty, password will remain unchanged',
+  'FG Invoice Payments' => 'Payments',
 ];
 
 
