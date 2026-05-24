@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6b9606c794c83166e27c6f9c7c6f3f05",
+    "content-hash": "dbc10ec1c1e532d03824cbc615f1bd5b",
     "packages": [
         {
             "name": "2amigos/qrcode-library",
@@ -2549,6 +2549,7 @@
                 "mail",
                 "mailer"
             ],
+            "abandoned": "symfony/mailer",
             "time": "2019-11-12T09:31:26+00:00"
         },
         {
@@ -7113,5 +7114,5 @@
         "php": ">=7.1.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.3.0"
 }

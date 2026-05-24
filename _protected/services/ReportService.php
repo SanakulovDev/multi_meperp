@@ -2197,36 +2197,169 @@ class ReportService
 
     
 
+    /**
+     * Debt status report — fully TTN-based per-customer shipment vs payment.
+     *
+     * Returned columns:
+     *   customer_id, customer_name, total_inv, total_pay, saldo,
+     *   unpaid_waybills (comma-separated TTN numbers),
+     *   first_unpaid_date, overdue_days
+     *
+     * @param int|null    $customerId  0/null means all customers
+     * @param string|null $type        'debt' (saldo>0.01), 'credit' (saldo<-0.01),
+     *                                 'zero' (|saldo|<=0.01), null = no filter
+     */
+    public function salesDebtStatus(?int $customerId = null, ?string $type = null, ?string $country = null, ?int $currencyId = null): array
+    {
+        $conditions = [];
+        $params = [];
+        $defaultVat = (float) (Yii::$app->params['vat'] ?? 0);
+        $invoiceAmountExpr = '(fid.price * fid.qty) + ((fid.price * fid.qty) * COALESCE(fi.vat, ' . $defaultVat . ') / 100)';
+        $currencySql = '';
+
+        if ($customerId) {
+            $conditions[] = 'c.id = :cid';
+            $params[':cid'] = $customerId;
+        }
+        if ($country === 'local') {
+            $conditions[] = 'EXISTS (SELECT 1 FROM country_code cc WHERE cc.id = c.country_code_id AND cc.alpha_2 = \'UZ\')';
+        } elseif ($country === 'import') {
+            $conditions[] = '(c.country_code_id IS NULL OR NOT EXISTS (SELECT 1 FROM country_code cc WHERE cc.id = c.country_code_id AND cc.alpha_2 = \'UZ\'))';
+        }
+        if ($currencyId) {
+            $params[':cur_id'] = $currencyId;
+            $currencySql = 'AND sc.currency_id = :cur_id';
+        }
+
+        $customerFilter = $conditions ? ('WHERE ' . implode(' AND ', $conditions)) : '';
+
+        switch ($type) {
+            case 'debt':   $having = 'HAVING saldo > 0.01'; break;
+            case 'credit': $having = 'HAVING saldo < -0.01'; break;
+            case 'zero':   $having = 'HAVING ABS(saldo) <= 0.01'; break;
+            default:       $having = '';
+        }
+
+        $sql = "
+            SELECT
+                c.id   customer_id,
+                c.name customer_name,
+                COALESCE(inv.total_inv, 0)                               total_inv,
+                COALESCE(pay.total_pay, 0)                               total_pay,
+                COALESCE(inv.total_inv, 0) - COALESCE(pay.total_pay, 0)  saldo,
+                pay.last_payment_date,
+                unp.unpaid_waybills,
+                unp.first_unpaid_date,
+                unp.overdue_days
+            FROM customer c
+
+            -- Customer-level shipment total aggregated by FG invoice.
+            JOIN (
+                SELECT inv.customer_id, SUM(inv.inv_amt) total_inv
+                FROM (
+                    SELECT
+                        fi.customer_id,
+                        fi.id fg_invoice_id,
+                        SUM($invoiceAmountExpr) inv_amt
+                    FROM fg_invoice fi
+                    JOIN fg_invoice_detail fid ON fid.fg_invoice_id = fi.id
+                    JOIN sales_contract sc ON sc.contract_no = fi.contract AND sc.customer_id = fi.customer_id
+                    WHERE 1 = 1
+                    $currencySql
+                    GROUP BY fi.customer_id, fi.id
+                ) inv
+                GROUP BY inv.customer_id
+            ) inv ON inv.customer_id = c.id
+
+            -- Customer-level payment total aggregated from FG invoice payments.
+            LEFT JOIN (
+                SELECT fi.customer_id, SUM(fip.amount) total_pay, MAX(fip.date) last_payment_date
+                FROM fg_invoice_payment fip
+                JOIN fg_invoice fi ON fi.id = fip.fg_invoice_id
+                JOIN sales_contract sc ON sc.contract_no = fi.contract AND sc.customer_id = fi.customer_id
+                WHERE 1 = 1
+                $currencySql
+                GROUP BY fi.customer_id
+            ) pay ON pay.customer_id = c.id
+
+            -- Unpaid FG invoices.
+            LEFT JOIN (
+                SELECT
+                    inv.customer_id,
+                    GROUP_CONCAT(
+                        CONCAT(
+                            inv.invoice_no,
+                            CASE
+                                WHEN inv.invoice_date IS NOT NULL THEN CONCAT(' (', DATE_FORMAT(inv.invoice_date, '%d.%m.%Y'), ')')
+                                ELSE ''
+                            END
+                        )
+                        ORDER BY inv.invoice_date, inv.invoice_no
+                        SEPARATOR ', '
+                    )                                                     unpaid_waybills,
+                    DATE(MIN(inv.invoice_date))                            first_unpaid_date,
+                    DATEDIFF(CURDATE(), DATE(MIN(inv.invoice_date)))       overdue_days
+                FROM (
+                    SELECT
+                        fi.customer_id,
+                        sc.currency_id,
+                        fi.id fg_invoice_id,
+                        fi.invoice_no,
+                        fi.invoice_date,
+                        SUM($invoiceAmountExpr) inv_amt
+                    FROM fg_invoice fi
+                    JOIN fg_invoice_detail fid ON fid.fg_invoice_id = fi.id
+                    JOIN sales_contract sc ON sc.contract_no = fi.contract AND sc.customer_id = fi.customer_id
+                    WHERE 1 = 1
+                    $currencySql
+                    GROUP BY fi.customer_id, sc.currency_id, fi.id, fi.invoice_no, fi.invoice_date
+                ) inv
+                LEFT JOIN (
+                    SELECT fg_invoice_id, SUM(amount) pay_amt
+                    FROM fg_invoice_payment
+                    WHERE fg_invoice_id IS NOT NULL
+                    GROUP BY fg_invoice_id
+                ) ip ON ip.fg_invoice_id = inv.fg_invoice_id
+                WHERE inv.inv_amt > COALESCE(ip.pay_amt, 0) + 0.01
+                GROUP BY inv.customer_id
+            ) unp ON unp.customer_id = c.id
+
+            $customerFilter
+            $having
+            ORDER BY saldo DESC, c.name ASC
+        ";
+        return Yii::$app->db->createCommand($sql, $params)->queryAll();
+    }
+
     public function salesPaymentStatus()
     {
         $query = "
-        select 
+        select
             customer, max(inv_date) inv_date, sum(inv_amt) inv_amt, max(pay_date) pay_date, sum(pay_amt) pay_amt
-        from 
+        from
         (
-            select 
-                concat(c.name , '|', rc.customer_id) customer, '' inv_date, 0 inv_amt, min(rc.date) pay_date, sum(fir.amount) pay_amt
-            from 
-                recept_control rc, fg_invoice_receipt fir, customer c
-            where 
-                rc.id = fir.recept_control_id  and	
-                c.id = rc.customer_id 
-            group by 
-                concat(c.name , '|', rc.customer_id)
-            union	
-            select 
-                concat(c.name , '|', fi.customer_id) customer, min(fi.invoice_date) inv_date, sum(fid.price*fid.qty) inv_amt, '' payd_date, 0 pay_amt 
-            from 
-                fg_invoice fi, fg_invoice_detail fid, customer c 
-            where 
-                fi.id = fid.fg_invoice_id and	
-                c.id = fi.customer_id 
-            group by 
+            select
+                concat(c.name , '|', sc.customer_id) customer, '' inv_date, 0 inv_amt, min(fip.date) pay_date, sum(fip.amount) pay_amt
+            from
+                fg_invoice_payment fip
+                join sales_contract sc on sc.id = fip.sales_contract_id
+                join customer c on c.id = sc.customer_id
+            group by
+                concat(c.name , '|', sc.customer_id)
+            union
+            select
+                concat(c.name , '|', fi.customer_id) customer, min(fi.invoice_date) inv_date, sum(fid.price*fid.qty) inv_amt, '' pay_date, 0 pay_amt
+            from
+                fg_invoice fi, fg_invoice_detail fid, customer c
+            where
+                fi.id = fid.fg_invoice_id and
+                c.id = fi.customer_id
+            group by
                 concat(c.name ,'|',fi.customer_id)
         ) a
         group by customer
         ";
-        $data = Yii::$app->db->createCommand($query,[])->queryAll();
+        $data = Yii::$app->db->createCommand($query, [])->queryAll();
 
         return compact('data');
     }
@@ -2255,17 +2388,15 @@ class ReportService
         $debit = Yii::$app->db->createCommand($query,[':customer_id' => $customer_id])->queryAll();
 
         $query = "
-        select 
-            no,fir.amount  pay_amt, rc.date  pay_date, sc.contract_no , rc.amount, (rc.amount - fir.amount) amt_diff
-        from 
-            recept_control rc, fg_invoice_receipt fir, customer c, sales_contract sc 
-        where 
-            rc.id = fir.recept_control_id  and	
-            c.id = rc.customer_id and
-            sc.id = rc.sales_contract_id and
-            rc.customer_id  = :customer_id
+        select
+            fip.no, fip.amount pay_amt, fip.date pay_date, sc.contract_no, fip.amount amount, 0 amt_diff
+        from
+            fg_invoice_payment fip
+            join sales_contract sc on sc.id = fip.sales_contract_id
+        where
+            sc.customer_id = :customer_id
         ";
-        $credit = Yii::$app->db->createCommand($query,[':customer_id' => $customer_id])->queryAll();
+        $credit = Yii::$app->db->createCommand($query, [':customer_id' => $customer_id])->queryAll();
         $customerName = Customer::findOne($customer_id)->name;
         return compact('debit','credit','customerName');
     }
@@ -2469,7 +2600,12 @@ class ReportService
         $all_amount = 0;
         $all_qty = 0;
         $all_vat_amount = 0;
-        $vat = $firstFgInvoice->vat;
+        $firstFgInvoice = null;
+        if($firstFgInvoice){
+            $vat = $firstFgInvoice->vat;
+        }else{
+            die('Vat not found');
+        }
         $contracts = FgInVoice::find()->where(['customer_id'=>$customer_id])->orderBy(['id'=>SORT_ASC])->all();
         if($contracts){
           foreach($contracts as $key => $contract){

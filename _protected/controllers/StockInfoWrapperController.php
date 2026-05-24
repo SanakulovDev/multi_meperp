@@ -90,7 +90,6 @@ class StockInfoWrapperController extends Controller
           try{
             $model->give_user_id = Yii::$app->user->id;
             $model->date = date('Y-m-d');
-            // vd($part_models);
             if($model->save(false)){
               if(!empty($part_models)){
                 foreach($part_models as $key => $item){                  
@@ -105,19 +104,6 @@ class StockInfoWrapperController extends Controller
                 $stockResult = Stock::issue(1, $data, true);
                 // vd($stockResult);
                 if ($stockResult['success']) {
-                  // Gotoviy mahsulotni o'z omboriga qo'shish
-                  $finishedStock = Stock::find()
-                    ->where(['part_id' => $model->part_id, 'warehouse_id' => $model->warehouse_id])
-                    ->one();
-                  if ($finishedStock) {
-                    $finishedStock->qty = $finishedStock->qty + $model->qty;
-                  } else {
-                    $finishedStock = new Stock();
-                    $finishedStock->part_id = $model->part_id;
-                    $finishedStock->warehouse_id = $model->warehouse_id;
-                    $finishedStock->qty = $model->qty;
-                  }
-                  $finishedStock->save(false);
                   $transaction->commit();
                   // $this->writeToDocHistory($model->id, $this->action->id);
                   Yii::$app->session->setFlash('success', Yii::t('app', 'Stock Info created successfully.'));
@@ -135,9 +121,6 @@ class StockInfoWrapperController extends Controller
                   );
                 }
               }
-              $transaction->commit();
-              Yii::$app->session->setFlash('success', Yii::t('app', 'Stock Info created successfully.'));
-              return $this->redirect(['index']);
             }
 
           }catch(\Exception $e){
@@ -241,9 +224,6 @@ class StockInfoWrapperController extends Controller
           }
           
         }
-        $transaction->commit();
-        Yii::$app->session->setFlash('success', 'Deleted Successfully');
-        return $this->redirect(['index']);
         
     }
 
@@ -268,7 +248,7 @@ class StockInfoWrapperController extends Controller
 
     private function loadDictionaries()
     {
-      $queryPart = Part::find()->where(['status' => 1, 'state' => Part::STATE_FINISHED]);
+      $queryPart = Part::find()->where("status = 1 and state <> 0");
       if (Yii::$app->user->identity->rolename == "counter" || Yii::$app->user->identity->rolename == "mrpc") {
         $queryPart->andWhere(["warehouse_id" => Yii::$app->user->identity->warehouseIds]);
       }

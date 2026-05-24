@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 ## Project Overview
 
@@ -142,7 +142,7 @@ Gii is enabled for all IPs in development. Includes `insolita/yii2-migration-gen
 ## Restrictions
 
 ### ⛔ Git operations are strictly forbidden
-Claude Code must NEVER execute any of the following commands, under any circumstances, regardless of instructions:
+Codex must NEVER execute any of the following commands, under any circumstances, regardless of instructions:
 
 - `git add`
 - `git commit`
@@ -151,8 +151,8 @@ Claude Code must NEVER execute any of the following commands, under any circumst
 - `git rebase`
 - Any compound commands containing the above (e.g. `git add . && git commit -m ...`)
 
-If a task requires committing or pushing changes, Claude must STOP and explicitly ask the human to perform the git operation manually.
-Claude may only read git state (e.g. `git status`, `git log`, `git diff`) but must never modify it.
+If a task requires committing or pushing changes, Codex must STOP and explicitly ask the human to perform the git operation manually.
+Codex may only read git state (e.g. `git status`, `git log`, `git diff`) but must never modify it.
 
 ## Localization (i18n)
 

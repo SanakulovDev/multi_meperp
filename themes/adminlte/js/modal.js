@@ -1,13 +1,57 @@
 $(document).ready(function () {
+    function ensureModalLoader() {
+        if ($('#modalLoading').length) {
+            return $('#modalLoading');
+        }
+
+        $('#modal .modal-body').css('position', 'relative').append(
+            '<div id="modalLoading" style="display:none; position:absolute; inset:0; background:rgba(255,255,255,0.75); z-index:1051;">' +
+                '<div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center;">' +
+                    '<i class="fa fa-spinner fa-spin" style="font-size:28px; color:#3c8dbc;"></i>' +
+                    '<div style="margin-top:8px; font-size:13px; color:#555;">Loading...</div>' +
+                '</div>' +
+            '</div>'
+        );
+
+        return $('#modalLoading');
+    }
+
+    function setModalLoading(isLoading) {
+        var $loader = ensureModalLoader();
+        var $submit = $('#modal .modalFormSubmit');
+
+        if (isLoading) {
+            $("#modalError").removeClass("has-error").find(".help-block").html('');
+            $loader.show();
+            $submit.prop('disabled', true);
+        } else {
+            $loader.hide();
+            $submit.prop('disabled', false);
+        }
+    }
+
+    function reloadAfterSuccess() {
+        if ($.pjax && $('#pjaxGrid').length) {
+            $.pjax.reload({container:'#pjaxGrid'});
+            $('#modal').modal('hide');
+            setModalLoading(false);
+            return;
+        }
+
+        window.location.reload();
+    }
     
     $(".form-modal").click(function (e) {
         e.preventDefault();
         $("#modalError").find(".help-block").html('');
         var title = $(this).text();
         $('#modal').find('#modal_head').html(title);
+        setModalLoading(true);
         $("#modal").modal('show')
             .find('#modalContent')
-            .load($(this).attr('href'));
+            .load($(this).attr('href'), function () {
+                setModalLoading(false);
+            });
     });
 
     $(document).on('click', '.modalFormSubmit', function () {
@@ -17,13 +61,17 @@ $(document).ready(function () {
     $(document).on('click', '.modalButtonUpdate', function () {
         var title = $('.modalButtonUpdate').attr('title');
         $('#modal').find('#modal_head').html(title);
-        $('#modalContent').load($(this).attr('value'));
+        setModalLoading(true);
+        $('#modalContent').load($(this).attr('value'), function () {
+            setModalLoading(false);
+        });
         $("#modalError").find(".help-block").html('');
         $('#modal').modal('show');
     });
 
     $(document).on('beforeSubmit', '.modalForm', function () {
         var form = $(this);
+        setModalLoading(true);
         $.post(
             form.attr("action"),
             form.serialize()
@@ -37,13 +85,14 @@ $(document).ready(function () {
 
             if (data.status == 1) {
                 form.trigger("reset");
-                $.pjax.reload({container:'#pjaxGrid'});
-                $('#modal').modal('hide');
+                reloadAfterSuccess();
             } else {
+                setModalLoading(false);
                 $("#modalError").addClass("has-error");
                 $("#modalError").find(".help-block").html(data.errors);
             }
         }).fail(function (error) {
+            setModalLoading(false);
             console.log("server error:" + error);
         });
         return false;

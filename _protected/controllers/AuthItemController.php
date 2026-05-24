@@ -151,7 +151,7 @@ class AuthItemController extends AppController {
           }
           $model->permissionList = implode(',', $list);
           $model->name = $fromModel->name."-copy";
-          $model->description = 'Copy from ' . $fromModel->name;
+          $model->description = 'Copy from «'.$fromModel->name.'»';
           $permissionData = self::getPermissionItems($fromModel->permissions);
           return $this->renderAjax('_form', ['model' => $model, 'permissionData' => $permissionData]);
         }

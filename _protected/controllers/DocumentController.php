@@ -127,7 +127,7 @@ class DocumentController extends AppController
 				$model->to_warehouse_id = $model->adj_wh_id;
 			}
 			$model->status = 1;
-			if ($model->save(false)) {
+			if ($model->save()) {
 				if (is_array($_POST['items']['detail']) and count($_POST['items']['detail']) > 1) {
 					$data = []; // for stock fucntion
 					foreach ($_POST['items']['detail'] as $key => $value) {
@@ -169,7 +169,6 @@ class DocumentController extends AppController
 					]);
 				}
 			} else {
-				vd($model->getErrors());
 				return $this->render('create-act', [
 					'model' => $model,
 					'items' => $_POST['items'],

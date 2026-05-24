@@ -34,7 +34,6 @@ class ContractController extends AppController
 	public function actionCreate()
 	{
 		$model = new Contract();
-		
 		$modelDetail = new ContractDetail();
 
 		$errorlist = [];
@@ -48,7 +47,7 @@ class ContractController extends AppController
 				$model->status = 1;
 				$redirectToIndex = true;
 			}
-			if ($model->save(false)) {
+			if ($model->save()) {
 				if (count($errorlist) == 0) {
 					$transaction->commit();
 					Yii::$app->session->setFlash('success', Yii::t('app', 'Contract created successfully.'));
