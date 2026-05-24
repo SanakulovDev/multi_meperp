@@ -1172,7 +1172,7 @@ return [
   'No unpaid waybills found for this customer.' => 'Для этого контрагента не найдено неоплаченных ТТН.',
   'No unpaid waybills selected.' => 'Не выбраны неоплаченные ТТН.',
   'Pay all unpaid invoices' => 'Оплатить все неоплаченные счёт-фактуры',
-  'Pay all unpaid waybills' => 'Оплатить все неоплаченные ТТН',
+  'Pay all unpaid waybills' => 'Оплатить ТТН по номеру',
   'First unpaid date' => 'Дата первой неоплаченной',
   'Days passed' => 'Сколько дней прошло',
   'days' => 'дней',

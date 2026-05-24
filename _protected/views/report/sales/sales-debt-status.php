@@ -246,9 +246,9 @@ $waybillPreview = 3;
                 <tr>
                     <td class="ctr">
                         <?php if ($canCreatePayment && $saldo > 0.01 && !empty($waybillArr)): ?>
-                            <?= Html::a('<span class="glyphicon glyphicon-usd"></span> ' . Yii::t('app', 'Pay all unpaid invoices'), ['/fg-invoice-payment/create-bulk-by-customer', 'customer_id' => $row['customer_id']], [
+                            <?= Html::a('<span class="glyphicon glyphicon-usd"></span> ' . Yii::t('app', 'Pay all unpaid waybills'), ['/fg-invoice-payment/create-bulk-by-customer', 'customer_id' => $row['customer_id']], [
                                 'class' => 'btn btn-success btn-xs form-modal',
-                                'title' => Yii::t('app', 'Pay all unpaid invoices'),
+                                'title' => Yii::t('app', 'Pay all unpaid waybills'),
                             ]) ?>
                         <?php endif; ?>
                     </td>
